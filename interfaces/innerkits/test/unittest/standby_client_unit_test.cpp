@@ -21,6 +21,7 @@
 #include "singleton.h"
 
 #include "allow_type.h"
+#include "standby_ipc_interface_code.h"
 #include "standby_service_client.h"
 #include "standby_service_subscriber_stub.h"
 using namespace testing::ext;
@@ -71,7 +72,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_002, TestSiz
     EXPECT_NE(StandbyServiceClient::GetInstance().ApplyAllowResource(resouarceRequest), ERR_OK);
     EXPECT_NE(StandbyServiceClient::GetInstance().UnapplyAllowResource(resouarceRequest), ERR_OK);
 
-    sptr<ResourceRequest> validResRequest = new (std::nothrow) ResourceRequest(AllowType::NET,
+    sptr<ResourceRequest> validResRequest = new (std::nothrow) ResourceRequest(AllowType::NETWORK,
         0, "test_process", 100, "test", 1);
     EXPECT_EQ(StandbyServiceClient::GetInstance().ApplyAllowResource(validResRequest), ERR_OK);
     EXPECT_EQ(StandbyServiceClient::GetInstance().UnapplyAllowResource(validResRequest), ERR_OK);
@@ -87,7 +88,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_003, TestSiz
 {
     std::vector<AllowInfo> allowInfoList;
     sptr<ResourceRequest> nullRequest = nullptr;
-    EXPECT_EQ(StandbyServiceClient::GetInstance().GetAllowList(AllowType::NET, allowInfoList, 0), ERR_OK);
+    EXPECT_EQ(StandbyServiceClient::GetInstance().GetAllowList(AllowType::NETWORK, allowInfoList, 0), ERR_OK);
     EXPECT_NE(StandbyServiceClient::GetInstance().GetAllowList(0, allowInfoList, 0), ERR_OK);
     EXPECT_EQ(StandbyServiceClient::GetInstance().GetAllowList((1 << 6), allowInfoList, 0), ERR_OK);
     allowInfoList.emplace_back(AllowInfo {});
@@ -103,7 +104,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_003, TestSiz
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_004, TestSize.Level1)
 {
     bool isStandby {false};
-    EXPECT_EQ(StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby), ERR_OK);
+    EXPECT_NE(StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby), ERR_OK);
 }
 
 /**
@@ -146,8 +147,10 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_007, TestSiz
     MessageParcel data {};
     MessageParcel reply {};
     MessageOption option {};
-    subscriber->OnRemoteRequestInner(StandbyServiceSubscriberStub::ON_ALLOW_LIST_CHANGED, data, reply, option);
-    subscriber->OnRemoteRequestInner(StandbyServiceSubscriberStub::ON_ALLOW_LIST_CHANGED + 1, data, reply, option);
+    subscriber->OnRemoteRequestInner(
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ALLOW_LIST_CHANGED)), data, reply, option);
+    subscriber->OnRemoteRequestInner(
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ALLOW_LIST_CHANGED)) + 1, data, reply, option);
     EXPECT_NE(subscriber->HandleOnDeviceIdleMode(data), ERR_OK);
     subscriber->HandleOnAllowListChanged(data);
     data.WriteBool(false);

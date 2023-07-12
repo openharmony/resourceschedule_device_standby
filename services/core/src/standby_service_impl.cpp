@@ -44,6 +44,7 @@
 #include "ability_manager_helper.h"
 #include "bundle_manager_helper.h"
 #include "common_event_observer.h"
+#include "standby_service.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -51,7 +52,6 @@ namespace {
 const std::string ALLOW_RECORD_FILE_PATH = "/data/service/el1/public/device_standby/allow_record";
 const std::string STANDBY_MSG_HANDLER = "StandbyMsgHandler";
 const std::string ON_PLUGIN_REGISTER = "OnPluginRegister";
-const std::string STANDBY_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPT_LIST_UPDATED";
 const std::string SYSTEM_SO_PATH = "/system/lib/";
 const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPTION";
 }
@@ -115,6 +115,8 @@ void StandbyServiceImpl::InitReadyState()
         ParsePersistentData();
         DumpPersistantData();
         isServiceReady_.store(true);
+        StandbyService::GetInstance()->AddPluginSysAbilityListener(BACKGROUND_TASK_MANAGER_SERVICE_ID);
+        StandbyService::GetInstance()->AddPluginSysAbilityListener(WORK_SCHEDULE_SERVICE_ID);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 
@@ -325,6 +327,8 @@ void StandbyServiceImpl::UninitReadyState()
         STANDBYSERVICE_LOGE("start uninit necessary observer");
         listenerManager_->UnInit();
         constraintManager_->UnInit();
+        strategyManager_->UnInit();
+        standbyStateManager_->UnInit();
         isServiceReady_.store(false);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 }
@@ -512,6 +516,10 @@ int32_t StandbyServiceImpl::GetUserIdByUid(int32_t uid)
 ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
     STANDBYSERVICE_LOGI("add %{public}s subscriber to stanby service", subscriber->GetSubscriberName().c_str());
+    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
+        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
+        return ERR_STANDBY_PERMISSION_DENIED;
+    }
     const auto& strategyConfigList = StandbyConfigManager::GetInstance()->GetStrategyConfigList();
     auto item = std::find(strategyConfigList.begin(), strategyConfigList.end(), subscriber->GetSubscriberName());
     if (item == strategyConfigList.end()) {
@@ -524,6 +532,10 @@ ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceS
 ErrCode StandbyServiceImpl::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
     STANDBYSERVICE_LOGI("add subscriber to stanby service succeed");
+    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
+        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
+        return ERR_STANDBY_PERMISSION_DENIED;
+    }
     return StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber);
 }
 
@@ -624,7 +636,7 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
             allowTimeList.emplace_back(AllowTime{allowTypeIndex, endTime, resourceRequest->GetReason()});
         } else {
             it->reason_ = resourceRequest->GetReason();
-            it->endTime_ = std::max(it->endTime_, endTime);
+            it->endTime_ = std::max(static_cast<long>(it->endTime_ - curTime), 0L);
         }
         allowRecord->allowType_ = (allowRecord->allowType_ | allowNumber);
         auto task = [this, uid, name, allowType] () {
@@ -699,6 +711,23 @@ void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& na
     DumpPersistantData();
 }
 
+void StandbyServiceImpl::OnProcessStatusChanged(int32_t uid, int32_t pid, const std::string& bundleName, bool isCreated)
+{
+    if (!isServiceReady_.load()) {
+        STANDBYSERVICE_LOGD("standby service is not ready");
+        return;
+    }
+    STANDBYSERVICE_LOGD("process status change, uid: %{piblic}d, pid: %{piblic}d, name: %{piblic}s, alive: %{piblic}d",
+        uid, pid, bundleName.c_str(), isCreated);
+    StandbyMessage standbyMessage {StandbyMessageType::PROCESS_STATE_CHANGED};
+    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_->SetParam("uid", uid);
+    standbyMessage.want_->SetParam("pid", pid);
+    standbyMessage.want_->SetParam("name", bundleName);
+    standbyMessage.want_->SetParam("isCreated", isCreated);
+    DispatchEvent(standbyMessage);
+}
+
 void StandbyServiceImpl::NotifyAllowListChanged(int32_t uid, const std::string& name,
     uint32_t allowType, bool added)
 {
@@ -743,7 +772,7 @@ void StandbyServiceImpl::GetAllowListInner(uint32_t allowType, std::vector<Allow
         }
         GetTemporaryAllowList(allowTypeIndex, allowInfoList, reasonCode);
         bool isApp = (reasonCode == ReasonCodeEnum::REASON_APP_API);
-        GetPersistAllowList(allowTypeIndex, allowInfoList, isApp);
+        GetPersistAllowList(allowTypeIndex, allowInfoList, true, isApp);
     }
 }
 
@@ -770,16 +799,16 @@ void StandbyServiceImpl::GetTemporaryAllowList(uint32_t allowTypeIndex, std::vec
 }
 
 void StandbyServiceImpl::GetPersistAllowList(uint32_t allowTypeIndex, std::vector<AllowInfo>& allowInfoList,
-    bool isApp)
+    bool isAllow, bool isApp)
 {
     uint32_t condition = TimeProvider::GetCondition();
     std::set<std::string> psersistAllowList;
     if (isApp) {
         psersistAllowList = StandbyConfigManager::GetInstance()->GetEligiblePersistAllowConfig(
-            AllowTypeName[allowTypeIndex], condition, true, true);
+            AllowTypeName[allowTypeIndex], condition, isAllow, true);
     } else {
         psersistAllowList = StandbyConfigManager::GetInstance()->GetEligiblePersistAllowConfig(
-            AllowTypeName[allowTypeIndex], condition, true, false);
+            AllowTypeName[allowTypeIndex], condition, isAllow, false);
     }
     for (const auto& allowName : psersistAllowList) {
         allowInfoList.emplace_back((1 << allowTypeIndex), allowName, -1);
@@ -799,28 +828,136 @@ ErrCode StandbyServiceImpl::IsDeviceInStandby(bool& isStandby)
     return ERR_OK;
 }
 
-ErrCode StandbyServiceImpl::GetEligiableRestrictSet(const std::string& strategyName, std::set<std::string>& restrictSet)
+ErrCode StandbyServiceImpl::GetEligiableRestrictSet(uint32_t allowType, const std::string& strategyName,
+    uint32_t resonCode, std::set<std::string>& restrictSet)
 {
     uint32_t condition = TimeProvider::GetCondition();
-    std::set<std::string> originRestrictSet =
-        StandbyConfigManager::GetInstance()->GetEligiblePersistAllowConfig(strategyName, condition, false, false);
-
+    std::set<std::string> originRestrictSet = StandbyConfigManager::GetInstance()->GetEligiblePersistAllowConfig(
+        strategyName, condition, false, resonCode == ReasonCodeEnum::REASON_APP_API);
     std::vector<AllowInfo> allowInfoList;
-    GetAllowListInner(AllowType::FREEZE, allowInfoList, ReasonCodeEnum::REASON_NATIVE_API);
-    STANDBYSERVICE_LOGD("allowInfoList size is %{public}d", static_cast<int32_t>(allowInfoList.size()));
+    GetAllowListInner(allowType, allowInfoList, resonCode);
     std::set<std::string> allowSet;
     for_each(allowInfoList.begin(), allowInfoList.end(),
         [&allowSet](AllowInfo& allowInfo) { allowSet.insert(allowInfo.GetName()); });
 
     std::set_difference(originRestrictSet.begin(), originRestrictSet.end(), allowSet.begin(),
         allowSet.end(), std::inserter(restrictSet, restrictSet.begin()));
-    STANDBYSERVICE_LOGD("restrictSet size is %{public}d", static_cast<int32_t>(restrictSet.size()));
+    STANDBYSERVICE_LOGD("origin restrict size is %{public}d, restrictSet size is %{public}d, "\
+        "restrictSet size is %{public}d", static_cast<int32_t>(originRestrictSet.size()), 
+        static_cast<int32_t>(allowInfoList.size()), static_cast<int32_t>(restrictSet.size()));
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
+{
+    if (!isServiceReady_.load()) {
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    STANDBYSERVICE_LOGI("work scheduler status changed, isstarted: %{public}d, uid: %{public}d, bundleName: %{public}s",
+        started, uid, bundleName.c_str());
+    Security::AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    if (CheckNativePermission(tokenId) != ERR_OK) {
+        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
+        return ERR_STANDBY_PERMISSION_DENIED;
+    }
+    StandbyMessage standbyMessage {StandbyMessageType::BG_TASK_STATUS_CHANGE};
+    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_->SetParam(BG_TASK_TYPE, WORK_SCHEDULER);
+    standbyMessage.want_->SetParam(BG_TASK_STATUS, started);
+    standbyMessage.want_->SetParam(BG_TASK_UID, uid);
+    DispatchEvent(standbyMessage);
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceImpl::GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+    uint32_t reasonCode)
+{
+    if (!isServiceReady_.load()) {
+        STANDBYSERVICE_LOGD("standby service is not ready");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    STANDBYSERVICE_LOGD("start GetRestrictList");
+    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
+        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
+        return ERR_STANDBY_PERMISSION_DENIED;
+    }
+    if (!CheckAllowTypeInfo(restrictType)) {
+        STANDBYSERVICE_LOGE("restrictType param is invalid");
+        return ERR_RESOURCE_TYPES_INVALID;
+    }
+    handler_->PostSyncTask([this, restrictType, &restrictInfoList, reasonCode]() {
+        this->GetRestrictListInner(restrictType, restrictInfoList, reasonCode);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return ERR_OK;
+}
+
+void StandbyServiceImpl::GetRestrictListInner(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+    uint32_t reasonCode)
+{
+    STANDBYSERVICE_LOGD("start GetRestrictListInner, restrictType is %{public}d", restrictType);
+    for (uint32_t restrictTypeIndex = 0; restrictTypeIndex < MAX_ALLOW_TYPE_NUM; ++restrictTypeIndex) {
+        uint32_t restrictNumber = restrictType & (1 << restrictTypeIndex);
+        if (restrictNumber == 0) {
+            continue;
+        }
+        bool isApp = (reasonCode == ReasonCodeEnum::REASON_APP_API);
+        GetPersistAllowList(restrictTypeIndex, restrictInfoList, false, isApp);
+    }
+}
+
+ErrCode StandbyServiceImpl::IsStrategyEnabled(const std::string& strategyName, bool& isStandby)
+{
+    if (!isServiceReady_.load()) {
+        STANDBYSERVICE_LOGD("standby service is not ready");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    STANDBYSERVICE_LOGD("start IsStrategyEnabled");
+    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
+        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
+        return ERR_STANDBY_PERMISSION_DENIED;
+    }
+    const auto& strategyConfigList = StandbyConfigManager::GetInstance()->GetStrategyConfigList();
+    auto item = std::find(strategyConfigList.begin(), strategyConfigList.end(), strategyName);
+    isStandby = item != strategyConfigList.end();
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
+{
+    if (!isServiceReady_.load()) {
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    STANDBYSERVICE_LOGI("device state changed, state type: %{public}d, enabled: %{public}d",
+        static_cast<int32_t>(type), enabled);
+    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
+        STANDBYSERVICE_LOGE("dump user is unpermitted due to not native process or shell");
+        return ERR_STANDBY_PERMISSION_DENIED;
+    }
+    DeviceStateCache::GetInstance()->SetDeviceState(static_cast<int32_t>(type), enabled);
+    if (!enabled) {
+        return ERR_OK;
+    }
+    StandbyMessage standbyMessage {StandbyMessageType::DEVICE_STATE_CHANGED};
+    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_->SetParam("DIS_COMP_STATE", enabled);
+    handler_->PostTask([standbyImpl = shared_from_this(), standbyMessage]() {
+        standbyImpl->DispatchEvent(standbyMessage);
+    });
     return ERR_OK;
 }
 
 void StandbyServiceImpl::DispatchEvent(const StandbyMessage& message)
 {
+    if (!isServiceReady_.load()) {
+        STANDBYSERVICE_LOGW("standby service is not ready");
+        return;
+    }
     STANDBYSERVICE_LOGD("standby service implement dispatch message %{public}d", message.eventId_);
+    if (!listenerManager_ || !standbyStateManager_ || !strategyManager_) {
+        STANDBYSERVICE_LOGE("can not dispatch event, state manager or strategy manager is nullptr");
+        return;
+    }
+    listenerManager_->HandleEvent(message);
     standbyStateManager_->HandleEvent(message);
     strategyManager_->HandleEvent(message);
 }
@@ -881,7 +1018,8 @@ void StandbyServiceImpl::DumpUsage(std::string& result)
     "    -h                                                 help menu\n"
     "    -D                                                 show detail information\n"
     "        --config                                            show all info, including config\n"
-    "        --reset_state                                       reset parameter, validate debug parameter "
+    "        --reset_state                                       reset parameter, validate debug parameter\n"
+    "        --strategy                                          dump strategy info\n"
     "    -E                                                 enter the specified state:\n"
     "        {id of state} {whether skip evalution}         enter the specified state, 0-4 represent respectively\n"
     "                                                            woking, dark, nap, maintenance, sleep\n"
@@ -891,6 +1029,7 @@ void StandbyServiceImpl::DumpUsage(std::string& result)
     "        --get {type} {isApp}                                get allow list info\n"
     "    -S                                                 simulately activate the sensor:\n"
     "        {--motion or --repeat or --blocked or --halfhour} simulately activate the motion sensor\n"
+    "        {--poweroff}                                      power off strategy\n"
     "    -T  {switch name} {on or off}                      turn on or turn off some switches, switch can be debug,\n"
     "                                                            nap_switch, sleep_switch, detect_motion, other\n"
     "                                                            switch only be used after open debug switch\n"
@@ -903,13 +1042,14 @@ void StandbyServiceImpl::DumpShowDetailInfo(const std::vector<std::string>& args
     std::string& result)
 {
     DumpAllowListInfo(result);
-    strategyManager_->ShellDump(argsInStr, result);
     standbyStateManager_->ShellDump(argsInStr, result);
     if (argsInStr.size() < DUMP_DETAILED_INFO_MAX_NUMS) {
         return;
     }
     if (argsInStr[DUMP_SECOND_PARAM] == DUMP_DETAIL_CONFIG) {
         DumpStandbyConfigInfo(result);
+    } else if (argsInStr[DUMP_SECOND_PARAM] == DUMP_STRATGY_DETAIL) {
+        strategyManager_->ShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_SECOND_PARAM] == DUMP_RESET_STATE) {
         standbyStateManager_->UnInit();
         standbyStateManager_->Init();
@@ -999,6 +1139,12 @@ void StandbyServiceImpl::DumpModifyAllowList(const std::vector<std::string>& arg
             "name: " + allowInfo.GetName() + "\n" +
             "duration: " + std::to_string(allowInfo.GetDuration()) + "\n";
         }
+        allowInfoList.clear();
+        GetRestrictListInner(allowType, allowInfoList, isApp);
+        for (const auto& allowInfo : allowInfoList) {
+            result += "restrictType: " + std::to_string(allowInfo.GetAllowType()) + "\n" +
+            "name: " + allowInfo.GetName() + "\n";
+        }
     }
 }
 
@@ -1054,6 +1200,36 @@ void StandbyServiceImpl::DumpActivateMotion(const std::vector<std::string>& args
 void StandbyServiceImpl::DumpSubScriberObserver(const std::vector<std::string>& argsInStr, std::string& result)
 {
     StandbyStateSubscriber::GetInstance()->ShellDump(argsInStr, result);
+}
+
+IMPLEMENT_SINGLE_INSTANCE(DeviceStateCache);
+
+DeviceStateCache::DeviceStateCache()
+{
+    deviceState_ = {false, false, false};
+}
+
+DeviceStateCache::~DeviceStateCache() {}
+
+bool DeviceStateCache::SetDeviceState(int32_t type, bool enabled)
+{
+    if (type < 0 || type >= DEVICE_STATE_NUM) {
+        return false;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (deviceState_[type] == enabled) {
+        return false;
+    }
+    deviceState_[type] = enabled;
+    return true;
+}
+
+bool DeviceStateCache::GetDeviceState(int32_t type)
+{
+    if (type < 0 || type >= DEVICE_STATE_NUM) {
+        return false;
+    }
+    return deviceState_[type];
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

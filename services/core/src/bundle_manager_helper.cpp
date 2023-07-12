@@ -55,10 +55,35 @@ bool WEAK_FUNC BundleManagerHelper::GetApplicationInfo(const std::string &appNam
 
     Connect();
     STANDBYSERVICE_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
-    if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfo(appName, flag, userId, appInfo)) {
-        return true;
+    if (bundleMgr_ == nullptr || !bundleMgr_->GetApplicationInfo(appName, flag, userId, appInfo)) {
+        return false;
     }
-    return false;
+    return true;
+}
+
+bool WEAK_FUNC BundleManagerHelper::GetApplicationInfos(const AppExecFwk::ApplicationFlag flag, int userId,
+    std::vector<AppExecFwk::ApplicationInfo> &appInfos)
+{
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+
+    Connect();
+    STANDBYSERVICE_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
+    if (bundleMgr_ == nullptr || !bundleMgr_->GetApplicationInfos(flag, userId, appInfos)) {
+        return false;
+    }
+    return true;
+}
+
+bool WEAK_FUNC BundleManagerHelper::CheckIsSystemAppByUid(const int uid, bool& isSystemApp)
+{
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+    Connect();
+    STANDBYSERVICE_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
+    if (bundleMgr_ == nullptr) {
+        return false;
+    }
+    isSystemApp = bundleMgr_->CheckIsSystemAppByUid(uid);
+    return true;
 }
 
 bool WEAK_FUNC BundleManagerHelper::Connect()

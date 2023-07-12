@@ -40,7 +40,12 @@
         "safwk",
         "samgr",
         "sensor",
-        "time_service"
+        "time_service",
+        "call_manager",
+        "netmanager_base",
+        "wifi",
+        "work_scheduler",
+        "background_task_mgr"
       ],
       "third_party": [
         "googletest"
@@ -83,13 +88,16 @@
           "header": {
             "header_base": "//foundation/resourceschedule/device_standby/services",
             "header_files": [
+              "common/include/background_task_helper.h",
               "common/include/device_standby_switch.h",
               "common/include/time_provider.h",
               "common/include/timed_task.h",
               "core/include/ability_manager_helper.h",
               "core/include/allow_record.h",
               "core/include/app_mgr_helper.h",
+              "core/include/app_state_observer.h",
               "core/include/bundle_manager_helper.h",
+              "core/include/common_event_observer.h",
               "core/include/standby_service_impl.h",
               "core/include/standby_service.h",
               "notification/include/standby_state_subscriber.h"
@@ -146,10 +154,7 @@
               "standby_state/include/state_manager_adapter.h",
               "standby_state/include/working_state.h",
               "strategy/include/network_strategy.h",
-              "strategy/include/running_lock_strategy.h",
-              "strategy/include/strategy_manager_adapter.h",
-              "strategy/include/timer_strategy.h",
-              "strategy/include/work_scheduler_strategy.h"
+              "strategy/include/strategy_manager_adapter.h"
             ]
           },
           "name": "//foundation/resourceschedule/device_standby/plugins:standby_plugin"

@@ -30,11 +30,13 @@
 
 #include "state_manager_adapter.h"
 #include "constraint_manager_adapter.h"
+#include "istandby_ipc_inteface_code.h"
 #include "listener_manager_adapter.h"
 #include "strategy_manager_adapter.h"
 
 #include "standby_state.h"
 #include "allow_type.h"
+#include "standby_ipc_interface_code.h"
 #include "standby_service_client.h"
 #include "standby_service.h"
 #include "ability_manager_helper.h"
@@ -92,8 +94,6 @@ public:
 void StandbyServiceUnitTest::SetUpTestCase()
 {
     StandbyServiceImpl::GetInstance()->Init();
-    StandbyServiceImpl::GetInstance()->InitReadyState();
-    SleepForFC();
 
     StandbyServiceImpl::GetInstance()->constraintManager_ = std::make_shared<ConstraintManagerAdapter>();
     StandbyServiceImpl::GetInstance()->listenerManager_ = std::make_shared<ListenerManagerAdapter>();
@@ -132,11 +132,8 @@ void StandbyServiceUnitTest::TearDownTestCase()
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_001, TestSize.Level1)
 {
-    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
-    StandbyService::GetInstance()->OnStart();
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
     StandbyService::GetInstance()->OnStart();
-    StandbyServiceImpl::GetInstance()->Init();
     EXPECT_NE(StandbyServiceImpl::GetInstance()->handler_, nullptr);
     StandbyServiceImpl::GetInstance()->InitReadyState();
     SleepForFC();
@@ -193,7 +190,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level1)
     EXPECT_NE(StandbyService::GetInstance()->UnapplyAllowResource(resourceRequest), ERR_OK);
 
     std::vector<AllowInfo> allowInfoList;
-    EXPECT_NE(StandbyService::GetInstance()->GetAllowList(AllowType::NET, allowInfoList, 0), ERR_OK);
+    EXPECT_NE(StandbyService::GetInstance()->GetAllowList(AllowType::NETWORK, allowInfoList, 0), ERR_OK);
     bool isStandby {false};
     EXPECT_NE(StandbyService::GetInstance()->IsDeviceInStandby(isStandby), ERR_OK);
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
@@ -202,7 +199,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level1)
     StandbyService::GetInstance()->UnsubscribeStandbyCallback(subscriber);
     StandbyService::GetInstance()->ApplyAllowResource(resourceRequest);
     StandbyService::GetInstance()->UnapplyAllowResource(resourceRequest);
-    EXPECT_EQ(StandbyService::GetInstance()->GetAllowList(AllowType::NET, allowInfoList, 0), ERR_OK);
+    EXPECT_EQ(StandbyService::GetInstance()->GetAllowList(AllowType::NETWORK, allowInfoList, 0), ERR_OK);
     EXPECT_EQ(StandbyService::GetInstance()->IsDeviceInStandby(isStandby), ERR_OK);
 }
 
@@ -220,7 +217,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_004, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->ApplyAllowResource(resourceRequest);
     StandbyServiceImpl::GetInstance()->UnapplyAllowResource(resourceRequest);
     std::vector<AllowInfo> allowInfoList;
-    StandbyServiceImpl::GetInstance()->GetAllowList(AllowType::NET, allowInfoList, 0);
+    StandbyServiceImpl::GetInstance()->GetAllowList(AllowType::NETWORK, allowInfoList, 0);
     bool isStandby {false};
     EXPECT_NE(StandbyServiceImpl::GetInstance()->IsDeviceInStandby(isStandby), ERR_OK);
     std::vector<std::string> argsInStr {};
@@ -264,7 +261,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_005, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-S", "--default"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D"}, result);
 
-    auto allowRecord = std::make_shared<AllowRecord>(0, 0, "name", AllowType::NET);
+    auto allowRecord = std::make_shared<AllowRecord>(0, 0, "name", AllowType::NETWORK);
     allowRecord->allowTimeList_.emplace_back(AllowTime{0, INT64_MAX, "reason"});
     StandbyServiceImpl::GetInstance()->allowInfoMap_.emplace(DEFAULT_KEY, allowRecord);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D"}, result);
@@ -305,11 +302,11 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_007, TestSize.Level1)
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_008, TestSize.Level1)
 {
     StandbyServiceImpl::GetInstance()->ParsePersistentData();
-    auto allowRecord = std::make_shared<AllowRecord>(0, 0, "name", AllowType::NET);
+    auto allowRecord = std::make_shared<AllowRecord>(0, 0, "name", AllowType::NETWORK);
     allowRecord->allowTimeList_.emplace_back(AllowTime{0, INT64_MAX, "reason"});
-    allowRecord = std::make_shared<AllowRecord>(-1, -1, "test", AllowType::NET);
+    allowRecord = std::make_shared<AllowRecord>(-1, -1, "test", AllowType::NETWORK);
     allowRecord->allowTimeList_.emplace_back(AllowTime{-1, INT64_MAX, "test"});
-    allowRecord = std::make_shared<AllowRecord>(-1, -1, "test", AllowType::NET);
+    allowRecord = std::make_shared<AllowRecord>(-1, -1, "test", AllowType::NETWORK);
     allowRecord->allowTimeList_.emplace_back(AllowTime{-1, INT64_MAX, "test"});
     StandbyServiceImpl::GetInstance()->allowInfoMap_.emplace(DEFAULT_KEY, allowRecord);
     StandbyServiceImpl::GetInstance()->DumpPersistantData();
@@ -464,7 +461,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_016, TestSize.Level1)
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level1)
 {
-    auto allowRecord = std::make_shared<AllowRecord>(DEFAULT_UID, 0, DEFAULT_BUNDLENAME, AllowType::NET);
+    auto allowRecord = std::make_shared<AllowRecord>(DEFAULT_UID, 0, DEFAULT_BUNDLENAME, AllowType::NETWORK);
     allowRecord->allowTimeList_.emplace_back(AllowTime{0, INT64_MAX, "reason"});
     StandbyServiceImpl::GetInstance()->allowInfoMap_.emplace(DEFAULT_KEY, allowRecord);
 
@@ -482,9 +479,9 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
         ReasonCodeEnum::REASON_NATIVE_API);
     StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
-        true);
+        true, true);
     StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
-        false);
+        true, false);
     sptr<ResourceRequest> resourceRequest = new (std::nothrow) ResourceRequest();
     StandbyServiceImpl::GetInstance()->UnapplyAllowResource(resourceRequest);
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
@@ -507,7 +504,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_018, TestSize.Level1)
     StandbyStateSubscriber::GetInstance()->ShellDump(argsInStr, result);
     StandbyStateSubscriber::GetInstance()->NotifyIdleModeByCallback(false, false);
     StandbyStateSubscriber::GetInstance()->ReportAllowListChanged(DEFAULT_UID, DEFAULT_BUNDLENAME,
-        AllowType::NET, true);
+        AllowType::NETWORK, true);
     sptr<IStandbyServiceSubscriber> nullSubscriber = nullptr;
     EXPECT_NE(StandbyStateSubscriber::GetInstance()->AddSubscriber(nullSubscriber), ERR_OK);
     EXPECT_NE(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(nullSubscriber), ERR_OK);
@@ -517,7 +514,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_018, TestSize.Level1)
     EXPECT_NE(StandbyStateSubscriber::GetInstance()->AddSubscriber(subscriber), ERR_OK);
     StandbyStateSubscriber::GetInstance()->NotifyIdleModeByCallback(false, false);
     StandbyStateSubscriber::GetInstance()->ReportAllowListChanged(DEFAULT_UID, DEFAULT_BUNDLENAME,
-        AllowType::NET, true);
+        AllowType::NETWORK, true);
     EXPECT_EQ(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber), ERR_OK);
     StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber);
     StandbyStateSubscriber::GetInstance()->AddSubscriber(subscriber);
@@ -547,7 +544,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_018, TestSize.Level1)
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_019, TestSize.Level1)
 {
-    auto allowRecord = std::make_shared<AllowRecord>(DEFAULT_UID, 0, DEFAULT_BUNDLENAME, AllowType::NET);
+    auto allowRecord = std::make_shared<AllowRecord>(DEFAULT_UID, 0, DEFAULT_BUNDLENAME, AllowType::NETWORK);
     auto value = allowRecord->ParseToJson();
     allowRecord->ParseFromJson(value);
     allowRecord->allowTimeList_.emplace_back(AllowTime{0, 0, "reason"});
@@ -724,7 +721,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_028, TestSize.Level1, 2
 {
     sptr<ResourceRequest> resourceRequest = new (std::nothrow) ResourceRequest();
     StandbyServiceImpl::GetInstance()->ApplyAllowResource(resourceRequest);
-    sptr<ResourceRequest> validResRequest = new (std::nothrow) ResourceRequest(AllowType::NET,
+    sptr<ResourceRequest> validResRequest = new (std::nothrow) ResourceRequest(AllowType::NETWORK,
         0, "test_process", 100, "test", 1);
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->ApplyAllowResource(validResRequest), ERR_OK);
     StandbyServiceUnitTest::SleepForFC();
@@ -740,7 +737,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_029, TestSize.Level1, 2
 {
     sptr<ResourceRequest> resourceRequest = new (std::nothrow) ResourceRequest();
     StandbyServiceImpl::GetInstance()->UnapplyAllowResource(resourceRequest);
-    sptr<ResourceRequest> validResRequest = new (std::nothrow) ResourceRequest(AllowType::NET,
+    sptr<ResourceRequest> validResRequest = new (std::nothrow) ResourceRequest(AllowType::NETWORK,
         0, "test_process", 100, "test", 1);
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->UnapplyAllowResource(validResRequest), ERR_OK);
 }
@@ -754,7 +751,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_029, TestSize.Level1, 2
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_030, TestSize.Level1, 20)
 {
     std::vector<AllowInfo> allowInfoList;
-    StandbyServiceImpl::GetInstance()->GetAllowList(AllowType::NET, allowInfoList, 0);
+    StandbyServiceImpl::GetInstance()->GetAllowList(AllowType::NETWORK, allowInfoList, 0);
     EXPECT_EQ(allowInfoList.size(), 0);
 }
 
@@ -857,9 +854,12 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_036, TestSize.Level1, 2
     MessageParcel reply {};
     MessageOption option {MessageOption::TF_ASYNC};
     data.WriteInterfaceToken(IStandbyServiceSubscriber::GetDescriptor());
-    subscriber->OnRemoteRequest(IStandbyServiceSubscriber::ON_DEVICE_IDLE_MODE, data, reply, option);
-    subscriber->OnRemoteRequest(IStandbyServiceSubscriber::ON_ALLOW_LIST_CHANGED, data, reply, option);
-    auto ret = subscriber->OnRemoteRequest(IStandbyServiceSubscriber::ON_ALLOW_LIST_CHANGED + 1, data, reply, option);
+    subscriber->OnRemoteRequest(
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_DEVICE_IDLE_MODE)), data, reply, option);
+    subscriber->OnRemoteRequest(
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ALLOW_LIST_CHANGED)), data, reply, option);
+    auto ret = subscriber->OnRemoteRequest(
+        static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ALLOW_LIST_CHANGED) + 1, data, reply, option);
     EXPECT_NE(ret, ERR_OK);
 }
 
@@ -875,15 +875,21 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_037, TestSize.Level1, 2
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
     data.WriteInterfaceToken(IStandbyService::GetDescriptor());
-    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::SUBSCRIBE_STANDBY_CALLBACK, data, reply, option);
-    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::UNSUBSCRIBE_STANDBY_CALLBACK,
+    StandbyService::GetInstance()->OnRemoteRequest(
+        (static_cast<uint32_t>(IStandbyInterfaceCode::SUBSCRIBE_STANDBY_CALLBACK)), data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(
+        (static_cast<uint32_t>(IStandbyInterfaceCode::UNSUBSCRIBE_STANDBY_CALLBACK)),
         data, reply, option);
-    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::APPLY_ALLOW_RESOURCE, data, reply, option);
-    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::UNAPPLY_ALLOW_RESOURCE, data, reply, option);
-    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::GET_ALLOW_LIST, data, reply, option);
-    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::IS_DEVICE_IN_STANDBY, data, reply, option);
-    auto ret = StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::IS_DEVICE_IN_STANDBY + 1,
-        data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(
+        (static_cast<uint32_t>(IStandbyInterfaceCode::APPLY_ALLOW_RESOURCE)), data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(
+        (static_cast<uint32_t>(IStandbyInterfaceCode::UNAPPLY_ALLOW_RESOURCE)), data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(
+        (static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST)), data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(
+        (static_cast<uint32_t>(IStandbyInterfaceCode::IS_DEVICE_IN_STANDBY)), data, reply, option);
+    auto ret = StandbyService::GetInstance()->OnRemoteRequest(
+        (static_cast<uint32_t>(IStandbyInterfaceCode::IS_DEVICE_IN_STANDBY)) + 1, data, reply, option);
     EXPECT_NE(ret, ERR_OK);
 }
 

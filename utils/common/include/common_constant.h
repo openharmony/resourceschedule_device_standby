@@ -18,6 +18,8 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <unordered_map>
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -62,6 +64,17 @@ extern const std::string CURRENT_PHASE;
 extern const std::string SENSOR_DETECTION;
 extern const std::string RES_CTRL_CONDITION;
 extern const std::string SCR_OFF_HALF_HOUR_STATUS;
+extern const std::string BG_TASK_TYPE;
+extern const std::string BG_TASK_STATUS;
+extern const std::string BG_TASK_UID;
+extern const std::string BG_TASK_PID;
+extern const std::string BG_TASK_BUNDLE_NAME;
+extern const std::string SA_STATUS;
+extern const std::string SA_ID;
+
+extern const std::string CONTINUOUS_TASK;
+extern const std::string TRANSIENT_TASK;
+extern const std::string WORK_SCHEDULER;
 
 extern const std::string LID_CLOSE;
 extern const std::string LID_OPEN;
@@ -83,6 +96,7 @@ extern const std::string DUMP_NIGHTTIME_SLEEP_MODE;
 extern const std::string DUMP_DEBUG_SWITCH;
 extern const std::string DUMP_RESET_STATE;
 extern const std::string DUMP_DETAIL_CONFIG;
+extern const std::string DUMP_STRATGY_DETAIL;
 
 extern const std::string DUMP_DETAIL_INFO;
 extern const std::string DUMP_ENTER_STATE;
@@ -103,6 +117,7 @@ extern const int32_t NIGHT_ENTRANCE_HOUR;
 extern const int32_t NIGHT_ENTRANCE_MIN;
 extern const int32_t DAY_ENTRANCE_HOUR;
 extern const int32_t DAY_ENTRANCE_MIN;
+extern const std::string AIRPLANE_MODE_PARAMETER;
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
 

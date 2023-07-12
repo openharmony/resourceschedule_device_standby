@@ -36,6 +36,9 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
             StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, false);
         });
     }
+    handler_->PostTask([uid = processData.uid, pid = processData.pid, bundleName = processData.bundleName]() {
+        StandbyServiceImpl::GetInstance()->OnProcessStatusChanged(uid, pid, bundleName, false);
+    });
 }
 
 bool AppStateObserver::CheckAlivedApp(const std::string &bundleName)
@@ -47,6 +50,13 @@ bool AppStateObserver::CheckAlivedApp(const std::string &bundleName)
         return true;
     }
     return isRunning;
+}
+
+void AppStateObserver::OnProcessCreated(const AppExecFwk::ProcessData &processData)
+{
+    handler_->PostTask([uid = processData.uid, pid = processData.pid, bundleName = processData.bundleName]() {
+        StandbyServiceImpl::GetInstance()->OnProcessStatusChanged(uid, pid, bundleName, true);
+    });
 }
 
 void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData)

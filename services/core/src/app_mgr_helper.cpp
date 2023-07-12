@@ -39,6 +39,18 @@ bool WEAK_FUNC AppMgrHelper::GetAllRunningProcesses(std::vector<AppExecFwk::Runn
     return true;
 }
 
+bool WEAK_FUNC AppMgrHelper::GetForegroundApplications(std::vector<AppExecFwk::AppStateData> &fgApps)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    if (!Connect()) {
+        return false;
+    }
+    if (appMgrProxy_->GetForegroundApplications(fgApps) != ERR_OK) {
+        return false;
+    }
+    return true;
+}
+
 bool WEAK_FUNC AppMgrHelper::GetAppRunningStateByBundleName(const std::string &bundleName, bool& isRunning)
 {
     std::lock_guard<std::mutex> lock(connectMutex_);

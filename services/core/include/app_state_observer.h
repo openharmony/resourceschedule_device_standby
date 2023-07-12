@@ -38,6 +38,14 @@ public:
      * @param processData process data.
      */
     void OnProcessDied(const AppExecFwk::ProcessData &processData) override;
+
+    /**
+     * Will be called when the process start.
+     *
+     * @param processData Process data.
+     */
+    void OnProcessCreated(const AppExecFwk::ProcessData &processData) override;
+
     /**
      * Application foreground state changed callback.
      *

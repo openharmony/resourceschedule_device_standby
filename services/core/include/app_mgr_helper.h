@@ -46,6 +46,11 @@ public:
     bool GetAppRunningStateByBundleName(const std::string &bundleName, bool& isRunning);
 
     /**
+     * Get Foreground Applications.
+     */
+    bool GetForegroundApplications(std::vector<AppExecFwk::AppStateData> &fgApps);
+
+    /**
      * @brief Subscribe AppStateObserver.
      *
      * @param observer app state observer.

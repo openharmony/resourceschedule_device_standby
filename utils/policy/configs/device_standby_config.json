@@ -18,7 +18,7 @@
     "nap_interval": [300, 600, 900],
     "sleep_interval": [3600, 7200, 14400, 21600]
   },
-  "strategy_list": ["NET", "TIMER", "RUNNING_LOCK", "WORK_SCHEDULER"],
+  "strategy_list": ["NETWORK", "TIMER", "RUNNING_LOCK", "WORK_SCHEDULER"],
   "halfhour_switch_setting": {
   }
 }

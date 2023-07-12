@@ -35,7 +35,9 @@ public:
     std::string GetClientBundleName(int32_t uid);
     bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
-
+    bool GetApplicationInfos(const AppExecFwk::ApplicationFlag flag, int userId,
+        std::vector<AppExecFwk::ApplicationInfo> &appInfos);
+    bool CheckIsSystemAppByUid(const int uid, bool& isSystemApp);
 private:
     bool Connect();
 

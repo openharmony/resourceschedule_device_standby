@@ -50,7 +50,9 @@ private:
     void OnScreenOffHalfHourInner(bool scrOffHalfHourCtrl, bool repeated);
 
     void HandleCommonEvent(const StandbyMessage& message);
+    void HandleScreenStatus(const StandbyMessage& message);
     void HandleScrOffHalfHour(const StandbyMessage& message);
+    bool CheckEnterDarkState(const StandbyMessage& message);
     void DumpShowDetailInfo(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpEnterSpecifiedState(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpActivateMotion(const std::vector<std::string>& argsInStr, std::string& result);
@@ -61,6 +63,7 @@ private:
     std::shared_ptr<BaseState> sleepStatePtr_ {nullptr};
     std::shared_ptr<BaseState> workingStatePtr_ {nullptr};
     std::vector<std::shared_ptr<BaseState>> indexToState_ {};
+    bool isScreenOn_ {true};
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

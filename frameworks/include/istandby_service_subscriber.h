@@ -70,11 +70,6 @@ public:
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IStandbyServiceSubscriber");
 
-protected:
-    enum InterfaceId : uint32_t {
-        ON_DEVICE_IDLE_MODE = FIRST_CALL_TRANSACTION,
-        ON_ALLOW_LIST_CHANGED,
-    };
 private:
     std::string subscriberName_;
 };

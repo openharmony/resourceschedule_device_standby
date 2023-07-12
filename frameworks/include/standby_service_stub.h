@@ -51,6 +51,10 @@ private:
     ErrCode HandleUnapplyAllowResource(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetAllowList(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleIsDeviceInStandby(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleReportWorkSchedulerStatus(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleGetRestrictList(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleIsStrategyEnabled(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleReportDeviceStateChanged(MessageParcel& data, MessageParcel& reply);
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

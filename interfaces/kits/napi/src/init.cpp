@@ -49,7 +49,7 @@ napi_value DeviceStandbyTypeInit(napi_env env, napi_value exports)
     napi_value obj = nullptr;
     napi_create_object(env, &obj);
 
-    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(AllowType::NET), "NETWORK");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(AllowType::NETWORK), "NETWORK");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(AllowType::RUNNING_LOCK), "RUNNING_LOCK");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(AllowType::TIMER), "TIMER");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(AllowType::WORK_SCHEDULER), "WORK_SCHEDULER");

@@ -13,20 +13,18 @@
  * limitations under the License.
  */
 
-#include "allow_type.h"
+#ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_FRAMEWORKS_INCLUDE_STANDBY_IPC_INTERFACE_CODE_H
+#define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_FRAMEWORKS_INCLUDE_STANDBY_IPC_INTERFACE_CODE_H
 
+#include <ipc_types.h>
+
+/* SAID: 1914 */
 namespace OHOS {
 namespace DevStandbyMgr {
-const std::vector<std::string> AllowTypeName = {
-    "NETWORK",
-    "RUNNING_LOCK",
-    "TIMER",
-    "WORK_SCHEDULER",
-    "AUTO_SYNC",
-    "PUSH",
-    "FREEZE"
-};
-const uint32_t MAX_ALLOW_TYPE_NUM = AllowTypeName.size();
-const uint32_t MAX_ALLOW_TYPE_NUMBER = (1 << MAX_ALLOW_TYPE_NUM) - 1;
+    enum class StandbySubscriberInterfaceCode {
+        ON_DEVICE_IDLE_MODE = FIRST_CALL_TRANSACTION,
+        ON_ALLOW_LIST_CHANGED,
+    };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_FRAMEWORKS_INCLUDE_STANDBY_IPC_INTERFACE_CODE_H

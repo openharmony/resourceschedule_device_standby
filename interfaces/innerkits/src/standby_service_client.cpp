@@ -117,6 +117,51 @@ ErrCode StandbyServiceClient::IsDeviceInStandby(bool& isStandby)
     return standbyServiceProxy_->IsDeviceInStandby(isStandby);
 }
 
+ErrCode StandbyServiceClient::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->ReportWorkSchedulerStatus(started, uid, bundleName);
+}
+
+ErrCode StandbyServiceClient::GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+    uint32_t reasonCode)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    if (!restrictInfoList.empty()) {
+        STANDBYSERVICE_LOGW("restrict info array is not empty");
+        restrictInfoList.clear();
+    }
+    return standbyServiceProxy_->GetAllowList(restrictType, restrictInfoList, reasonCode);
+}
+
+ErrCode StandbyServiceClient::IsStrategyEnabled(const std::string& strategyName, bool& isEnabled)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->IsStrategyEnabled(strategyName, isEnabled);
+}
+
+ErrCode StandbyServiceClient::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->ReportDeviceStateChanged(type, enabled);
+}
+
 bool StandbyServiceClient::GetStandbyServiceProxy()
 {
     if (standbyServiceProxy_ != nullptr) {

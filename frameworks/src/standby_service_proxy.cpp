@@ -20,6 +20,7 @@
 
 #include "standby_service_errors.h"
 #include "standby_service_log.h"
+#include "istandby_ipc_inteface_code.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -50,7 +51,8 @@ ErrCode StandbyServiceProxy::SubscribeStandbyCallback(const sptr<IStandbyService
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
 
-    ErrCode result = InnerTransact(SUBSCRIBE_STANDBY_CALLBACK, option, data, reply);
+    ErrCode result = InnerTransact(
+        static_cast<uint32_t>(IStandbyInterfaceCode::SUBSCRIBE_STANDBY_CALLBACK), option, data, reply);
     if (result != ERR_OK) {
         STANDBYSERVICE_LOGW("SubscribeSleepStateEvent fail: transact ErrCode=%{public}d", result);
         return ERR_STANDBY_TRANSACT_FAILED;
@@ -84,7 +86,8 @@ ErrCode StandbyServiceProxy::UnsubscribeStandbyCallback(const sptr<IStandbyServi
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
 
-    ErrCode result = InnerTransact(UNSUBSCRIBE_STANDBY_CALLBACK, option, data, reply);
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::UNSUBSCRIBE_STANDBY_CALLBACK),
+        option, data, reply);
     if (result != ERR_OK) {
         STANDBYSERVICE_LOGW("UnsubscribeSleepStateEvent fail: transact ErrCode=%{public}d", result);
         return ERR_STANDBY_TRANSACT_FAILED;
@@ -114,7 +117,8 @@ ErrCode StandbyServiceProxy::ApplyAllowResource(const sptr<ResourceRequest>& res
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
 
-    ErrCode result = InnerTransact(APPLY_ALLOW_RESOURCE, option, data, reply);
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::APPLY_ALLOW_RESOURCE),
+        option, data, reply);
     if (result != ERR_OK) {
         STANDBYSERVICE_LOGW("ApplyAllowResource fail: transact ErrCode=%{public}d", result);
         return ERR_STANDBY_TRANSACT_FAILED;
@@ -144,7 +148,8 @@ ErrCode StandbyServiceProxy::UnapplyAllowResource(const sptr<ResourceRequest>& r
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
 
-    ErrCode result = InnerTransact(UNAPPLY_ALLOW_RESOURCE, option, data, reply);
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::UNAPPLY_ALLOW_RESOURCE),
+        option, data, reply);
     if (result != ERR_OK) {
         STANDBYSERVICE_LOGW("RemoveAllowList fail: transact ErrCode=%{public}d", result);
         return ERR_STANDBY_TRANSACT_FAILED;
@@ -175,7 +180,8 @@ ErrCode StandbyServiceProxy::GetAllowList(uint32_t allowType, std::vector<AllowI
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
 
-    ErrCode result = InnerTransact(GET_ALLOW_LIST, option, data, reply);
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST),
+        option, data, reply);
     if (result != ERR_OK) {
         STANDBYSERVICE_LOGW("GetAllowList fail: transact ErrCode=%{public}d", result);
         return ERR_STANDBY_TRANSACT_FAILED;
@@ -211,7 +217,8 @@ ErrCode StandbyServiceProxy::IsDeviceInStandby(bool& isStandby)
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
 
-    ErrCode result = InnerTransact(IS_DEVICE_IN_STANDBY, option, data, reply);
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::IS_DEVICE_IN_STANDBY),
+        option, data, reply);
     if (result != ERR_OK) {
         STANDBYSERVICE_LOGW("IsDeviceInStandby fail: transact ErrCode=%{public}d", result);
         return ERR_STANDBY_TRANSACT_FAILED;
@@ -227,6 +234,145 @@ ErrCode StandbyServiceProxy::IsDeviceInStandby(bool& isStandby)
     if (!reply.ReadBool(isStandby)) {
         STANDBYSERVICE_LOGW("IsDeviceInStandby fail: read result failed.");
         return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
+ErrCode StandbyServiceProxy::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(StandbyServiceProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("IsDeviceInStandby write descriptor failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteBool(started) || !data.WriteInt32(uid) || !data.WriteString(bundleName)) {
+        STANDBYSERVICE_LOGW("ReportWorkSchedulerStatus write parameter failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_WORK_SCHEDULER_STATUS),
+        option, data, reply);
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("ReportWorkSchedulerStatus fail: transact ErrCode=%{public}d", result);
+        return ERR_STANDBY_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        STANDBYSERVICE_LOGW("ReportWorkSchedulerStatus fail: read result failed.");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("ReportWorkSchedulerStatus failed");
+        return result;
+    }
+    return result;
+}
+
+ErrCode StandbyServiceProxy::GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+    uint32_t reasonCode)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(StandbyServiceProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("GetRestrictList write descriptor failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (!data.WriteUint32(restrictType) || !data.WriteUint32(reasonCode)) {
+        STANDBYSERVICE_LOGW("GetRestrictList write parameter failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::GET_RESTRICT_LIST),
+        option, data, reply);
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("GetRestrictList fail: transact ErrCode=%{public}d", result);
+        return ERR_STANDBY_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        STANDBYSERVICE_LOGW("GetRestrictList fail: read result failed.");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("GetRestrictList failed");
+        return result;
+    }
+    uint32_t infoSize = reply.ReadUint32();
+    for (uint32_t i = 0; i < infoSize; i++) {
+        auto info = AllowInfo::Unmarshalling(reply);
+        if (info == nullptr) {
+            STANDBYSERVICE_LOGW("GetRestrictList Read Parcelable infos failed.");
+            return ERR_STANDBY_PARCELABLE_FAILED;
+        }
+        restrictInfoList.emplace_back(*info);
+    }
+
+    return result;
+}
+
+ErrCode StandbyServiceProxy::IsStrategyEnabled(const std::string& strategyName, bool& enabled)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(StandbyServiceProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("IsStrategyEnabled write descriptor failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (!data.WriteString(strategyName)) {
+        STANDBYSERVICE_LOGW("IsStrategyEnabled write parameter failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::IS_STRATEGY_ENABLED),
+        option, data, reply);
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("IsStrategyEnabled fail: transact ErrCode=%{public}d", result);
+        return ERR_STANDBY_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        STANDBYSERVICE_LOGW("IsStrategyEnabled fail: read result failed.");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("IsStrategyEnabled failed");
+        return result;
+    }
+    if (!reply.ReadBool(enabled)) {
+        STANDBYSERVICE_LOGW("IsStrategyEnabled fail: read result failed.");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
+ErrCode StandbyServiceProxy::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(StandbyServiceProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("IsDeviceInStandby write descriptor failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteInt32(static_cast<int32_t>(type)) || !data.WriteBool(enabled)) {
+        STANDBYSERVICE_LOGW("ReportDeviceStateChanged write parameter failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_DEVICE_STATE_CHANGED),
+        option, data, reply);
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("ReportDeviceStateChanged fail: transact ErrCode=%{public}d", result);
+        return ERR_STANDBY_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        STANDBYSERVICE_LOGW("ReportDeviceStateChanged fail: read result failed.");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("ReportDeviceStateChanged failed");
+        return result;
     }
     return result;
 }

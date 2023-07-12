@@ -59,12 +59,10 @@ void CommonEventListener::OnReceiveEvent(const EventFwk::CommonEventData& eventD
     STANDBYSERVICE_LOGD("receive common event %{public}s", action.c_str());
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
         handler_->PostTask([this, action]() {
-            isScreenOn_ = true;
             StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
         });
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF) {
         handler_->PostTask([this, action]() {
-            isScreenOn_ = false;
             StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
         });
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING ||
@@ -72,9 +70,6 @@ void CommonEventListener::OnReceiveEvent(const EventFwk::CommonEventData& eventD
         action == EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING ||
         action == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED) {
         handler_->PostTask([this, action]() {
-            if (isScreenOn_) {
-                return;
-            }
             StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
         });
     }

@@ -1,0 +1,25 @@
+From 94d4a38669a5a7126efc03bee4b0e9eac65997a9 Mon Sep 17 00:00:00 2001
+From: geraltxu <36860135+geraltxu@users.noreply.github.com>
+Date: Fri, 7 Jul 2023 17:05:49 +0800
+Subject: [PATCH] log output bug fix
+
+Signed-off-by: xufanghan <xufanghan@huawei.com>
+---
+ services/native/src/work_scheduler_service.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/services/native/src/work_scheduler_service.cpp b/services/native/src/work_scheduler_service.cpp
+index 9760f1be..d85c7818 100644
+--- a/services/native/src/work_scheduler_service.cpp
++++ b/services/native/src/work_scheduler_service.cpp
+@@ -780,7 +780,7 @@ bool WorkSchedulerService::CheckStandbyApplyInfo(std::string& bundleName)
+     std::vector<DevStandbyMgr::AllowInfo> allowInfoArray;
+     DevStandbyMgr::StandbyServiceClient::GetInstance().GetAllowList(DevStandbyMgr::AllowType::WORK_SCHEDULER,
+         allowInfoArray, DevStandbyMgr::ReasonCodeEnum::REASON_APP_API);
+-    WS_HILOGD("allowInfoArray size is %{public}ld", allowInfoArray.size());
++    WS_HILOGD("allowInfoArray size is %{public}d", static_cast<int32_t>(allowInfoArray.size()));
+     for (const auto& item : allowInfoArray) {
+         if (item.GetName() == bundleName) {
+             return true;
+-- 
+Gitee

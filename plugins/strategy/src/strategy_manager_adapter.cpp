@@ -23,13 +23,15 @@
 #include "ibase_strategy.h"
 #include "standby_service_log.h"
 #include "network_strategy.h"
-#include "timer_strategy.h"
-#include "running_lock_strategy.h"
-#include "work_scheduler_strategy.h"
 #include "standby_config_manager.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
+namespace {
+const std::map<std::string, std::shared_ptr<IBaseStrategy>> strategyMap_ {
+    {"NETWORK", std::make_shared<NetworkStrategy>() },
+};
+}
 
 bool StrategyManagerAdapter::Init()
 {
@@ -47,22 +49,30 @@ bool StrategyManagerAdapter::Init()
     return true;
 }
 
+bool StrategyManagerAdapter::UnInit()
+{
+    for (const auto& strategy : strategyList_) {
+        strategy->OnDestroy();
+    }
+    strategyList_.clear();
+    return true;
+}
+
 void StrategyManagerAdapter::RegisterPolicy(const std::vector<std::string>& strategies)
 {
-    for (const auto& iter : strategies) {
-        std::shared_ptr<IBaseStrategy> strategyPtr {nullptr};
-        if (iter == "NET") {
-            strategyPtr = std::make_shared<NetworkStrategy>();
-        } else if (iter == "TIMER") {
-            strategyPtr = std::make_shared<TimerStrategy>();
-        } else if (iter == "RUNNING_LOCK") {
-            strategyPtr = std::make_shared<RunningLockStrategy>();
-        } else if (iter == "WORK_SCHEDULER") {
-            strategyPtr = std::make_shared<WorkSchedulerStrategy>();
-        } else {
+    for (const auto& item : strategies) {
+        auto strategy = strategyMap_.find(item);
+        if (strategy == strategyMap_.end()) {
             continue;
         }
-        strategyList_.emplace_back(strategyPtr);
+        STANDBYSERVICE_LOGI("strategy manager init %{public}s", item.c_str());
+        auto strategyPtr = strategy->second;
+        if (!strategyPtr) {
+            continue;
+        }
+        if (strategyPtr->OnCreated() == ERR_OK) {
+            strategyList_.emplace_back(strategyPtr);
+        }
     }
 }
 
@@ -77,6 +87,9 @@ void StrategyManagerAdapter::HandleEvent(const StandbyMessage& message)
 
 void StrategyManagerAdapter::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
+    for (const auto &strategy : strategyList_) {
+        strategy->ShellDump(argsInStr, result);
+    }
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

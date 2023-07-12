@@ -99,6 +99,7 @@ void StateManagerAdapter::HandleCommonEvent(const StandbyMessage& message)
 {
     HandleScrOffHalfHour(message);
     HandleOpenCloseLid(message);
+    HandleScreenStatus(message);
     if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON ||
         message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING ||
         message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED) {
@@ -107,10 +108,31 @@ void StateManagerAdapter::HandleCommonEvent(const StandbyMessage& message)
     if (curStatePtr_->GetCurState() != StandbyState::WORKING) {
         return;
     }
-    if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
-        message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING) {
+    if (CheckEnterDarkState(message)) {
         TransitToState(StandbyState::DARK);
     }
+}
+
+void StateManagerAdapter::HandleScreenStatus(const StandbyMessage& message)
+{
+    if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
+        isScreenOn_ = true;
+    } else if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF) {
+        isScreenOn_ = false;
+    }
+}
+
+bool StateManagerAdapter::CheckEnterDarkState(const StandbyMessage& message)
+{
+    if (isScreenOn_) {
+        return false;
+    }
+    if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
+        message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING ||
+        message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED) {
+        return true;
+    }
+    return true;
 }
 
 void StateManagerAdapter::HandleScrOffHalfHour(const StandbyMessage& message)
@@ -350,6 +372,21 @@ void StateManagerAdapter::DumpActivateMotion(const std::vector<std::string>& arg
         BlockCurrentState();
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--halfhour") {
         OnScreenOffHalfHourInner(true, true);
+    } else if (argsInStr[DUMP_SECOND_PARAM] == "--poweroff") {
+        handler_->PostTask([this]() {
+            STANDBYSERVICE_LOGD("after 2000ms, start poweroff mode");
+            UnblockCurrentState();
+            TransitToStateInner(StandbyState::SLEEP);
+            OnScreenOffHalfHourInner(true, true);
+            std::string res {""};
+            StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--strategy", "poweroff"}, res);
+            }, 20 * 1000);
+    } else if (argsInStr[DUMP_SECOND_PARAM] == "--powersave") {
+        STANDBYSERVICE_LOGD("after 3000ms, start powersavenetwork");
+        UnblockCurrentState();
+        TransitToStateInner(StandbyState::SLEEP);
+        OnScreenOffHalfHourInner(true, true);
+        StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--strategy", "powersave"}, result);
     }
 }
 }  // namespace DevStandbyMgr

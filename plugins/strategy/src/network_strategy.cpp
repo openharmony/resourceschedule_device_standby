@@ -33,5 +33,9 @@ ErrCode NetworkStrategy::OnDestroy()
 {
     return ERR_OK;
 }
+
+void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
+{
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

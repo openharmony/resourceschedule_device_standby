@@ -55,7 +55,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, Tes
     EXPECT_NE(StandbyServiceClient::GetInstance().UnapplyAllowResource(nullRequest), ERR_OK);
     std::vector<AllowInfo> allowInfoList;
     nullRequest = nullptr;
-    EXPECT_NE(StandbyServiceClient::GetInstance().GetAllowList(AllowType::NET, allowInfoList, 0), ERR_OK);
+    EXPECT_NE(StandbyServiceClient::GetInstance().GetAllowList(AllowType::NETWORK, allowInfoList, 0), ERR_OK);
     EXPECT_NE(StandbyServiceClient::GetInstance().GetAllowList(0, allowInfoList, 0), ERR_OK);
     bool isStandby {false};
     EXPECT_NE(StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby), ERR_OK);

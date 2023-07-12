@@ -23,12 +23,14 @@
 #include <string>
 #include <map>
 #include <set>
+#include <array>
 
 #include "accesstoken_kit.h"
 #include "ipc_skeleton.h"
 #include "event_runner.h"
 #include "event_handler.h"
 
+#include "istandby_service.h"
 #include "allow_info.h"
 #include "allow_record.h"
 #include "resourcce_request.h"
@@ -71,8 +73,14 @@ public:
     ErrCode UnapplyAllowResource(const sptr<ResourceRequest>& resourceRequest);
     ErrCode GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
         uint32_t reasonCode);
-    ErrCode GetEligiableRestrictSet(const std::string& strategyName, std::set<std::string>& restrictSet);
+    ErrCode GetEligiableRestrictSet(uint32_t allowType, const std::string& strategyName,
+        uint32_t resonCode, std::set<std::string>& restrictSet);
     ErrCode IsDeviceInStandby(bool& isStandby);
+    ErrCode ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName);
+    ErrCode GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+        uint32_t reasonCode);
+    ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled);
+    ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled);
 
     void RegisterPluginInner(IConstraintManagerAdapter* constraintManager,
         IListenerManagerAdapter* listenerManager,
@@ -88,17 +96,22 @@ public:
     ErrCode RemoveAppAllowRecord(int32_t uid, const std::string &bundleName, bool resetAll);
 
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result);
+    void ShellDumpInner(const std::vector<std::string>& argsInStr, std::string& result);
     void GetAllowListInner(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
         uint32_t reasonCode);
     void DispatchEvent(const StandbyMessage& message);
     bool IsDebugMode();
+
+    void OnProcessStatusChanged(int32_t uid, int32_t pid, const std::string& bundleName, bool isCreated);
 private:
     void ApplyAllowResInner(const sptr<ResourceRequest>& resourceRequest, int32_t pid);
     void UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord, const sptr<ResourceRequest>& resourceRequest);
     void UnapplyAllowResInner(int32_t uid, const std::string& name, uint32_t allowType,  bool removeAll);
     void GetTemporaryAllowList(uint32_t allowTypeIndex, std::vector<AllowInfo>& allowInfoList,
         uint32_t reasonCode);
-    void GetPersistAllowList(uint32_t allowTypeIndex, std::vector<AllowInfo>& allowInfoList, bool isApp);
+    void GetPersistAllowList(uint32_t allowTypeIndex, std::vector<AllowInfo>& allowInfoList, bool isAllow, bool isApp);
+    void GetRestrictListInner(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+        uint32_t reasonCode);
     void NotifyAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added);
 
     void RecoverTimeLimitedTask();
@@ -113,7 +126,6 @@ private:
     ErrCode CheckRunningResourcesApply(const int32_t uid, const std::string& bundleName);
     int32_t GetUserIdByUid(int32_t uid);
 
-    void ShellDumpInner(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpUsage(std::string& result);
     void DumpShowDetailInfo(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpAllowListInfo(std::string& result);
@@ -144,6 +156,17 @@ private:
     std::shared_ptr<IStrategyManagerAdapter> strategyManager_ {nullptr};
     std::shared_ptr<IStateManagerAdapter> standbyStateManager_ {nullptr};
     bool debugMode_ {false};
+};
+
+class DeviceStateCache {
+DECLARE_SINGLE_INSTANCE(DeviceStateCache);
+public:
+    bool SetDeviceState(int32_t type, bool enabled);
+    bool GetDeviceState(int32_t type);
+private:
+    std::mutex mutex_ {};
+    const static std::int32_t DEVICE_STATE_NUM = 3;
+    std::array<bool, DEVICE_STATE_NUM> deviceState_;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

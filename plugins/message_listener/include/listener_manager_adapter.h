@@ -27,9 +27,14 @@ public:
     ~ListenerManagerAdapter() override = default;
     bool Init() override;
     bool UnInit() override;
+    void HandleEvent(const StandbyMessage& message) override;
     ErrCode StartListener() override;
     ErrCode StopListener() override;
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
+private:
+    void UpdateListenerList(const StandbyMessage& message);
+    void AddSystemServiceListener(int32_t systemAbilityId);
+    void RemoveSystemServiceListener(int32_t systemAbilityId);
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

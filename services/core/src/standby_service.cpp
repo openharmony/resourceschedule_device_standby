@@ -118,6 +118,7 @@ void StandbyService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
             dependsReady_ |= MULTIMODAL_INPUT_SERVICE_READY;
             break;
         default:
+            NotifySystemAbilityStatusChanged(true, systemAbilityId);
             break;
     }
     STANDBYSERVICE_LOGI("after add system ability, ready state : %{public}u", dependsReady_);
@@ -164,6 +165,7 @@ void StandbyService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::s
             dependsReady_ &= (~MULTIMODAL_INPUT_SERVICE_READY);
             break;
         default:
+            NotifySystemAbilityStatusChanged(false, systemAbilityId);
             break;
     }
     if (dependsReady_ != ALL_DEPENDS_READY) {
@@ -227,11 +229,67 @@ ErrCode StandbyService::IsDeviceInStandby(bool& isStandby)
     return StandbyServiceImpl::GetInstance()->IsDeviceInStandby(isStandby);
 }
 
+void StandbyService::AddPluginSysAbilityListener(int32_t systemAbilityId)
+{
+    std::lock_guard<std::mutex> pluginListenerLock(listenedSALock_);
+    STANDBYSERVICE_LOGI("add listener to system ability %{public}d", systemAbilityId);
+    AddSystemAbilityListener(systemAbilityId);
+}
+
+ErrCode StandbyService::NotifySystemAbilityStatusChanged(bool isAdded, int32_t systemAbilityId)
+{
+    StandbyMessage standbyMessage{StandbyMessageType::SYS_ABILITY_STATUS_CHANGED};
+    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_->SetParam(SA_STATUS, isAdded);
+    standbyMessage.want_->SetParam(SA_ID, systemAbilityId);
+    StandbyServiceImpl::GetInstance()->GetHandler()->PostTask([standbyMessage]() {
+        StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
+    });
+    return ERR_OK;
+}
+
 void StandbyService::OnStop()
 {
     StandbyServiceImpl::GetInstance()->UnInit();
     state_ = ServiceRunningState::STATE_NOT_START;
     STANDBYSERVICE_LOGI("standby service task manager stop");
+}
+
+ErrCode StandbyService::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
+{
+    if (state_ != ServiceRunningState::STATE_RUNNING) {
+        STANDBYSERVICE_LOGW("standby service is not running");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    return StandbyServiceImpl::GetInstance()->ReportWorkSchedulerStatus(started, uid, bundleName);
+}
+
+ErrCode StandbyService::GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+    uint32_t reasonCode)
+{
+    if (state_ != ServiceRunningState::STATE_RUNNING) {
+        STANDBYSERVICE_LOGW("standby service is not running");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    return StandbyServiceImpl::GetInstance()->GetRestrictList(restrictType, restrictInfoList, reasonCode);
+}
+
+ErrCode StandbyService::IsStrategyEnabled(const std::string& strategyName, bool& isEnabled)
+{
+    if (state_ != ServiceRunningState::STATE_RUNNING) {
+        STANDBYSERVICE_LOGW("standby service is not running");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    return StandbyServiceImpl::GetInstance()->IsStrategyEnabled(strategyName, isEnabled);
+}
+
+ErrCode StandbyService::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
+{
+    if (state_ != ServiceRunningState::STATE_RUNNING) {
+        STANDBYSERVICE_LOGW("standby service is not running");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    return StandbyServiceImpl::GetInstance()->ReportDeviceStateChanged(type, enabled);
 }
 
 int32_t StandbyService::Dump(int32_t fd, const std::vector<std::u16string>& args)

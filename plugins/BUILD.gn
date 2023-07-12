@@ -32,6 +32,7 @@ ohos_shared_library("standby_plugin") {
     "${standby_service_constraints_path}/src/charge_state_monitor.cpp",
     "${standby_service_constraints_path}/src/constraint_manager_adapter.cpp",
     "${standby_service_constraints_path}/src/motion_sensor_monitor.cpp",
+    "${standby_service_message_listener_path}/src/background_task_listener.cpp",
     "${standby_service_message_listener_path}/src/common_event_listener.cpp",
     "${standby_service_message_listener_path}/src/input_manager_listener.cpp",
     "${standby_service_message_listener_path}/src/listener_manager_adapter.cpp",
@@ -45,10 +46,7 @@ ohos_shared_library("standby_plugin") {
     "${standby_service_standby_state_path}/src/state_manager_adapter.cpp",
     "${standby_service_standby_state_path}/src/working_state.cpp",
     "${standby_service_strategy_path}/src/network_strategy.cpp",
-    "${standby_service_strategy_path}/src/running_lock_strategy.cpp",
     "${standby_service_strategy_path}/src/strategy_manager_adapter.cpp",
-    "${standby_service_strategy_path}/src/timer_strategy.cpp",
-    "${standby_service_strategy_path}/src/work_scheduler_strategy.cpp",
   ]
 
   public_configs = [ ":standby_plugin_config" ]
@@ -70,21 +68,31 @@ ohos_shared_library("standby_plugin") {
     "access_token:libtokenid_sdk",
     "battery_manager:batterysrv_client",
     "c_utils:utils",
+    "call_manager:tel_call_manager_api",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_single",
+    "netmanager_base:net_policy_manager_if",
     "power_manager:powermgr_client",
+    "samgr:samgr_proxy",
     "sensor:sensor_interface_native",
     "time_service:time_client",
+    "work_scheduler:workschedclient",
+    "wifi:wifi_sdk",
   ]
 
   defines = []
   if (enable_standby_configpolicy) {
     external_deps += [ "config_policy:configpolicy_util" ]
     defines += [ "STANDBY_CONFIG_POLICY_ENABLE" ]
+  }
+
+  if (enable_background_task_mgr) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
   }
 
   subsystem_name = "resourceschedule"

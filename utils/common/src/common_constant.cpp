@@ -63,6 +63,18 @@ const std::string SCR_OFF_HALF_HOUR_STATUS = "scr_off_half_hour_status";
 
 const std::string LID_CLOSE = "LID_CLOSE";
 const std::string LID_OPEN = "LID_OPEN";
+const std::string BG_TASK_TYPE = "type";
+const std::string BG_TASK_STATUS = "started";
+const std::string BG_TASK_UID = "uid";
+const std::string BG_TASK_PID = "pid";
+const std::string BG_TASK_BUNDLE_NAME = "name";
+
+const std::string SA_STATUS = "isAdded";
+const std::string SA_ID = "systemAbilityId";
+
+const std::string CONTINUOUS_TASK = "continuous_task";
+const std::string TRANSIENT_TASK = "transient_task";
+const std::string WORK_SCHEDULER = "work_scheduler";
 
 const uint32_t NO_DUMP_PARAM_NUMS = 0;
 const uint32_t DUMP_DETAILED_INFO_MAX_NUMS = 2;
@@ -81,6 +93,7 @@ const std::string DUMP_NIGHTTIME_SLEEP_MODE = "nighttimesleep";
 const std::string DUMP_DEBUG_SWITCH = "debug";
 const std::string DUMP_RESET_STATE = "--reset_state";
 const std::string DUMP_DETAIL_CONFIG = "--config";
+const std::string DUMP_STRATGY_DETAIL = "--strategy";
 
 const std::string DUMP_DETAIL_INFO = "-D";
 const std::string DUMP_ENTER_STATE = "-E";
@@ -102,5 +115,6 @@ const int32_t NIGHT_ENTRANCE_HOUR = 23;
 const int32_t NIGHT_ENTRANCE_MIN = 45;
 const int32_t DAY_ENTRANCE_HOUR = 6;
 const int32_t DAY_ENTRANCE_MIN = 0;
+const std::string AIRPLANE_MODE_PARAMETER = "persist.sys.support_air_plane_mode";
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

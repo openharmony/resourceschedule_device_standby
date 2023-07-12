@@ -19,6 +19,10 @@
     *TimeProvider*;
     *StandbyStateSubscriber*;
     *AbilityManagerHelper*;
+    *AppMgrHelper*;
+    *BackgroundTaskHelper*;
+    *AbilityManagerHelper*;
+    *BundleManagerHelper*;
   local:
     *;
 };

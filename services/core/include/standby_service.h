@@ -21,6 +21,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <string>
 
 #include "singleton.h"
@@ -52,7 +53,14 @@ public:
     ErrCode GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
         uint32_t reasonCode) override;
     ErrCode IsDeviceInStandby(bool& isStandby) override;
+    ErrCode ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName) override;
+    ErrCode GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+        uint32_t reasonCode) override;
+    ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled) override;
+    ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string>& args) override;
+    void AddPluginSysAbilityListener(int32_t systemAbilityId);
+    ErrCode NotifySystemAbilityStatusChanged(bool isAdded, int32_t systemAbilityId);
 
 private:
     void DumpUsage(std::string& result);
@@ -63,6 +71,7 @@ private:
     std::mutex systemAbilityLock_ {};
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
     uint32_t dependsReady_ = 0;
+    std::mutex listenedSALock_ {};
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

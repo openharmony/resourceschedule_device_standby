@@ -18,6 +18,7 @@
 #include <errors.h>
 #include <ipc_skeleton.h>
 
+#include "standby_ipc_interface_code.h"
 #include "standby_service_log.h"
 
 namespace OHOS {
@@ -43,15 +44,16 @@ ErrCode StandbyServiceSubscriberStub::OnRemoteRequestInner(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
     switch (code) {
-        case ON_DEVICE_IDLE_MODE: {
+        case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_DEVICE_IDLE_MODE)): {
             return HandleOnDeviceIdleMode(data);
         }
-        case ON_ALLOW_LIST_CHANGED: {
+        case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ALLOW_LIST_CHANGED)): {
             return HandleOnAllowListChanged(data);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
+    return ERR_OK;
 }
 
 void StandbyServiceSubscriberStub::OnDeviceIdleMode(bool napped, bool sleeped)

@@ -23,7 +23,7 @@ namespace OHOS {
 namespace DevStandbyMgr {
 struct AllowType {
     enum : uint32_t {
-        NET = 1,
+        NETWORK = 1,
         RUNNING_LOCK = 1 << 1,
         TIMER = 1 << 2,
         WORK_SCHEDULER = 1 << 3,
@@ -36,7 +36,6 @@ struct AllowType {
 extern const std::vector<std::string> AllowTypeName;
 extern const uint32_t MAX_ALLOW_TYPE_NUM;
 extern const uint32_t MAX_ALLOW_TYPE_NUMBER;
-
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_INTERFACES_INNERKITS_INCLUDE_ALLOW_TYPE_H

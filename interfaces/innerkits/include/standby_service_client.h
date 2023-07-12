@@ -78,12 +78,52 @@ public:
         uint32_t reasonCode);
 
     /**
+     * @brief Get the Restrict List object.
+     *
+     * @param restrictType the restrict type to be retrieved.
+     * @param restrictInfoList result represents restricted types and apps.
+     * @param reasonCode represents the reason why invoke the api.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    ErrCode GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+        uint32_t reasonCode);
+
+    /**
+     * @brief Construct a new Report Work Scheduler Status object.
+     *
+     * @param started true if the work is triggered, else false.
+     * @param uid uid of the applicatoin.
+     * @param bundleName bundleName of the application.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    ErrCode ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName);
+
+    /**
+     * @brief Whether the restriction strategy enbaled or not.
+     *
+     * @param strategyName the strategy name.
+     * @param enabled true if the strategy is enabled.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled);
+
+    /**
+     * @brief Report event when device state change, such as discomponent device, bluetooth socket..
+     *
+     * @param type type of device state.
+     * @param enabled true if the device state is on.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled);
+
+    /**
      * @brief query if the device is in standby mode;
      *
      * @param isStandby true if device in standby, else false.
      * @return ErrCode ERR_OK if success, else fail.
      */
     ErrCode IsDeviceInStandby(bool& isStandby);
+
 private:
     bool GetStandbyServiceProxy();
     void ResetStandbyServiceClient();

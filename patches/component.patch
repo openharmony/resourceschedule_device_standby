@@ -1,0 +1,75 @@
+From e280b7e8000c24a8b3512da0985e45852447cc11 Mon Sep 17 00:00:00 2001
+From: geraltxu <36860135+geraltxu@users.noreply.github.com>
+Date: Mon, 10 Jul 2023 15:13:13 +0800
+Subject: [PATCH] add standby
+
+Signed-off-by: xufanghan <xufanghan@huawei.com>
+---
+ inherit/default.json | 4 ++++
+ inherit/pc.json      | 4 ++++
+ inherit/rich.json    | 4 ++++
+ inherit/tablet.json  | 4 ++++
+ 4 files changed, 16 insertions(+)
+
+diff --git a/inherit/default.json b/inherit/default.json
+index 3621e9e..7f1c3ef 100644
+--- a/inherit/default.json
++++ b/inherit/default.json
+@@ -858,6 +858,10 @@
+           {
+             "component": "device_usage_statistics",
+             "features": []
++          },
++          {
++            "component": "device_standby",
++            "features": []
+           }
+         ]
+       },
+diff --git a/inherit/pc.json b/inherit/pc.json
+index 89392c5..9801307 100644
+--- a/inherit/pc.json
++++ b/inherit/pc.json
+@@ -834,6 +834,10 @@
+           {
+             "component": "device_usage_statistics",
+             "features": []
++          },
++          {
++            "component": "device_standby",
++            "features": []
+           }
+         ]
+       },
+diff --git a/inherit/rich.json b/inherit/rich.json
+index 7277257..3ede13a 100644
+--- a/inherit/rich.json
++++ b/inherit/rich.json
+@@ -893,6 +893,10 @@
+         {
+           "component": "qos_manager",
+           "features": []
++        },
++        {
++          "component": "device_standby",
++          "features": []
+         }
+       ]
+     },
+diff --git a/inherit/tablet.json b/inherit/tablet.json
+index 1e0e322..8f2bfbe 100644
+--- a/inherit/tablet.json
++++ b/inherit/tablet.json
+@@ -792,6 +792,10 @@
+           {
+             "component": "device_usage_statistics",
+             "features": []
++          },
++          {
++            "component": "device_standby",
++            "features": []
+           }
+         ]
+       },
+-- 
+Gitee

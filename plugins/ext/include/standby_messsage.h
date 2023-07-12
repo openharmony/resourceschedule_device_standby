@@ -33,9 +33,13 @@ struct StandbyMessageType {
         COMMON_EVENT = 1,
         STATE_TRANSIT,
         PHASE_TRANSIT,
-        RES_CTRL_CONDITION_CHANGED,
+        RES_CTRL_CONDITION_CHANGED,  // day and night switch
         ALLOW_LIST_CHANGED,
         SCREEN_OFF_HALF_HOUR,
+        BG_TASK_STATUS_CHANGE,  // application apply or unapply background task, start or stop work scheduler
+        SYS_ABILITY_STATUS_CHANGED,  // system ability is added or removed
+        PROCESS_STATE_CHANGED,  // process is created or died
+        DEVICE_STATE_CHANGED,  // process is created or died
     };
 };
 

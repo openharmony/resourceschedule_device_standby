@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <memory>
+#include <map>
 
 #include "event_handler.h"
 #include "event_runner.h"
@@ -34,10 +35,12 @@ public:
     virtual bool UnInit() = 0;
     virtual ErrCode StartListener() = 0;
     virtual ErrCode StopListener() = 0;
+    virtual void HandleEvent(const StandbyMessage& message) = 0;
     virtual void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) = 0;
     virtual ~IListenerManagerAdapter() = default;
 protected:
     std::vector<std::shared_ptr<IMesssageListener>> messageListenerList_ {};
+    std::map<int32_t, std::shared_ptr<IMesssageListener>> listenerPluginMap_ {};
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

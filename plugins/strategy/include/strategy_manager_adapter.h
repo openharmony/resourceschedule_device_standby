@@ -27,6 +27,7 @@ public:
     StrategyManagerAdapter() = default;
     ~StrategyManagerAdapter() override = default;
     bool Init() override;
+    bool UnInit() override;
     void HandleEvent(const StandbyMessage& messageType) override;
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
 

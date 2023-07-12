@@ -18,34 +18,13 @@
 #include <ipc_skeleton.h>
 #include <string_ex.h>
 
+#include "istandby_ipc_inteface_code.h"
 #include "standby_service_subscriber_proxy.h"
 #include "standby_service_errors.h"
 #include "standby_service_log.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
-const std::map<uint32_t, std::function<ErrCode(StandbyServiceStub*, MessageParcel&, MessageParcel&)>>
-    StandbyServiceStub::interfaces_ = {
-        {StandbyServiceStub::SUBSCRIBE_STANDBY_CALLBACK,
-            std::bind(&StandbyServiceStub::HandleSubscribeStandbyCallback,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {StandbyServiceStub::UNSUBSCRIBE_STANDBY_CALLBACK,
-            std::bind(&StandbyServiceStub::HandleUnsubscribeStandbyCallback,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {StandbyServiceStub::APPLY_ALLOW_RESOURCE,
-            std::bind(&StandbyServiceStub::HandleApplyAllowResource,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {StandbyServiceStub::UNAPPLY_ALLOW_RESOURCE,
-            std::bind(&StandbyServiceStub::HandleUnapplyAllowResource,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {StandbyServiceStub::GET_ALLOW_LIST,
-            std::bind(&StandbyServiceStub::HandleGetAllowList,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {StandbyServiceStub::IS_DEVICE_IN_STANDBY,
-            std::bind(&StandbyServiceStub::HandleIsDeviceInStandby,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-};
-
 ErrCode StandbyServiceStub::OnRemoteRequest(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
@@ -55,23 +34,43 @@ ErrCode StandbyServiceStub::OnRemoteRequest(uint32_t code,
         STANDBYSERVICE_LOGE("StandbyServiceStub: Local descriptor not match remote.");
         return ERR_TRANSACTION_FAILED;
     }
-    auto it = interfaces_.find(code);
-    if (it == interfaces_.end()) {
-        return IRemoteStub<IStandbyService>::OnRemoteRequest(code, data, reply, option);
-    }
 
-    auto fun = it->second;
-    if (fun == nullptr) {
-        return IRemoteStub<IStandbyService>::OnRemoteRequest(code, data, reply, option);
+    switch (code) {
+        case static_cast<uint32_t>(IStandbyInterfaceCode::SUBSCRIBE_STANDBY_CALLBACK):
+            HandleSubscribeStandbyCallback(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::UNSUBSCRIBE_STANDBY_CALLBACK):
+            HandleUnsubscribeStandbyCallback(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::APPLY_ALLOW_RESOURCE):
+            HandleApplyAllowResource(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::UNAPPLY_ALLOW_RESOURCE):
+            HandleUnapplyAllowResource(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST):
+            HandleGetAllowList(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::IS_DEVICE_IN_STANDBY):
+            HandleIsDeviceInStandby(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_WORK_SCHEDULER_STATUS):
+            HandleReportWorkSchedulerStatus(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::GET_RESTRICT_LIST):
+            HandleGetRestrictList(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::IS_STRATEGY_ENABLED):
+            HandleIsStrategyEnabled(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_DEVICE_STATE_CHANGED):
+            HandleReportDeviceStateChanged(data, reply);
+            break;
+        default:
+            return IRemoteStub<IStandbyService>::OnRemoteRequest(code, data, reply, option);
     }
-
-    ErrCode result = fun(this, data, reply);
-    if (SUCCEEDED(result)) {
-        return ERR_OK;
-    }
-
-    STANDBYSERVICE_LOGW("StandbyServiceStub: Failed to call interface %{public}u, err:%{public}d", code, result);
-    return result;
+    STANDBYSERVICE_LOGW("StandbyServiceStub: Failed to call interface %{public}u,", code);
+    return ERR_OK;
 }
 
 ErrCode StandbyServiceStub::HandleSubscribeStandbyCallback(MessageParcel& data, MessageParcel& reply)
@@ -88,6 +87,69 @@ ErrCode StandbyServiceStub::HandleSubscribeStandbyCallback(MessageParcel& data, 
     ErrCode result = SubscribeStandbyCallback(subscriber);
     if (!reply.WriteInt32(result)) {
         STANDBYSERVICE_LOGW("HandleSubscribeStandbyCallback Write result failed, ErrCode=%{public}d", result);
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceStub::HandleReportWorkSchedulerStatus(MessageParcel& data, MessageParcel& reply)
+{
+    bool started {false};
+    int32_t uid {0};
+    std::string bundleName {""};
+    if (!data.ReadBool(started) || !data.ReadInt32(uid) || !data.ReadString(bundleName)) {
+        STANDBYSERVICE_LOGW("HandleReportWorkSchedulerStatus ReadParcelable failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    ErrCode result = ReportWorkSchedulerStatus(started, uid, bundleName);
+    if (!reply.WriteInt32(result)) {
+        STANDBYSERVICE_LOGW("HandleReportWorkSchedulerStatus Write result failed, ErrCode=%{public}d", result);
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceStub::HandleGetRestrictList(MessageParcel& data, MessageParcel& reply)
+{
+    uint32_t restrictType {0};
+    uint32_t reasonCode {0};
+    if (!data.ReadUint32(restrictType) || !data.ReadUint32(reasonCode)) {
+        STANDBYSERVICE_LOGW("HandleGetRestrictList ReadParcelable failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    std::vector<AllowInfo> restrictInfoList {};
+    ErrCode result = GetRestrictList(restrictType, restrictInfoList, reasonCode);
+    if (!reply.WriteInt32(result)) {
+        STANDBYSERVICE_LOGW("HandleGetRestrictList Write result failed, ErrCode=%{public}d", result);
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (!reply.WriteUint32(restrictInfoList.size())) {
+        STANDBYSERVICE_LOGW("HandleGetRestrictList Write result size failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    for (auto& info : restrictInfoList) {
+        if (!info.Marshalling(reply)) {
+            return ERR_STANDBY_PARCELABLE_FAILED;
+        }
+    }
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceStub::HandleIsStrategyEnabled(MessageParcel& data, MessageParcel& reply)
+{
+    bool enabled {false};
+    std::string strategyName {""};
+    if (!data.ReadString(strategyName)) {
+        STANDBYSERVICE_LOGW("HandleIsStrategyEnabled ReadParcelable failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    ErrCode result = IsDeviceInStandby(enabled);
+    if (!reply.WriteInt32(result)) {
+        STANDBYSERVICE_LOGW("HandleIsStrategyEnabled Write result failed, ErrCode=%{public}d", result);
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (!reply.WriteBool(enabled)) {
+        STANDBYSERVICE_LOGW("HandleIsStrategyEnabled Write enabled failed");
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
     return ERR_OK;
@@ -175,6 +237,22 @@ ErrCode StandbyServiceStub::HandleIsDeviceInStandby(MessageParcel& data, Message
     }
     if (!reply.WriteBool(isStandby)) {
         STANDBYSERVICE_LOGW("HandleIsDeviceInStandby Write isStandby failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceStub::HandleReportDeviceStateChanged(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t type {0};
+    bool enable {false};
+    if (!data.ReadInt32(type) || !data.ReadBool(enable)) {
+        STANDBYSERVICE_LOGW("HandleReportDeviceStateChanged ReadParcelable failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    ErrCode result = ReportDeviceStateChanged(static_cast<DeviceStateType>(type), enable);
+    if (!reply.WriteInt32(result)) {
+        STANDBYSERVICE_LOGW("HandleReportDeviceStateChanged Write result failed, ErrCode=%{public}d", result);
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
     return ERR_OK;

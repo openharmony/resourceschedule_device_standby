@@ -42,9 +42,15 @@ standby_service_path = "${standby_service_root_path}/services"
 
 declare_args() {
   enable_standby_configpolicy = true
+  enable_background_task_mgr = true
 
   if (defined(global_parts_info) &&
     !defined(global_parts_info.customization_config_policy)) {
         enable_standby_configpolicy = false
+  }
+
+  if (defined(global_parts_info) &&
+    !defined(global_parts_info.resourceschedule_background_task_mgr)) {
+        enable_background_task_mgr = false
   }
 }

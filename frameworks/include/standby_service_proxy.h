@@ -79,6 +79,42 @@ public:
      * @return ErrCode ERR_OK if success, others if fail.
      */
     ErrCode IsDeviceInStandby(bool& isStandby) override;
+
+    /**
+     * @brief Construct a new Report Work Scheduler Status object.
+     *
+     * @param started true if the work is triggered, else false.
+     * @param uid uid of the applicatoin.
+     * @param bundleName bundleName of the application.
+     */
+    ErrCode ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName) override;
+
+    /**
+     * @brief Get the Restrict List object.
+     *
+     * @param allowType the allow type to be retrieved.
+     * @param allowInfoList result represents allowed types and apps.
+     * @param reasonCode represents the reason why invoke the api.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    ErrCode GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+        uint32_t reasonCode) override;
+
+    /**
+     * @brief Whether the restriction strategy enbaled or not.
+     *
+     * @param strategyName the strategy name.
+     * @param enabled true if the strategy is enabled.
+     */
+    ErrCode IsStrategyEnabled(const std::string& strategyName, bool& enabled) override;
+
+    /**
+     * @brief Report event when device state change.
+     *
+     * @param type type of device state.
+     * @param enabled true if the device state is on.
+     */
+    ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled) override;
 private:
     ErrCode InnerTransact(uint32_t code, MessageOption& flags, MessageParcel& data, MessageParcel& reply);
 

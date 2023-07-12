@@ -20,14 +20,56 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
+
+struct BaseAppInfo {
+    std::string name_ {""};
+    int32_t uid_ {-1};
+    int32_t pid_ {-1};
+};
+
+class ExemptionTypeFlag {
+public:
+enum : uint8_t {
+    // apps which has applied continuous task
+    CONTINUOUS_TASK = 1,
+    // apps which has applied transient task
+    TRANSIENT_TASK = 1 << 1,
+    // app with work scheduler
+    WORK_SCHEDULER = 1 << 2,
+    // foreground app will not be restricted
+    FOREGROUND_APP = 1 << 3,
+    // default exemption, used for system app or native process not configured in restriction list
+    DEFAULT_EXEMPTION = 1 << 4,
+    // applied exemption
+    APPLIED_EXEMPTION = 1 << 5,
+    // app is configured to restricted
+    RESTRICTED = 1 << 6,
+};
+
+public:
+    inline static bool IsExempted(uint8_t flag) {
+        if ((flag & APPLIED_EXEMPTION) != 0) {
+            return true;
+        } else if ((flag & RESTRICTED) != 0) {
+            return false;
+        }
+        return flag != 0;
+    }
+};
+
 class IBaseStrategy {
 public:
     virtual void HandleEvent(const StandbyMessage& message) = 0;
+    /**
+     * @brief invoked when strategy is initialized, reset restriction status
+     */
     virtual ErrCode OnCreated() = 0;
+    /**
+     * @brief invoked when strategy is destroyed, finalize restriction status
+     */
     virtual ErrCode OnDestroy() = 0;
+    virtual void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) = 0;
     virtual ~IBaseStrategy() = default;
-protected:
-    int32_t policyId_ {0};
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

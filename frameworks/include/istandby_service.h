@@ -30,6 +30,11 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
+enum class DeviceStateType: int32_t {
+    DIS_COMP_CHANGE = 0,
+    TELEPHONE_STATE_CHANGE,
+    WIFI_P2P_CHANGE,
+};
 
 class IStandbyService : public IRemoteBroker {
 public:
@@ -81,12 +86,52 @@ public:
         uint32_t reasonCode) = 0;
 
     /**
+     * @brief Get the Restrict List object.
+     *
+     * @param restrictType the restrict type to be retrieved.
+     * @param restrictInfoList result represents restricted types and apps.
+     * @param reasonCode represents the reason why invoke the api.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    virtual ErrCode GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
+        uint32_t reasonCode) = 0;
+
+    /**
+     * @brief Construct a new Report Work Scheduler Status object.
+     *
+     * @param started true if the work is triggered, else false.
+     * @param uid uid of the applicatoin.
+     * @param bundleName bundleName of the application.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    virtual ErrCode ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName) = 0;
+
+    /**
+     * @brief Whether the restriction strategy enbaled or not.
+     *
+     * @param strategyName the strategy name.
+     * @param enabled true if the strategy is enabled.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    virtual ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled) = 0;
+
+    /**
+     * @brief Report event when device state change, such as discomponent device, bluetooth socket.
+     *
+     * @param type type of device state.
+     * @param enabled true if the device state is on.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    virtual ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled) = 0;
+
+    /**
      * @brief query if the device is in standby mode.
      *
      * @param isStandby true if device in standby, else false.
      * @return ErrCode ERR_OK if success, others if fail.
      */
     virtual ErrCode IsDeviceInStandby(bool& isStandby) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IStandbyService");
 
@@ -98,6 +143,8 @@ protected:
         UNAPPLY_ALLOW_RESOURCE,
         GET_ALLOW_LIST,
         IS_DEVICE_IN_STANDBY,
+        REPORT_WORK_SCHEDULER_STATUS,
+        REPORT_DEVICE_STATE_CHANGED,
     };
 };
 }  // namespace DevStandbyMgr

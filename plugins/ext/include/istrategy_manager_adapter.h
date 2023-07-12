@@ -18,6 +18,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <set>
 
 #include "ibase_strategy.h"
 #include "standby_service_errors.h"
@@ -28,6 +29,7 @@ class IStrategyManagerAdapter {
 public:
     virtual ~IStrategyManagerAdapter() = default;
     virtual bool Init() = 0;
+    virtual bool UnInit() = 0;
     virtual void HandleEvent(const StandbyMessage& message) = 0;
     virtual void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) = 0;
 protected:

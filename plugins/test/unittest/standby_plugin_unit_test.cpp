@@ -146,7 +146,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_001, TestSize.Level1)
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_002, TestSize.Level1)
 {
-    strategyManager_->RegisterPolicy({"NET", "TIMER", "RUNNING_LOCK", "WORK_SCHEDULER", ""});
+    strategyManager_->RegisterPolicy({"NETWORK", "TIMER", "RUNNING_LOCK", "WORK_SCHEDULER", ""});
     EXPECT_NE(strategyManager_->strategyList_.size(), 0);
 }
 
@@ -344,7 +344,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_010, TestSize.Level1)
     standbyStateManager_->napStatePtr_->EndEvalCurrentState(false);
     standbyStateManager_->napStatePtr_->EndEvalCurrentState(true);
     SleepForFC();
-    EXPECT_NE(standbyStateManager_->curStatePtr_->GetCurState(), StandbyState::WORKING);
+    EXPECT_NE(standbyStateManager_->curStatePtr_->GetCurState(), StandbyState::MAINTENANCE);
 }
 
 /**

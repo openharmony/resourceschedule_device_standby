@@ -20,6 +20,7 @@
 
 #include "standby_messsage.h"
 #include "standby_service_log.h"
+#include "standby_config_manager.h"
 
 #include "istate_manager_adapter.h"
 #include "timed_task.h"
@@ -209,9 +210,8 @@ int64_t StateWithMaint::CalculateMaintTimeOut(const std::shared_ptr<IStateManage
         maintIntervalTimeOut =  maintInterval_[maintIntervalIndex_];
     }
     int64_t timeDiff {0};
-    if (TimeProvider::GetCondition(maintIntervalTimeOut) == ConditionType::NIGHT_STANDBY) {
-        int64_t curSecTimeStamp = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs() / MSEC_PER_SEC;
-        TimeProvider::DiffToFixedClock(curSecTimeStamp, DAY_ENTRANCE_HOUR, DAY_ENTRANCE_MIN, timeDiff);
+    if (TimeProvider::GetCondition(maintIntervalTimeOut) == ConditionType::NIGHT_STANDBY &&
+        TimeProvider::TimeDiffToDayNightSwitch(timeDiff)) {
         maintIntervalTimeOut *= TimeConstant::MSEC_PER_SEC;
         maintIntervalTimeOut += timeDiff;
         return maintIntervalTimeOut;

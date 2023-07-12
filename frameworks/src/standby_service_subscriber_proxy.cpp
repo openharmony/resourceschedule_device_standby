@@ -19,6 +19,7 @@
 
 #include "standby_service_errors.h"
 #include "standby_service_log.h"
+#include "standby_ipc_interface_code.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -46,7 +47,8 @@ void StandbyServiceSubscriberProxy::OnDeviceIdleMode(bool napped, bool sleeping)
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(ON_DEVICE_IDLE_MODE, data, reply, option);
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_DEVICE_IDLE_MODE), data, reply, option);
     if (ret!= ERR_OK) {
         STANDBYSERVICE_LOGE("OnDeviceIdleMode SendRequest failed, error code: %d", ret);
     }
@@ -74,7 +76,8 @@ void StandbyServiceSubscriberProxy::OnAllowListChanged(int32_t uid, const std::s
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(ON_ALLOW_LIST_CHANGED, data, reply, option);
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ALLOW_LIST_CHANGED), data, reply, option);
     if (ret!= ERR_OK) {
         STANDBYSERVICE_LOGE("OnAllowListChanged SendRequest failed, error code: %d", ret);
     }

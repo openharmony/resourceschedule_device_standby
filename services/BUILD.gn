@@ -30,6 +30,7 @@ ohos_shared_library("standby_service") {
   }
 
   sources = [
+    "common/src/background_task_helper.cpp",
     "common/src/device_standby_switch.cpp",
     "common/src/time_provider.cpp",
     "common/src/timed_task.cpp",
@@ -73,6 +74,13 @@ ohos_shared_library("standby_service") {
     "samgr:samgr_proxy",
     "time_service:time_client",
   ]
+
+  defines = []
+  if (enable_background_task_mgr) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
+  }
+
   subsystem_name = "resourceschedule"
   part_name = "${standby_service_part_name}"
 
@@ -82,6 +90,7 @@ ohos_shared_library("standby_service") {
 ohos_static_library("standby_service_static") {
   cflags_cc = [ "-DSTANDBY_SERVICE_UNIT_TEST" ]
   sources = [
+    "common/src/background_task_helper.cpp",
     "common/src/device_standby_switch.cpp",
     "common/src/time_provider.cpp",
     "common/src/timed_task.cpp",
@@ -125,6 +134,13 @@ ohos_static_library("standby_service_static") {
     "samgr:samgr_proxy",
     "time_service:time_client",
   ]
+
+  defines = []
+  if (enable_background_task_mgr) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
+  }
+
   subsystem_name = "resourceschedule"
   part_name = "${standby_service_part_name}"
 }
