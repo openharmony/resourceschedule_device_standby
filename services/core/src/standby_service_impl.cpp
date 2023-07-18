@@ -285,7 +285,6 @@ void StandbyServiceImpl::RegisterPluginInner(IConstraintManagerAdapter* constrai
     IStrategyManagerAdapter* strategyManager,
     IStateManagerAdapter* stateManager)
 {
-    STANDBYSERVICE_LOGI("RegisterPluginInner this address %{public}lld", (int64_t)this);
     constraintManager_ = std::shared_ptr<IConstraintManagerAdapter>(constraintManager);
     listenerManager_ = std::shared_ptr<IListenerManagerAdapter>(listenerManager);
     strategyManager_ = std::shared_ptr<IStrategyManagerAdapter>(strategyManager);
