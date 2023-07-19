@@ -619,8 +619,6 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
         if (allowNumber != AllowType::WORK_SCHEDULER) {
             maxDuration = std::min(resourceRequest->GetDuration(), StandbyConfigManager::GetInstance()->
                 GetMaxDuration(name, AllowTypeName[allowTypeIndex], condition, isApp)) * TimeConstant::MSEC_PER_SEC;
-            STANDBYSERVICE_LOGD("name: %{public}s, condition: %{public}d, res: %{public}s, duration: %{public}lld",
-                name.c_str(), condition, AllowTypeName[allowTypeIndex].c_str(), maxDuration);
         } else {
             maxDuration = resourceRequest->GetDuration() * TimeConstant::MSEC_PER_SEC;
         }
