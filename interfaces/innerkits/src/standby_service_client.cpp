@@ -139,7 +139,7 @@ ErrCode StandbyServiceClient::GetRestrictList(uint32_t restrictType, std::vector
         STANDBYSERVICE_LOGW("restrict info array is not empty");
         restrictInfoList.clear();
     }
-    return standbyServiceProxy_->GetAllowList(restrictType, restrictInfoList, reasonCode);
+    return standbyServiceProxy_->GetRestrictList(restrictType, restrictInfoList, reasonCode);
 }
 
 ErrCode StandbyServiceClient::IsStrategyEnabled(const std::string& strategyName, bool& isEnabled)
