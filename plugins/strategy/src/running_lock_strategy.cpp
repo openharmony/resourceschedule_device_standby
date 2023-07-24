@@ -179,7 +179,8 @@ ErrCode RunningLockStrategy::GetAllAppInfos()
         STANDBYSERVICE_LOGW("failed to get all applicationInfos");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d", static_cast<int32_t>(applicationInfos.size()));
+    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d",
+        static_cast<int32_t>(applicationInfos.size()));
     for (const auto& info : applicationInfos) {
         uidBundleNmeMap_.emplace(info.uid, info.name);
         std::string key = std::to_string(info.uid) + "_" + info.name;
@@ -267,14 +268,16 @@ ErrCode RunningLockStrategy::GetBackgroundTaskApp()
         STANDBYSERVICE_LOGE("get continuous task app failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetContinuousTaskApps, size is %{public}d", static_cast<int32_t>(continuousTaskList.size()));
+    STANDBYSERVICE_LOGD("succeed GetContinuousTaskApps, size is %{public}d",
+        static_cast<int32_t>(continuousTaskList.size()));
     std::vector<std::shared_ptr<TransientTaskAppInfo>> transientTaskList;
     if (!BackgroundTaskHelper::GetInstance()->GetTransientTaskApps(transientTaskList)) {
         STANDBYSERVICE_LOGE("get transient task app failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
     // add continuous exemption flag for app with continuous task
-    STANDBYSERVICE_LOGD("succeed GetTransientTaskApps, size is %{public}d", static_cast<int32_t>(transientTaskList.size()));
+    STANDBYSERVICE_LOGD("succeed GetTransientTaskApps, size is %{public}d",
+        static_cast<int32_t>(transientTaskList.size()));
     for (const auto& task : continuousTaskList) {
         auto iter = uidBundleNmeMap_.find(task->GetCreatorUid());
         if (iter == uidBundleNmeMap_.end()) {
@@ -320,7 +323,8 @@ ErrCode RunningLockStrategy::GetExemptionConfig()
     std::set<std::string> restrictBundleName {};
     StandbyServiceImpl::GetInstance()->GetEligiableRestrictSet(AllowType::RUNNING_LOCK, "RUNNING_LOCK",
         ReasonCodeEnum::REASON_APP_API, restrictBundleName);
-    STANDBYSERVICE_LOGI("running lock restrict app list, size is %{public}d", static_cast<int32_t>(restrictBundleName.size()));
+    STANDBYSERVICE_LOGI("running lock restrict app list, size is %{public}d",
+        static_cast<int32_t>(restrictBundleName.size()));
     for (auto& [key, value] : proxiedAppInfo_) {
         if (restrictBundleName.find(value.name_) == restrictBundleName.end()) {
             continue;

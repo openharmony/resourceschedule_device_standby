@@ -160,7 +160,8 @@ ErrCode BaseNetworkStrategy::InitNetLimitedAppInfo()
         STANDBYSERVICE_LOGW("failed to get all applicationInfos");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d", static_cast<int32_t>(applicationInfos.size()));
+    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d",
+        static_cast<int32_t>(applicationInfos.size()));
     for (const auto& info : applicationInfos) {
         if (netLimitedAppInfo_.find(info.uid) == netLimitedAppInfo_.end()) {
             continue;
@@ -211,13 +212,15 @@ ErrCode BaseNetworkStrategy::GetBackgroundTaskApp()
         STANDBYSERVICE_LOGW("get continuous task app failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetContinuousTaskApps, size is %{public}d", static_cast<int32_t>(continuousTaskList.size()));
+    STANDBYSERVICE_LOGD("succeed GetContinuousTaskApps, size is %{public}d",
+        static_cast<int32_t>(continuousTaskList.size()));
     std::vector<std::shared_ptr<TransientTaskAppInfo>> transientTaskList;
     if (!BackgroundTaskHelper::GetInstance()->GetTransientTaskApps(transientTaskList)) {
         STANDBYSERVICE_LOGW("get transient task app failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetTransientTaskApps, size is %{public}d", static_cast<int32_t>(transientTaskList.size()));
+    STANDBYSERVICE_LOGD("succeed GetTransientTaskApps, size is %{public}d",
+        static_cast<int32_t>(transientTaskList.size()));
     condition_ = TimeProvider::GetCondition();
     for (const auto& task : continuousTaskList) {
         if (auto infoIter = netLimitedAppInfo_.find(task->GetCreatorUid()); infoIter == netLimitedAppInfo_.end()) {
