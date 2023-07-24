@@ -113,7 +113,7 @@ void NetworkStrategy::StopNetLimit(const StandbyMessage& message)
 
 void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, bool isAdded)
 {
-    STANDBYSERVICE_LOGD("SetFireWallAllowedList, uids size %{public}ld, isAdded is %{public}d", uids.size(), isAdded);
+    STANDBYSERVICE_LOGD("SetFireWallAllowedList, uids size %{public}u, isAdded is %{public}d", uids.size(), isAdded);
     if (uids.empty()) {
         STANDBYSERVICE_LOGD("allow list is empty");
         return;

@@ -130,4 +130,4 @@ protected:
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
-#endif  //DEVICE_STANDBY_EXT_BASE_NETWPRK_STRATEGY_H
+#endif //DEVICE_STANDBY_EXT_BASE_NETWPRK_STRATEGY_H

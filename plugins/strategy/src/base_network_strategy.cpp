@@ -37,7 +37,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 namespace {
 const std::map<std::string, uint8_t> BGTASK_EXEMPTION_FLAG_MAP {
     {CONTINUOUS_TASK, ExemptionTypeFlag::CONTINUOUS_TASK},
@@ -161,7 +160,7 @@ ErrCode BaseNetworkStrategy::InitNetLimitedAppInfo()
         STANDBYSERVICE_LOGW("failed to get all applicationInfos");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}lu", applicationInfos.size());
+    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d", static_cast<int32_t>(applicationInfos.size()));
     for (const auto& info : applicationInfos) {
         if (netLimitedAppInfo_.find(info.uid) == netLimitedAppInfo_.end()) {
             continue;
@@ -185,7 +184,7 @@ ErrCode BaseNetworkStrategy::GetAllRunningAppInfo()
         STANDBYSERVICE_LOGE("connect to app manager service failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGI("current running processes size %{public}lu", allAppProcessInfos.size());
+    STANDBYSERVICE_LOGI("current running processes size %{public}d", static_cast<int32_t>(allAppProcessInfos.size()));
     for (const auto &info : allAppProcessInfos) {
         netLimitedAppInfo_.emplace(info.uid_, NetLimtedAppInfo {info.processName_});
     }
@@ -212,13 +211,13 @@ ErrCode BaseNetworkStrategy::GetBackgroundTaskApp()
         STANDBYSERVICE_LOGW("get continuous task app failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetContinuousTaskApps, size is %{public}lu", continuousTaskList.size());
+    STANDBYSERVICE_LOGD("succeed GetContinuousTaskApps, size is %{public}d", static_cast<int32_t>(continuousTaskList.size()));
     std::vector<std::shared_ptr<TransientTaskAppInfo>> transientTaskList;
     if (!BackgroundTaskHelper::GetInstance()->GetTransientTaskApps(transientTaskList)) {
         STANDBYSERVICE_LOGW("get transient task app failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetTransientTaskApps, size is %{public}lu", transientTaskList.size());
+    STANDBYSERVICE_LOGD("succeed GetTransientTaskApps, size is %{public}d", static_cast<int32_t>(transientTaskList.size()));
     condition_ = TimeProvider::GetCondition();
     for (const auto& task : continuousTaskList) {
         if (auto infoIter = netLimitedAppInfo_.find(task->GetCreatorUid()); infoIter == netLimitedAppInfo_.end()) {
@@ -240,7 +239,7 @@ ErrCode BaseNetworkStrategy::GetWorkSchedulerTask()
     if (WorkScheduler::WorkSchedulerSrvClient::GetInstance().GetAllRunningWorks(workInfos) != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("GetWorkSchedulerTask succeed, size is %{public}lu", workInfos.size());
+    STANDBYSERVICE_LOGD("GetWorkSchedulerTask succeed, size is %{public}d", static_cast<int32_t>(workInfos.size()));
     for (const auto& task : workInfos) {
         AddExemptionFlagByUid(task->GetUid(), ExemptionTypeFlag::WORK_SCHEDULER);
     }
@@ -318,8 +317,8 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
         }
         uids.emplace_back(key);
     }
-    STANDBYSERVICE_LOGD("all application size: %{public}lu, network allow: %{public}lu",
-        netLimitedAppInfo_.size(), uids.size());
+    STANDBYSERVICE_LOGD("all application size: %{public}d, network allow: %{public}d",
+        static_cast<int32_t>(netLimitedAppInfo_.size()), static_cast<int32_t>(uids.size()));
     SetFirewallAllowedList(uids, isAllow);
 }
 
@@ -388,7 +387,6 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
     int32_t uid = message.want_->GetIntParam("uid", -1);
     std::string bundleName = message.want_->GetStringParam("name");
     bool isCreated = message.want_->GetBoolParam("isCreated", false);
-
     if (isCreated) {
         GetAndCreateAppInfo(uid, bundleName);
         auto iter = netLimitedAppInfo_.find(uid);

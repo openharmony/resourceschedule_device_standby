@@ -94,7 +94,6 @@ bool WEAK_FUNC TimedTask::StartDayNightSwitchTimer(uint64_t& timeId)
         return false;
     }
     timeDiff += TimeProvider::GetRandomDelay(LOW_DELAY_TIME_INTERVAL, HIGH_DELAY_TIME_INTERVAL);
-    STANDBYSERVICE_LOGD("start next day and night switch after %{public}ld ms", timeDiff);
     auto curTimeStamp = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
     if (!MiscServices::TimeServiceClient::GetInstance()->StartTimer(timeId, curTimeStamp + timeDiff)) {
         STANDBYSERVICE_LOGE("day and night switch observer start failed");

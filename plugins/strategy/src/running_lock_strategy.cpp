@@ -179,7 +179,7 @@ ErrCode RunningLockStrategy::GetAllAppInfos()
         STANDBYSERVICE_LOGW("failed to get all applicationInfos");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}lu", applicationInfos.size());
+    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d", static_cast<int32_t>(applicationInfos.size()));
     for (const auto& info : applicationInfos) {
         uidBundleNmeMap_.emplace(info.uid, info.name);
         std::string key = std::to_string(info.uid) + "_" + info.name;
@@ -200,7 +200,7 @@ ErrCode RunningLockStrategy::GetAllRunningAppInfo()
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
     // get all running proc of app, add them to proxiedAppInfo_.
-    STANDBYSERVICE_LOGI("current running processes size %{public}lu", allAppProcessInfos.size());
+    STANDBYSERVICE_LOGI("current running processes size %{public}d", static_cast<int32_t>(allAppProcessInfos.size()));
     std::set<int> runningUids {};
     for (const auto& info : allAppProcessInfos) {
         if (uidBundleNmeMap_.find(info.uid_) == uidBundleNmeMap_.end()) {
@@ -233,7 +233,7 @@ ErrCode RunningLockStrategy::GetWorkSchedulerTask()
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
 
-    STANDBYSERVICE_LOGD("GetWorkSchedulerTask succeed, size is %{public}lu", workInfos.size());
+    STANDBYSERVICE_LOGD("GetWorkSchedulerTask succeed, size is %{public}d", static_cast<int32_t>(workInfos.size()));
     for (const auto& task : workInfos) {
         std::string key = std::to_string(task->GetUid()) + "_" + task->GetBundleName();
         if (auto iter = proxiedAppInfo_.find(key); iter != proxiedAppInfo_.end()) {
@@ -267,14 +267,14 @@ ErrCode RunningLockStrategy::GetBackgroundTaskApp()
         STANDBYSERVICE_LOGE("get continuous task app failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetContinuousTaskApps, size is %{public}lu", continuousTaskList.size());
+    STANDBYSERVICE_LOGD("succeed GetContinuousTaskApps, size is %{public}d", static_cast<int32_t>(continuousTaskList.size()));
     std::vector<std::shared_ptr<TransientTaskAppInfo>> transientTaskList;
     if (!BackgroundTaskHelper::GetInstance()->GetTransientTaskApps(transientTaskList)) {
         STANDBYSERVICE_LOGE("get transient task app failed");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
     // add continuous exemption flag for app with continuous task
-    STANDBYSERVICE_LOGD("succeed GetTransientTaskApps, size is %{public}lu", transientTaskList.size());
+    STANDBYSERVICE_LOGD("succeed GetTransientTaskApps, size is %{public}d", static_cast<int32_t>(transientTaskList.size()));
     for (const auto& task : continuousTaskList) {
         auto iter = uidBundleNmeMap_.find(task->GetCreatorUid());
         if (iter == uidBundleNmeMap_.end()) {
@@ -320,7 +320,7 @@ ErrCode RunningLockStrategy::GetExemptionConfig()
     std::set<std::string> restrictBundleName {};
     StandbyServiceImpl::GetInstance()->GetEligiableRestrictSet(AllowType::RUNNING_LOCK, "RUNNING_LOCK",
         ReasonCodeEnum::REASON_APP_API, restrictBundleName);
-    STANDBYSERVICE_LOGI("running lock restrict app list, size is %{public}lu", restrictBundleName.size());
+    STANDBYSERVICE_LOGI("running lock restrict app list, size is %{public}d", static_cast<int32_t>(restrictBundleName.size()));
     for (auto& [key, value] : proxiedAppInfo_) {
         if (restrictBundleName.find(value.name_) == restrictBundleName.end()) {
             continue;
@@ -344,7 +344,7 @@ ErrCode RunningLockStrategy::ProxyAppAndProcess(bool isProxied)
         }
         SetProxiedAppList(proxiedAppList, value);
     }
-    STANDBYSERVICE_LOGI("proxied app size: %{public}lu", proxiedAppList.size());
+    STANDBYSERVICE_LOGI("proxied app size: %{public}d", static_cast<int32_t>(proxiedAppList.size()));
     ProxyRunningLockList(isProxied, proxiedAppList);
     return ERR_OK;
 }
@@ -434,7 +434,6 @@ void RunningLockStrategy::AddExemptionFlag(int32_t uid, const std::string& name,
         return;
     }
     std::string mapKey = std::to_string(uid) + "_" + name;
-
     // if last appExemptionFlag is not exempted, current appExemptionFlag is exempted, unproxy running lock
     if (auto iter = proxiedAppInfo_.find(mapKey); iter != proxiedAppInfo_.end()) {
         auto lastAppExemptionFlag = iter->second.appExemptionFlag_;
