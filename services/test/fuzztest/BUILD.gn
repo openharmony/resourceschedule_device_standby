@@ -14,7 +14,5 @@
 group("fuzztest") {
   testonly = true
 
-  deps = [
-    "devicestandby_fuzzer:fuzztest",
-  ]
+  deps = [ "devicestandby_fuzzer:fuzztest" ]
 }

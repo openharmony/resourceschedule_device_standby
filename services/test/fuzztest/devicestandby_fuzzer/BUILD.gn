@@ -20,7 +20,8 @@ module_output_path = "device_standby/devicestandbyservicetest"
 ##############################fuzztest##########################################
 ohos_fuzztest("DeviceStandbyFuzzTest") {
   module_out_path = module_output_path
-  fuzz_config_file = "${standby_service_path}/test/fuzztest/devicestandby_fuzzer"
+  fuzz_config_file =
+      "${standby_service_path}/test/fuzztest/devicestandby_fuzzer"
 
   include_dirs = [
     "${standby_service_path}/include",
@@ -37,10 +38,10 @@ ohos_fuzztest("DeviceStandbyFuzzTest") {
   ]
 
   deps = [
+    "${standby_innerkits_path}:standby_innerkits",
     "${standby_plugins_path}:standby_plugin",
     "${standby_service_frameworks_path}:standby_fwk",
     "${standby_service_path}:standby_service_static",
-    "${standby_innerkits_path}:standby_innerkits",
     "${standby_utils_common_path}:standby_utils_common",
     "${standby_utils_policy_path}:standby_utils_policy",
   ]
