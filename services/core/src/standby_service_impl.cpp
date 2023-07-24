@@ -1210,6 +1210,7 @@ DeviceStateCache::~DeviceStateCache() {}
 
 bool DeviceStateCache::SetDeviceState(int32_t type, bool enabled)
 {
+    STANDBYSERVICE_LOGD("set device state %{public}d, enabled is %{public}d", type, enabled);
     if (type < 0 || type >= DEVICE_STATE_NUM) {
         return false;
     }
@@ -1226,6 +1227,7 @@ bool DeviceStateCache::GetDeviceState(int32_t type)
     if (type < 0 || type >= DEVICE_STATE_NUM) {
         return false;
     }
+    STANDBYSERVICE_LOGD("get device state %{public}d, enabled is %{public}d", type, deviceState_[type]);
     return deviceState_[type];
 }
 }  // namespace DevStandbyMgr

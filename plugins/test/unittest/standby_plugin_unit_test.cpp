@@ -414,5 +414,452 @@ HWMTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_013, TestSize.Level1, 20)
     }
     EXPECT_TRUE(true);
 }
+
+/**
+ * @tc.name: StandbyPluginUnitTest_014
+ * @tc.desc: test MotionSensorMonitor of AddEnergy.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0014, TestSize.Level1)
+{
+    ConstraintEvalParam repeatedMotionParams{};
+    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
+            PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
+    AccelData* accelData = new AccelData();
+    repeatedMotionConstraint->AddEnergy(accelData);
+    repeatedMotionConstraint->hasPrevAccelData_ = true;
+    repeatedMotionConstraint->AddEnergy(accelData);
+    EXPECT_TRUE(repeatedMotionConstraint->hasPrevAccelData_ == true);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_015
+ * @tc.desc: test MotionSensorMonitor of Init.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0015, TestSize.Level1)
+{
+    ConstraintEvalParam repeatedMotionParams{};
+    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
+            PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
+    repeatedMotionConstraint->Init();
+    repeatedMotionConstraint->params_.isRepeatedDetection_ = true;
+    repeatedMotionConstraint->Init();
+    repeatedMotionConstraint->params_.isRepeatedDetection_ = false;
+    EXPECT_TRUE(repeatedMotionConstraint->Init() == true);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_016
+ * @tc.desc: test MotionSensorMonitor of PeriodlyStartMotionDetection.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0016, TestSize.Level1)
+{
+    ConstraintEvalParam repeatedMotionParams{};
+    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
+            PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
+    repeatedMotionConstraint->PeriodlyStartMotionDetection();
+    repeatedMotionConstraint->energy_ = 1;
+    repeatedMotionConstraint->PeriodlyStartMotionDetection();
+    EXPECT_TRUE(repeatedMotionConstraint->StartMonitoringInner() != ERR_OK);
+    repeatedMotionConstraint->isMonitoring_ = false;
+    repeatedMotionConstraint->StartMonitoringInner();
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_017
+ * @tc.desc: test MotionSensorMonitor of StartSensor.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0017, TestSize.Level1)
+{
+    ConstraintEvalParam repeatedMotionParams{};
+    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
+            PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
+    int32_t sensorTypeId = 1;
+    SensorUser sensorUser;
+    repeatedMotionConstraint->isMonitoring_ = false;
+    repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser);
+    repeatedMotionConstraint->isMonitoring_ = true;
+    repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser);
+    sensorTypeId = repeatedMotionConstraint->detectionTimeOut_;
+    repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser);
+    EXPECT_TRUE(repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser) != ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_018
+ * @tc.desc: test MotionSensorMonitor of StopSensor.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0018, TestSize.Level1)
+{
+    ConstraintEvalParam repeatedMotionParams{};
+    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
+            PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
+    int32_t sensorTypeId = 1;
+    SensorUser sensorUser;
+    repeatedMotionConstraint->isMonitoring_ = false;
+    repeatedMotionConstraint->StopSensor(sensorTypeId, &sensorUser);
+    repeatedMotionConstraint->isMonitoring_ = true;
+    repeatedMotionConstraint->StopSensor(sensorTypeId, &sensorUser);
+    sensorTypeId = repeatedMotionConstraint->detectionTimeOut_;
+    repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser);
+    EXPECT_TRUE(repeatedMotionConstraint->isMonitoring_ == true);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_019
+ * @tc.desc: test ConstraintManagerAdapter of Init.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0019, TestSize.Level1)
+{
+    auto repeatedMotionConstraint = std::make_shared<ConstraintManagerAdapter>();
+    repeatedMotionConstraint->Init();
+    EXPECT_TRUE(repeatedMotionConstraint->Init());
+    StandbyServiceImpl::GetInstance()->GetStateManager();
+    repeatedMotionConstraint->Init();
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_020
+ * @tc.desc: test ConstraintManagerAdapter of StartEvalution.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0020, TestSize.Level1)
+{
+    auto repeatedMotionConstraint = std::make_shared<ConstraintManagerAdapter>();
+    ConstraintEvalParam params;
+    repeatedMotionConstraint->StartEvalution(params);
+    repeatedMotionConstraint->isEvaluation_ = false;
+    repeatedMotionConstraint->StartEvalution(params);
+    repeatedMotionConstraint->isEvaluation_ = true;
+    repeatedMotionConstraint->UnInit();
+    EXPECT_TRUE(repeatedMotionConstraint->StartEvalution(params) != ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_021
+ * @tc.desc: test ConstraintManagerAdapter of StopEvalution.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0021, TestSize.Level1)
+{
+    auto repeatedMotionConstraint = std::make_shared<ConstraintManagerAdapter>();
+    repeatedMotionConstraint->StopEvalution();
+    repeatedMotionConstraint->isEvaluation_ = false;
+    repeatedMotionConstraint->StopEvalution();
+    repeatedMotionConstraint->isEvaluation_ = true;
+    repeatedMotionConstraint->UnInit();
+    EXPECT_TRUE(repeatedMotionConstraint->StopEvalution() != ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_022
+ * @tc.desc: test ChargeStateMonitor of StartMonitoring.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0022, TestSize.Level1)
+{
+    auto repeatedChargeStateMonitor = std::make_shared<ChargeStateMonitor>();
+    repeatedChargeStateMonitor->StartMonitoring();
+    standbyStateManager_->napStatePtr_->EndEvalCurrentState(false);
+    repeatedChargeStateMonitor->StartMonitoring();
+    EXPECT_TRUE(repeatedChargeStateMonitor->Init());
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_023
+ * @tc.desc: test StateManagerAdapter of UnInit.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0023, TestSize.Level1)
+{
+    EXPECT_TRUE(DelayedSingleton<StateManagerAdapter>::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_024
+ * @tc.desc: test StateManagerAdapter of HandleEvent.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0024, TestSize.Level1)
+{
+    StandbyMessage message;
+    message.eventId_ = StandbyMessageType::COMMON_EVENT;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleEvent(message);
+    message.eventId_ = StandbyMessageType::RES_CTRL_CONDITION_CHANGED;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleEvent(message);
+    message.eventId_ = 1234;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleEvent(message);
+    EXPECT_TRUE(message.eventId_ != StandbyMessageType::COMMON_EVENT);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_025
+ * @tc.desc: test StateManagerAdapter of HandleCommonEvent.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0025, TestSize.Level1)
+{
+    StandbyMessage message;
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->Init();
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
+    message.action_ = "1234";
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
+    EXPECT_TRUE(DelayedSingleton<StateManagerAdapter>::GetInstance()->indexToState_.size() != 0);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_026
+ * @tc.desc: test StateManagerAdapter of HandleScrOffHalfHour.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0026, TestSize.Level1)
+{
+    StandbyMessage message;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->scrOffHalfHourTimerId_ = 0;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleScrOffHalfHour(message);
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->scrOffHalfHourTimerId_ = 1;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleScrOffHalfHour(message);
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleScrOffHalfHour(message);
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleScrOffHalfHour(message);
+    EXPECT_TRUE(DelayedSingleton<StateManagerAdapter>::GetInstance()->isScreenOn_);
+    message.action_ = "1234";
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleScrOffHalfHour(message);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_027
+ * @tc.desc: test StateManagerAdapter of HandleOpenCloseLid.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0027, TestSize.Level1)
+{
+    StandbyMessage message;
+    message.action_ = LID_OPEN;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleOpenCloseLid(message);
+    message.action_ = LID_CLOSE;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleOpenCloseLid(message);
+    message.action_ = "1234";
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleOpenCloseLid(message);
+    EXPECT_TRUE(DelayedSingleton<StateManagerAdapter>::GetInstance()->TransitToState(0) == ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_028
+ * @tc.desc: test StateManagerAdapter of EndEvalCurrentState.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0028, TestSize.Level1)
+{
+    auto evalResult = true;
+    standbyStateManager_->isEvalution_ = false;
+    EXPECT_TRUE(standbyStateManager_->EndEvalCurrentState(evalResult) == ERR_STANDBY_STATE_TIMING_SEQ_ERROR);
+    standbyStateManager_->isEvalution_ = true;
+    standbyStateManager_->EndEvalCurrentState(evalResult);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_029
+ * @tc.desc: test StateManagerAdapter of StopEvalution.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0029, TestSize.Level1)
+{
+    standbyStateManager_->isEvalution_ = false;
+    standbyStateManager_->StopEvalution();
+    standbyStateManager_->isEvalution_ = true;
+    standbyStateManager_->StopEvalution();
+    EXPECT_TRUE(standbyStateManager_->isEvalution_ == false);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_030
+ * @tc.desc: test ListenerManagerAdapter of StartListener.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0030, TestSize.Level1)
+{
+    DelayedSingleton<ListenerManagerAdapter>::GetInstance()->StartListener();
+    DelayedSingleton<ListenerManagerAdapter>::GetInstance()->messageListenerList_.clear();
+    EXPECT_TRUE(DelayedSingleton<ListenerManagerAdapter>::GetInstance()->StartListener() == ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_031
+ * @tc.desc: test ListenerManagerAdapter of StopListener.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0031, TestSize.Level1)
+{
+    DelayedSingleton<ListenerManagerAdapter>::GetInstance()->StopListener();
+    DelayedSingleton<ListenerManagerAdapter>::GetInstance()->messageListenerList_.clear();
+    EXPECT_TRUE(DelayedSingleton<ListenerManagerAdapter>::GetInstance()->StopListener() == ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_032
+ * @tc.desc: test MotionSensorMonitor of AcceleromterCallback.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0032, TestSize.Level1)
+{
+    ConstraintEvalParam repeatedMotionParams{};
+    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
+            PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
+    SensorEvent event;
+    repeatedMotionConstraint->Init();
+    GravityData data = {0, 0, 0};
+    event.sensorTypeId = SENSOR_TYPE_ID_NONE;
+    event.data = reinterpret_cast<uint8_t*>(&data);
+    repeatedMotionConstraint->AcceleromterCallback(&event);
+    EXPECT_TRUE(repeatedMotionConstraint->GetEnergy() == 0);
+    repeatedMotionConstraint->energy_ = 10000;
+    repeatedMotionConstraint->AcceleromterCallback(&event);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_033
+ * @tc.desc: test MotionSensorMonitor of AcceleromterCallback.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0033, TestSize.Level1)
+{
+    ConstraintEvalParam repeatedMotionParams{};
+    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
+            PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
+    SensorEvent event;
+    repeatedMotionConstraint->Init();
+    GravityData data = {0, 0, 0};
+    event.sensorTypeId = SENSOR_TYPE_ID_NONE;
+    event.data = reinterpret_cast<uint8_t*>(&data);
+    repeatedMotionConstraint->RepeatAcceleromterCallback(&event);
+    EXPECT_NE(repeatedMotionConstraint->GetEnergy(), 0);
+    repeatedMotionConstraint->energy_ = 10000;
+    repeatedMotionConstraint->RepeatAcceleromterCallback(&event);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_034
+ * @tc.desc: test StateManagerAdapter of OnScreenOffHalfHourInner.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0034, TestSize.Level1)
+{
+    bool scrOffHalfHourCtrl = true;
+    bool repeated = true;
+    standbyStateManager_->OnScreenOffHalfHourInner(scrOffHalfHourCtrl, repeated);
+    repeated = false;
+    standbyStateManager_->OnScreenOffHalfHourInner(scrOffHalfHourCtrl, repeated);
+    scrOffHalfHourCtrl = false;
+    standbyStateManager_->OnScreenOffHalfHourInner(scrOffHalfHourCtrl, repeated);
+    repeated = true;
+    standbyStateManager_->OnScreenOffHalfHourInner(scrOffHalfHourCtrl, repeated);
+    EXPECT_TRUE(standbyStateManager_->scrOffHalfHourCtrl_ == false);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_035
+ * @tc.desc: test StateManagerAdapter of ShellDump.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0035, TestSize.Level1)
+{
+    std::vector<std::string> argsInStr {};
+    std::string result;
+    int32_t DUMP_FIRST_PARAM = 0;
+    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
+    standbyStateManager_->ShellDump(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "-D");
+    standbyStateManager_->ShellDump(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "-E");
+    standbyStateManager_->ShellDump(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "-S");
+    standbyStateManager_->ShellDump(argsInStr, result);
+    EXPECT_TRUE(argsInStr.size() != 0);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_036
+ * @tc.desc: test StateManagerAdapter of DumpEnterSpecifiedState.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0036, TestSize.Level1)
+{
+    std::vector<std::string> argsInStr {};
+    std::string result;
+    int32_t DUMP_FIRST_PARAM = 0;
+    int32_t DUMP_THIRD_PARAM = 2;
+    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
+    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
+    argsInStr.insert(argsInStr.begin() + DUMP_THIRD_PARAM, "false");
+    standbyStateManager_->DumpEnterSpecifiedState(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + DUMP_THIRD_PARAM, "0");
+    standbyStateManager_->DumpEnterSpecifiedState(argsInStr, result);
+    EXPECT_TRUE(argsInStr.size() != 0);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_037
+ * @tc.desc: test StateManagerAdapter of DumpActivateMotion.
+ * @tc.type: FUNC
+ * @tc.require: AR000HQ6GA
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0037, TestSize.Level1)
+{
+    std::vector<std::string> argsInStr {};
+    std::string result;
+    int32_t DUMP_FIRST_PARAM = 0;
+    int32_t DUMP_SECOND_PARAM = 1;
+    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
+    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
+    argsInStr.insert(argsInStr.begin() + DUMP_SECOND_PARAM, "--motion");
+    standbyStateManager_->DumpActivateMotion(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + DUMP_SECOND_PARAM, "--blocked");
+    standbyStateManager_->DumpActivateMotion(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + DUMP_SECOND_PARAM, "--halfhour");
+    standbyStateManager_->DumpActivateMotion(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + DUMP_SECOND_PARAM, "0");
+    standbyStateManager_->DumpActivateMotion(argsInStr, result);
+    EXPECT_TRUE(argsInStr.size() != 0);
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

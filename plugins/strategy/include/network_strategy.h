@@ -15,15 +15,28 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_STRATEGY_INCLUDE_NETWORK_STRATEGY_H
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_STRATEGY_INCLUDE_NETWORK_STRATEGY_H
 
-#include "ibase_strategy.h"
+#include "base_network_strategy.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
-class NetworkStrategy : public IBaseStrategy {
+class NetworkStrategy : public BaseNetworkStrategy {
+public:
     void HandleEvent(const StandbyMessage& message) override;
     ErrCode OnCreated() override;
     ErrCode OnDestroy() override;
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
+
+protected:
+    ErrCode SetFirewallStatus(bool enableFirewall) override;
+    virtual void SetFirewallAllowedList(const std::vector<uint32_t>& uids, bool isAdded) override;
+    void ResetFirewallAllowList() override;
+    void UpdateDeviceIdleIptable(bool enableFirewall);
+
+private:
+    void UpdateAllowedList(const StandbyMessage& message);
+    void UpdateNetResourceConfig(const StandbyMessage& message);
+    void StartNetLimit(const StandbyMessage& message);
+    void StopNetLimit(const StandbyMessage& message);
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

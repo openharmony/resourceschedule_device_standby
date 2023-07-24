@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import(
-    "//foundation/resourceschedule/device_standby/standby_service.gni")
+import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 config("standby_plugin_config") {
   include_dirs = [
@@ -29,6 +28,8 @@ config("standby_plugin_config") {
 
 ohos_shared_library("standby_plugin") {
   sources = [
+    "${standby_plugins_path}/ext/src/base_state.cpp",
+    "${standby_plugins_path}/ext/src/istate_manager_adapter.cpp",
     "${standby_service_constraints_path}/src/charge_state_monitor.cpp",
     "${standby_service_constraints_path}/src/constraint_manager_adapter.cpp",
     "${standby_service_constraints_path}/src/motion_sensor_monitor.cpp",
@@ -36,8 +37,6 @@ ohos_shared_library("standby_plugin") {
     "${standby_service_message_listener_path}/src/common_event_listener.cpp",
     "${standby_service_message_listener_path}/src/input_manager_listener.cpp",
     "${standby_service_message_listener_path}/src/listener_manager_adapter.cpp",
-    "${standby_plugins_path}/ext/src/base_state.cpp",
-    "${standby_plugins_path}/ext/src/istate_manager_adapter.cpp",
     "${standby_service_standby_state_path}/src/dark_state.cpp",
     "${standby_service_standby_state_path}/src/export_plugin.cpp",
     "${standby_service_standby_state_path}/src/maintenance_state.cpp",
@@ -45,7 +44,9 @@ ohos_shared_library("standby_plugin") {
     "${standby_service_standby_state_path}/src/sleep_state.cpp",
     "${standby_service_standby_state_path}/src/state_manager_adapter.cpp",
     "${standby_service_standby_state_path}/src/working_state.cpp",
+    "${standby_service_strategy_path}/src/base_network_strategy.cpp",
     "${standby_service_strategy_path}/src/network_strategy.cpp",
+    "${standby_service_strategy_path}/src/running_lock_strategy.cpp",
     "${standby_service_strategy_path}/src/strategy_manager_adapter.cpp",
   ]
 
@@ -80,8 +81,8 @@ ohos_shared_library("standby_plugin") {
     "samgr:samgr_proxy",
     "sensor:sensor_interface_native",
     "time_service:time_client",
-    "work_scheduler:workschedclient",
     "wifi:wifi_sdk",
+    "work_scheduler:workschedclient",
   ]
 
   defines = []

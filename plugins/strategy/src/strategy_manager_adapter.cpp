@@ -24,12 +24,14 @@
 #include "standby_service_log.h"
 #include "network_strategy.h"
 #include "standby_config_manager.h"
+#include "running_lock_strategy.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
 const std::map<std::string, std::shared_ptr<IBaseStrategy>> strategyMap_ {
-    {"NETWORK", std::make_shared<NetworkStrategy>() },
+    { "NETWORK", std::make_shared<NetworkStrategy>() },
+    { "RUNNING_LOCK", std::make_shared<RunningLockStrategy>() },
 };
 }
 

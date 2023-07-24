@@ -139,7 +139,7 @@ ErrCode StandbyServiceClient::GetRestrictList(uint32_t restrictType, std::vector
         STANDBYSERVICE_LOGW("restrict info array is not empty");
         restrictInfoList.clear();
     }
-    return standbyServiceProxy_->GetAllowList(restrictType, restrictInfoList, reasonCode);
+    return standbyServiceProxy_->GetRestrictList(restrictType, restrictInfoList, reasonCode);
 }
 
 ErrCode StandbyServiceClient::IsStrategyEnabled(const std::string& strategyName, bool& isEnabled)
@@ -155,6 +155,8 @@ ErrCode StandbyServiceClient::IsStrategyEnabled(const std::string& strategyName,
 ErrCode StandbyServiceClient::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    STANDBYSERVICE_LOGI("device state changed, state type: %{public}d, enabled: %{public}d",
+        static_cast<int32_t>(type), enabled);
     if (!GetStandbyServiceProxy()) {
         STANDBYSERVICE_LOGE("get standby service proxy failed");
         return ERR_STANDBY_SERVICE_NOT_CONNECTED;

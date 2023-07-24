@@ -22,10 +22,14 @@
 
 #include "standby_service_impl.h"
 #include "istate_manager_adapter.h"
+#include "istandby_service.h"
+#include "call_manager_inner_type.h"
+#include "wifi_p2p_msg.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
+using namespace OHOS::Telephony;
+using namespace OHOS::Wifi;
 CommonEventListener::CommonEventListener(const EventFwk::CommonEventSubscribeInfo& subscribeInfo)
     : EventFwk::CommonEventSubscriber(subscribeInfo)
 {
@@ -51,6 +55,24 @@ ErrCode WEAK_FUNC CommonEventListener::StopListener()
     return ERR_OK;
 }
 
+void WEAK_FUNC CommonEventListener::HandleCallStateChanged(int32_t state)
+{
+    bool disabled = (state == static_cast<int32_t>(TelCallState::CALL_STATUS_UNKNOWN) ||
+        state == static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED) ||
+        state == static_cast<int32_t>(TelCallState::CALL_STATUS_IDLE));
+    DeviceStateCache::GetInstance()->SetDeviceState(
+        static_cast<int32_t>(DeviceStateType::TELEPHONE_STATE_CHANGE), !disabled);
+}
+
+void WEAK_FUNC CommonEventListener::HandleP2PStateChanged(int32_t state)
+{
+    bool disabled = (state == static_cast<int32_t>(P2pState::P2P_STATE_IDLE) ||
+        state == static_cast<int32_t>(P2pState::P2P_STATE_NONE) ||
+        state == static_cast<int32_t>(P2pState::P2P_STATE_CLOSED));
+    DeviceStateCache::GetInstance()->SetDeviceState(
+        static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE), !disabled);
+}
+
 void CommonEventListener::OnReceiveEvent(const EventFwk::CommonEventData& eventData)
 {
     AAFwk::Want want = eventData.GetWant();
@@ -72,6 +94,11 @@ void CommonEventListener::OnReceiveEvent(const EventFwk::CommonEventData& eventD
         handler_->PostTask([this, action]() {
             StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
         });
+    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_CALL_STATE_CHANGED) {
+        int32_t state = want.GetIntParam("state", static_cast<int32_t>(TelCallState::CALL_STATUS_UNKNOWN));
+        HandleCallStateChanged(state);
+    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_WIFI_P2P_STATE_CHANGED) {
+        HandleP2PStateChanged(eventData.GetCode());
     }
 }
 }  // namespace DevStandbyMgr

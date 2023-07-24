@@ -25,8 +25,10 @@
         "ability_base",
         "ability_runtime",
         "access_token",
+        "background_task_mgr",
         "battery_manager",
         "bundle_framework",
+        "call_manager",
         "common_event_service",
         "config_policy",
         "c_utils",
@@ -36,16 +38,14 @@
         "ipc",
         "input",
         "napi",
+        "netmanager_base",
         "power_manager",
         "safwk",
         "samgr",
         "sensor",
         "time_service",
-        "call_manager",
-        "netmanager_base",
-        "wifi",
         "work_scheduler",
-        "background_task_mgr"
+        "wifi"
       ],
       "third_party": [
         "googletest"
@@ -163,7 +163,8 @@
       "test": [
         "//foundation/resourceschedule/device_standby/interfaces/innerkits/test/unittest:unittest",
         "//foundation/resourceschedule/device_standby/services/test/unittest:unittest",
-        "//foundation/resourceschedule/device_standby/plugins/test/unittest:unittest"
+        "//foundation/resourceschedule/device_standby/plugins/test/unittest:unittest",
+        "//foundation/resourceschedule/device_standby/services/test/fuzztest:fuzztest"
       ]
     }
   }

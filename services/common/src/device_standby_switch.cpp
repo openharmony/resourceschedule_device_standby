@@ -19,14 +19,14 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-const std::string KEY_BUILD_CHARACTER = "ro.build.characteristics";
+const std::string KEY_BUILD_CHARACTER = "const.product.devicetype";
 
 DeviceType GetDeviceType()
 {
     std::string deviceType = system::GetParameter(KEY_BUILD_CHARACTER, "unknown");
     if (deviceType == "phone" || deviceType == "default") {
         return DeviceType::PHONE;
-    } else if (deviceType == "tablet") {
+    } else if (deviceType == "tablet" || deviceType == "2in1") {
         return DeviceType::TABLET;
     } else if (deviceType == "watch") {
         return DeviceType::WATCH;

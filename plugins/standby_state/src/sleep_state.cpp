@@ -44,12 +44,18 @@ SleepState::SleepState(uint32_t curState, uint32_t curPhase, const std::shared_p
 
 ErrCode SleepState::Init(const std::shared_ptr<BaseState>& statePtr)
 {
-    BaseState::Init(statePtr);
+    auto callbackTask = [statePtr]() { statePtr->StartTransitNextState(statePtr); };
+    enterStandbyTimerId_ = TimedTask::CreateTimer(false, 0, true, true, callbackTask);
+    if (enterStandbyTimerId_ == 0) {
+        STANDBYSERVICE_LOGE("%{public}s state init failed", STATE_NAME_LIST[GetCurState()].c_str());
+        return ERR_STANDBY_STATE_INIT_FAILED;
+    }
+
     if (!StandbyConfigManager::GetInstance()->GetStandbySwitch(DETECT_MOTION_CONFIG)) {
         return ERR_OK;
     }
     auto callback = [sleepState = shared_from_this()]() { sleepState->StartPeriodlyMotionDetection(); };
-    repeatedDetectionTimerId_ = TimedTask::CreateTimer(true, REPEATED_MOTION_DETECTION_INTERVAL, true, callback);
+    repeatedDetectionTimerId_ = TimedTask::CreateTimer(true, REPEATED_MOTION_DETECTION_INTERVAL, true, false, callback);
     if (repeatedDetectionTimerId_ == 0) {
         STANDBYSERVICE_LOGE("%{public}s init failed", STATE_NAME_LIST[GetCurState()].c_str());
         return ERR_STANDBY_STATE_INIT_FAILED;

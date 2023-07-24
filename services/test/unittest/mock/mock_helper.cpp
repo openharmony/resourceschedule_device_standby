@@ -38,7 +38,8 @@ void MockGetRunningSystemProcess(bool mockRet)
 namespace OHOS {
 namespace DevStandbyMgr {
 
-uint64_t TimedTask::CreateTimer(bool repeat, uint64_t interval, bool isExact, const std::function<void()>& callBack)
+uint64_t TimedTask::CreateTimer(bool repeat, uint64_t interval, bool isExact, bool isIdle,
+    const std::function<void()>& callBack)
 {
     return 1;
 }
