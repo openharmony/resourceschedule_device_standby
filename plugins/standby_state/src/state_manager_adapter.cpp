@@ -51,7 +51,7 @@ bool StateManagerAdapter::Init()
         workingStatePtr_, darkStatePtr_, napStatePtr_, maintStatePtr_, sleepStatePtr_
     };
     auto callbackTask = [this]() { this->OnScreenOffHalfHour(true, false); };
-    scrOffHalfHourTimerId_ = TimedTask::CreateTimer(false, 0, true, callbackTask);
+    scrOffHalfHourTimerId_ = TimedTask::CreateTimer(false, 0, true, false, callbackTask);
     if (scrOffHalfHourTimerId_ == 0) {
         STANDBYSERVICE_LOGE("timer of screen off half hour is nullptr");
     }
@@ -372,15 +372,6 @@ void StateManagerAdapter::DumpActivateMotion(const std::vector<std::string>& arg
         BlockCurrentState();
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--halfhour") {
         OnScreenOffHalfHourInner(true, true);
-    } else if (argsInStr[DUMP_SECOND_PARAM] == "--poweroff") {
-        handler_->PostTask([this]() {
-            STANDBYSERVICE_LOGD("after 2000ms, start poweroff mode");
-            UnblockCurrentState();
-            TransitToStateInner(StandbyState::SLEEP);
-            OnScreenOffHalfHourInner(true, true);
-            std::string res {""};
-            StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--strategy", "poweroff"}, res);
-            }, 20 * 1000);
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--powersave") {
         STANDBYSERVICE_LOGD("after 3000ms, start powersavenetwork");
         UnblockCurrentState();

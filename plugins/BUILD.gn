@@ -45,7 +45,9 @@ ohos_shared_library("standby_plugin") {
     "${standby_service_standby_state_path}/src/sleep_state.cpp",
     "${standby_service_standby_state_path}/src/state_manager_adapter.cpp",
     "${standby_service_standby_state_path}/src/working_state.cpp",
+    "${standby_service_strategy_path}/src/base_network_strategy.cpp",
     "${standby_service_strategy_path}/src/network_strategy.cpp",
+    "${standby_service_strategy_path}/src/running_lock_strategy.cpp",
     "${standby_service_strategy_path}/src/strategy_manager_adapter.cpp",
   ]
 

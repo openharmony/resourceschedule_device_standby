@@ -39,8 +39,8 @@ namespace DevStandbyMgr {
 bool ListenerManagerAdapter::Init()
 {
     EventFwk::MatchingSkills matchingSkills;
-    STANDBYSERVICE_LOGD("device type ro.build.characteristics is: %{public}s",
-        system::GetParameter("ro.build.characteristics", "unknown").c_str());
+    STANDBYSERVICE_LOGD("device type const.product.devicetype is: %{public}s",
+        system::GetParameter("const.product.devicetype", "unknown").c_str());
     switch (DEVICE_TYPE) {
         case DeviceType::PHONE:
         case DeviceType::UNKNOWN:
@@ -50,6 +50,8 @@ bool ListenerManagerAdapter::Init()
             matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED);
             matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING);
             matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED);
+            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_CALL_STATE_CHANGED);
+            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_WIFI_P2P_STATE_CHANGED);
             break;
         default:
             STANDBYSERVICE_LOGD("listener manager plugin initialization failed");
@@ -117,7 +119,6 @@ void ListenerManagerAdapter::RemoveSystemServiceListener(int32_t systemAbilityId
     if (iter == listenerPluginMap_.end()) {
         return;
     }
-    std::shared_ptr<IMesssageListener> listener = iter->second;
     auto listenerIter = std::remove(messageListenerList_.begin(), messageListenerList_.end(), iter->second);
     if (listenerIter != messageListenerList_.end()) {
         messageListenerList_.erase(listenerIter, messageListenerList_.end());

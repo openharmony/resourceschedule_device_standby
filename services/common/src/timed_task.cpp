@@ -28,13 +28,16 @@ namespace {
 TimedTask::TimedTask()
 {}
 
-TimedTask::TimedTask(bool repeat, uint64_t interval, bool isExact)
+TimedTask::TimedTask(bool repeat, uint64_t interval, bool isExact, bool isIdle)
 {
     this->repeat = repeat;
     this->interval = interval;
     this->type = TIMER_TYPE_WAKEUP;
     if (isExact) {
         this->type = TIMER_TYPE_WAKEUP + TIMER_TYPE_EXACT;
+    }
+    if (isIdle) {
+        this->type = TIMER_TYPE_IDLE;
     }
 }
 
@@ -76,10 +79,10 @@ void TimedTask::SetCallbackInfo(const std::function<void()>& callBack)
     this->callBack_ = callBack;
 }
 
-uint64_t WEAK_FUNC TimedTask::CreateTimer(bool repeat, uint64_t interval, bool isExact,
+uint64_t WEAK_FUNC TimedTask::CreateTimer(bool repeat, uint64_t interval, bool isExact, bool isIdle,
     const std::function<void()>& callBack)
 {
-    auto timedTask = std::make_shared<TimedTask>(repeat, interval, isExact);
+    auto timedTask = std::make_shared<TimedTask>(repeat, interval, isExact, isIdle);
     timedTask->SetCallbackInfo(callBack);
     return MiscServices::TimeServiceClient::GetInstance()->CreateTimer(timedTask);
 }
@@ -91,6 +94,7 @@ bool WEAK_FUNC TimedTask::StartDayNightSwitchTimer(uint64_t& timeId)
         return false;
     }
     timeDiff += TimeProvider::GetRandomDelay(LOW_DELAY_TIME_INTERVAL, HIGH_DELAY_TIME_INTERVAL);
+    STANDBYSERVICE_LOGD("start next day and night switch after %{public}ld ms", timeDiff);
     auto curTimeStamp = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
     if (!MiscServices::TimeServiceClient::GetInstance()->StartTimer(timeId, curTimeStamp + timeDiff)) {
         STANDBYSERVICE_LOGE("day and night switch observer start failed");
@@ -102,7 +106,7 @@ bool WEAK_FUNC TimedTask::StartDayNightSwitchTimer(uint64_t& timeId)
 bool WEAK_FUNC TimedTask::RegisterDayNightSwitchTimer(uint64_t& timeId, bool repeat, uint64_t interval,
     const std::function<void()>& callBack)
 {
-    timeId = CreateTimer(repeat, interval, false, callBack);
+    timeId = CreateTimer(repeat, interval, false, false, callBack);
     if (timeId == 0) {
         STANDBYSERVICE_LOGE("create timer failed");
         return false;

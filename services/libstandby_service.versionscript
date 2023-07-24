@@ -23,6 +23,7 @@
     *BackgroundTaskHelper*;
     *AbilityManagerHelper*;
     *BundleManagerHelper*;
+    *DeviceStateCache*;
   local:
     *;
 };

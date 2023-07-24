@@ -912,7 +912,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_038, TestSize.Level1)
     EXPECT_TRUE(timedTask->RegisterDayNightSwitchTimer(zeroTimeId, false, 0, callBack));
     EXPECT_TRUE(timedTask->RegisterDayNightSwitchTimer(negativeTimeId, false, 0, callBack));
     timedTask->StartDayNightSwitchTimer(timerId);
-    TimedTask::CreateTimer(false, 0, false, callBack);
+    TimedTask::CreateTimer(false, 0, false, false, callBack);
     StandbyServiceImpl::GetInstance()->UnregisterTimeObserver();
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     StandbyServiceImpl::GetInstance()->RegisterTimeObserver();

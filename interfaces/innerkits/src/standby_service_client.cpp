@@ -155,6 +155,8 @@ ErrCode StandbyServiceClient::IsStrategyEnabled(const std::string& strategyName,
 ErrCode StandbyServiceClient::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    STANDBYSERVICE_LOGI("device state changed, state type: %{public}d, enabled: %{public}d",
+        static_cast<int32_t>(type), enabled);
     if (!GetStandbyServiceProxy()) {
         STANDBYSERVICE_LOGE("get standby service proxy failed");
         return ERR_STANDBY_SERVICE_NOT_CONNECTED;

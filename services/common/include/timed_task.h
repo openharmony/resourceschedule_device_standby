@@ -35,7 +35,7 @@ namespace DevStandbyMgr {
 class TimedTask : public MiscServices::ITimerInfo {
 public:
     TimedTask();
-    TimedTask(bool repeat, uint64_t interval, bool isExact);
+    TimedTask(bool repeat, uint64_t interval, bool isExact, bool isIdle = false);
     virtual ~TimedTask();
     void OnTrigger() override;
     void SetType(const int &type) override;
@@ -44,7 +44,8 @@ public:
     void SetWantAgent(std::shared_ptr<OHOS::AbilityRuntime::WantAgent::WantAgent> wantAgent) override;
     void SetCallbackInfo(const std::function<void()>& callBack);
 
-    static uint64_t CreateTimer(bool repeat, uint64_t interval, bool isExact, const std::function<void()>& callBack);
+    static uint64_t CreateTimer(bool repeat, uint64_t interval, bool isExact, bool isIdle,
+        const std::function<void()>& callBack);
     static bool StartDayNightSwitchTimer(uint64_t& timeId);
     static bool RegisterDayNightSwitchTimer(uint64_t& timeId, bool repeat, uint64_t interval,
         const std::function<void()>& callBack);
