@@ -13,7 +13,7 @@
  * limitations under the License.
  */
  
- include "running_lock_strategy.h"
+#include "running_lock_strategy.h"
 #include <algorithm>
 #include "standby_service_log.h"
 #include "system_ability_definition.h"

@@ -23,7 +23,6 @@
  
 namespace OHOS {
 namespace DevStandbyMgr {
- 
 ErrCode NetworkStrategy::OnCreated()
 {
     STANDBYSERVICE_LOGI("NetworkStrategy is now OnCreated");
@@ -146,6 +145,5 @@ void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::
 {
     STANDBYSERVICE_LOGD("enter NetworkStrategy::ShellDump");
 }
-
 } // namespace DevStandbyMgr
 } // namespace OHOS
