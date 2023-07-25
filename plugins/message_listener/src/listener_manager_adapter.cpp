@@ -35,7 +35,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 bool ListenerManagerAdapter::Init()
 {
     EventFwk::MatchingSkills matchingSkills;

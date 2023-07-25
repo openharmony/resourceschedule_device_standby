@@ -13,8 +13,7 @@
 
 import("//build/ohos.gni")
 import("//build/test.gni")
-import(
-    "//foundation/resourceschedule/device_standby/standby_service.gni")
+import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 module_output_path = "${standby_service_part_name}/unittest"
 
@@ -36,16 +35,16 @@ ohos_unittest("standby_plugin_unit_test") {
   ]
 
   sources = [
+    "${standby_plugins_path}/test/unittest/standby_plugin_unit_test.cpp",
     "${standby_service_path}/test/unittest/mock/mock_helper.cpp",
     "${standby_service_path}/test/unittest/mock/mock_ipc.cpp",
-    "${standby_plugins_path}/test/unittest/standby_plugin_unit_test.cpp",
   ]
 
   deps = [
+    "${standby_innerkits_path}:standby_innerkits",
     "${standby_plugins_path}:standby_plugin",
     "${standby_service_frameworks_path}:standby_fwk",
     "${standby_service_path}:standby_service_static",
-    "${standby_innerkits_path}:standby_innerkits",
     "${standby_utils_common_path}:standby_utils_common",
     "${standby_utils_policy_path}:standby_utils_policy",
   ]
@@ -64,11 +63,18 @@ ohos_unittest("standby_plugin_unit_test") {
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "init:libbegetutil",
+    "input:libmmi-client",
     "ipc:ipc_single",
     "power_manager:powermgr_client",
     "sensor:sensor_interface_native",
     "time_service:time_client",
   ]
+
+  defines = []
+  if (enable_background_task_mgr) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
+  }
 
   subsystem_name = "resourceschedule"
   part_name = "${standby_service_part_name}"

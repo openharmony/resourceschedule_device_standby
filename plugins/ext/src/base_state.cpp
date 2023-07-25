@@ -31,7 +31,6 @@
 using namespace OHOS::MiscServices;
 namespace OHOS {
 namespace DevStandbyMgr {
-
 std::shared_ptr<PowerMgr::RunningLock> BaseState::standbyRunningLock_ = nullptr;
 bool BaseState::runningLockStatus_ = false;
 

@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 IMPLEMENT_SINGLE_INSTANCE(BundleManagerHelper);
 BundleManagerHelper::BundleManagerHelper()
 {

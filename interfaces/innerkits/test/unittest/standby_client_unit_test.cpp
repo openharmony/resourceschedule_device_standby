@@ -24,11 +24,12 @@
 #include "standby_ipc_interface_code.h"
 #include "standby_service_client.h"
 #include "standby_service_subscriber_stub.h"
+#include "standby_service_subscriber_proxy.h"
+
 using namespace testing::ext;
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 class StandbyServiceClientUnitTest : public testing::Test {
 public:
     static void SetUpTestCase() {}
@@ -41,7 +42,7 @@ public:
  * @tc.name: StandbyServiceClientUnitTest_001
  * @tc.desc: test SubscribeStandbyCallback.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_001, TestSize.Level1)
 {
@@ -60,7 +61,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_001, TestSiz
  * @tc.name: StandbyServiceClientUnitTest_002
  * @tc.desc: test ApplyAllowResource.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_002, TestSize.Level1)
 {
@@ -82,7 +83,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_002, TestSiz
  * @tc.name: StandbyServiceClientUnitTest_003
  * @tc.desc: test GetAllowList.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_003, TestSize.Level1)
 {
@@ -99,19 +100,19 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_003, TestSiz
  * @tc.name: StandbyServiceClientUnitTest_004
  * @tc.desc: test IsDeviceInStandby.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_004, TestSize.Level1)
 {
     bool isStandby {false};
-    EXPECT_NE(StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby), ERR_OK);
+    EXPECT_EQ(StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby), ERR_OK);
 }
 
 /**
  * @tc.name: StandbyServiceClientUnitTest_005
  * @tc.desc: test Unmarshalling.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_005, TestSize.Level1)
 {
@@ -124,7 +125,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_005, TestSiz
  * @tc.name: StandbyServiceClientUnitTest_006
  * @tc.desc: test ResetStandbyServiceClient.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_006, TestSize.Level1)
 {
@@ -139,7 +140,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_006, TestSiz
  * @tc.name: StandbyServiceClientUnitTest_007
  * @tc.desc: test StandbyServiceSubscriberStub.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_007, TestSize.Level1)
 {
@@ -176,7 +177,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_007, TestSiz
  * @tc.name: StandbyServiceClientUnitTest_008
  * @tc.desc: test StandbyServiceProxy.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_008, TestSize.Level1)
 {
@@ -186,6 +187,34 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_008, TestSiz
     EXPECT_NE(proxy->SubscribeStandbyCallback(nullSubscriber), ERR_OK);
     EXPECT_NE(proxy->SubscribeStandbyCallback(nullSubscriber), ERR_OK);
     proxy->UnsubscribeStandbyCallback(nullSubscriber);
+}
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_009
+ * @tc.desc: test ReportWorkSchedulerStatus.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_009, TestSize.Level1)
+{
+    EXPECT_EQ(StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(true, -1, ""), ERR_OK);
+    EXPECT_EQ(StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(false, -1, ""), ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_010
+ * @tc.desc: test StandbyServiceSubscriberProxy.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_010, TestSize.Level1)
+{
+    sptr<IRemoteObject> impl {};
+    sptr<StandbyServiceSubscriberProxy> proxy = new (std::nothrow) StandbyServiceSubscriberProxy(impl);
+    sptr<StandbyServiceSubscriberProxy> nullSubscriber = nullptr;
+    proxy->OnDeviceIdleMode(false, false);
+    proxy->OnAllowListChanged(-1, "", 0, false);
+    EXPECT_NE(proxy, nullptr);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

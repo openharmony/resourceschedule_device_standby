@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 CommonEventObserver::CommonEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo,
     const std::shared_ptr<AppExecFwk::EventHandler>& handler)
     : EventFwk::CommonEventSubscriber(subscribeInfo), handler_(handler) {}

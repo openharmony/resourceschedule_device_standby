@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 IMPLEMENT_SINGLE_INSTANCE(StandbyStateSubscriber);
 
 StandbyStateSubscriber::StandbyStateSubscriber()

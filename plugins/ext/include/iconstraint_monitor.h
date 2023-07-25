@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 class IStateManagerAdapter;
 class IConstraintMonitor {
 public:

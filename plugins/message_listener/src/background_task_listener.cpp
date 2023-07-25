@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 BackgroundTaskListener::BackgroundTaskListener()
 {
     bgTaskListenerImpl_ = std::make_unique<BgTaskListenerImpl>();

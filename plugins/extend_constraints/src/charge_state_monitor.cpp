@@ -22,8 +22,7 @@ namespace DevStandbyMgr {
 bool ChargeStateMonitor::Init()
 {
     auto &constraintManager = StandbyServiceImpl::GetInstance()->GetConstraintManager();
-    ConstraintEvalParam params{StandbyState::WORKING, 0,
-        StandbyState::DARK, 0};
+    ConstraintEvalParam params{StandbyState::WORKING, 0, StandbyState::DARK, 0};
     constraintManager->RegisterConstraintCallback(params, shared_from_this());
     return true;
 }

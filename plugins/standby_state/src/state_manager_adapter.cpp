@@ -33,7 +33,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 bool StateManagerAdapter::Init()
 {
     auto StandbyServiceImpl = StandbyServiceImpl::GetInstance();

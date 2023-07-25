@@ -180,7 +180,7 @@ napi_value ParseGetAllowListParameters(const napi_env& env, const napi_callback_
         return nullptr;
     }
 
-    //argv[0]: allowType
+    // argv[0]: allowType
     if (Common::GetUint32Value(env, argv[0], params.allowType) == nullptr) {
         STANDBYSERVICE_LOGE("ParseParameters failed, allowType is nullptr.");
         Common::HandleParamErr(env, ERR_RESOURCE_TYPES_INVALID);

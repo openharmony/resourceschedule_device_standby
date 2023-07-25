@@ -31,7 +31,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 class ConditionType {
 public:
     enum Type : uint32_t {
@@ -110,7 +109,6 @@ private:
     bool ParseDeviceStanbyConfig(const nlohmann::json& devStandbyConfigRoot);
     bool ParseStandbyConfig(const nlohmann::json& standbyConfig);
     bool ParseIntervalList(const nlohmann::json& standbyIntervalList);
-    bool ParseStandbySwitchConfig(const nlohmann::json& standbySwitchConfig);
     bool ParseStrategyListConfig(const nlohmann::json& standbyListConfig);
     bool ParseHalfHourSwitchConfig(const nlohmann::json& halfHourSwitchConfig);
     bool ParseResCtrlConfig(const nlohmann::json& resCtrlConfigRoot);

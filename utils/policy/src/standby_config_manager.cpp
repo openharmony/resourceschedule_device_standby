@@ -36,7 +36,6 @@ namespace {
     const std::string TAG_STANDBY = "standby";
     const std::string TAG_MAINTENANCE_LIST = "maintenance_list";
     const std::string TAG_DETECT_LIST = "detect_list";
-    const std::string TAG_STRATEGY_SWITCH = "strategy_switch";
     const std::string TAG_STRATEGY_LIST = "strategy_list";
     const std::string TAG_HALFHOUR_SWITCH_SETTING = "halfhour_switch_setting";
 
@@ -293,11 +292,6 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
         STANDBYSERVICE_LOGW("failed to parse standby interval list in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
-    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STRATEGY_SWITCH, standbySwitchConfig) &&
-        !ParseStandbySwitchConfig(standbySwitchConfig)) {
-        STANDBYSERVICE_LOGW("failed to parse standby switch config in %{public}s", STANDBY_CONFIG_PATH.c_str());
-        return false;
-    }
     if (JsonUtils::GetArrayFromJsonValue(devStandbyConfigRoot, TAG_STRATEGY_LIST, standbyListConfig) &&
         !ParseStrategyListConfig(standbyListConfig)) {
         STANDBYSERVICE_LOGW("failed to parse strategy list config in %{public}s", STANDBY_CONFIG_PATH.c_str());
@@ -351,21 +345,6 @@ bool StandbyConfigManager::ParseIntervalList(const nlohmann::json& standbyInterv
             intervalList.emplace_back(interval);
         }
         intervalListMap_.emplace(element.key(), std::move(intervalList));
-    }
-    return ret;
-}
-
-bool StandbyConfigManager::ParseStandbySwitchConfig(const nlohmann::json& standbySwitchConfig)
-{
-    bool ret = true;
-    for (const auto& element : standbySwitchConfig.items()) {
-        if (!element.value()) {
-            STANDBYSERVICE_LOGW("there is unexpected type of value in standby switch config %{public}s",
-                element.key().c_str());
-            ret = false;
-            continue;
-        }
-        strategySwitchMap_[element.key()] = element.value().get<bool>();
     }
     return ret;
 }

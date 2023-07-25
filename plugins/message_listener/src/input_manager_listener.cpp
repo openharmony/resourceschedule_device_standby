@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 InputManagerListener::InputManagerListener()
 {
     handler_ = StandbyServiceImpl::GetInstance()->GetHandler();

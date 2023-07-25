@@ -18,11 +18,14 @@
 #include "app_mgr_helper.h"
 #include "bundle_manager_helper.h"
 #include "common_event_observer.h"
+#include "background_task_helper.h"
 
 namespace {
     static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
     bool g_mockGetAllRunningProcesses = true;
     bool g_mockGetRunningSystemProcess = true;
+    bool g_mockGetBackgroundTask = true;
+    bool g_mockSubscribeObserver = true;
 }
 
 void MockGetAllRunningProcesses(bool mockRet)
@@ -35,9 +38,18 @@ void MockGetRunningSystemProcess(bool mockRet)
     g_mockGetRunningSystemProcess = mockRet;
 }
 
+void MockGetBackgroundTask(bool mockRet)
+{
+    g_mockGetBackgroundTask = mockRet;
+}
+
+void MockSubscribeObserver(bool mockRet)
+{
+    g_mockSubscribeObserver = mockRet;
+}
+
 namespace OHOS {
 namespace DevStandbyMgr {
-
 uint64_t TimedTask::CreateTimer(bool repeat, uint64_t interval, bool isExact, bool isIdle,
     const std::function<void()>& callBack)
 {
@@ -66,6 +78,12 @@ bool AppMgrHelper::Connect()
     return true;
 }
 
+bool AppMgrHelper::GetAppRunningStateByBundleName(const std::string &bundleName, bool& isRunning)
+{
+    isRunning = true;
+    return true;
+}
+
 std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
 {
     return TEST_DEFAULT_BUNDLE;
@@ -91,6 +109,26 @@ bool CommonEventObserver::Subscribe()
 bool CommonEventObserver::Unsubscribe()
 {
     return true;
+}
+
+bool BackgroundTaskHelper::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    return g_mockGetBackgroundTask;
+}
+
+bool BackgroundTaskHelper::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
+{
+    return g_mockGetBackgroundTask;
+}
+
+bool AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
+{
+    return g_mockSubscribeObserver;
+}
+
+bool AppMgrHelper::UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
+{
+    return g_mockSubscribeObserver;
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
