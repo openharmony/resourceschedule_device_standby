@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 AppStateObserver::AppStateObserver(const std::shared_ptr<AppExecFwk::EventHandler>& handler): handler_(handler) {}
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)

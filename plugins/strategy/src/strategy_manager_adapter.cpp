@@ -15,11 +15,6 @@
 
 #include "strategy_manager_adapter.h"
 
-#include <map>
-#include <functional>
-#include <string>
-#include <memory>
-
 #include "ibase_strategy.h"
 #include "standby_service_log.h"
 #include "network_strategy.h"

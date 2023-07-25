@@ -16,7 +16,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 const std::string TRANSIT_NEXT_STATE_TIMED_TASK = "TransitNextStateTimedTask";
 const std::string TRANSIT_NEXT_STATE_CONDITION_TASK = "TransitNextStateConditionTask";
 const std::string TRANSIT_NEXT_PHASE_INSTANT_TASK = "TransitNextPhaseInstantTask";

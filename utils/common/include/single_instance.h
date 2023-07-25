@@ -16,8 +16,8 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_SINGLE_INSTANCE_H
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_SINGLE_INSTANCE_H
 
-#include "singleton.h"
 #include <memory>
+#include "singleton.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

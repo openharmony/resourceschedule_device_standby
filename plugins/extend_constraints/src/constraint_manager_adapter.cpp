@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 bool ConstraintManagerAdapter::Init()
 {
     stateManager_ = StandbyServiceImpl::GetInstance()->GetStateManager();

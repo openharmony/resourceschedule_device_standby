@@ -40,6 +40,11 @@
 #include "common_event_listener.h"
 #include "charge_state_monitor.h"
 #include "motion_sensor_monitor.h"
+#include "input_manager.h"
+#include "background_task_listener.h"
+#include "input_manager_listener.h"
+#include "common_constant.h"
+#include "dark_state.h"
 
 using namespace testing::ext;
 using namespace testing::mt;
@@ -121,7 +126,7 @@ void StandbyPluginUnitTest::SetUpTestCase()
  * @tc.name: StandbyPluginUnitTest_001
  * @tc.desc: test Init of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_001, TestSize.Level1)
 {
@@ -142,19 +147,19 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_001, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_002
  * @tc.desc: test RegisterPolicy of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_002, TestSize.Level1)
 {
     strategyManager_->RegisterPolicy({"NETWORK", "TIMER", "RUNNING_LOCK", "WORK_SCHEDULER", ""});
-    EXPECT_NE(strategyManager_->strategyList_.size(), 0);
+    EXPECT_FALSE(strategyManager_->strategyList_.empty());
 }
 
 /**
  * @tc.name: StandbyPluginUnitTest_003
  * @tc.desc: test HandleEvent of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_003, TestSize.Level1)
 {
@@ -174,7 +179,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_003, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_004
  * @tc.desc: test CommonEventListener of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_004, TestSize.Level1)
 {
@@ -205,7 +210,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_004, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_005
  * @tc.desc: test ChargeStateMonitor of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_005, TestSize.Level1)
 {
@@ -219,7 +224,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_005, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_006
  * @tc.desc: test ChargeStateMonitor of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_006, TestSize.Level1)
 {
@@ -261,7 +266,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_006, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_007
  * @tc.desc: test MotionSensorMonitor of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_007, TestSize.Level1)
 {
@@ -280,7 +285,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_007, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_008
  * @tc.desc: test CheckTransitionValid of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_008, TestSize.Level1)
 {
@@ -296,7 +301,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_008, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_009
  * @tc.desc: test TransitToState of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_009, TestSize.Level1)
 {
@@ -326,7 +331,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_009, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_010
  * @tc.desc: test NapState of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_010, TestSize.Level1)
 {
@@ -345,13 +350,21 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_010, TestSize.Level1)
     standbyStateManager_->napStatePtr_->EndEvalCurrentState(true);
     SleepForFC();
     EXPECT_NE(standbyStateManager_->curStatePtr_->GetCurState(), StandbyState::MAINTENANCE);
+
+    standbyStateManager_->darkStatePtr_->stateManager_.reset();
+    standbyStateManager_->darkStatePtr_->EndEvalCurrentState(false);
+    standbyStateManager_->darkStatePtr_->stateManager_ = standbyStateManager_;
+
+    standbyStateManager_->maintStatePtr_->stateManager_.reset();
+    standbyStateManager_->maintStatePtr_->BeginState();
+    standbyStateManager_->maintStatePtr_->stateManager_ = standbyStateManager_;
 }
 
 /**
  * @tc.name: StandbyPluginUnitTest_011
  * @tc.desc: test SleepState of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_011, TestSize.Level1)
 {
@@ -376,7 +389,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_011, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_012
  * @tc.desc: test TransitToStateInner of StandbyPlugin.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_012, TestSize.Level1)
 {
@@ -397,7 +410,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_012, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_013
  * @tc.desc: test multithread OnReceiveEvent of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_013, TestSize.Level1, 20)
 {
@@ -419,7 +432,7 @@ HWMTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_013, TestSize.Level1, 20)
  * @tc.name: StandbyPluginUnitTest_014
  * @tc.desc: test MotionSensorMonitor of AddEnergy.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0014, TestSize.Level1)
 {
@@ -437,7 +450,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0014, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_015
  * @tc.desc: test MotionSensorMonitor of Init.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0015, TestSize.Level1)
 {
@@ -455,7 +468,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0015, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_016
  * @tc.desc: test MotionSensorMonitor of PeriodlyStartMotionDetection.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0016, TestSize.Level1)
 {
@@ -474,7 +487,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0016, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_017
  * @tc.desc: test MotionSensorMonitor of StartSensor.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0017, TestSize.Level1)
 {
@@ -496,7 +509,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0017, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_018
  * @tc.desc: test MotionSensorMonitor of StopSensor.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0018, TestSize.Level1)
 {
@@ -518,7 +531,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0018, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_019
  * @tc.desc: test ConstraintManagerAdapter of Init.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0019, TestSize.Level1)
 {
@@ -533,7 +546,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0019, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_020
  * @tc.desc: test ConstraintManagerAdapter of StartEvalution.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0020, TestSize.Level1)
 {
@@ -551,7 +564,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0020, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_021
  * @tc.desc: test ConstraintManagerAdapter of StopEvalution.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0021, TestSize.Level1)
 {
@@ -568,7 +581,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0021, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_022
  * @tc.desc: test ChargeStateMonitor of StartMonitoring.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0022, TestSize.Level1)
 {
@@ -583,7 +596,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0022, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_023
  * @tc.desc: test StateManagerAdapter of UnInit.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0023, TestSize.Level1)
 {
@@ -594,7 +607,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0023, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_024
  * @tc.desc: test StateManagerAdapter of HandleEvent.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0024, TestSize.Level1)
 {
@@ -612,7 +625,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0024, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_025
  * @tc.desc: test StateManagerAdapter of HandleCommonEvent.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0025, TestSize.Level1)
 {
@@ -638,7 +651,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0025, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_026
  * @tc.desc: test StateManagerAdapter of HandleScrOffHalfHour.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0026, TestSize.Level1)
 {
@@ -660,7 +673,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0026, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_027
  * @tc.desc: test StateManagerAdapter of HandleOpenCloseLid.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0027, TestSize.Level1)
 {
@@ -678,7 +691,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0027, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_028
  * @tc.desc: test StateManagerAdapter of EndEvalCurrentState.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0028, TestSize.Level1)
 {
@@ -693,7 +706,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0028, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_029
  * @tc.desc: test StateManagerAdapter of StopEvalution.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0029, TestSize.Level1)
 {
@@ -708,7 +721,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0029, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_030
  * @tc.desc: test ListenerManagerAdapter of StartListener.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0030, TestSize.Level1)
 {
@@ -721,7 +734,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0030, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_031
  * @tc.desc: test ListenerManagerAdapter of StopListener.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0031, TestSize.Level1)
 {
@@ -734,7 +747,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0031, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_032
  * @tc.desc: test MotionSensorMonitor of AcceleromterCallback.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0032, TestSize.Level1)
 {
@@ -756,7 +769,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0032, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_033
  * @tc.desc: test MotionSensorMonitor of AcceleromterCallback.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0033, TestSize.Level1)
 {
@@ -778,7 +791,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0033, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_034
  * @tc.desc: test StateManagerAdapter of OnScreenOffHalfHourInner.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0034, TestSize.Level1)
 {
@@ -792,26 +805,38 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0034, TestSize.Level1)
     repeated = true;
     standbyStateManager_->OnScreenOffHalfHourInner(scrOffHalfHourCtrl, repeated);
     EXPECT_TRUE(standbyStateManager_->scrOffHalfHourCtrl_ == false);
+
+    standbyStateManager_->curStatePtr_ = standbyStateManager_->sleepStatePtr_;
+    standbyStateManager_->preStatePtr_ = standbyStateManager_->maintStatePtr_;
+    standbyStateManager_->OnScreenOffHalfHourInner(true, false);
+
+    standbyStateManager_->curStatePtr_ = standbyStateManager_->maintStatePtr_;
+    standbyStateManager_->preStatePtr_ = standbyStateManager_->sleepStatePtr_;
+    standbyStateManager_->OnScreenOffHalfHourInner(true, false);
+
+    standbyStateManager_->curStatePtr_ = standbyStateManager_->workingStatePtr_;
+    standbyStateManager_->preStatePtr_ = standbyStateManager_->sleepStatePtr_;
+    standbyStateManager_->OnScreenOffHalfHourInner(true, false);
 }
 
 /**
  * @tc.name: StandbyPluginUnitTest_035
  * @tc.desc: test StateManagerAdapter of ShellDump.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0035, TestSize.Level1)
 {
     std::vector<std::string> argsInStr {};
     std::string result;
-    int32_t DUMP_FIRST_PARAM = 0;
-    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
+    int32_t dumpFirstParam = 0;
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "0");
     standbyStateManager_->ShellDump(argsInStr, result);
-    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "-D");
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "-D");
     standbyStateManager_->ShellDump(argsInStr, result);
-    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "-E");
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "-E");
     standbyStateManager_->ShellDump(argsInStr, result);
-    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "-S");
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "-S");
     standbyStateManager_->ShellDump(argsInStr, result);
     EXPECT_TRUE(argsInStr.size() != 0);
 }
@@ -820,19 +845,19 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0035, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_036
  * @tc.desc: test StateManagerAdapter of DumpEnterSpecifiedState.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0036, TestSize.Level1)
 {
     std::vector<std::string> argsInStr {};
     std::string result;
-    int32_t DUMP_FIRST_PARAM = 0;
-    int32_t DUMP_THIRD_PARAM = 2;
-    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
-    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
-    argsInStr.insert(argsInStr.begin() + DUMP_THIRD_PARAM, "false");
+    int32_t dumpFirstParam = 0;
+    int32_t dumpThirdParam = 2;
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "0");
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "0");
+    argsInStr.insert(argsInStr.begin() + dumpThirdParam, "false");
     standbyStateManager_->DumpEnterSpecifiedState(argsInStr, result);
-    argsInStr.insert(argsInStr.begin() + DUMP_THIRD_PARAM, "0");
+    argsInStr.insert(argsInStr.begin() + dumpThirdParam, "0");
     standbyStateManager_->DumpEnterSpecifiedState(argsInStr, result);
     EXPECT_TRUE(argsInStr.size() != 0);
 }
@@ -841,25 +866,152 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0036, TestSize.Level1)
  * @tc.name: StandbyPluginUnitTest_037
  * @tc.desc: test StateManagerAdapter of DumpActivateMotion.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0037, TestSize.Level1)
 {
     std::vector<std::string> argsInStr {};
     std::string result;
-    int32_t DUMP_FIRST_PARAM = 0;
-    int32_t DUMP_SECOND_PARAM = 1;
-    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
-    argsInStr.insert(argsInStr.begin() + DUMP_FIRST_PARAM, "0");
-    argsInStr.insert(argsInStr.begin() + DUMP_SECOND_PARAM, "--motion");
+    int32_t dumpFirstParam = 0;
+    int32_t dumpSecondParam = 1;
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "0");
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "0");
+    argsInStr.insert(argsInStr.begin() + dumpSecondParam, "--motion");
     standbyStateManager_->DumpActivateMotion(argsInStr, result);
-    argsInStr.insert(argsInStr.begin() + DUMP_SECOND_PARAM, "--blocked");
+    argsInStr.insert(argsInStr.begin() + dumpSecondParam, "--blocked");
     standbyStateManager_->DumpActivateMotion(argsInStr, result);
-    argsInStr.insert(argsInStr.begin() + DUMP_SECOND_PARAM, "--halfhour");
+    argsInStr.insert(argsInStr.begin() + dumpSecondParam, "--halfhour");
     standbyStateManager_->DumpActivateMotion(argsInStr, result);
-    argsInStr.insert(argsInStr.begin() + DUMP_SECOND_PARAM, "0");
+    argsInStr.insert(argsInStr.begin() + dumpSecondParam, "0");
     standbyStateManager_->DumpActivateMotion(argsInStr, result);
     EXPECT_TRUE(argsInStr.size() != 0);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_038
+ * @tc.desc: test InputManagerListener.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0038, TestSize.Level1)
+{
+    auto inputManagerListener = std::make_shared<InputManagerListener>();
+    inputManagerListener->subscriberId_ = -1;
+    inputManagerListener->StopListener();
+    inputManagerListener->OnCallbackEvent(MMI::SwitchEvent::SWITCH_OFF);
+    inputManagerListener->OnCallbackEvent(MMI::SwitchEvent::SWITCH_ON);
+    EXPECT_TRUE(inputManagerListener->subscriberId_ <= 0);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_039
+ * @tc.desc: test BackgroundTaskListener.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_039, TestSize.Level1)
+{
+    auto backgroundTaskListener = std::make_shared<BackgroundTaskListener>();
+    backgroundTaskListener->StartListener();
+    backgroundTaskListener->StopListener();
+    backgroundTaskListener->bgTaskListenerImpl_ = nullptr;
+    backgroundTaskListener->StartListener();
+    EXPECT_NE(backgroundTaskListener->StopListener(), ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_040
+ * @tc.desc: test ListenerManagerAdapter.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_040, TestSize.Level1)
+{
+    StandbyConfigManager::GetInstance()->strategyList_.emplace_back("RUNNING_LOCK");
+    listenerManager_->StopListener();
+    listenerManager_->UnInit();
+    listenerManager_->StartListener();
+    listenerManager_->Init();
+    StandbyConfigManager::GetInstance()->strategyList_.emplace_back("NETWORK");
+    listenerManager_->StopListener();
+    listenerManager_->UnInit();
+    listenerManager_->StartListener();
+    listenerManager_->Init();
+    EXPECT_FALSE(listenerManager_->listenerPluginMap_.empty());
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_041
+ * @tc.desc: test StartTransitNextState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_041, TestSize.Level1)
+{
+    standbyStateManager_->sleepStatePtr_->stateManager_.reset();
+    standbyStateManager_->sleepStatePtr_->TransitToPhaseInner(0, 0);
+    standbyStateManager_->sleepStatePtr_->StartTransitNextState(standbyStateManager_->sleepStatePtr_);
+    standbyStateManager_->sleepStatePtr_->EndEvalCurrentState(false);
+    standbyStateManager_->sleepStatePtr_->stateManager_ = standbyStateManager_;
+    standbyStateManager_->isEvalution_ = true;
+    standbyStateManager_->sleepStatePtr_->nextState_ = 0;
+    standbyStateManager_->sleepStatePtr_->StartTransitNextState(standbyStateManager_->sleepStatePtr_);
+    SleepForFC();
+    EXPECT_FALSE(standbyStateManager_->sleepStatePtr_ == nullptr);
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_042
+ * @tc.desc: test StopTimedTask.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_042, TestSize.Level1)
+{
+    standbyStateManager_->workingStatePtr_->timedTaskMap_.emplace("", -1);
+    standbyStateManager_->workingStatePtr_->StopTimedTask("");
+    standbyStateManager_->workingStatePtr_->StopTimedTask("test");
+    standbyStateManager_->workingStatePtr_->DestroyAllTimedTask();
+    SleepForFC();
+    EXPECT_TRUE(standbyStateManager_->workingStatePtr_->timedTaskMap_.empty());
+
+    standbyStateManager_->workingStatePtr_->stateManager_.reset();
+    standbyStateManager_->workingStatePtr_->EndState();
+    standbyStateManager_->workingStatePtr_->EndEvalCurrentState(false);
+    standbyStateManager_->workingStatePtr_->stateManager_ = standbyStateManager_;
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_043
+ * @tc.desc: test StopTimedTask.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_043, TestSize.Level1)
+{
+    standbyStateManager_->workingStatePtr_->timedTaskMap_.emplace("", -1);
+    standbyStateManager_->workingStatePtr_->StopTimedTask("");
+    standbyStateManager_->workingStatePtr_->StopTimedTask("test");
+    standbyStateManager_->workingStatePtr_->DestroyAllTimedTask();
+    SleepForFC();
+    EXPECT_TRUE(standbyStateManager_->workingStatePtr_->timedTaskMap_.empty());
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_044
+ * @tc.desc: test SleepState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_044, TestSize.Level1)
+{
+    std::string result {""};
+    standbyStateManager_->sleepStatePtr_->ShellDump({"-D", "--repeat"}, result);
+    standbyStateManager_->sleepStatePtr_->ShellDump({"-S", "--r"}, result);
+    standbyStateManager_->sleepStatePtr_->ShellDump({"-S", "--repeat"}, result);
+    standbyStateManager_->sleepStatePtr_->EndEvalCurrentState(false);
+    SleepForFC();
+    EXPECT_TRUE(standbyStateManager_->workingStatePtr_->timedTaskMap_.empty());
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

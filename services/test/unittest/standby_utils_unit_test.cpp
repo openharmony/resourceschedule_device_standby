@@ -50,7 +50,7 @@ void StandbyUtilsUnitTest::SetUpTestCase()
  * @tc.name: StandbyUtilsUnitTest_001
  * @tc.desc: test StandbyServiceLog.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_001, TestSize.Level1)
 {
@@ -68,7 +68,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_001, TestSize.Level1)
  * @tc.name: StandbyUtilsUnitTest_002
  * @tc.desc: test GetInt32FromJsonValue.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_002, TestSize.Level1)
 {
@@ -83,13 +83,14 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_002, TestSize.Level1)
     jsonValue = nlohmann::json::parse("{\"key\":\"1\"}", nullptr, false);
     ret = JsonUtils::GetInt32FromJsonValue(jsonValue, JSON_ERROR_KEY, value);
     EXPECT_FALSE(ret);
+    JsonUtils::GetInt32FromJsonValue(jsonValue, JSON_KEY, value);
 }
 
 /**
  * @tc.name: StandbyUtilsUnitTest_003
  * @tc.desc: test GetBoolFromJsonValue.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_003, TestSize.Level1)
 {
@@ -104,13 +105,14 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_003, TestSize.Level1)
     jsonValue = nlohmann::json::parse("{\"key\":\"true\"}", nullptr, false);
     ret = JsonUtils::GetBoolFromJsonValue(jsonValue, JSON_ERROR_KEY, value);
     EXPECT_FALSE(ret);
+    JsonUtils::GetBoolFromJsonValue(jsonValue, JSON_KEY, value);
 }
 
 /**
  * @tc.name: StandbyUtilsUnitTest_004
  * @tc.desc: test GetStringFromJsonValue.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_004, TestSize.Level1)
 {
@@ -131,7 +133,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_004, TestSize.Level1)
  * @tc.name: StandbyUtilsUnitTest_005
  * @tc.desc: test GetObjFromJsonValue.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_005, TestSize.Level1)
 {
@@ -152,7 +154,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_005, TestSize.Level1)
  * @tc.name: StandbyUtilsUnitTest_006
  * @tc.desc: test GetArrayFromJsonValue.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_006, TestSize.Level1)
 {
@@ -173,7 +175,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_006, TestSize.Level1)
  * @tc.name: StandbyUtilsUnitTest_007
  * @tc.desc: test GetStrArrFromJsonValue.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_007, TestSize.Level1)
 {
@@ -189,37 +191,42 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_007, TestSize.Level1)
     ret = JsonUtils::GetStrArrFromJsonValue(jsonValue, JSON_ERROR_KEY, value);
     EXPECT_FALSE(ret);
     jsonValue = nlohmann::json::parse("{\"key\":[1,2]}", nullptr, false);
+    JsonUtils::GetStrArrFromJsonValue(jsonValue, JSON_KEY, value);
 }
 
 /**
  * @tc.name: StandbyUtilsUnitTest_008
  * @tc.desc: test GetRealPath.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_008, TestSize.Level1)
 {
     std::string partialPath (PATH_MAX + 1, 'a');
     std::string fullPath;
     EXPECT_FALSE(JsonUtils::GetRealPath(partialPath, fullPath));
+    JsonUtils::CreateNodeFile("/data/service/el1/public/device_standby/allow_record");
+    JsonUtils::CreateNodeFile("/data/service/el1/public/device_standby/allow_record");
+    nlohmann::json jsonValue;
+    JsonUtils::DumpJsonValueToFile(jsonValue, "/data/service/el1/public/device_standby/record");
 }
 
 /**
  * @tc.name: StandbyUtilsUnitTest_009
  * @tc.desc: test ParseCondition.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_009, TestSize.Level1)
 {
-    EXPECT_EQ(StandbyConfigManager::GetInstance()->ParseCondition("test"), 0);
+    EXPECT_TRUE(StandbyConfigManager::GetInstance()->ParseCondition("test") == 0);
 }
 
 /**
  * @tc.name: StandbyUtilsUnitTest_010
  * @tc.desc: test DUMP.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_010, TestSize.Level1)
 {
@@ -239,7 +246,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_010, TestSize.Level1)
  * @tc.name: StandbyUtilsUnitTest_011
  * @tc.desc: test ParseTimeLimitedConfig.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_011, TestSize.Level1)
 {
@@ -257,7 +264,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_011, TestSize.Level1)
  * @tc.name: StandbyUtilsUnitTest_012
  * @tc.desc: test ParseCommonResCtrlConfig.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_012, TestSize.Level1)
 {
@@ -282,7 +289,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_012, TestSize.Level1)
  * @tc.name: StandbyUtilsUnitTest_013
  * @tc.desc: test ParseDefaultResCtrlConfig.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_013, TestSize.Level1)
 {
@@ -318,16 +325,28 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_013, TestSize.Level1)
  * @tc.name: StandbyUtilsUnitTest_014
  * @tc.desc: test ParseDeviceStanbyConfig.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_014, TestSize.Level1)
 {
     nlohmann::json devStandbyConfigRoot = nlohmann::json::parse("{}", nullptr, false);
     EXPECT_TRUE(StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(devStandbyConfigRoot));
-    std::string content = "\"halfhour_switch_setting\":[\"test\":0]";
+    std::string content = "{\"halfhour_switch_setting\":[\"test\":0]}";
     devStandbyConfigRoot = nlohmann::json::parse(content, nullptr, false);
     StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(devStandbyConfigRoot);
     StandbyConfigManager::GetInstance()->ParseHalfHourSwitchConfig(devStandbyConfigRoot);
+    content = "{\"halfhour_switch_setting\":[\"test\":true]}";
+    devStandbyConfigRoot = nlohmann::json::parse(content, nullptr, false);
+    StandbyConfigManager::GetInstance()->ParseHalfHourSwitchConfig(devStandbyConfigRoot);
+    content = "{\"standby\":[\"test\":0]}";
+    devStandbyConfigRoot = nlohmann::json::parse(content, nullptr, false);
+    StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(devStandbyConfigRoot);
+    content = "{\"detect_list\":[\"test\":0]}";
+    devStandbyConfigRoot = nlohmann::json::parse(content, nullptr, false);
+    StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(devStandbyConfigRoot);
+    content = "{\"maintenance_list\":[\"test\":[1, 2, 3]]}";
+    devStandbyConfigRoot = nlohmann::json::parse(content, nullptr, false);
+    StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(devStandbyConfigRoot);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

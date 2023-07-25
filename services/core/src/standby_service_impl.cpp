@@ -147,14 +147,14 @@ ErrCode StandbyServiceImpl::RegisterAppStateObserver()
     }
     appStateObserver_ = new (std::nothrow) AppStateObserver(handler_);
     if (!appStateObserver_) {
-        STANDBYSERVICE_LOGE("malloc appStateObserver_ failed");
+        STANDBYSERVICE_LOGE("malloc appStateObserver failed");
         return ERR_STANDBY_OBSERVER_INIT_FAILED;
     }
-    if (AppMgrHelper::GetInstance()->SubscribeObserver(appStateObserver_) != ERR_OK) {
-        STANDBYSERVICE_LOGE("subscribe appStateObserver_ failed");
+    if (!AppMgrHelper::GetInstance()->SubscribeObserver(appStateObserver_)) {
+        STANDBYSERVICE_LOGE("subscribe appStateObserver failed");
         return ERR_STANDBY_OBSERVER_INIT_FAILED;
     }
-    return ERR_STANDBY_OBSERVER_ALREADY_EXIST;
+    return ERR_OK;
 }
 
 ErrCode StandbyServiceImpl::UnregisterAppStateObserver()

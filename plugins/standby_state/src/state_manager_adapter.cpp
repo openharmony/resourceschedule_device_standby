@@ -15,10 +15,6 @@
 
 #include "state_manager_adapter.h"
 
-#include <vector>
-#include <string>
-#include <memory>
-
 #include "common_event_support.h"
 #include "standby_service_impl.h"
 #include "standby_state_subscriber.h"
@@ -33,7 +29,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 bool StateManagerAdapter::Init()
 {
     auto StandbyServiceImpl = StandbyServiceImpl::GetInstance();

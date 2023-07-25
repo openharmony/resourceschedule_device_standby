@@ -16,7 +16,6 @@
 #include "standby_service_client.h"
 
 #include <message_parcel.h>
-#include <cstring>
 
 #include "iservice_registry.h"
 #include "system_ability_definition.h"

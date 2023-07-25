@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 ErrCode WorkingState::BeginState()
 {
     curPhase_ = 0;

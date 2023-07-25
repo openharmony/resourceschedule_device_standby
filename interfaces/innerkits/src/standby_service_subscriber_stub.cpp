@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 StandbyServiceSubscriberStub::StandbyServiceSubscriberStub() {}
 StandbyServiceSubscriberStub::~StandbyServiceSubscriberStub() {}
 

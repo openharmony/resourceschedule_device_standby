@@ -23,6 +23,8 @@
 #include "bundle_manager_helper.h"
 #include "app_mgr_helper.h"
 #include "ability_manager_helper.h"
+#include "background_task_helper.h"
+#include "ability_manager_helper.h"
 
 using namespace testing::ext;
 using namespace testing::mt;
@@ -33,7 +35,7 @@ namespace {
     const std::string JSON_KEY = "key";
     const std::string JSON_ERROR_KEY = "error_key";
 }
-class StandbyUtilsUnitTest : public testing::Test {
+class StandbyHelperUnitTest : public testing::Test {
 public:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -42,28 +44,36 @@ public:
 };
 
 /**
- * @tc.name: StandbyUtilsUnitTest_001
+ * @tc.name: StandbyHelperUnitTest_001
  * @tc.desc: test AppMgrHelper.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
-HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_001, TestSize.Level1)
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_001, TestSize.Level1)
 {
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
+    bool isRunning {false};
+    sptr<AppExecFwk::IApplicationStateObserver> observer {nullptr};
     AppMgrHelper::GetInstance()->GetAllRunningProcesses(allAppProcessInfos);
+    AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName("", isRunning);
+    AppMgrHelper::GetInstance()->SubscribeObserver(observer);
+    AppMgrHelper::GetInstance()->UnsubscribeObserver(observer);
     AppMgrHelper::GetInstance()->Connect();
     AppMgrHelper::GetInstance()->Connect();
     AppMgrHelper::GetInstance()->GetAllRunningProcesses(allAppProcessInfos);
+    AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName("", isRunning);
+    AppMgrHelper::GetInstance()->SubscribeObserver(observer);
+    AppMgrHelper::GetInstance()->UnsubscribeObserver(observer);
     EXPECT_TRUE(allAppProcessInfos.empty());
 }
 
 /**
- * @tc.name: StandbyUtilsUnitTest_002
+ * @tc.name: StandbyHelperUnitTest_002
  * @tc.desc: test BundleManagerHelper.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
-HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_002, TestSize.Level1)
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_002, TestSize.Level1)
 {
     int32_t uid {0};
     BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
@@ -71,6 +81,54 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_002, TestSize.Level1)
     BundleManagerHelper::GetInstance()->GetApplicationInfo("test",
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, 0, applicationInfo);
     EXPECT_FALSE(applicationInfo.uid > 0);
+}
+
+/**
+ * @tc.name: StandbyHelperUnitTest_003
+ * @tc.desc: test BackgroundTaskHelper.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_003, TestSize.Level1)
+{
+    std::vector<std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>> list;
+    BackgroundTaskHelper::GetInstance()->GetContinuousTaskApps(list);
+    std::vector<std::shared_ptr<OHOS::BackgroundTaskMgr::TransientTaskAppInfo>> appInfoList;
+    BackgroundTaskHelper::GetInstance()->GetTransientTaskApps(appInfoList);
+    EXPECT_TRUE(list.empty());
+}
+
+/**
+ * @tc.name: StandbyHelperUnitTest_004
+ * @tc.desc: test AbilityManagerHelper.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_004, TestSize.Level1)
+{
+    std::list<SystemProcessInfo> systemProcessInfos {};
+    AbilityManagerHelper::GetInstance()->GetRunningSystemProcess(systemProcessInfos);
+    EXPECT_TRUE(systemProcessInfos.empty());
+}
+
+/**
+ * @tc.name: StandbyHelperUnitTest_005
+ * @tc.desc: test BundleManagerHelper.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_005, TestSize.Level1)
+{
+    BundleManagerHelper::GetInstance()->bundleMgr_  = nullptr;
+    AppExecFwk::ApplicationInfo appInfo;
+    BundleManagerHelper::GetInstance()->GetApplicationInfo("", AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
+        0, appInfo);
+
+    std::vector<AppExecFwk::ApplicationInfo> appInfos {};
+    BundleManagerHelper::GetInstance()->GetApplicationInfos(AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
+        0, appInfos);
+
+    EXPECT_TRUE(appInfos.empty());
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

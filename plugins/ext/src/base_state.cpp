@@ -15,7 +15,6 @@
 
 #include "base_state.h"
 
-#include <functional>
 #include "time_service_client.h"
 
 #include "standby_messsage.h"
@@ -31,7 +30,6 @@
 using namespace OHOS::MiscServices;
 namespace OHOS {
 namespace DevStandbyMgr {
-
 std::shared_ptr<PowerMgr::RunningLock> BaseState::standbyRunningLock_ = nullptr;
 bool BaseState::runningLockStatus_ = false;
 

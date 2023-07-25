@@ -46,6 +46,8 @@
 #include "standby_service_subscriber_stub.h"
 #include "bundle_manager_helper.h"
 #include "standby_config_manager.h"
+#include "app_state_observer.h"
+#include "app_mgr_constants.h"
 using namespace testing::ext;
 using namespace testing::mt;
 
@@ -54,14 +56,17 @@ extern void MockSubscribeCommonEvent(bool mockRet);
 extern void MockSubscribeCommonEvent(bool mockRet);
 extern void MockGetAllRunningProcesses(bool mockRet);
 extern void MockGetRunningSystemProcess(bool mockRet);
+extern void MockSubscribeObserver(bool mockRet);
 extern void MockGetTokenTypeFlag(bool mockRet);
 extern void MockStartTimer(bool mockRet);
 
 namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
-    const uint32_t ALL_DEPENDS_READY = 31;
+    const uint32_t ALL_DEPENDS_READY = 127;
     constexpr int32_t DEFAULT_UID = 0;
+    constexpr int32_t SAMPLE_APP_UID = 10001;
+    const std::string SAMPLE_BUNDLE_NAME = "name";
     const std::string DEFAULT_BUNDLENAME = "test";
     const std::string DEFAULT_KEY = "0_test";
     const vector<std::string> COMMON_EVENT_LIST = {
@@ -128,7 +133,7 @@ void StandbyServiceUnitTest::TearDownTestCase()
  * @tc.name: StandbyServiceUnitTest_001
  * @tc.desc: test OnStart of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_001, TestSize.Level1)
 {
@@ -144,7 +149,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_001, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_002
  * @tc.desc: test OnAddSystemAbility of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_002, TestSize.Level1)
 {
@@ -153,11 +158,15 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_002, TestSize.Level1)
     StandbyService::GetInstance()->OnAddSystemAbility(ABILITY_MGR_SERVICE_ID, "");
     StandbyService::GetInstance()->OnAddSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
     StandbyService::GetInstance()->OnAddSystemAbility(POWER_MANAGER_SERVICE_ID, "");
+    StandbyService::GetInstance()->OnAddSystemAbility(APP_MGR_SERVICE_ID, "");
+    StandbyService::GetInstance()->OnAddSystemAbility(MULTIMODAL_INPUT_SERVICE_ID, "");
     StandbyService::GetInstance()->OnAddSystemAbility(POWER_MANAGER_SERVICE_ID + 1, "");
     StandbyService::GetInstance()->OnRemoveSystemAbility(POWER_MANAGER_SERVICE_ID + 1, "");
     SleepForFC();
     StandbyService::GetInstance()->OnAddSystemAbility(POWER_MANAGER_SERVICE_ID + 1, "");
     StandbyService::GetInstance()->OnRemoveSystemAbility(COMMON_EVENT_SERVICE_ID, "");
+    StandbyService::GetInstance()->OnRemoveSystemAbility(APP_MGR_SERVICE_ID, "");
+    StandbyService::GetInstance()->OnRemoveSystemAbility(MULTIMODAL_INPUT_SERVICE_ID, "");
     StandbyService::GetInstance()->OnRemoveSystemAbility(TIME_SERVICE_ID, "");
     StandbyService::GetInstance()->OnRemoveSystemAbility(ABILITY_MGR_SERVICE_ID, "");
     StandbyService::GetInstance()->OnRemoveSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
@@ -168,6 +177,8 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_002, TestSize.Level1)
     StandbyService::GetInstance()->OnAddSystemAbility(ABILITY_MGR_SERVICE_ID, "");
     StandbyService::GetInstance()->OnAddSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
     StandbyService::GetInstance()->OnAddSystemAbility(POWER_MANAGER_SERVICE_ID, "");
+    StandbyService::GetInstance()->OnAddSystemAbility(APP_MGR_SERVICE_ID, "");
+    StandbyService::GetInstance()->OnAddSystemAbility(MULTIMODAL_INPUT_SERVICE_ID, "");
     EXPECT_EQ(StandbyService::GetInstance()->dependsReady_, ALL_DEPENDS_READY);
     StandbyServiceImpl::GetInstance()->InitReadyState();
 }
@@ -176,7 +187,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_002, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_003
  * @tc.desc: test state not start of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level1)
 {
@@ -193,6 +204,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level1)
     EXPECT_NE(StandbyService::GetInstance()->GetAllowList(AllowType::NETWORK, allowInfoList, 0), ERR_OK);
     bool isStandby {false};
     EXPECT_NE(StandbyService::GetInstance()->IsDeviceInStandby(isStandby), ERR_OK);
+    StandbyService::GetInstance()->ReportWorkSchedulerStatus(true, -1, "");
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());
     StandbyService::GetInstance()->SubscribeStandbyCallback(subscriber);
@@ -201,17 +213,24 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level1)
     StandbyService::GetInstance()->UnapplyAllowResource(resourceRequest);
     EXPECT_EQ(StandbyService::GetInstance()->GetAllowList(AllowType::NETWORK, allowInfoList, 0), ERR_OK);
     EXPECT_EQ(StandbyService::GetInstance()->IsDeviceInStandby(isStandby), ERR_OK);
+    StandbyService::GetInstance()->ReportWorkSchedulerStatus(true, -1, "");
 }
 
 /**
  * @tc.name: StandbyServiceUnitTest_004
  * @tc.desc: test unready not start of StandbyServiceImpl.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_004, TestSize.Level1)
 {
     StandbyServiceImpl::GetInstance()->isServiceReady_ = false;
+    StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
+    SleepForFC();
+    MockStartTimer(false);
+    StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
+    SleepForFC();
+    MockStartTimer(true);
     StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(DEFAULT_UID, DEFAULT_BUNDLENAME, true);
     sptr<ResourceRequest> resourceRequest = new (std::nothrow) ResourceRequest();
     StandbyServiceImpl::GetInstance()->ApplyAllowResource(resourceRequest);
@@ -223,18 +242,22 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_004, TestSize.Level1)
     std::vector<std::string> argsInStr {};
     std::string result;
     StandbyServiceImpl::GetInstance()->ShellDump(argsInStr, result);
+    StandbyServiceImpl::GetInstance()->OnProcessStatusChanged(-1, -1, "", true);
+    StandbyServiceImpl::GetInstance()->ReportWorkSchedulerStatus(true, -1, "");
     StandbyServiceImpl::GetInstance()->isServiceReady_ = true;
+    StandbyServiceImpl::GetInstance()->OnProcessStatusChanged(-1, -1, "", true);
+    StandbyServiceImpl::GetInstance()->ReportWorkSchedulerStatus(true, -1, "");
 }
 
 /**
  * @tc.name: StandbyServiceUnitTest_005
  * @tc.desc: test shelldump not start of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_005, TestSize.Level1)
 {
-    std::vector<std::u16string> args{};
+    std::vector<std::u16string> args {};
     std::vector<std::string> argsInStr {};
     std::string result;
     StandbyServiceImpl::GetInstance()->ShellDump(argsInStr, result);
@@ -242,6 +265,8 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_005, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-h"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-v"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--config"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--conf"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-E"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-E", "0", "false"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-E", "0", "true"}, result);
@@ -259,7 +284,19 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_005, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-S", "--repeat"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-S", "--motion"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-S", "--default"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-O"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-T"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-T", "detect_motion", "on"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-T", "detect_motion", "off"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-T", "debug", "on"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-C", "dark_timeout", "60"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-T", "detect_motion", "on"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-T", "detect_motion", "off"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-T", "debug", "off"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-C"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-C", "dark_timeout", "60"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-A", "--get", "127", "false", "true"}, result);
 
     auto allowRecord = std::make_shared<AllowRecord>(0, 0, "name", AllowType::NETWORK);
     allowRecord->allowTimeList_.emplace_back(AllowTime{0, INT64_MAX, "reason"});
@@ -273,7 +310,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_005, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_006
  * @tc.desc: test init of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_006, TestSize.Level1)
 {
@@ -285,7 +322,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_006, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_007
  * @tc.desc: test init of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_007, TestSize.Level1)
 {
@@ -297,7 +334,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_007, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_008
  * @tc.desc: test ParsePersistentData of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_008, TestSize.Level1)
 {
@@ -315,21 +352,32 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_008, TestSize.Level1)
     allowRecord->allowTimeList_.clear();
     StandbyServiceImpl::GetInstance()->DumpPersistantData();
     StandbyServiceImpl::GetInstance()->ParsePersistentData();
-    EXPECT_EQ(StandbyServiceImpl::GetInstance()->allowInfoMap_.size(), 0);
+    EXPECT_TRUE(StandbyServiceImpl::GetInstance()->allowInfoMap_.empty());
     MockGetAllRunningProcesses(false);
     StandbyServiceImpl::GetInstance()->ParsePersistentData();
     MockGetAllRunningProcesses(true);
+
+    auto emptyRecord = std::make_shared<AllowRecord>(0, 0, "name", 0);
+    emptyRecord->allowTimeList_.emplace_back(AllowTime{0, 0, "reason"});
+    StandbyServiceImpl::GetInstance()->allowInfoMap_.emplace(DEFAULT_KEY, emptyRecord);
+    StandbyServiceImpl::GetInstance()->UnapplyAllowResInner(0, "test", 0, true);
+    emptyRecord->allowTimeList_.emplace_back(AllowTime{1, 0, "reason"});
+    emptyRecord->allowTimeList_.emplace_back(AllowTime{2, 0, "reason"});
+    StandbyServiceImpl::GetInstance()->UnapplyAllowResInner(0, "test", AllowType::NETWORK, true);
 }
 
 /**
  * @tc.name: StandbyServiceUnitTest_009
  * @tc.desc: test ResetTimeObserver of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_009, TestSize.Level1)
 {
     StandbyServiceImpl::GetInstance()->ResetTimeObserver();
+    MockStartTimer(false);
+    StandbyServiceImpl::GetInstance()->ResetTimeObserver();
+    MockStartTimer(true);
     EXPECT_NE(StandbyServiceImpl::GetInstance()->dayNightSwitchTimerId_, 0);
 }
 
@@ -337,7 +385,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_009, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_010
  * @tc.desc: test UnInit of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_010, TestSize.Level1)
 {
@@ -355,7 +403,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_010, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_011
  * @tc.desc: test RemoveAppAllowRecord of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_011, TestSize.Level1)
 {
@@ -367,7 +415,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_011, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_012
  * @tc.desc: test CheckCallerPermission of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_012, TestSize.Level1)
 {
@@ -377,13 +425,16 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_012, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API);
     StandbyServiceImpl::GetInstance()->CheckCallerPermission(ReasonCodeEnum::REASON_APP_API);
     MockGetTokenTypeFlag(true);
+    Security::AccessToken::AccessTokenID tokenId {};
+    StandbyServiceImpl::GetInstance()->IsSystemAppWithPermission(-1, tokenId, ReasonCodeEnum::REASON_APP_API);
+    StandbyServiceImpl::GetInstance()->IsSystemAppWithPermission(-1, tokenId, ReasonCodeEnum::REASON_NATIVE_API);
 }
 
 /**
  * @tc.name: StandbyServiceUnitTest_013
  * @tc.desc: test ApplyAllowResource of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_013, TestSize.Level1)
 {
@@ -398,7 +449,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_013, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_014
  * @tc.desc: test UpdateRecord of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, UpdateRecord_014, TestSize.Level1)
 {
@@ -414,7 +465,7 @@ HWTEST_F(StandbyServiceUnitTest, UpdateRecord_014, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_015
  * @tc.desc: test UpdateRecord of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_015, TestSize.Level1)
 {
@@ -430,7 +481,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_015, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_016
  * @tc.desc: test DayNightSwitchCallback of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_016, TestSize.Level1)
 {
@@ -442,6 +493,10 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_016, TestSize.Level1)
     SleepForFC();
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     SleepForFC();
+    MockStartTimer(false);
+    StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
+    SleepForFC();
+    MockStartTimer(true);
     StandbyServiceImpl::GetInstance()->UnregisterTimeObserver();
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
@@ -457,7 +512,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_016, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_017
  * @tc.desc: test DayNightSwitchCallback of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level1)
 {
@@ -470,9 +525,13 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level1)
         ReasonCodeEnum::REASON_APP_API);
     StandbyServiceImpl::GetInstance()->GetAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
         ReasonCodeEnum::REASON_NATIVE_API);
+    std::string result {""};
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-A", "--get", "127", "true"}, result);
     StandbyServiceImpl::GetInstance()->GetAllowListInner(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
         ReasonCodeEnum::REASON_APP_API);
     StandbyServiceImpl::GetInstance()->GetAllowListInner(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+        ReasonCodeEnum::REASON_NATIVE_API);
+    StandbyServiceImpl::GetInstance()->GetAllowListInner(0, allowInfoList,
         ReasonCodeEnum::REASON_NATIVE_API);
     StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
         ReasonCodeEnum::REASON_APP_API);
@@ -488,6 +547,17 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level1)
     SleepForFC();
     StandbyServiceImpl::GetInstance()->UnapplyAllowResInner(DEFAULT_UID, DEFAULT_BUNDLENAME, 1, false);
     StandbyServiceImpl::GetInstance()->UnapplyAllowResInner(DEFAULT_UID, DEFAULT_BUNDLENAME, 1, true);
+    allowRecord = std::make_shared<AllowRecord>(0, 0, "name", MAX_ALLOW_TYPE_NUMBER);
+    allowRecord->allowTimeList_.emplace_back(AllowTime{0, INT64_MAX, "reason"});
+    allowRecord->allowTimeList_.emplace_back(AllowTime{1, INT64_MAX, "reason"});
+    StandbyServiceImpl::GetInstance()->allowInfoMap_.emplace(DEFAULT_KEY, allowRecord);
+    StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+        ReasonCodeEnum::REASON_NATIVE_API);
+    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+        true, true);
+    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+        false, true);
+    StandbyServiceImpl::GetInstance()->allowInfoMap_.clear();
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->allowInfoMap_.size(), 0);
 }
 
@@ -495,7 +565,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_018
  * @tc.desc: test AddSubscriber of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_018, TestSize.Level1)
 {
@@ -540,7 +610,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_018, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_019
  * @tc.desc: test AddSubscriber of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_019, TestSize.Level1)
 {
@@ -559,7 +629,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_019, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_020
  * @tc.desc: test TimeProvider of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_020, TestSize.Level1)
 {
@@ -578,7 +648,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_020, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_021
  * @tc.desc: test TimedTask of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_021, TestSize.Level1)
 {
@@ -594,7 +664,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_021, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_022
  * @tc.desc: test observer of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_022, TestSize.Level1)
 {
@@ -630,7 +700,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_022, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_023
  * @tc.desc: test GetPidAndProcName of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_023, TestSize.Level1)
 {
@@ -649,7 +719,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_023, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_024
  * @tc.desc: test multithread OnReceiveEvent of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_024, TestSize.Level1, 20)
 {
@@ -675,7 +745,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_024, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_025
  * @tc.desc: test multithread init of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_025, TestSize.Level1, 20)
 {
@@ -688,7 +758,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_025, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_026
  * @tc.desc: test multithread uninit of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_026, TestSize.Level1, 20)
 {
@@ -701,11 +771,12 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_026, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_027
  * @tc.desc: test multithread DayNightSwitchCallback of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_027, TestSize.Level1, 20)
 {
     StandbyServiceImpl::GetInstance()->InitReadyState();
+    StandbyServiceUnitTest::SleepForFC();
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     StandbyServiceUnitTest::SleepForFC();
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());
@@ -715,7 +786,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_027, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_028
  * @tc.desc: test multithread ApplyAllowResource of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_028, TestSize.Level1, 20)
 {
@@ -724,6 +795,12 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_028, TestSize.Level1, 2
     sptr<ResourceRequest> validResRequest = new (std::nothrow) ResourceRequest(AllowType::NETWORK,
         0, "test_process", 100, "test", 1);
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->ApplyAllowResource(validResRequest), ERR_OK);
+    sptr<ResourceRequest> invalidResRequest = new (std::nothrow) ResourceRequest(AllowType::NETWORK,
+        -1, "test_process", 100, "test", 1);
+    StandbyServiceImpl::GetInstance()->ApplyAllowResource(invalidResRequest);
+    sptr<ResourceRequest> negResRequest = new (std::nothrow) ResourceRequest(AllowType::NETWORK,
+        0, "test_process", -1, "test", 1);
+    StandbyServiceImpl::GetInstance()->ApplyAllowResource(negResRequest);
     StandbyServiceUnitTest::SleepForFC();
 }
 
@@ -731,7 +808,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_028, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_029
  * @tc.desc: test multithread UnapplyAllowResource of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_029, TestSize.Level1, 20)
 {
@@ -740,13 +817,16 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_029, TestSize.Level1, 2
     sptr<ResourceRequest> validResRequest = new (std::nothrow) ResourceRequest(AllowType::NETWORK,
         0, "test_process", 100, "test", 1);
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->UnapplyAllowResource(validResRequest), ERR_OK);
+    sptr<ResourceRequest> invalidResRequest = new (std::nothrow) ResourceRequest(AllowType::NETWORK,
+        -1, "test_process", 100, "test", 1);
+    StandbyServiceImpl::GetInstance()->UnapplyAllowResource(invalidResRequest);
 }
 
 /**
  * @tc.name: StandbyServiceUnitTest_030
  * @tc.desc: test multithread GetAllowList of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_030, TestSize.Level1, 20)
 {
@@ -759,7 +839,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_030, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_031
  * @tc.desc: test multithread IsDeviceInStandby of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_031, TestSize.Level1, 20)
 {
@@ -771,7 +851,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_031, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_032
  * @tc.desc: test multithread ShellDump of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_032, TestSize.Level1, 20)
 {
@@ -785,7 +865,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_032, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_033
  * @tc.desc: test RegisterCommEventObserver of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_033, TestSize.Level1, 20)
 {
@@ -803,7 +883,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_033, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_034
  * @tc.desc: test RegisterCommEventObserver of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_034, TestSize.Level1, 20)
 {
@@ -815,6 +895,10 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_034, TestSize.Level1, 2
     StandbyServiceImpl::GetInstance()->dayNightSwitchTimerId_ = 0;
     MockSubscribeCommonEvent(false);
     StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
+    MockStartTimer(false);
+    StandbyServiceImpl::GetInstance()->dayNightSwitchTimerId_ = 0;
+    StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
+    MockStartTimer(true);
     MockSubscribeCommonEvent(true);
 }
 
@@ -822,7 +906,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_034, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_035
  * @tc.desc: test AddSubscriber of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_035, TestSize.Level1, 20)
 {
@@ -845,7 +929,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_035, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_036
  * @tc.desc: test OnRemoteRequestInner of StandbyStateSubscriber.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_036, TestSize.Level1, 20)
 {
@@ -867,7 +951,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_036, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_037
  * @tc.desc: test OnRemoteRequestInner of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_037, TestSize.Level1, 20)
 {
@@ -875,10 +959,16 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_037, TestSize.Level1, 2
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
     data.WriteInterfaceToken(IStandbyService::GetDescriptor());
+    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::SUBSCRIBE_STANDBY_CALLBACK, data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::UNSUBSCRIBE_STANDBY_CALLBACK,
+        data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::APPLY_ALLOW_RESOURCE, data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::UNAPPLY_ALLOW_RESOURCE, data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::GET_ALLOW_LIST, data, reply, option);
+    StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::IS_DEVICE_IN_STANDBY, data, reply, option);
     StandbyService::GetInstance()->OnRemoteRequest(
-        (static_cast<uint32_t>(IStandbyInterfaceCode::SUBSCRIBE_STANDBY_CALLBACK)), data, reply, option);
-    StandbyService::GetInstance()->OnRemoteRequest(
-        (static_cast<uint32_t>(IStandbyInterfaceCode::UNSUBSCRIBE_STANDBY_CALLBACK)),
+        StandbyServiceStub::REPORT_WORK_SCHEDULER_STATUS, data, reply, option);
+    auto ret = StandbyService::GetInstance()->OnRemoteRequest(StandbyServiceStub::REPORT_WORK_SCHEDULER_STATUS + 1,
         data, reply, option);
     StandbyService::GetInstance()->OnRemoteRequest(
         (static_cast<uint32_t>(IStandbyInterfaceCode::APPLY_ALLOW_RESOURCE)), data, reply, option);
@@ -888,7 +978,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_037, TestSize.Level1, 2
         (static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST)), data, reply, option);
     StandbyService::GetInstance()->OnRemoteRequest(
         (static_cast<uint32_t>(IStandbyInterfaceCode::IS_DEVICE_IN_STANDBY)), data, reply, option);
-    auto ret = StandbyService::GetInstance()->OnRemoteRequest(
+    ret = StandbyService::GetInstance()->OnRemoteRequest(
         (static_cast<uint32_t>(IStandbyInterfaceCode::IS_DEVICE_IN_STANDBY)) + 1, data, reply, option);
     EXPECT_NE(ret, ERR_OK);
 }
@@ -897,7 +987,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_037, TestSize.Level1, 2
  * @tc.name: StandbyServiceUnitTest_038
  * @tc.desc: test TimedTask.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_038, TestSize.Level1)
 {
@@ -928,7 +1018,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_038, TestSize.Level1)
  * @tc.name: StandbyServiceUnitTest_039
  * @tc.desc: test CheckNativePermission of StandbyService.
  * @tc.type: FUNC
- * @tc.require: AR000HQ6GA
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_039, TestSize.Level1)
 {
@@ -937,6 +1027,82 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_039, TestSize.Level1)
     MockGetTokenTypeFlag(false);
     StandbyServiceImpl::GetInstance()->CheckNativePermission(tokenId);
     MockGetTokenTypeFlag(true);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_040
+ * @tc.desc: test OnRemoteRequestInner of StandbyService.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_040, TestSize.Level1)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    data.WriteInterfaceToken(IStandbyService::GetDescriptor());
+    StandbyService::GetInstance()->HandleApplyAllowResource(data, reply);
+    EXPECT_NE(StandbyService::GetInstance()->HandleUnapplyAllowResource(data, reply), ERR_OK);
+
+    MessageParcel workSchedulerData;
+    workSchedulerData.WriteBool(false);
+    workSchedulerData.WriteInt32(-1);
+    workSchedulerData.WriteString("");
+    StandbyService::GetInstance()->HandleReportWorkSchedulerStatus(workSchedulerData, reply);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_041
+ * @tc.desc: test RegisterAppStateObserver of StandbyServiceImpl.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_041, TestSize.Level1)
+{
+    StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();
+    StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();
+    EXPECT_EQ(StandbyServiceImpl::GetInstance()->appStateObserver_, nullptr);
+    MockSubscribeObserver(true);
+    StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
+    StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
+    StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();
+    MockSubscribeObserver(false);
+    StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
+    StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
+    StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_042
+ * @tc.desc: test AppStateObserver.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_042, TestSize.Level1)
+{
+    auto appStateObserver = std::make_shared<AppStateObserver>(StandbyServiceImpl::GetInstance()->handler_);
+    AppExecFwk::ProcessData processData {};
+    appStateObserver->OnProcessDied(processData);
+    processData.bundleName = "com.ohos.systemui";
+    appStateObserver->OnProcessDied(processData);
+
+    AppExecFwk::AppStateData appStateData {};
+    appStateData.uid = -1;
+    appStateObserver->OnApplicationStateChanged(appStateData);
+    appStateData.uid = SAMPLE_APP_UID;
+    appStateObserver->OnApplicationStateChanged(appStateData);
+
+    appStateData.bundleName = SAMPLE_BUNDLE_NAME;
+    appStateObserver->OnApplicationStateChanged(appStateData);
+
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED);
+    appStateObserver->OnApplicationStateChanged(appStateData);
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END);
+    appStateObserver->OnApplicationStateChanged(appStateData);
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
+    appStateObserver->OnApplicationStateChanged(appStateData);
+    SleepForFC();
+    EXPECT_TRUE(StandbyServiceImpl::GetInstance()->allowInfoMap_.empty());
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

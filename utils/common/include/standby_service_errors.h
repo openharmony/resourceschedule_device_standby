@@ -16,9 +16,9 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_INCLUDE_STANDBY_SERVICE_INNER_ERRORS_H
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_INCLUDE_STANDBY_SERVICE_INNER_ERRORS_H
 
-#include "errors.h"
 #include <map>
 #include <string>
+#include "errors.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -137,7 +137,6 @@ static std::map<int32_t, std::string> paramErrCodeMsgMap = {
 
     {ERR_REASON_INVALID_TYPE_ERR, "The reason cannot be null and its type must be string."},
 };
-
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_INCLUDE_STANDBY_SERVICE_INNER_ERRORS_H

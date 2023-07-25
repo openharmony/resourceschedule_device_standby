@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 struct AllowTime {
     AllowTime() = default;
     AllowTime(uint32_t allowTypeIndex, int64_t endTime, const std::string& reason)

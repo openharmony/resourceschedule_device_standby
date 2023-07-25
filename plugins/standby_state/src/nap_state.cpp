@@ -15,8 +15,6 @@
 
 #include "nap_state.h"
 
-#include <cmath>
-
 #include "itimer_info.h"
 #include "time_service_client.h"
 

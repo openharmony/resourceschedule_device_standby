@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-
 ErrCode MaintenanceState::BeginState()
 {
     auto stateManagerPtr = stateManager_.lock();

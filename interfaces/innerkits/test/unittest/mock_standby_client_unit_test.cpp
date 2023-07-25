@@ -29,7 +29,6 @@ extern void MockGetSystemAbilityManager(bool mockRet);
 extern void MockSendRequest(bool mockRet);
 namespace OHOS {
 namespace DevStandbyMgr {
-
 class StandbyServiceClientUnitTest : public testing::Test {
 public:
     static void SetUpTestCase() {}
@@ -42,7 +41,7 @@ public:
  * @tc.name: MockStandbyServiceClientUnitTest_001
  * @tc.desc: test MockFunction.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, TestSize.Level1)
 {
@@ -59,15 +58,17 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, Tes
     EXPECT_NE(StandbyServiceClient::GetInstance().GetAllowList(0, allowInfoList, 0), ERR_OK);
     bool isStandby {false};
     EXPECT_NE(StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby), ERR_OK);
+    StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(false, -1, "");
     MockGetSystemAbilityManager(true);
     StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby);
+    StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(true, -1, "");
 }
 
 /**
  * @tc.name: MockStandbyServiceClientUnitTest_002
  * @tc.desc: test StandbyServiceProxy.
  * @tc.type: FUNC
- * @tc.require: AR000HQ76V
+ * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_002, TestSize.Level1)
 {
@@ -84,6 +85,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_002, Tes
     EXPECT_NE(proxy->GetAllowList(0, allowInfoList, 0), ERR_OK);
     bool isStandby {false};
     proxy->IsDeviceInStandby(isStandby);
+    proxy->ReportWorkSchedulerStatus(false, -1, "");
 
     MockSendRequest(false);
     EXPECT_NE(proxy->SubscribeStandbyCallback(subscriber), ERR_OK);
@@ -92,6 +94,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_002, Tes
     EXPECT_NE(proxy->UnapplyAllowResource(resouarceRequest), ERR_OK);
     EXPECT_NE(proxy->GetAllowList(0, allowInfoList, 0), ERR_OK);
     proxy->IsDeviceInStandby(isStandby);
+    proxy->ReportWorkSchedulerStatus(false, -1, "");
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

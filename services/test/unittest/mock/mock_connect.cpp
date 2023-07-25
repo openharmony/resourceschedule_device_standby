@@ -12,18 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_STRATEGY_INCLUDE_TIMER_STRATEGY_H
-#define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_STRATEGY_INCLUDE_TIMER_STRATEGY_H
 
-#include "ibase_strategy.h"
+#include "timed_task.h"
+#include "ability_manager_helper.h"
+#include "app_mgr_helper.h"
+#include "bundle_manager_helper.h"
+#include "common_event_observer.h"
+#include "background_task_helper.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
-class TimerStrategy : public IBaseStrategy {
-    void HandleEvent(const StandbyMessage& message) override;
-    ErrCode OnCreated() override;
-    ErrCode OnDestroy() override;
-};
+bool AppMgrHelper::Connect()
+{
+    return false;
+}
+
+bool BundleManagerHelper::Connect()
+{
+    bundleMgr_ = nullptr;
+    return false;
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_STRATEGY_INCLUDE_TIMER_STRATEGY_H
