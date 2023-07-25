@@ -17,6 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_SERVICES_INCLUDE_TIME_PROVIDER_H
 
 #include <ctime>
+#include <cstdint>
 
 namespace OHOS {
 namespace DevStandbyMgr {

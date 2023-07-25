@@ -172,7 +172,7 @@ ohos_unittest("mock_standby_helper_unit_test") {
 
   sources = [
     "mock/mock_connect.cpp",
-    "mock_standby_helper_unit_test.cpp",
+    "mock/mock_standby_helper_unit_test.cpp",
   ]
 
   deps = [
