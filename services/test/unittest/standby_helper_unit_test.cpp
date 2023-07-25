@@ -35,7 +35,7 @@ namespace {
     const std::string JSON_KEY = "key";
     const std::string JSON_ERROR_KEY = "error_key";
 }
-class StandbHelperUnitTest : public testing::Test {
+class StandbyHelperUnitTest : public testing::Test {
 public:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -44,12 +44,12 @@ public:
 };
 
 /**
- * @tc.name: StandbHelperUnitTest_001
+ * @tc.name: StandbyHelperUnitTest_001
  * @tc.desc: test AppMgrHelper.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_001, TestSize.Level1)
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_001, TestSize.Level1)
 {
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
     bool isRunning {false};
@@ -68,12 +68,12 @@ HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: StandbHelperUnitTest_002
+ * @tc.name: StandbyHelperUnitTest_002
  * @tc.desc: test BundleManagerHelper.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_002, TestSize.Level1)
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_002, TestSize.Level1)
 {
     int32_t uid {0};
     BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
@@ -84,12 +84,12 @@ HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_002, TestSize.Level1)
 }
 
 /**
- * @tc.name: StandbHelperUnitTest_003
+ * @tc.name: StandbyHelperUnitTest_003
  * @tc.desc: test BackgroundTaskHelper.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_003, TestSize.Level1)
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_003, TestSize.Level1)
 {
     std::vector<std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>> list;
     BackgroundTaskHelper::GetInstance()->GetContinuousTaskApps(list);
@@ -99,12 +99,12 @@ HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_003, TestSize.Level1)
 }
 
 /**
- * @tc.name: StandbHelperUnitTest_004
+ * @tc.name: StandbyHelperUnitTest_004
  * @tc.desc: test AbilityManagerHelper.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_004, TestSize.Level1)
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_004, TestSize.Level1)
 {
     std::list<SystemProcessInfo> systemProcessInfos {};
     AbilityManagerHelper::GetInstance()->GetRunningSystemProcess(systemProcessInfos);
@@ -112,12 +112,12 @@ HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_004, TestSize.Level1)
 }
 
 /**
- * @tc.name: StandbHelperUnitTest_005
+ * @tc.name: StandbyHelperUnitTest_005
  * @tc.desc: test BundleManagerHelper.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbHelperUnitTest, StandbHelperUnitTest_005, TestSize.Level1)
+HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_005, TestSize.Level1)
 {
     BundleManagerHelper::GetInstance()->bundleMgr_  = nullptr;
     AppExecFwk::ApplicationInfo appInfo;

@@ -358,7 +358,6 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_010, TestSize.Level1)
     standbyStateManager_->maintStatePtr_->stateManager_.reset();
     standbyStateManager_->maintStatePtr_->BeginState();
     standbyStateManager_->maintStatePtr_->stateManager_ = standbyStateManager_;
-
 }
 
 /**

@@ -33,4 +33,4 @@ bool BundleManagerHelper::Connect()
     return false;
 }
 }  // namespace DevStandbyMgr
-}  // namespace OHOS
+}  // namespace OHOS

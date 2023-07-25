@@ -26,7 +26,7 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DevStandbyMgr {
-class MockStandbHelperUnitTest : public testing::Test {
+class MockStandbyHelperUnitTest : public testing::Test {
 public:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -35,12 +35,12 @@ public:
 };
 
 /**
- * @tc.name: MockStandbHelperUnitTest_001
+ * @tc.name: MockStandbyHelperUnitTest_001
  * @tc.desc: test AppMgrHelper.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(MockStandbHelperUnitTest, MockStandbHelperUnitTest_001, TestSize.Level1)
+HWTEST_F(MockStandbyHelperUnitTest, MockStandbyHelperUnitTest_001, TestSize.Level1)
 {
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
     bool isRunning {false};
@@ -54,12 +54,12 @@ HWTEST_F(MockStandbHelperUnitTest, MockStandbHelperUnitTest_001, TestSize.Level1
 }
 
 /**
- * @tc.name: MockStandbHelperUnitTest_002
+ * @tc.name: MockStandbyHelperUnitTest_002
  * @tc.desc: test BundleManagerHelper.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(MockStandbHelperUnitTest, MockStandbHelperUnitTest_002, TestSize.Level1)
+HWTEST_F(MockStandbyHelperUnitTest, MockStandbyHelperUnitTest_002, TestSize.Level1)
 {
     int32_t uid {0};
     BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
@@ -76,12 +76,12 @@ HWTEST_F(MockStandbHelperUnitTest, MockStandbHelperUnitTest_002, TestSize.Level1
 }
 
 /**
- * @tc.name: MockStandbHelperUnitTest_003
+ * @tc.name: MockStandbyHelperUnitTest_003
  * @tc.desc: test BackgroundTaskHelper.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(MockStandbHelperUnitTest, MockStandbHelperUnitTest_003, TestSize.Level1)
+HWTEST_F(MockStandbyHelperUnitTest, MockStandbyHelperUnitTest_003, TestSize.Level1)
 {
     std::vector<std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>> list;
     BackgroundTaskHelper::GetInstance()->GetContinuousTaskApps(list);

@@ -144,7 +144,7 @@ ohos_unittest("standby_helper_unit_test") {
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",
     "power_manager:powermgr_client",
