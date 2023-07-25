@@ -15,7 +15,6 @@
 
 #include "base_state.h"
 
-#include <functional>
 #include "time_service_client.h"
 
 #include "standby_messsage.h"

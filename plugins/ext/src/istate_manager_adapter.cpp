@@ -15,8 +15,6 @@
 
 #include "base_state.h"
 
-#include <functional>
-
 #include "standby_messsage.h"
 #include "standby_service_log.h"
 

@@ -16,9 +16,9 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_INCLUDE_STANDBY_SERVICE_INNER_ERRORS_H
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_INCLUDE_STANDBY_SERVICE_INNER_ERRORS_H
 
-#include "errors.h"
 #include <map>
 #include <string>
+#include "errors.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

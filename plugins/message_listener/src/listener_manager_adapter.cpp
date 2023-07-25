@@ -16,9 +16,6 @@
 
 #include "listener_manager_adapter.h"
 
-#include <map>
-#include <functional>
-
 #include "common_event_manager.h"
 #include "common_event_support.h"
 

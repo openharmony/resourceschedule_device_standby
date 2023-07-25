@@ -16,7 +16,6 @@
 #include "standby_service_proxy.h"
 
 #include <message_parcel.h>
-#include <cstring>
 
 #include "standby_service_errors.h"
 #include "standby_service_log.h"
