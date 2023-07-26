@@ -763,6 +763,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0032, TestSize.Level1)
     EXPECT_TRUE(repeatedMotionConstraint->GetEnergy() == 0);
     repeatedMotionConstraint->energy_ = 10000;
     repeatedMotionConstraint->AcceleromterCallback(&event);
+    repeatedMotionConstraint->AcceleromterCallback(nullptr);
 }
 
 /**
@@ -785,6 +786,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0033, TestSize.Level1)
     EXPECT_NE(repeatedMotionConstraint->GetEnergy(), 0);
     repeatedMotionConstraint->energy_ = 10000;
     repeatedMotionConstraint->RepeatAcceleromterCallback(&event);
+    repeatedMotionConstraint->RepeatAcceleromterCallback(nullptr);
 }
 
 /**

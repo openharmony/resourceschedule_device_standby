@@ -21,6 +21,8 @@
 #include "singleton.h"
 
 #include "allow_type.h"
+#include "istandby_service.h"
+#include "resourcce_request.h"
 #include "standby_ipc_interface_code.h"
 #include "standby_service_client.h"
 #include "standby_service_subscriber_stub.h"
@@ -215,6 +217,46 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_010, TestSiz
     proxy->OnDeviceIdleMode(false, false);
     proxy->OnAllowListChanged(-1, "", 0, false);
     EXPECT_NE(proxy, nullptr);
+}
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_011
+ * @tc.desc: test IsStrategyEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_011, TestSize.Level1)
+{
+    std::string strategyName;
+    bool isEnabled =  false;
+    EXPECT_EQ(StandbyServiceClient::GetInstance().IsStrategyEnabled(strategyName, isEnabled), ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_012
+ * @tc.desc: test IsStrategyEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_012, TestSize.Level1)
+{
+    DeviceStateType type = DeviceStateType::WIFI_P2P_CHANGE;
+    bool enabled = false;
+    EXPECT_EQ(StandbyServiceClient::GetInstance().ReportDeviceStateChanged(type, enabled), ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_013
+ * @tc.desc: test IsStrategyEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_013, TestSize.Level1)
+{
+    uint32_t restrictType = 1;
+    std::vector<AllowInfo> restrictInfoList;
+    uint32_t reasonCode = ReasonCodeEnum::REASON_APP_API;
+    EXPECT_EQ(StandbyServiceClient::GetInstance().GetRestrictList(restrictType, restrictInfoList, reasonCode), ERR_OK);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

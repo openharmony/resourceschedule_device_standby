@@ -1104,5 +1104,101 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_042, TestSize.Level1)
     SleepForFC();
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->allowInfoMap_.empty());
 }
+
+/**
+ * @tc.name: StandbyServiceUnitTest_043
+ * @tc.desc: test GetRestrictList.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_043, TestSize.Level1)
+{
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
+    uint32_t restrictType = 1;
+    std::vector<AllowInfo> restrictInfoList;
+    uint32_t reasonCode = 1;
+    EXPECT_EQ(StandbyService::GetInstance()->GetRestrictList(restrictType, restrictInfoList, reasonCode), ERR_OK);
+
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
+    EXPECT_EQ(StandbyService::GetInstance()->
+        GetRestrictList(restrictType, restrictInfoList, reasonCode), ERR_STANDBY_SYS_NOT_READY);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_044
+ * @tc.desc: test IsStrategyEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_044, TestSize.Level1)
+{
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
+    std::string strategyName;
+    bool isEnabled = false;
+    EXPECT_EQ(StandbyService::GetInstance()->IsStrategyEnabled(strategyName, isEnabled), ERR_OK);
+
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
+    EXPECT_EQ(StandbyService::GetInstance()->IsStrategyEnabled(strategyName, isEnabled), ERR_STANDBY_SYS_NOT_READY);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_045
+ * @tc.desc: test ReportDeviceStateChanged.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_045, TestSize.Level1)
+{
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
+    DeviceStateType type = DeviceStateType::DIS_COMP_CHANGE;
+    bool enabled = true;
+    EXPECT_EQ(StandbyService::GetInstance()->ReportDeviceStateChanged(type, enabled), ERR_OK);
+
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
+    EXPECT_EQ(StandbyService::GetInstance()->ReportDeviceStateChanged(type, enabled), ERR_STANDBY_SYS_NOT_READY);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_046
+ * @tc.desc: test ReportDeviceStateChanged.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_046, TestSize.Level1)
+{
+    int32_t type = -1;
+    DeviceStateCache::GetInstance()->deviceState_ = {true, true, false};
+    EXPECT_EQ(DeviceStateCache::GetInstance()->GetDeviceState(type), false);
+
+    type = DeviceStateCache::DEVICE_STATE_NUM;
+    EXPECT_EQ(DeviceStateCache::GetInstance()->GetDeviceState(type), false);
+
+    type = 1;
+    EXPECT_EQ(DeviceStateCache::GetInstance()->GetDeviceState(type), true);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_047
+ * @tc.desc: test ReportDeviceStateChanged.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_047, TestSize.Level1)
+{
+    int32_t type = -1;
+    bool enabled = true;
+    EXPECT_EQ(DeviceStateCache::GetInstance()->SetDeviceState(type, enabled), false);
+
+    type = DeviceStateCache::DEVICE_STATE_NUM;
+    EXPECT_EQ(DeviceStateCache::GetInstance()->SetDeviceState(type, enabled), false);
+
+    type = 1;
+    DeviceStateCache::GetInstance()->deviceState_ {true, true, false};
+    EXPECT_EQ(DeviceStateCache::GetInstance()->SetDeviceState(type, enabled), false);
+
+    type = 2;
+    DeviceStateCache::GetInstance()->deviceState_ {true, true, false};
+    EXPECT_EQ(DeviceStateCache::GetInstance()->SetDeviceState(type, enabled), true);
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
