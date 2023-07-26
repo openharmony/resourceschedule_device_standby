@@ -12,6 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define private public
+#define protected public
+
 #include <functional>
 #include <chrono>
 #include <thread>
@@ -48,7 +51,6 @@
 
 using namespace testing::ext;
 using namespace testing::mt;
-
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -763,6 +765,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0032, TestSize.Level1)
     EXPECT_TRUE(repeatedMotionConstraint->GetEnergy() == 0);
     repeatedMotionConstraint->energy_ = 10000;
     repeatedMotionConstraint->AcceleromterCallback(&event);
+    repeatedMotionConstraint->AcceleromterCallback(nullptr);
 }
 
 /**
@@ -785,6 +788,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0033, TestSize.Level1)
     EXPECT_NE(repeatedMotionConstraint->GetEnergy(), 0);
     repeatedMotionConstraint->energy_ = 10000;
     repeatedMotionConstraint->RepeatAcceleromterCallback(&event);
+    repeatedMotionConstraint->RepeatAcceleromterCallback(nullptr);
 }
 
 /**
