@@ -61,9 +61,9 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_001, TestSize.Leve
     std::string bundleName = "defaultBundleName";
     std::string mapKey = std::to_string(uid) + "_" + bundleName;
     struct ProxiedProcInfo procInfo = {
-       bundleName,
-       uid,
-       {pid}
+        bundleName,
+        uid,
+        {pid}
     };
     runningLockStrategy->proxiedAppInfo_.emplace(mapKey, procInfo);
     runningLockStrategy->GetAndCreateAppInfo(uid, pid, bundleName);
@@ -86,9 +86,9 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_002, TestSize.Leve
     uint32_t pid = 1;
     std::string bundleName = "defaultBundleName";
     struct ProxiedProcInfo procInfo = {
-       bundleName,
-       uid,
-       {pid}
+        bundleName,
+        uid,
+        {pid}
     };
     runningLockStrategy->GetExemptionConfigForApp(procInfo, bundleName)
     EXPECT_NE(runningLockStrategy, nullptr);
@@ -129,7 +129,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_004, TestSize.Leve
     int32_t pid = 1;
     std::string bundleName = "defaultBundleName";
     StandbyMessage standbyMessage {StandbyMessageType::PROCESS_STATE_CHANGED};
-    standbyMessage.want_ = AAFWK::Want{};
+    standbyMessage.want_ = AAFWK::Want {};
     standbyMessage.want_->SetParam("uid", uid);
     standbyMessage.want_->SetParam("pid", pid);
     standbyMessage.want_->SetParam("name", bundleName);
@@ -138,9 +138,9 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_004, TestSize.Leve
     runningLockStrategy->isProxied_ = true;
     std::string mapKey = std::to_string(uid) + "_" + bundleName;
     struct ProxiedProcInfo procInfo = {
-       bundleName,
-       uid,
-       {pid}
+        bundleName,
+        uid,
+        {pid}
     };
     runningLockStrategy->proxiedAppInfo_.emplace(mapKey, procInfo);
     runningLockStrategy->HandleProcessStatusChanged(standbyMessage);
@@ -234,7 +234,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_010, TestSize.Leve
     
     baseNetworkStrategy->isFirewallEnabled_ = true;
     baseNetworkStrategy->isIdleMaintence_ = false;
-    standbyMessage.want_ = AAFWK::Want{};
+    standbyMessage.want_ = AAFWK::Want {};
     standbyMessage.want_->SetParam(SA_STATUS, false);
     standbyMessage.want_->SetParam(SA_ID, WORK_SCHEDULE_SERVICE_ID);
     baseNetworkStrategy->ResetFirewallStatus(standbyMessage);
