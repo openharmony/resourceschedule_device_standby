@@ -12,6 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define private public
+#define protected public
+
 #include <functional>
 #include <chrono>
 #include <thread>
@@ -48,7 +51,6 @@
 
 using namespace testing::ext;
 using namespace testing::mt;
-
 
 namespace OHOS {
 namespace DevStandbyMgr {

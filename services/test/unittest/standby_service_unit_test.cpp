@@ -1193,11 +1193,11 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_047, TestSize.Level1)
     EXPECT_EQ(DeviceStateCache::GetInstance()->SetDeviceState(type, enabled), false);
 
     type = 1;
-    DeviceStateCache::GetInstance()->deviceState_ {true, true, false};
+    DeviceStateCache::GetInstance()->deviceState_ = {true, true, false};
     EXPECT_EQ(DeviceStateCache::GetInstance()->SetDeviceState(type, enabled), false);
 
     type = 2;
-    DeviceStateCache::GetInstance()->deviceState_ {true, true, false};
+    DeviceStateCache::GetInstance()->deviceState_ = {true, true, false};
     EXPECT_EQ(DeviceStateCache::GetInstance()->SetDeviceState(type, enabled), true);
 }
 }  // namespace DevStandbyMgr

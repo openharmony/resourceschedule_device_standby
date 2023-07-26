@@ -144,6 +144,6 @@ group("unittest") {
 
   deps = [
     ":standby_plugin_strategy_test",
-    ":standby_plugin_unit_test"
+    ":standby_plugin_unit_test",
   ]
 }
