@@ -103,7 +103,7 @@ enum ParamErr: int32_t {
     ERR_REASON_INVALID_TYPE_ERR,
 };
 
-static std::map<int32_t, std::string> saErrCodeMsgMap = {
+inline std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_STANDBY_PERMISSION_DENIED, "Permission denied."},
     {ERR_STANDBY_NOT_SYSTEM_APP,
         "System API verification failed."},
@@ -125,7 +125,7 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_STATE_MANAGER_IS_NULLPTR, "The state manager adapter can not be nullptr."},
 };
 
-static std::map<int32_t, std::string> paramErrCodeMsgMap = {
+inline std::map<int32_t, std::string> paramErrCodeMsgMap = {
     {ERR_STANDBY_INVALID_PARAM, "The input param is invalid."},
     {ERR_PARAM_NUMBER_ERR, "The number of arguments is wrong."},
     {ERR_CALLBACK_NULL_OR_TYPE_ERR, "The callback cannot be null and its type must be function."},
