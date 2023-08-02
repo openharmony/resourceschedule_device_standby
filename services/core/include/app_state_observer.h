@@ -27,11 +27,6 @@ namespace OHOS {
 namespace DevStandbyMgr {
 class AppStateObserver : public AppExecFwk::ApplicationStateObserverStub {
 public:
-
-    /**
-     * @brief constructor of AppStateObserver.
-     */
-    explicit AppStateObserver(const std::shared_ptr<AppExecFwk::EventHandler>& handler);
     /**
      * @brief Callback when process died.
      *

@@ -148,7 +148,7 @@ ErrCode StandbyServiceImpl::RegisterAppStateObserver()
     if (appStateObserver_) {
         return ERR_STANDBY_OBSERVER_ALREADY_EXIST;
     }
-    appStateObserver_ = new (std::nothrow) AppStateObserver(handler_);
+    appStateObserver_ = new (std::nothrow) AppStateObserver();
     if (!appStateObserver_) {
         STANDBYSERVICE_LOGE("malloc appStateObserver failed");
         return ERR_STANDBY_OBSERVER_INIT_FAILED;
@@ -935,9 +935,7 @@ ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool 
     StandbyMessage standbyMessage {StandbyMessageType::DEVICE_STATE_CHANGED};
     standbyMessage.want_ = AAFwk::Want{};
     standbyMessage.want_->SetParam("DIS_COMP_STATE", enabled);
-    handler_->PostTask([standbyImpl = shared_from_this(), standbyMessage]() {
-        standbyImpl->DispatchEvent(standbyMessage);
-    });
+    DispatchEvent(standbyMessage);
     return ERR_OK;
 }
 
@@ -947,14 +945,19 @@ void StandbyServiceImpl::DispatchEvent(const StandbyMessage& message)
         STANDBYSERVICE_LOGW("standby service is not ready");
         return;
     }
-    STANDBYSERVICE_LOGD("standby service implement dispatch message %{public}d", message.eventId_);
-    if (!listenerManager_ || !standbyStateManager_ || !strategyManager_) {
-        STANDBYSERVICE_LOGE("can not dispatch event, state manager or strategy manager is nullptr");
-        return;
+
+    auto dispatchEventFunc = [this, standbyMessage]() {
+        STANDBYSERVICE_LOGD("standby service implement dispatch message %{public}d", message.eventId_);
+        if (!listenerManager_ || !standbyStateManager_ || !strategyManager_) {
+            STANDBYSERVICE_LOGE("can not dispatch event, state manager or strategy manager is nullptr");
+            return;
+        }
+        listenerManager_->HandleEvent(message);
+        standbyStateManager_->HandleEvent(message);
+        strategyManager_->HandleEvent(message);
     }
-    listenerManager_->HandleEvent(message);
-    standbyStateManager_->HandleEvent(message);
-    strategyManager_->HandleEvent(message);
+
+    handler_->PostTask(dispatchEventFunc);
 }
 
 bool StandbyServiceImpl::IsDebugMode()

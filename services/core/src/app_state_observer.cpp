@@ -23,21 +23,18 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-AppStateObserver::AppStateObserver(const std::shared_ptr<AppExecFwk::EventHandler>& handler): handler_(handler) {}
-
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 {
     STANDBYSERVICE_LOGD("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
+
+    auto uid = processData.uid;
+    auto pid = processData.pid;
+    auto bundleName = processData.bundleName;
+
     if (!this->CheckAlivedApp(processData.bundleName)) {
-        auto uid = processData.uid;
-        auto bundleName = processData.bundleName;
-        handler_->PostTask([uid, bundleName]() {
-            StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, false);
-        });
+        StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, false);
     }
-    handler_->PostTask([uid = processData.uid, pid = processData.pid, bundleName = processData.bundleName]() {
-        StandbyServiceImpl::GetInstance()->OnProcessStatusChanged(uid, pid, bundleName, false);
-    });
+    StandbyServiceImpl::GetInstance()->OnProcessStatusChanged(uid, pid, bundleName, false);
 }
 
 bool AppStateObserver::CheckAlivedApp(const std::string &bundleName)
@@ -53,9 +50,8 @@ bool AppStateObserver::CheckAlivedApp(const std::string &bundleName)
 
 void AppStateObserver::OnProcessCreated(const AppExecFwk::ProcessData &processData)
 {
-    handler_->PostTask([uid = processData.uid, pid = processData.pid, bundleName = processData.bundleName]() {
-        StandbyServiceImpl::GetInstance()->OnProcessStatusChanged(uid, pid, bundleName, true);
-    });
+    StandbyServiceImpl::GetInstance()->OnProcessStatusChanged(processData.uid, processData.pid,
+        processData.bundleName, true);
 }
 
 void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData)
@@ -69,9 +65,8 @@ void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData 
     auto state = appStateData.state;
     if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED) || state ==
         static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END)) {
-        handler_->PostTask([uid, bundleName]() {
-            StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, false);
-        });
+        STANDBYSERVICE_LOGD("app is terminated, uid: %{public}d, bunddlename: %{public}s", uid, bundleName.c_str());
+        StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, false);
     }
 }
 }  // namespace DevStandbyMgr
