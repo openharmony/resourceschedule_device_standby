@@ -113,7 +113,10 @@ void StandbyServiceImpl::InitReadyState()
         }
         RegisterTimeObserver();
         ParsePersistentData();
-        DumpPersistantData();
+        {
+            std::shared_lock<std::shared_mutex> sharedAllowRecordLock(allowRecordMutex_);
+            DumpPersistantData();
+        }
         isServiceReady_.store(true);
         StandbyService::GetInstance()->AddPluginSysAbilityListener(BACKGROUND_TASK_MANAGER_SERVICE_ID);
         StandbyService::GetInstance()->AddPluginSysAbilityListener(WORK_SCHEDULE_SERVICE_ID);
@@ -345,6 +348,7 @@ bool StandbyServiceImpl::ParsePersistentData()
         STANDBYSERVICE_LOGE("failed to load allow record from file");
         return false;
     }
+    std::lock_guard<std::shared_mutex> allowRecordLock(allowRecordMutex_);
     for (auto iter = root.begin(); iter != root.end(); ++iter) {
         std::shared_ptr<AllowRecord> recordPtr = std::make_shared<AllowRecord>();
         if (recordPtr->ParseFromJson(iter.value())) {
@@ -557,9 +561,7 @@ ErrCode StandbyServiceImpl::ApplyAllowResource(const sptr<ResourceRequest>& reso
         return ERR_DURATION_INVALID;
     }
     int32_t pid = IPCSkeleton::GetCallingPid();
-    handler_->PostTask([this, resourceRequest, pid]() {
-        this->ApplyAllowResInner(resourceRequest, pid);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
+    ApplyAllowResInner(resourceRequest, pid);
     return ERR_OK;
 }
 
@@ -574,6 +576,7 @@ void StandbyServiceImpl::ApplyAllowResInner(const sptr<ResourceRequest>& resourc
     const std::string& name = resourceRequest->GetName();
     std::string keyStr = std::to_string(uid) + "_" + name;
     uint32_t preAllowType = 0;
+    std::lock_guard<std::shared_mutex> allowRecordLock(allowRecordMutex_);
     auto iter = allowInfoMap_.find(keyStr);
     if (iter == allowInfoMap_.end()) {
         std::tie(iter, std::ignore) =
@@ -658,10 +661,7 @@ ErrCode StandbyServiceImpl::UnapplyAllowResource(const sptr<ResourceRequest>& re
         STANDBYSERVICE_LOGE("param of resourceRequest is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
     }
-    handler_->PostTask([this, resourceRequest]() {
-        this->UnapplyAllowResInner(resourceRequest->GetUid(),
-            resourceRequest->GetName(), resourceRequest->GetAllowType(), true);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
+    UnapplyAllowResInner(resourceRequest->GetUid(), resourceRequest->GetName(), resourceRequest->GetAllowType(), true);
     return ERR_OK;
 }
 
@@ -671,6 +671,7 @@ void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& na
     STANDBYSERVICE_LOGD("start UnapplyAllowResInner, uid is %{public}d, allowType is %{public}d, removeAll is "\
         "%{public}d", uid, allowType, removeAll);
     std::string keyStr = std::to_string(uid) + "_" + name;
+    std::lock_guard<std::shared_mutex> allowRecordLock(allowRecordMutex_);
     auto iter = allowInfoMap_.find(keyStr);
     if (iter == allowInfoMap_.end()) {
         STANDBYSERVICE_LOGW("uid has no corresponding allow list");
@@ -752,9 +753,7 @@ ErrCode StandbyServiceImpl::GetAllowList(uint32_t allowType, std::vector<AllowIn
         STANDBYSERVICE_LOGE("allowtype param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
     }
-    handler_->PostSyncTask([this, allowType, &allowInfoList, reasonCode]() {
-        this->GetAllowListInner(allowType, allowInfoList, reasonCode);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
+    GetAllowListInner(allowType, allowInfoList, reasonCode);
     return ERR_OK;
 }
 
@@ -762,6 +761,7 @@ void StandbyServiceImpl::GetAllowListInner(uint32_t allowType, std::vector<Allow
     uint32_t reasonCode)
 {
     STANDBYSERVICE_LOGD("start GetAllowListInner, allowType is %{public}d", allowType);
+    std::shared_lock<std::shared_mutex> sharedAllowRecordLock(allowRecordMutex_);
     for (uint32_t allowTypeIndex = 0; allowTypeIndex < MAX_ALLOW_TYPE_NUM; ++allowTypeIndex) {
         uint32_t allowNumber = allowType & (1 << allowTypeIndex);
         if (allowNumber == 0) {
@@ -840,7 +840,7 @@ ErrCode StandbyServiceImpl::GetEligiableRestrictSet(uint32_t allowType, const st
     std::set_difference(originRestrictSet.begin(), originRestrictSet.end(), allowSet.begin(),
         allowSet.end(), std::inserter(restrictSet, restrictSet.begin()));
     STANDBYSERVICE_LOGD("origin restrict size is %{public}d, restrictSet size is %{public}d, "\
-        "restrictSet size is %{public}d", static_cast<int32_t>(originRestrictSet.size()), 
+        "restrictSet size is %{public}d", static_cast<int32_t>(originRestrictSet.size()),
         static_cast<int32_t>(allowInfoList.size()), static_cast<int32_t>(restrictSet.size()));
     return ERR_OK;
 }
@@ -882,9 +882,7 @@ ErrCode StandbyServiceImpl::GetRestrictList(uint32_t restrictType, std::vector<A
         STANDBYSERVICE_LOGE("restrictType param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
     }
-    handler_->PostSyncTask([this, restrictType, &restrictInfoList, reasonCode]() {
-        this->GetRestrictListInner(restrictType, restrictInfoList, reasonCode);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
+    GetRestrictListInner(restrictType, restrictInfoList, reasonCode);
     return ERR_OK;
 }
 
@@ -1056,6 +1054,7 @@ void StandbyServiceImpl::DumpShowDetailInfo(const std::vector<std::string>& args
 
 void StandbyServiceImpl::DumpAllowListInfo(std::string& result)
 {
+    std::shared_lock<std::shared_mutex> sharedAllowRecordLock(allowRecordMutex_);
     if (allowInfoMap_.empty()) {
         result += "allow resources record is empty\n";
         return;

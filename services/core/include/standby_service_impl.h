@@ -145,6 +145,7 @@ private:
     std::mutex appStateObserverMutex_ {};
     std::mutex eventObserverMutex_ {};
     std::recursive_mutex timerObserverMutex_ {};
+    std::shared_mutex allowRecordMutex_ {};
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_ {nullptr};
     std::shared_ptr<CommonEventObserver> commonEventObserver_ {nullptr};
     uint64_t dayNightSwitchTimerId_ {0};
