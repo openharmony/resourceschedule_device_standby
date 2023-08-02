@@ -148,7 +148,7 @@ ErrCode StandbyServiceImpl::RegisterAppStateObserver()
     if (appStateObserver_) {
         return ERR_STANDBY_OBSERVER_ALREADY_EXIST;
     }
-    appStateObserver_ = new (std::nothrow) AppStateObserver();
+    appStateObserver_ = new (std::nothrow) AppStateObserver(handler_);
     if (!appStateObserver_) {
         STANDBYSERVICE_LOGE("malloc appStateObserver failed");
         return ERR_STANDBY_OBSERVER_INIT_FAILED;
@@ -955,7 +955,7 @@ void StandbyServiceImpl::DispatchEvent(const StandbyMessage& message)
         listenerManager_->HandleEvent(message);
         standbyStateManager_->HandleEvent(message);
         strategyManager_->HandleEvent(message);
-    }
+    };
 
     handler_->PostTask(dispatchEventFunc);
 }

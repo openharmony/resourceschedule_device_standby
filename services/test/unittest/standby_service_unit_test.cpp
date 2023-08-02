@@ -1080,7 +1080,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_041, TestSize.Level1)
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_042, TestSize.Level1)
 {
-    auto appStateObserver = std::make_shared<AppStateObserver>();
+    auto appStateObserver = std::make_shared<AppStateObserver>(StandbyServiceImpl::GetInstance()->handler_);
     AppExecFwk::ProcessData processData {};
     appStateObserver->OnProcessDied(processData);
     processData.bundleName = "com.ohos.systemui";
