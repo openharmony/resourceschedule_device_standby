@@ -636,7 +636,7 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
             allowTimeList.emplace_back(AllowTime{allowTypeIndex, endTime, resourceRequest->GetReason()});
         } else {
             it->reason_ = resourceRequest->GetReason();
-            it->endTime_ = std::max(static_cast<long>(it->endTime_ - curTime), 0L);
+            it->endTime_ = std::max(it->endTime_, endTime);
         }
         allowRecord->allowType_ = (allowRecord->allowType_ | allowNumber);
         auto task = [this, uid, name, allowType] () {
@@ -946,12 +946,12 @@ void StandbyServiceImpl::DispatchEvent(const StandbyMessage& message)
         return;
     }
 
-    auto dispatchEventFunc = [this, standbyMessage]() {
+    auto dispatchEventFunc = [this, message]() {
         STANDBYSERVICE_LOGD("standby service implement dispatch message %{public}d", message.eventId_);
         if (!listenerManager_ || !standbyStateManager_ || !strategyManager_) {
             STANDBYSERVICE_LOGE("can not dispatch event, state manager or strategy manager is nullptr");
             return;
-        }
+        };
         listenerManager_->HandleEvent(message);
         standbyStateManager_->HandleEvent(message);
         strategyManager_->HandleEvent(message);
