@@ -63,7 +63,6 @@ private:
     std::shared_ptr<BaseState> sleepStatePtr_ {nullptr};
     std::shared_ptr<BaseState> workingStatePtr_ {nullptr};
     std::vector<std::shared_ptr<BaseState>> indexToState_ {};
-    bool isScreenOn_ {true};
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

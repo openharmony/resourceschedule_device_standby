@@ -67,6 +67,7 @@ void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData 
     auto uid = appStateData.uid;
     auto bundleName = appStateData.bundleName;
     auto state = appStateData.state;
+    STANDBYSERVICE_LOGD("app is terminated, uid: %{public}d, bunddlename: %{public}s", uid, bundleName.c_str());
     if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED) || state ==
         static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END)) {
         handler_->PostTask([uid, bundleName]() {

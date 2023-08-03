@@ -80,20 +80,14 @@ void CommonEventListener::OnReceiveEvent(const EventFwk::CommonEventData& eventD
 
     STANDBYSERVICE_LOGD("receive common event %{public}s", action.c_str());
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
-        handler_->PostTask([this, action]() {
-            StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
-        });
+        StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF) {
-        handler_->PostTask([this, action]() {
-            StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
-        });
+        StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING ||
         action == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED ||
         action == EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING ||
         action == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED) {
-        handler_->PostTask([this, action]() {
-            StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
-        });
+        StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_CALL_STATE_CHANGED) {
         int32_t state = want.GetIntParam("state", static_cast<int32_t>(TelCallState::CALL_STATUS_UNKNOWN));
         HandleCallStateChanged(state);
