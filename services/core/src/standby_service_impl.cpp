@@ -52,7 +52,7 @@ namespace {
 const std::string ALLOW_RECORD_FILE_PATH = "/data/service/el1/public/device_standby/allow_record";
 const std::string STANDBY_MSG_HANDLER = "StandbyMsgHandler";
 const std::string ON_PLUGIN_REGISTER = "OnPluginRegister";
-#ifdef__LP64__
+#ifdef __LP64__
 const std::string SYSTEM_SO_PATH = "/system/lib64/";
 #else
 const std::string SYSTEM_SO_PATH = "/system/lib/";
