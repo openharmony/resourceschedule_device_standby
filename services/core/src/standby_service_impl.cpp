@@ -111,13 +111,11 @@ void StandbyServiceImpl::InitReadyState()
             STANDBYSERVICE_LOGE("listener plugin init failed");
             return;
         }
+
         RegisterTimeObserver();
         ParsePersistentData();
-        {
-            std::shared_lock<std::shared_mutex> sharedAllowRecordLock(allowRecordMutex_);
-            DumpPersistantData();
-        }
         isServiceReady_.store(true);
+
         StandbyService::GetInstance()->AddPluginSysAbilityListener(BACKGROUND_TASK_MANAGER_SERVICE_ID);
         StandbyService::GetInstance()->AddPluginSysAbilityListener(WORK_SCHEDULE_SERVICE_ID);
         }, AppExecFwk::EventQueue::Priority::HIGH);
@@ -348,7 +346,8 @@ bool StandbyServiceImpl::ParsePersistentData()
         STANDBYSERVICE_LOGE("failed to load allow record from file");
         return false;
     }
-    std::lock_guard<std::shared_mutex> allowRecordLock(allowRecordMutex_);
+
+    std::lock_guard<std::mutex> allowRecordLock(allowRecordMutex_);
     for (auto iter = root.begin(); iter != root.end(); ++iter) {
         std::shared_ptr<AllowRecord> recordPtr = std::make_shared<AllowRecord>();
         if (recordPtr->ParseFromJson(iter.value())) {
@@ -363,9 +362,10 @@ bool StandbyServiceImpl::ParsePersistentData()
             iter++;
         }
     }
-    DumpPersistantData();
+
     STANDBYSERVICE_LOGI("after reboot, allowInfoMap_ size is %{public}d", static_cast<int32_t>(allowInfoMap_.size()));
     RecoverTimeLimitedTask();
+    DumpPersistantData();
     return true;
 }
 
@@ -576,7 +576,8 @@ void StandbyServiceImpl::ApplyAllowResInner(const sptr<ResourceRequest>& resourc
     const std::string& name = resourceRequest->GetName();
     std::string keyStr = std::to_string(uid) + "_" + name;
     uint32_t preAllowType = 0;
-    std::lock_guard<std::shared_mutex> allowRecordLock(allowRecordMutex_);
+
+    std::lock_guard<std::mutex> allowRecordLock(allowRecordMutex_);
     auto iter = allowInfoMap_.find(keyStr);
     if (iter == allowInfoMap_.end()) {
         std::tie(iter, std::ignore) =
@@ -671,7 +672,8 @@ void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& na
     STANDBYSERVICE_LOGD("start UnapplyAllowResInner, uid is %{public}d, allowType is %{public}d, removeAll is "\
         "%{public}d", uid, allowType, removeAll);
     std::string keyStr = std::to_string(uid) + "_" + name;
-    std::lock_guard<std::shared_mutex> allowRecordLock(allowRecordMutex_);
+
+    std::lock_guard<std::mutex> allowRecordLock(allowRecordMutex_);
     auto iter = allowInfoMap_.find(keyStr);
     if (iter == allowInfoMap_.end()) {
         STANDBYSERVICE_LOGW("uid has no corresponding allow list");
@@ -761,7 +763,8 @@ void StandbyServiceImpl::GetAllowListInner(uint32_t allowType, std::vector<Allow
     uint32_t reasonCode)
 {
     STANDBYSERVICE_LOGD("start GetAllowListInner, allowType is %{public}d", allowType);
-    std::shared_lock<std::shared_mutex> sharedAllowRecordLock(allowRecordMutex_);
+
+    std::lock_guard<std::mutex> allowRecordLock(allowRecordMutex_);
     for (uint32_t allowTypeIndex = 0; allowTypeIndex < MAX_ALLOW_TYPE_NUM; ++allowTypeIndex) {
         uint32_t allowNumber = allowType & (1 << allowTypeIndex);
         if (allowNumber == 0) {
@@ -1057,11 +1060,12 @@ void StandbyServiceImpl::DumpShowDetailInfo(const std::vector<std::string>& args
 
 void StandbyServiceImpl::DumpAllowListInfo(std::string& result)
 {
-    std::shared_lock<std::shared_mutex> sharedAllowRecordLock(allowRecordMutex_);
+    std::lock_guard<std::mutex> allowRecordLock(allowRecordMutex_);
     if (allowInfoMap_.empty()) {
         result += "allow resources record is empty\n";
         return;
     }
+
     std::stringstream stream;
     uint32_t index = 1;
     for (auto iter = allowInfoMap_.begin(); iter != allowInfoMap_.end(); iter++) {

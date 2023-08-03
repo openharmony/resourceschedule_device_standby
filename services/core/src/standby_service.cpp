@@ -242,9 +242,7 @@ ErrCode StandbyService::NotifySystemAbilityStatusChanged(bool isAdded, int32_t s
     standbyMessage.want_ = AAFwk::Want{};
     standbyMessage.want_->SetParam(SA_STATUS, isAdded);
     standbyMessage.want_->SetParam(SA_ID, systemAbilityId);
-    StandbyServiceImpl::GetInstance()->GetHandler()->PostTask([standbyMessage]() {
-        StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
-    });
+    StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
     return ERR_OK;
 }
 

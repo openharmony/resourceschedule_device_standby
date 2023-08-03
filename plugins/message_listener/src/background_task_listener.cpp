@@ -98,9 +98,7 @@ void BackgroundTaskListener::BgTaskListenerImpl::OnTaskStatusChanged(const std::
     standbyMessage.want_->SetParam(BG_TASK_STATUS, started);
     standbyMessage.want_->SetParam(BG_TASK_UID, uid);
     standbyMessage.want_->SetParam(BG_TASK_BUNDLE_NAME, bundleName);
-    handler_->PostTask([standbyMessage]() {
-        StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
-    });
+    StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
 }
 } // OHOS
 } // DevStandbyMgr

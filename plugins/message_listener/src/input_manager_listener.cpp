@@ -59,9 +59,7 @@ void InputManagerListener::OnCallbackEvent(int32_t switchValue)
         STANDBYSERVICE_LOGI("lid open event received");
         msg.action_ = LID_OPEN;
     }
-    handler_->PostTask([&msg]() {
-        StandbyServiceImpl::GetInstance()->DispatchEvent(msg);
-    });
+    StandbyServiceImpl::GetInstance()->DispatchEvent(msg);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
