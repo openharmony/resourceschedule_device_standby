@@ -182,7 +182,7 @@ void StandbyServiceImpl::DayNightSwitchCallback()
         }
         auto curState = standbyImpl->standbyStateManager_->GetCurState();
         if (curState == StandbyState::SLEEP) {
-            StandbyMessage standbyMessage{StandbyMessageType::RES_CTRL_CONDITION_CHANGED};
+            StandbyMessage standbyMessage {StandbyMessageType::RES_CTRL_CONDITION_CHANGED};
             standbyMessage.want_ = AAFwk::Want{};
             uint32_t condition = TimeProvider::GetCondition();
             standbyMessage.want_->SetParam(RES_CTRL_CONDITION, static_cast<int32_t>(condition));
