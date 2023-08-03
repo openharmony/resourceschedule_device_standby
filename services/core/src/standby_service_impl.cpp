@@ -54,6 +54,8 @@ const std::string STANDBY_MSG_HANDLER = "StandbyMsgHandler";
 const std::string ON_PLUGIN_REGISTER = "OnPluginRegister";
 const std::string SYSTEM_SO_PATH = "/system/lib/";
 const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPTION";
+const uint32_t STANDBY_ALL_RESOURCES = 0;
+const uint32_t BASE_OF_STANDBY_ALL_RESOURCES = 100;
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyServiceImpl);
@@ -479,8 +481,7 @@ ErrCode StandbyServiceImpl::IsSystemAppWithPermission(int32_t uid,
         STANDBYSERVICE_LOGE("reasonCode error, uid %{public}d  must be app api", uid);
         return ERR_STANDBY_PERMISSION_DENIED;
     }
-    auto bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
-    return CheckRunningResourcesApply(uid, bundleName);
+    return ERR_OK;
 }
 
 ErrCode StandbyServiceImpl::CheckNativePermission(Security::AccessToken::AccessTokenID tokenId)
@@ -495,19 +496,48 @@ ErrCode StandbyServiceImpl::CheckNativePermission(Security::AccessToken::AccessT
     return ERR_STANDBY_PERMISSION_DENIED;
 }
 
-ErrCode StandbyServiceImpl::CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName)
+uint32_t StandbyServiceImpl::FilterOutUnpermittedResType(uint32_t allowType)
+{
+    int32_t uid = IPCSkeleton::GetCallingUid();
+    auto bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    const std::set<int32_t>& resourcesApply = QueryRunningResourcesApply(uid, bundleName);
+
+    // this app is permitted to use all type of resources
+    if (resourcesApply.find(STANDBY_ALL_RESOURCES) != resourcesApply.end()) {
+        return allowType;
+    }
+
+    uint32_t permittedAllowType = 0;
+    if (resourcesApply.empty()) {
+        return permittedAllowType;
+    }
+
+    // filter out unpermitted resource type
+    for (uint32_t allowTypeIndex = 0; allowTypeIndex < MAX_RESOURCES_TYPE_NUM; ++allowTypeIndex) {
+        if (resourcesApply.find(allowTypeIndex + 1) == resourcesApply.end()) {
+            continue;
+        }
+        permittedAllowType += (1 << resourceIndex);
+    }
+    BGTASK_LOGD("after filter, uid: %{public}d, bundleName: %{public}s, origin resource number: %{public}u, return "\
+        "resource number: %{public}u", uid, bundleName.c_str(), allowType, permittedResourceNumber);
+    return permittedAllowType;
+}
+
+std::set<int32_t> StandbyServiceImpl::QueryRunningResourcesApply(const int32_t uid, const std::string &bundleName)
 {
     AppExecFwk::ApplicationInfo applicationInfo;
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
-        STANDBYSERVICE_LOGE("failed to get applicationInfo, bundleName is %{public}s", bundleName.c_str());
-        return ERR_STANDBY_PERMISSION_DENIED;
+        BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
+        return false;
     }
-    STANDBYSERVICE_LOGD("applicationInfo.runningResourcesApply is %{public}d", applicationInfo.runningResourcesApply);
-    if (!applicationInfo.runningResourcesApply) {
-        return ERR_STANDBY_PERMISSION_DENIED;
-    }
-    return ERR_OK;
+    BGTASK_LOGD("size of applicationInfo.resourcesApply is %{public}d",
+        static_cast<int32_t>(applicationInfo.resourcesApply));
+    auto decreaseBase = [](int& permission) { permission -= decreaseBase; };
+    for_each(applicationInfo.resourcesApply.begin(), applicationInfo.resourcesApply.end(),
+        decreaseBase);
+    return std::set{applicationInfo.resourcesApply.cbegin(), applicationInfo.resourcesApply.cend()};
 }
 
 int32_t StandbyServiceImpl::GetUserIdByUid(int32_t uid)
@@ -552,6 +582,13 @@ ErrCode StandbyServiceImpl::ApplyAllowResource(const sptr<ResourceRequest>& reso
     if (auto checkRet = CheckCallerPermission(resourceRequest->GetReasonCode()); checkRet != ERR_OK) {
         return checkRet;
     }
+
+    // update allow type according to configuration
+    if (Security::AccessToken::AccessTokenKit::GetTokenType(OHOS::IPCSkeleton::GetCallingTokenID())
+        == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        resourceRequest->SetAllowType(FilterOutUnpermittedResType(resourceRequest->GetAllowType()));
+    }
+
     if (!CheckAllowTypeInfo(resourceRequest->GetAllowType()) || resourceRequest->GetUid() < 0) {
         STANDBYSERVICE_LOGE("resourceRequest param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
@@ -658,6 +695,13 @@ ErrCode StandbyServiceImpl::UnapplyAllowResource(const sptr<ResourceRequest>& re
     if (auto checkRet = CheckCallerPermission(resourceRequest->GetReasonCode()); checkRet != ERR_OK) {
         return checkRet;
     }
+
+    // update allow type according to configuration
+    if (Security::AccessToken::AccessTokenKit::GetTokenType(OHOS::IPCSkeleton::GetCallingTokenID())
+        == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        resourceRequest->SetAllowType(FilterOutUnpermittedResType(resourceRequest->GetAllowType()));
+    }
+
     if (!CheckAllowTypeInfo(resourceRequest->GetAllowType()) || resourceRequest->GetUid() < 0) {
         STANDBYSERVICE_LOGE("param of resourceRequest is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
@@ -747,10 +791,12 @@ ErrCode StandbyServiceImpl::GetAllowList(uint32_t allowType, std::vector<AllowIn
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
+
     STANDBYSERVICE_LOGD("start GetAllowList");
-    if (auto checkRet = CheckCallerPermission(reasonCode); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(reasonCode, allowType); checkRet != ERR_OK) {
         return checkRet;
     }
+
     if (!CheckAllowTypeInfo(allowType)) {
         STANDBYSERVICE_LOGE("allowtype param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
