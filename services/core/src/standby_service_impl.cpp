@@ -496,7 +496,7 @@ ErrCode StandbyServiceImpl::CheckNativePermission(Security::AccessToken::AccessT
     return ERR_STANDBY_PERMISSION_DENIED;
 }
 
-uint32_t StandbyServiceImpl::FilterOutUnpermittedResType(uint32_t allowType)
+uint32_t StandbyServiceImpl::FilterOutUnpermittedResType(uint32_t resourceType)
 {
     int32_t uid = IPCSkeleton::GetCallingUid();
     auto bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
@@ -504,24 +504,24 @@ uint32_t StandbyServiceImpl::FilterOutUnpermittedResType(uint32_t allowType)
 
     // this app is permitted to use all type of resources
     if (resourcesApply.find(STANDBY_ALL_RESOURCES) != resourcesApply.end()) {
-        return allowType;
+        return resourceType;
     }
 
-    uint32_t permittedAllowType = 0;
+    uint32_t permittedResourceType = 0;
     if (resourcesApply.empty()) {
-        return permittedAllowType;
+        return permittedResourceType;
     }
 
     // filter out unpermitted resource type
-    for (uint32_t allowTypeIndex = 0; allowTypeIndex < MAX_RESOURCES_TYPE_NUM; ++allowTypeIndex) {
-        if (resourcesApply.find(allowTypeIndex + 1) == resourcesApply.end()) {
+    for (uint32_t resTypeIndex = 0; resTypeIndex < MAX_ALLOW_TYPE_NUMBER; ++resTypeIndex) {
+        if (resourcesApply.find(resTypeIndex + 1) == resourcesApply.end()) {
             continue;
         }
-        permittedAllowType += (1 << resourceIndex);
+        permittedResourceType += (1 << resTypeIndex);
     }
     BGTASK_LOGD("after filter, uid: %{public}d, bundleName: %{public}s, origin resource number: %{public}u, return "\
         "resource number: %{public}u", uid, bundleName.c_str(), allowType, permittedResourceNumber);
-    return permittedAllowType;
+    return permittedResourceType;
 }
 
 std::set<int32_t> StandbyServiceImpl::QueryRunningResourcesApply(const int32_t uid, const std::string &bundleName)
@@ -530,14 +530,14 @@ std::set<int32_t> StandbyServiceImpl::QueryRunningResourcesApply(const int32_t u
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
         BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
-        return false;
+        return {};
     }
     BGTASK_LOGD("size of applicationInfo.resourcesApply is %{public}d",
-        static_cast<int32_t>(applicationInfo.resourcesApply));
-    auto decreaseBase = [](int& permission) { permission -= decreaseBase; };
+        static_cast<int32_t>(applicationInfo.resourcesApply.size()));
+    std::set<int32_t> runningResourceApply {};
     for_each(applicationInfo.resourcesApply.begin(), applicationInfo.resourcesApply.end(),
-        decreaseBase);
-    return std::set{applicationInfo.resourcesApply.cbegin(), applicationInfo.resourcesApply.cend()};
+        [&runningResourceApply](int num) { runningResourceApply.emplace(num - BASE_OF_STANDBY_ALL_RESOURCES) }; );
+    return runningResourceApply;
 }
 
 int32_t StandbyServiceImpl::GetUserIdByUid(int32_t uid)
