@@ -519,8 +519,8 @@ uint32_t StandbyServiceImpl::FilterOutUnpermittedResType(uint32_t resourceType)
         }
         permittedResourceType += (1 << resTypeIndex);
     }
-    STANDBYSERVICE_LOGD("after filter, uid: %{public}d, bundleName: %{public}s, origin resource type: %{public}u, return "\
-        "resource type: %{public}u", uid, bundleName.c_str(), resourceType, permittedResourceType);
+    STANDBYSERVICE_LOGD("after filter, uid: %{public}d, bundleName: %{public}s, origin resource type: %{public}u, "\
+        "permitted resource type: %{public}u", uid, bundleName.c_str(), resourceType, permittedResourceType);
     return permittedResourceType;
 }
 
@@ -529,7 +529,7 @@ std::set<int32_t> StandbyServiceImpl::QueryRunningResourcesApply(const int32_t u
     AppExecFwk::ApplicationInfo applicationInfo;
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
-        STANDBYSERVICE_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
+        STANDBYSERVICE_LOGE("failed to get applicationInfo, bundleName is %{public}s", bundleName.c_str());
         return {};
     }
     STANDBYSERVICE_LOGD("size of applicationInfo.resourcesApply is %{public}d",
