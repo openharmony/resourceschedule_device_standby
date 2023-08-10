@@ -22,7 +22,7 @@
     *GetRunningSystemProcess*;
     *GetAllRunningProcesses*;
     *GetForegroundApplications*;
-    *GetAppRunningStateByuBundleName*;
+    *GetAppRunningStateByBundleName*;
     *GetContinuousTaskApps*;
     *GetTransientTaskApps*;
     *GetApplicationInfos*;
