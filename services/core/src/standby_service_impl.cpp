@@ -519,8 +519,10 @@ uint32_t StandbyServiceImpl::FilterOutUnpermittedResType(uint32_t resourceType)
         }
         permittedResourceType += (1 << resTypeIndex);
     }
+    permittedResourceType &= resourceType;
     STANDBYSERVICE_LOGD("after filter, uid: %{public}d, bundleName: %{public}s, origin resource type: %{public}u, "\
         "permitted resource type: %{public}u", uid, bundleName.c_str(), resourceType, permittedResourceType);
+
     return permittedResourceType;
 }
 
