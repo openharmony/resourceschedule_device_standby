@@ -519,8 +519,6 @@ uint32_t StandbyServiceImpl::GetExemptedResourceType(uint32_t resourceType)
         exemptedResourceType += (1 << (resourceType - EXEMPT_ALL_RESOURCES - 1));
     }
     exemptedResourceType &= resourceType;
-    STANDBYSERVICE_LOGD("after filter, uid: %{public}d, bundleName: %{public}s, origin resource type: %{public}u, "\
-        "permitted resource type: %{public}u", uid, bundleName.c_str(), resourceType, exemptedResourceType);
 
     return exemptedResourceType;
 }
