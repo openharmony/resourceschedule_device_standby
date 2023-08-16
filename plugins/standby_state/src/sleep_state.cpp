@@ -99,6 +99,8 @@ ErrCode SleepState::BeginState()
     if (stateManagerPtr->GetPreState() == StandbyState::MAINTENANCE) {
         maintIntervalTimeOut = CalculateMaintTimeOut(stateManagerPtr, false);
         if (maintIntervalTimeOut != 0) {
+            STANDBYSERVICE_LOGI("from maintenance to sleep, maintIntervalTimeOut is %{public}lld",
+                maintIntervalTimeOut);
             StartStateTransitionTimer(maintIntervalTimeOut);
         }
         return ERR_OK;
@@ -107,6 +109,8 @@ ErrCode SleepState::BeginState()
     maintIntervalIndex_ = 0;
     curPhase_ = SleepStatePhase::SYS_RES_DEEP;
     maintIntervalTimeOut = CalculateMaintTimeOut(stateManagerPtr, true);
+    STANDBYSERVICE_LOGI("maintIntervalTimeOut is %{public}lld ms", maintIntervalTimeOut);
+
     handler_->PostTask([sleepState = shared_from_this()]() {
         BaseState::AcquireStandbyRunningLock();
         sleepState->TransitToPhase(sleepState->curPhase_, sleepState->curPhase_ + 1);

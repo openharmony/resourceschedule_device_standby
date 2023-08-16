@@ -133,6 +133,9 @@ ErrCode BaseState::StartStateTransitionTimer(int64_t triggerTime)
         STANDBYSERVICE_LOGE("%{public}s state set timed task failed", STATE_NAME_LIST[nextState_].c_str());
         return ERR_STANDBY_TIMER_SERVICE_ERROR;
     }
+
+    STANDBYSERVICE_LOGD("StartStateTransitionTimer by id=%{public}lld, triggerTime=%{public}lld",
+        enterStandbyTimerId_, triggerTime);
     SetTimedTask(TRANSIT_NEXT_STATE_TIMED_TASK, enterStandbyTimerId_);
     return ERR_OK;
 }
