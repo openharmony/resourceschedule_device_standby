@@ -134,7 +134,7 @@ ErrCode BaseState::StartStateTransitionTimer(int64_t triggerTime)
         return ERR_STANDBY_TIMER_SERVICE_ERROR;
     }
 
-    STANDBYSERVICE_LOGD("StartStateTransitionTimer by id=%{public}lld, triggerTime=%{public}lld",
+    STANDBYSERVICE_LOGD("StartStateTransitionTimer by id=" SPUBI64 ", triggerTime=" SPUBI64,
         enterStandbyTimerId_, triggerTime);
     SetTimedTask(TRANSIT_NEXT_STATE_TIMED_TASK, enterStandbyTimerId_);
     return ERR_OK;
