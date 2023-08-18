@@ -20,7 +20,7 @@
 #include "istandby_service.h"
 #include "standby_service_log.h"
 #include "net_policy_client.h"
- 
+
 namespace OHOS {
 namespace DevStandbyMgr {
 ErrCode NetworkStrategy::OnCreated()
@@ -30,7 +30,7 @@ ErrCode NetworkStrategy::OnCreated()
     ResetFirewallAllowList();
     return ERR_OK;
 }
- 
+
 ErrCode NetworkStrategy::OnDestroy()
 {
     STANDBYSERVICE_LOGI("NetworkStrategy is now OnDestroy");
@@ -74,6 +74,9 @@ void NetworkStrategy::HandleEvent(const StandbyMessage& message)
             break;
         case StandbyMessageType::BG_TASK_STATUS_CHANGE:
             UpdateBgTaskAppStatus(message);
+            break;
+        case StandbyMessageType::PROCESS_STATE_CHANGED:
+            HandleProcessStatusChanged(message);
             break;
         default:
             break;
@@ -141,10 +144,11 @@ ErrCode NetworkStrategy::SetFirewallStatus(bool enableFirewall)
     SetNetAllowApps(enableFirewall);
     return ERR_OK;
 }
- 
+
 void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
-    STANDBYSERVICE_LOGD("enter NetworkStrategy::ShellDump");
+    result.append("=================DeviceIdle=======================\n");
+    BaseNetworkStrategy::ShellDump(argsInStr, result);
 }
 } // namespace DevStandbyMgr
 } // namespace OHOS
