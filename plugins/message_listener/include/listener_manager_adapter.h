@@ -23,7 +23,6 @@ namespace OHOS {
 namespace DevStandbyMgr {
 class ListenerManagerAdapter : public IListenerManagerAdapter {
 public:
-    ListenerManagerAdapter() = default;
     ~ListenerManagerAdapter() override = default;
     bool Init() override;
     bool UnInit() override;
