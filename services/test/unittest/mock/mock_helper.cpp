@@ -50,6 +50,30 @@ void MockSubscribeObserver(bool mockRet)
 
 namespace OHOS {
 namespace DevStandbyMgr {
+namespace {
+    std::shared_ptr<IBundleManagerHelper> bundleManaerHelperMock;
+}
+
+void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
+{
+    bundleManagerHelperMock = mock;
+}
+
+void CleanBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
+{
+    bundleManagerHelperMock.reset();
+}
+
+bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
+    const int userId, AppExecFwk::ApplicationInfo &appInfo)
+{
+    bool ret {false};
+    if (bundleManagerHelperMock) {
+        ret = bundleManagerHelperMock->GetApplicationInfo(appName, flag, userId, appInfo);
+    }
+    return ret;
+}
+
 uint64_t TimedTask::CreateTimer(bool repeat, uint64_t interval, bool isExact, bool isIdle,
     const std::function<void()>& callBack)
 {

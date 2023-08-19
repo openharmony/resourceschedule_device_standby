@@ -584,7 +584,7 @@ ErrCode StandbyServiceImpl::ApplyAllowResource(const sptr<ResourceRequest>& reso
         == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         resourceRequest->SetAllowType(GetExemptedResourceType(resourceRequest->GetAllowType()));
     }
-
+f
     if (!CheckAllowTypeInfo(resourceRequest->GetAllowType()) || resourceRequest->GetUid() < 0) {
         STANDBYSERVICE_LOGE("resourceRequest param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
