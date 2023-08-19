@@ -24,7 +24,7 @@
 #include "resource_type.h"
 #include "system_ability_definition.h"
 
-#include "ibundle_manager_helper_mock.h"
+#include "mock_bundle_manager_helper.h"
 
 using namespace testing::ext;
 using namespace testing;
