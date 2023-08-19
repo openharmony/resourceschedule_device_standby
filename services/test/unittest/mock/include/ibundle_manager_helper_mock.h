@@ -27,7 +27,7 @@ public:
 
     MOCK_METHOD4(GetApplicationInfo, bool(const std::string &, const AppExecFwk::ApplicationFlag,
         const int, AppExecFwk::ApplicationInfo &));
-}
+};
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICES_TEST_IBUNDLE_MANAGER_HELPER_MOCK_H
