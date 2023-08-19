@@ -512,7 +512,7 @@ uint32_t StandbyServiceImpl::GetExemptedResourceType(uint32_t resourceType)
     }
 
     // filter out unpermitted resource type
-    for (const auto resourceType : resourcesApply) {
+    for (const uint32_t resourceType : resourcesApply) {
         if (resourceType < EXEMPT_ALL_RESOURCES) {
             continue;
         }
@@ -584,7 +584,7 @@ ErrCode StandbyServiceImpl::ApplyAllowResource(const sptr<ResourceRequest>& reso
         == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         resourceRequest->SetAllowType(GetExemptedResourceType(resourceRequest->GetAllowType()));
     }
-f
+
     if (!CheckAllowTypeInfo(resourceRequest->GetAllowType()) || resourceRequest->GetUid() < 0) {
         STANDBYSERVICE_LOGE("resourceRequest param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
