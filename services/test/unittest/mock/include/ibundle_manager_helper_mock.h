@@ -21,8 +21,7 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-class MockBundleManagerHelper final : public IBundleManagerHelper
-{
+class MockBundleManagerHelper final : public IBundleManagerHelper {
 public:
     ~IBundleManagerHelper() override = default;
 

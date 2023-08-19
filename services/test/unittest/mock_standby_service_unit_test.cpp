@@ -23,7 +23,6 @@
 #include "standby_service_impl.h"
 #include "resource_type.h"
 #include "system_ability_definition.h"
-#include "time_provider.h"
 
 #include "ibundle_manager_helper_mock.h"
 
