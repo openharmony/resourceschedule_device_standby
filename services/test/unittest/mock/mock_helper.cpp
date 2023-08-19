@@ -51,7 +51,7 @@ void MockSubscribeObserver(bool mockRet)
 namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
-    std::shared_ptr<IBundleManagerHelper> bundleManaerHelperMock;
+    std::shared_ptr<IBundleManagerHelper> bundleManagerHelperMock;
 }
 
 void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
