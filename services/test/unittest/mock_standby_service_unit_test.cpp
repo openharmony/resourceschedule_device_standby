@@ -44,10 +44,10 @@ public:
     void SetUp();
     void TearDown();
 
-    static std::shared_ptr<IBundleManagerHelper> bundleManagerHelperMock_;
+    static std::shared_ptr<MockBundleManagerHelper> bundleManagerHelperMock_;
 };
 
-std::shared_ptr<IBundleManagerHelper> MockStandbyServiceUnitTest::bundleManagerHelperMock_ = nullptr;
+std::shared_ptr<MockBundleManagerHelper> MockStandbyServiceUnitTest::bundleManagerHelperMock_ = nullptr;
 
 void MockStandbyServiceUnitTest::TearDownTestCase()
 {
