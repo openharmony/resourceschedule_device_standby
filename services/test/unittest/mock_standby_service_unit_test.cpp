@@ -115,7 +115,7 @@ HWTEST_F(MockStandbyServiceUnitTest, GetExemptedResourceType_003, TestSize.Level
 HWTEST_F(MockStandbyServiceUnitTest, GetExemptedResourceType_004, TestSize.Level1)
 {
     AppExecFwk::ApplicationInfo info {};
-    info1.resourcesApply = { NETWORK_INDEX };
+    info.resourcesApply = { NETWORK_INDEX };
     EXPECT_CALL(*bundleManagerHelperMock_, GetApplicationInfo(_, _, _, _))
         .WillOnce(DoAll(SetArgReferee<3>(info), Return(true)));
     auto exemptedType = StandbyServiceImpl::GetInstance()->GetExemptedResourceType(MAX_ALLOW_TYPE_NUMBER);

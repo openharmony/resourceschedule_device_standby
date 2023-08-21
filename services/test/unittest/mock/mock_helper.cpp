@@ -19,6 +19,7 @@
 #include "bundle_manager_helper.h"
 #include "common_event_observer.h"
 #include "background_task_helper.h"
+#include "include/ibundle_manager_helper.h"
 
 namespace {
     static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
@@ -59,7 +60,7 @@ void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
     bundleManagerHelperMock = mock;
 }
 
-void CleanBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
+void CleanBundleManagerHelper()
 {
     bundleManagerHelperMock.reset();
 }
