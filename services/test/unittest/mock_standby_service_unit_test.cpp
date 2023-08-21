@@ -56,7 +56,7 @@ void MockStandbyServiceUnitTest::TearDownTestCase()
 
 void MockStandbyServiceUnitTest::SetUp()
 {
-    bundleManagerHelperMock_ = std::make_shared<IBundleManagerHelper>();
+    bundleManagerHelperMock_ = std::make_shared<MockBundleManagerHelper>();
     SetBundleManagerHelper(bundleManagerHelperMock_);
 }
 
