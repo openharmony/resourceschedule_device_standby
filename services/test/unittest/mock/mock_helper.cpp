@@ -114,13 +114,6 @@ std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
     return TEST_DEFAULT_BUNDLE;
 }
 
-bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
-    const int userId, AppExecFwk::ApplicationInfo &appInfo)
-{
-    appInfo.runningResourcesApply = true;
-    return true;
-}
-
 bool BundleManagerHelper::Connect()
 {
     return true;
