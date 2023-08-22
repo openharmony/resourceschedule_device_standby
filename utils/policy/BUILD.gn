@@ -11,8 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import(
-    "//foundation/resourceschedule/device_standby/standby_service.gni")
+import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 config("standby_utils_policy_config") {
   include_dirs = [
@@ -21,23 +20,45 @@ config("standby_utils_policy_config") {
   ]
 }
 
+StandbyUtilsPolicy = [
+  "src/json_utils.cpp",
+  "src/standby_config_manager.cpp",
+]
+
+StandbyUtilsPolicyExternalDeps = [
+  "c_utils:utils",
+  "hilog:libhilog",
+  "ipc:ipc_single",
+]
+
 ohos_shared_library("standby_utils_policy") {
-  sources = [
-    "src/json_utils.cpp",
-    "src/standby_config_manager.cpp",
-  ]
+  sources = StandbyUtilsPolicy
 
   public_configs = [ ":standby_utils_policy_config" ]
 
-  deps = [
-    "${standby_utils_common_path}:standby_utils_common",
-  ]
+  deps = [ "${standby_utils_common_path}:standby_utils_common" ]
 
-  external_deps = [
-    "c_utils:utils",
-    "hilog:libhilog",
-    "ipc:ipc_single",
-  ]
+  external_deps = StandbyUtilsPolicyExternalDeps
+
+  defines = []
+  if (enable_standby_configpolicy) {
+    external_deps += [ "config_policy:configpolicy_util" ]
+    defines += [ "STANDBY_CONFIG_POLICY_ENABLE" ]
+  }
+
+  subsystem_name = "resourceschedule"
+  part_name = "${standby_service_part_name}"
+  version_script = "libstandby_utils_policy.versionscript"
+}
+
+ohos_static_library("standby_utils_policy_static") {
+  sources = StandbyUtilsPolicy
+
+  public_configs = [ ":standby_utils_policy_config" ]
+
+  deps = [ "${standby_utils_common_path}:standby_utils_common" ]
+
+  external_deps = StandbyUtilsPolicyExternalDeps
 
   defines = []
   if (enable_standby_configpolicy) {

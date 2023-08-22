@@ -13,17 +13,35 @@
 
 1.0 {
   global:
-    *StandbyService*;
-    *TimedTask*;
+    *AddPluginSysAbilityListener*;
+    *CreateTimer*;
+    *TimeDiffToDayNightSwitch*;
     *DEVICE_TYPE*;
-    *TimeProvider*;
-    *StandbyStateSubscriber*;
-    *AbilityManagerHelper*;
-    *AppMgrHelper*;
-    *BackgroundTaskHelper*;
-    *AbilityManagerHelper*;
-    *BundleManagerHelper*;
+    *GetCondition*;
+    *ReportStandbyState*;
+    *GetRunningSystemProcess*;
+    *GetAllRunningProcesses*;
+    *GetForegroundApplications*;
+    *GetAppRunningStateByBundleName*;
+    *GetContinuousTaskApps*;
+    *GetTransientTaskApps*;
+    *GetApplicationInfos*;
+    *GetClientBundleName*;
+    *CheckIsSystemAppByUid*;
     *DeviceStateCache*;
+    *GetInstance*;
+    *DispatchEvent*;
+    *GetStateManager*;
+    *GetConstraintManager*;
+    *GetHandler*;
+    *GetNapTimeOut*;
+    *GetAllowList*;
+    *GetStrategyManager*;
+    *ShellDump*;
+    *GetEligiableRestrictSet*;
+    *IStateManagerAdapter*;
+    *IStrategyManagerAdapter*;
+    *IsDebugMode*;
   local:
     *;
 };
