@@ -1026,15 +1026,19 @@ void StandbyServiceImpl::DumpUsage(std::string& result)
     "        --reset_state                                       reset parameter, validate debug parameter\n"
     "        --strategy                                          dump strategy info\n"
     "    -E                                                 enter the specified state:\n"
-    "        {id of state} {whether skip evalution}         enter the specified state, 0-4 represent respectively\n"
+    "        {name of state} {whether skip evalution}       enter the specified state, 0-4 represent respectively\n"
     "                                                            woking, dark, nap, maintenance, sleep\n"
     "    -A                                                 modify the allow list:\n"
     "        --apply {uid} {name} {type} {duration} {reasoncode} apply the type of the uid to allow list\n"
     "        --unapply {uid} {name} {type}                  delete the type of the uid from allow list\n"
     "        --get {type} {isApp}                                get allow list info\n"
-    "    -S                                                 simulately activate the sensor:\n"
-    "        {--motion or --repeat or --blocked or --halfhour} simulately activate the motion sensor\n"
-    "        {--poweroff}                                      power off strategy\n"
+    "    -S                                                 simulate some action:\n"
+    "        {--motion}                                          activate the motion sensor when enter idle\n"
+    "        {--repeat}                                          be in motion mode, only used in idle state\n"
+    "        {--blocked}                                         block current state\n"
+    "        {--poweroff}                                        power off strategy\n"
+    "        {--powersave}                                       enable power save firwwall\n"
+    "        {--halfhour}                                        screen off for half hour\n"
     "    -T  {switch name} {on or off}                      turn on or turn off some switches, switch can be debug,\n"
     "                                                            nap_switch, sleep_switch, detect_motion, other\n"
     "                                                            switch only be used after open debug switch\n"
@@ -1202,6 +1206,7 @@ void StandbyServiceImpl::DumpActivateMotion(const std::vector<std::string>& args
 {
     standbyStateManager_->ShellDump(argsInStr, result);
     constraintManager_->ShellDump(argsInStr, result);
+    strategyManager_->ShellDump(argsInStr, result);
 }
 
 void StandbyServiceImpl::DumpSubScriberObserver(const std::vector<std::string>& argsInStr, std::string& result)

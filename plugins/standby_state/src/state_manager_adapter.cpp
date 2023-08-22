@@ -350,7 +350,11 @@ void StateManagerAdapter::DumpEnterSpecifiedState(const std::vector<std::string>
     if (argsInStr[DUMP_THIRD_PARAM] == "false") {
         curStatePtr_->StartTransitNextState(curStatePtr_);
     } else {
-        TransitToStateInner(static_cast<uint32_t>(std::atoi(argsInStr[DUMP_SECOND_PARAM].c_str())));
+        auto iter =  std::find(STATE_NAME_LIST.begin(), STATE_NAME_LIST.end(), argsInStr[DUMP_SECOND_PARAM]);
+        if (iter == STATE_NAME_LIST.end()) {
+            result += "state name is not correct";
+        }
+        TransitToStateInner(iter - STATE_NAME_LIST.begin());
     }
 }
 
