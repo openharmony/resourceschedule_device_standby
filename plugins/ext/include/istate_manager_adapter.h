@@ -54,7 +54,7 @@ public:
     bool IsEvalution();
     bool IsScreenOn();
     virtual int64_t GetScreenOffTimeStamp();
-    virtual void IsScrOffHalfHourCtrl();
+    virtual bool IsScrOffHalfHourCtrl();
 protected:
     bool isEvalution_ {false};
     bool isBlocked_ {false};

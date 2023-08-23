@@ -42,7 +42,7 @@ bool IStateManagerAdapter::IsScreenOn()
     return isScreenOn_;
 }
 
-void IStateManagerAdapter::IsScrOffHalfHourCtrl()
+bool IStateManagerAdapter::IsScrOffHalfHourCtrl()
 {
     return scrOffHalfHourCtrl_;
 }
