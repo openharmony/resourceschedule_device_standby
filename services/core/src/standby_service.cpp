@@ -239,7 +239,7 @@ void StandbyService::AddPluginSysAbilityListener(int32_t systemAbilityId)
 ErrCode StandbyService::NotifySystemAbilityStatusChanged(bool isAdded, int32_t systemAbilityId)
 {
     StandbyMessage standbyMessage{StandbyMessageType::SYS_ABILITY_STATUS_CHANGED};
-    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_ = AAFwk::Want {};
     standbyMessage.want_->SetParam(SA_STATUS, isAdded);
     standbyMessage.want_->SetParam(SA_ID, systemAbilityId);
     StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
