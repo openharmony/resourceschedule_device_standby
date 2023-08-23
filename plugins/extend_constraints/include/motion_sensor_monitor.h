@@ -61,8 +61,6 @@ private:
     const int32_t restTimeOut_;
     const int32_t totalTimeOut_;
 
-    // SensorUser acceSensorUser_ {};
-    // SensorUser motionSensorUser_ {};
     static double energy_;
     static bool hasPrevAccelData_;
     static AccelData previousAccelData_;
