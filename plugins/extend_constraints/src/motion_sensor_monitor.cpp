@@ -40,7 +40,7 @@ MotionSensorMonitor::MotionSensorMonitor(int32_t detectionTimeOut, int32_t restT
     handler_ = StandbyServiceImpl::GetInstance()->GetHandler();
 }
 
-bool MotionSensorMonitor::CheckSersorConfig(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId)
+bool MotionSensorMonitor::CheckSersorUsable(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId)
 {
     SensorInfo *pt = sensorInfo + count;
     for (SensorInfo *ps = sensorInfo; ps < pt; ++ps) {
@@ -141,9 +141,11 @@ bool MotionSensorMonitor::Init()
 
 bool MotionSensorMonitor::InitSensorUserMap(SensorInfo* sensorInfo, int32_t count)
 {
+    // use acceleromter sensor and significant motion sensor to check motion
     const std::vector<int32_t> SENSOR_TYPE_CONFIG = {SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_SIGNIFICANT_MOTION};
+
     for (const auto sensorType : SENSOR_TYPE_CONFIG) {
-        if (CheckSersorConfig(sensorInfo, count, sensorType)) {
+        if (CheckSersorUsable(sensorInfo, count, sensorType)) {
             mornitoredSensorMap_.emplace(sensorType, SensorUser {});
         }
     }
@@ -156,6 +158,7 @@ void MotionSensorMonitor::AssignAcclerometerSensorCallBack()
     if (iter == sensorUserMap_.end()) {
         return;
     }
+
     if (params_.isRepeatedDetection_) {
         iter->second.callback = &RepeatAcceleromterCallback;
     } else {
@@ -169,6 +172,7 @@ void MotionSensorMonitor::AssignMotionSensorCallBack()
     if (iter == sensorUserMap_.end()) {
         return;
     }
+
     iter->second.callback = &MotionSensorCallback;
 }
 
@@ -210,6 +214,7 @@ ErrCode MotionSensorMonitor::StartMonitoringInner()
         return ERR_OK;
     }
 
+    // if failed to start sensor, must stop sensor, in case of sensor keep callback
     StopSensor();
     return ERR_STANDBY_START_SENSOR_FAILED;
 }

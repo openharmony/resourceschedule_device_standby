@@ -50,7 +50,7 @@ private:
     void AssignMotionSensorCallBack();
     ErrCode StartMonitoringInner();
     void StopMonitoringInner();
-    bool CheckSersorConfig(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId);
+    bool CheckSersorUsable(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId);
     ErrCode StartSensor();
     void StopSensor();
     void PeriodlyStartMotionDetection();
@@ -69,6 +69,7 @@ private:
     ConstraintEvalParam params_{};
     bool isMonitoring_ {false};
 
+    // key is sensor type, value is sensorUser with callback function pointer
     std::map<int32_t, SensorUser> sensorUserMap_ {};
 };
 } // DevStandbyMgr
