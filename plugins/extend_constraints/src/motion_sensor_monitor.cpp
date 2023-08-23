@@ -146,10 +146,10 @@ bool MotionSensorMonitor::InitSensorUserMap(SensorInfo* sensorInfo, int32_t coun
 
     for (const auto sensorType : SENSOR_TYPE_CONFIG) {
         if (CheckSersorUsable(sensorInfo, count, sensorType)) {
-            mornitoredSensorMap_.emplace(sensorType, SensorUser {});
+            sensorUserMap_.emplace(sensorType, SensorUser {});
         }
     }
-    return mornitoredSensorMap_.size() > 0;
+    return sensorUserMap_.size() > 0;
 }
 
 void MotionSensorMonitor::AssignAcclerometerSensorCallBack()
