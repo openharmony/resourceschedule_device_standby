@@ -123,7 +123,8 @@ private:
     ErrCode IsSystemAppWithPermission(int32_t uid, Security::AccessToken::AccessTokenID tokenId, uint32_t reasonCode);
     ErrCode CheckNativePermission(Security::AccessToken::AccessTokenID tokenId);
     bool CheckAllowTypeInfo(uint32_t allowType);
-    ErrCode CheckRunningResourcesApply(const int32_t uid, const std::string& bundleName);
+    uint32_t GetExemptedResourceType(uint32_t resourceType);
+    std::vector<int32_t> QueryRunningResourcesApply(const int32_t uid, const std::string& bundleName);
     int32_t GetUserIdByUid(int32_t uid);
 
     void DumpUsage(std::string& result);

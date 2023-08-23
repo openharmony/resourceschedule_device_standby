@@ -212,11 +212,67 @@ ohos_unittest("mock_standby_helper_unit_test") {
   part_name = "${standby_service_part_name}"
 }
 
+ohos_unittest("mock_standby_service_unit_test") {
+  module_out_path = module_output_path
+  cflags_cc = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
+
+  include_dirs = [ "${standby_service_path}/test/unittest/mock/include" ]
+
+  sources = [
+    "mock/mock_helper.cpp",
+    "mock_standby_service_unit_test.cpp",
+  ]
+
+  deps = [
+    "${standby_innerkits_path}:standby_innerkits",
+    "${standby_plugins_path}:standby_plugin",
+    "${standby_service_frameworks_path}:standby_fwk",
+    "${standby_service_path}:standby_service_static",
+    "${standby_utils_common_path}:standby_utils_common",
+    "${standby_utils_policy_path}:standby_utils_policy",
+    "//third_party/googletest:gmock_main",
+  ]
+
+  external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
+    "access_token:libaccesstoken_sdk",
+    "access_token:libtokenid_sdk",
+    "bundle_framework:appexecfwk_base",
+    "c_utils:utils",
+    "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "init:libbegetutil",
+    "ipc:ipc_single",
+    "power_manager:powermgr_client",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+    "time_service:time_client",
+  ]
+
+  defines = []
+  if (enable_background_task_mgr) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
+  }
+
+  subsystem_name = "resourceschedule"
+  part_name = "${standby_service_part_name}"
+}
+
 group("unittest") {
   testonly = true
 
   deps = [
     ":mock_standby_helper_unit_test",
+    ":mock_standby_service_unit_test",
     ":standby_helper_unit_test",
     ":standby_service_unit_test",
     ":standby_utils_unit_test",

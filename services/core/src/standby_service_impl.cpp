@@ -58,6 +58,7 @@ const std::string SYSTEM_SO_PATH = "/system/lib64/";
 const std::string SYSTEM_SO_PATH = "/system/lib/";
 #endif
 const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPTION";
+const uint32_t EXEMPT_ALL_RESOURCES = 100;
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyServiceImpl);
@@ -483,8 +484,7 @@ ErrCode StandbyServiceImpl::IsSystemAppWithPermission(int32_t uid,
         STANDBYSERVICE_LOGE("reasonCode error, uid %{public}d  must be app api", uid);
         return ERR_STANDBY_PERMISSION_DENIED;
     }
-    auto bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
-    return CheckRunningResourcesApply(uid, bundleName);
+    return ERR_OK;
 }
 
 ErrCode StandbyServiceImpl::CheckNativePermission(Security::AccessToken::AccessTokenID tokenId)
@@ -499,19 +499,47 @@ ErrCode StandbyServiceImpl::CheckNativePermission(Security::AccessToken::AccessT
     return ERR_STANDBY_PERMISSION_DENIED;
 }
 
-ErrCode StandbyServiceImpl::CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName)
+uint32_t StandbyServiceImpl::GetExemptedResourceType(uint32_t resourceType)
+{
+    int32_t uid = IPCSkeleton::GetCallingUid();
+    auto bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    const std::vector<int32_t>& resourcesApply = QueryRunningResourcesApply(uid, bundleName);
+
+    uint32_t exemptedResourceType = 0;
+    if (resourcesApply.empty()) {
+        return exemptedResourceType;
+    }
+
+    if (std::find(resourcesApply.begin(), resourcesApply.end(), EXEMPT_ALL_RESOURCES) != resourcesApply.end()) {
+        return resourceType;
+    }
+
+    // traverse resourcesApply and get exempted resource type
+    for (const uint32_t resourceType : resourcesApply) {
+        if (resourceType < EXEMPT_ALL_RESOURCES) {
+            continue;
+        }
+        // maps number in resourceApply to resourceType defined in allow_type.h
+        exemptedResourceType |= (1 << (resourceType - EXEMPT_ALL_RESOURCES - 1));
+    }
+    exemptedResourceType &= resourceType;
+
+    return exemptedResourceType;
+}
+
+// meaning of number in resourcesApply list: 100 - all type of resources, 101 - NETWORK,
+// 102 - RUNNING_LOCK, 103 - TIMER, 104 - WORK_SCHEDULER, 105 - AUTO_SYNC, 106 - PUSH, 107 - FREEZE
+std::vector<int32_t> StandbyServiceImpl::QueryRunningResourcesApply(const int32_t uid, const std::string &bundleName)
 {
     AppExecFwk::ApplicationInfo applicationInfo;
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
         STANDBYSERVICE_LOGE("failed to get applicationInfo, bundleName is %{public}s", bundleName.c_str());
-        return ERR_STANDBY_PERMISSION_DENIED;
+        return {};
     }
-    STANDBYSERVICE_LOGD("applicationInfo.runningResourcesApply is %{public}d", applicationInfo.runningResourcesApply);
-    if (!applicationInfo.runningResourcesApply) {
-        return ERR_STANDBY_PERMISSION_DENIED;
-    }
-    return ERR_OK;
+    STANDBYSERVICE_LOGD("size of applicationInfo.resourcesApply is %{public}d",
+        static_cast<int32_t>(applicationInfo.resourcesApply.size()));
+    return applicationInfo.resourcesApply;
 }
 
 int32_t StandbyServiceImpl::GetUserIdByUid(int32_t uid)
@@ -556,6 +584,13 @@ ErrCode StandbyServiceImpl::ApplyAllowResource(const sptr<ResourceRequest>& reso
     if (auto checkRet = CheckCallerPermission(resourceRequest->GetReasonCode()); checkRet != ERR_OK) {
         return checkRet;
     }
+
+    // update allow type according to configuration
+    if (Security::AccessToken::AccessTokenKit::GetTokenType(OHOS::IPCSkeleton::GetCallingTokenID())
+        == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        resourceRequest->SetAllowType(GetExemptedResourceType(resourceRequest->GetAllowType()));
+    }
+
     if (!CheckAllowTypeInfo(resourceRequest->GetAllowType()) || resourceRequest->GetUid() < 0) {
         STANDBYSERVICE_LOGE("resourceRequest param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
@@ -662,6 +697,13 @@ ErrCode StandbyServiceImpl::UnapplyAllowResource(const sptr<ResourceRequest>& re
     if (auto checkRet = CheckCallerPermission(resourceRequest->GetReasonCode()); checkRet != ERR_OK) {
         return checkRet;
     }
+
+    // update allow type according to configuration
+    if (Security::AccessToken::AccessTokenKit::GetTokenType(OHOS::IPCSkeleton::GetCallingTokenID())
+        == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        resourceRequest->SetAllowType(GetExemptedResourceType(resourceRequest->GetAllowType()));
+    }
+
     if (!CheckAllowTypeInfo(resourceRequest->GetAllowType()) || resourceRequest->GetUid() < 0) {
         STANDBYSERVICE_LOGE("param of resourceRequest is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
@@ -751,10 +793,12 @@ ErrCode StandbyServiceImpl::GetAllowList(uint32_t allowType, std::vector<AllowIn
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
+
     STANDBYSERVICE_LOGD("start GetAllowList");
     if (auto checkRet = CheckCallerPermission(reasonCode); checkRet != ERR_OK) {
         return checkRet;
     }
+
     if (!CheckAllowTypeInfo(allowType)) {
         STANDBYSERVICE_LOGE("allowtype param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
