@@ -505,28 +505,30 @@ uint32_t StandbyServiceImpl::GetExemptedResourceType(uint32_t resourceType)
     auto bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
     const std::vector<int32_t>& resourcesApply = QueryRunningResourcesApply(uid, bundleName);
 
-    // this app is permitted to use all type of resources
-    if (std::find(resourcesApply.begin(), resourcesApply.end(), EXEMPT_ALL_RESOURCES) != resourcesApply.end()) {
-        return resourceType;
-    }
-
     uint32_t exemptedResourceType = 0;
     if (resourcesApply.empty()) {
         return exemptedResourceType;
     }
 
-    // filter out unpermitted resource type
+    if (std::find(resourcesApply.begin(), resourcesApply.end(), EXEMPT_ALL_RESOURCES) != resourcesApply.end()) {
+        return resourceType;
+    }
+
+    // traverse resourcesApply and get exempted resource type
     for (const uint32_t resourceType : resourcesApply) {
         if (resourceType < EXEMPT_ALL_RESOURCES) {
             continue;
         }
-        exemptedResourceType += (1 << (resourceType - EXEMPT_ALL_RESOURCES - 1));
+        // maps number in resourceApply to resourceType defined in allow_type.h
+        exemptedResourceType |= (1 << (resourceType - EXEMPT_ALL_RESOURCES - 1));
     }
     exemptedResourceType &= resourceType;
 
     return exemptedResourceType;
 }
 
+// meaning of number in resourcesApply list: 100 - all type of resources, 101 - NETWORK,
+// 102 - RUNNING_LOCK, 103 - TIMER, 104 - WORK_SCHEDULER, 105 - AUTO_SYNC, 106 - PUSH, 107 - FREEZE
 std::vector<int32_t> StandbyServiceImpl::QueryRunningResourcesApply(const int32_t uid, const std::string &bundleName)
 {
     AppExecFwk::ApplicationInfo applicationInfo;
