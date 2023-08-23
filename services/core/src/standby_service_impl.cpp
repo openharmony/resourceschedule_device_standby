@@ -188,7 +188,7 @@ void StandbyServiceImpl::DayNightSwitchCallback()
         auto curState = standbyImpl->standbyStateManager_->GetCurState();
         if (curState == StandbyState::SLEEP) {
             StandbyMessage standbyMessage {StandbyMessageType::RES_CTRL_CONDITION_CHANGED};
-            standbyMessage.want_ = AAFwk::Want{};
+            standbyMessage.want_ = AAFwk::Want {};
             uint32_t condition = TimeProvider::GetCondition();
             standbyMessage.want_->SetParam(RES_CTRL_CONDITION, static_cast<int32_t>(condition));
             standbyImpl->DispatchEvent(standbyMessage);
@@ -673,7 +673,7 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
         auto findRecordTask = [allowTypeIndex](const auto& it) { return it.allowTypeIndex_ == allowTypeIndex; };
         auto it = std::find_if(allowTimeList.begin(), allowTimeList.end(), findRecordTask);
         if (it == allowTimeList.end()) {
-            allowTimeList.emplace_back(AllowTime{allowTypeIndex, endTime, resourceRequest->GetReason()});
+            allowTimeList.emplace_back(AllowTime {allowTypeIndex, endTime, resourceRequest->GetReason()});
         } else {
             it->reason_ = resourceRequest->GetReason();
             it->endTime_ = std::max(it->endTime_, endTime);
@@ -766,7 +766,7 @@ void StandbyServiceImpl::OnProcessStatusChanged(int32_t uid, int32_t pid, const 
     STANDBYSERVICE_LOGD("process status change, uid: %{piblic}d, pid: %{piblic}d, name: %{piblic}s, alive: %{piblic}d",
         uid, pid, bundleName.c_str(), isCreated);
     StandbyMessage standbyMessage {StandbyMessageType::PROCESS_STATE_CHANGED};
-    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_ = AAFwk::Want {};
     standbyMessage.want_->SetParam("uid", uid);
     standbyMessage.want_->SetParam("pid", pid);
     standbyMessage.want_->SetParam("name", bundleName);
@@ -778,7 +778,7 @@ void StandbyServiceImpl::NotifyAllowListChanged(int32_t uid, const std::string& 
     uint32_t allowType, bool added)
 {
     StandbyMessage standbyMessage {StandbyMessageType::ALLOW_LIST_CHANGED};
-    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_ = AAFwk::Want {};
     standbyMessage.want_->SetParam("uid", uid);
     standbyMessage.want_->SetParam("name", name);
     standbyMessage.want_->SetParam("allowType", static_cast<int>(allowType));
@@ -909,7 +909,7 @@ ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid,
         return ERR_STANDBY_PERMISSION_DENIED;
     }
     StandbyMessage standbyMessage {StandbyMessageType::BG_TASK_STATUS_CHANGE};
-    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_ = AAFwk::Want {};
     standbyMessage.want_->SetParam(BG_TASK_TYPE, WORK_SCHEDULER);
     standbyMessage.want_->SetParam(BG_TASK_STATUS, started);
     standbyMessage.want_->SetParam(BG_TASK_UID, uid);
@@ -984,7 +984,7 @@ ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool 
         return ERR_OK;
     }
     StandbyMessage standbyMessage {StandbyMessageType::DEVICE_STATE_CHANGED};
-    standbyMessage.want_ = AAFwk::Want{};
+    standbyMessage.want_ = AAFwk::Want {};
     standbyMessage.want_->SetParam("DIS_COMP_STATE", enabled);
     DispatchEvent(standbyMessage);
     return ERR_OK;
