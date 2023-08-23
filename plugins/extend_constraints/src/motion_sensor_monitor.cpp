@@ -125,7 +125,7 @@ bool MotionSensorMonitor::Init()
         return false;
     }
 
-    if (!InitSensorUserMap()) {
+    if (!InitSensorUserMap(sensorInfo, count)) {
         STANDBYSERVICE_LOGE("do not find any usable sensor to detect motion");
         return false;
     }
@@ -139,7 +139,7 @@ bool MotionSensorMonitor::Init()
     return true;
 }
 
-bool MotionSensorMonitor::InitSensorUserMap()
+bool MotionSensorMonitor::InitSensorUserMap(SensorInfo* sensorInfo, int32_t count)
 {
     const std::vector<int32_t> SENSOR_TYPE_CONFIG = {SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_SIGNIFICANT_MOTION};
     for (const auto sensorType : SENSOR_TYPE_CONFIG) {
@@ -147,7 +147,7 @@ bool MotionSensorMonitor::InitSensorUserMap()
             mornitoredSensorMap_.emplace(sensorType, SensorUser {});
         }
     }
-    return InitSensorUserMap.size() > 0;
+    return mornitoredSensorMap_.size() > 0;
 }
 
 void MotionSensorMonitor::AssignAcclerometerSensorCallBack()
@@ -226,17 +226,17 @@ void MotionSensorMonitor::StopMonitoringInner()
     isMonitoring_ = false;
 }
 
-ErrCode MotionSensorMonitor::StartSensor(int32_t sensorTypeId, SensorUser* sensorUser)
+ErrCode MotionSensorMonitor::StartSensor()
 {
     for (const auto &[sensorTypeId, sensorUser] : sensorUserMap_) {
-        if (SubscribeSensor(sensorTypeId, sensorUser) != 0) {
+        if (SubscribeSensor(sensorTypeId, &sensorUser) != 0) {
             STANDBYSERVICE_LOGE("subscribe sensor failed for sensor ID %{public}d", sensorTypeId);
             return ERR_STANDBY_START_SENSOR_FAILED;
         }
         STANDBYSERVICE_LOGD("subscribe sensor succeed for sensor ID %{public}d", sensorTypeId);
 
-        SetBatch(sensorTypeId, sensorUser, SENSOR_SAMPLING_RATE, SENSOR_REPORTING_RATE);
-        if (ActivateSensor(sensorTypeId, sensorUser) != 0) {
+        SetBatch(sensorTypeId, &sensorUser, SENSOR_SAMPLING_RATE, SENSOR_REPORTING_RATE);
+        if (ActivateSensor(sensorTypeId, &sensorUser) != 0) {
             STANDBYSERVICE_LOGE("activate sensor failed for sensor ID %{public}d", sensorTypeId);
             return ERR_STANDBY_START_SENSOR_FAILED;
         }

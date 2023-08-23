@@ -45,7 +45,7 @@ public:
     static void RepeatAcceleromterCallback(SensorEvent *event);
 
 private:
-    bool InitSensorUserMap();
+    bool InitSensorUserMap(SensorInfo* sensorInfo, int32_t count);
     void AssignAcclerometerSensorCallBack();
     void AssignMotionSensorCallBack();
     ErrCode StartMonitoringInner();
