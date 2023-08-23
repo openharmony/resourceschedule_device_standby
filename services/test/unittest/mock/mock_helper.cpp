@@ -19,6 +19,7 @@
 #include "bundle_manager_helper.h"
 #include "common_event_observer.h"
 #include "background_task_helper.h"
+#include "include/ibundle_manager_helper.h"
 
 namespace {
     static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
@@ -50,6 +51,30 @@ void MockSubscribeObserver(bool mockRet)
 
 namespace OHOS {
 namespace DevStandbyMgr {
+namespace {
+    std::shared_ptr<IBundleManagerHelper> bundleManagerHelperMock;
+}
+
+void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
+{
+    bundleManagerHelperMock = mock;
+}
+
+void CleanBundleManagerHelper()
+{
+    bundleManagerHelperMock.reset();
+}
+
+bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
+    const int userId, AppExecFwk::ApplicationInfo &appInfo)
+{
+    bool ret {false};
+    if (bundleManagerHelperMock) {
+        ret = bundleManagerHelperMock->GetApplicationInfo(appName, flag, userId, appInfo);
+    }
+    return ret;
+}
+
 uint64_t TimedTask::CreateTimer(bool repeat, uint64_t interval, bool isExact, bool isIdle,
     const std::function<void()>& callBack)
 {
@@ -87,13 +112,6 @@ bool AppMgrHelper::GetAppRunningStateByBundleName(const std::string &bundleName,
 std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
 {
     return TEST_DEFAULT_BUNDLE;
-}
-
-bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
-    const int userId, AppExecFwk::ApplicationInfo &appInfo)
-{
-    appInfo.runningResourcesApply = true;
-    return true;
 }
 
 bool BundleManagerHelper::Connect()
