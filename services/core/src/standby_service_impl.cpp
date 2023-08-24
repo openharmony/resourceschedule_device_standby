@@ -998,13 +998,14 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
         DumpUsage(result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_DETAIL_INFO) {
         DumpShowDetailInfo(argsInStr, result);
-        OnPluginShellDump();
+        OnPluginShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ENTER_STATE) {
         DumpEnterSpecifiedState(argsInStr, result);
+        OnPluginShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_APPLY_ALLOW_RECORD) {
         DumpModifyAllowList(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_SIMULATE_SENSOR) {
-        OnPluginShellDump();
+        OnPluginShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_SUBSCRIBER_OBSERVER) {
         DumpSubScriberObserver(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_TURN_ON_OFF_SWITCH) {
@@ -1016,7 +1017,7 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
     }
 }
 
-void StandbyServiceImpl::OnPluginShellDump()
+void StandbyServiceImpl::OnPluginShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
     standbyStateManager_->ShellDump(argsInStr, result);
     constraintManager_->ShellDump(argsInStr, result);

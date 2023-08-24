@@ -93,6 +93,8 @@ const std::string DUMP_DEBUG_SWITCH = "debug";
 const std::string DUMP_RESET_STATE = "--reset_state";
 const std::string DUMP_DETAIL_CONFIG = "--config";
 const std::string DUMP_STRATGY_DETAIL = "--strategy";
+const std::string DUMP_POWEROFF_STRATEGY = "--poweroff";
+const std::string DUMP_POWERSAVE_FIREWALL = "--powersave";
 
 const std::string DUMP_DETAIL_INFO = "-D";
 const std::string DUMP_ENTER_STATE = "-E";

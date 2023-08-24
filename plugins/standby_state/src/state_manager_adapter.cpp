@@ -275,7 +275,7 @@ ErrCode StateManagerAdapter::TransitToStateInner(uint32_t nextState)
 void StateManagerAdapter::RecordStateTransition()
 {
     auto curTimeStampMs = MiscServices::TimeServiceClient::GetInstance()->GetMonotonicTimeMs();
-    stateRecordList_.empalce_back(std::make_pair(preStatePtr_->GetCurState(),
+    stateRecordList_.emplace_back(std::make_pair(preStatePtr_->GetCurState(),
         curTimeStampMs));
     if (stateRecordList_.size() > MAX_RECORD_SIZE) {
         stateRecordList_.pop_front();
@@ -355,7 +355,15 @@ void StateManagerAdapter::DumpShowDetailInfo(const std::vector<std::string>& arg
         std::to_string(isBlocked_) + ", current state: " + STATE_NAME_LIST[
         curStatePtr_->GetCurState()] + ", current phase: " + std::to_string(curStatePtr_->
         GetCurInnerPhase()) + ", previous state: " + STATE_NAME_LIST[preStatePtr_->GetCurState()] +
-        ", scrOffHalfHourCtrl: " + std::to_string(scrOffHalfHourCtrl_) + "\n";
+        ", scrOffHalfHourCtrl: " + std::to_string(scrOffHalfHourCtrl_) +
+        ", isScreenOn: " + std::to_string(isScreenOn) + "\n";
+
+    if (stateRecordList_.empty()) {
+        result += "state record is empty\n";
+    }
+    for (const auto &[stateIndex, timeStamp] : stateRecordList_) {
+        result += STATE_NAME_LIST[stateIndex] + std::to_string(timeStamp) + "\n";
+    }
 }
 
 void StateManagerAdapter::DumpEnterSpecifiedState(const std::vector<std::string>& argsInStr, std::string& result)

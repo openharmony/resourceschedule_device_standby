@@ -867,6 +867,31 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0036, TestSize.Level1)
 }
 
 /**
+ * @tc.name: StandbyPluginUnitTest_037
+ * @tc.desc: test StateManagerAdapter of DumpActivateMotion.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0037, TestSize.Level1)
+{
+    std::vector<std::string> argsInStr {};
+    std::string result;
+    int32_t dumpFirstParam = 0;
+    int32_t dumpSecondParam = 1;
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "0");
+    argsInStr.insert(argsInStr.begin() + dumpFirstParam, "0");
+    argsInStr.insert(argsInStr.begin() + dumpSecondParam, "--motion");
+    standbyStateManager_->DumpActivateMotion(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + dumpSecondParam, "--blocked");
+    standbyStateManager_->DumpActivateMotion(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + dumpSecondParam, "--halfhour");
+    standbyStateManager_->DumpActivateMotion(argsInStr, result);
+    argsInStr.insert(argsInStr.begin() + dumpSecondParam, "0");
+    standbyStateManager_->DumpActivateMotion(argsInStr, result);
+    EXPECT_TRUE(argsInStr.size() != 0);
+}
+
+/**
  * @tc.name: StandbyPluginUnitTest_038
  * @tc.desc: test InputManagerListener.
  * @tc.type: FUNC
