@@ -1036,7 +1036,7 @@ void StandbyServiceImpl::DumpUsage(std::string& result)
     "        --reset_state                                       reset parameter, validate debug parameter\n"
     "        --strategy                                          dump strategy info\n"
     "    -E                                                 enter the specified state:\n"
-    "        {name of state} {whether skip evalution}       enter the specified state, 0-4 represent respectively\n"
+    "        {name of state} {whether skip evalution}       enter the specified state, respectively named\n"
     "                                                            woking, dark, nap, maintenance, sleep\n"
     "    -A                                                 modify the allow list:\n"
     "        --apply {uid} {name} {type} {duration} {reasoncode} apply the type of the uid to allow list\n"

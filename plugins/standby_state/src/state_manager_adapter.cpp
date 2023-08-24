@@ -338,14 +338,13 @@ void StateManagerAdapter::ShellDump(const std::vector<std::string>& argsInStr, s
 {
     if (argsInStr[DUMP_FIRST_PARAM] == DUMP_DETAIL_INFO) {
         DumpShowDetailInfo(argsInStr, result);
+        if (argsInStr[DUMP_SECOND_PARAM] == DUMP_RESET_STATE) {
+            DumpResetState(argsInStr, result);
+        }
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ENTER_STATE) {
         DumpEnterSpecifiedState(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_SIMULATE_SENSOR) {
         DumpActivateMotion(argsInStr, result);
-    } else if (argsInStr[DUMP_SECOND_PARAM] == DUMP_RESET_STATE) {
-        UnInit();
-        Init();
-        result += "validate debug parameter\n";
     }
     curStatePtr_->ShellDump(argsInStr, result);
 }
@@ -360,11 +359,21 @@ void StateManagerAdapter::DumpShowDetailInfo(const std::vector<std::string>& arg
         ", isScreenOn: " + std::to_string(isScreenOn_) + "\n";
 
     if (stateRecordList_.empty()) {
-        result += "state record is empty\n";
+        result += "\nstate record is empty\n";
+    } else {
+        result += "\nstate transition record:\n";
     }
+
     for (const auto &[stateIndex, timeStamp] : stateRecordList_) {
-        result += STATE_NAME_LIST[stateIndex] + std::to_string(timeStamp) + "\n";
+        result += STATE_NAME_LIST[stateIndex] + "\t" + std::to_string(timeStamp) + "\n";
     }
+}
+
+void StateManagerAdapter::DumpResetState(const std::vector<std::string>& argsInStr, std::string& result)
+{
+    UnInit();
+    Init();
+    result += "\nreset state and validate debug parameter\n";
 }
 
 void StateManagerAdapter::DumpEnterSpecifiedState(const std::vector<std::string>& argsInStr, std::string& result)
