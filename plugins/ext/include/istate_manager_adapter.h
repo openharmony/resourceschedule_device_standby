@@ -70,7 +70,7 @@ protected:
     bool scrOffHalfHourCtrl_ {false};
 
     // record the history of state transition, the element of stateRecordList_ is (state, timestamp of exit)
-    const int32_t MAX_RECORD_SIZE = 10;
+    const uint32_t MAX_RECORD_SIZE = 10;
     std::list<std::pair<uint32_t, int64_t>> stateRecordList_ {};
 };
 }  // namespace DevStandbyMgr

@@ -55,6 +55,7 @@ private:
     bool CheckEnterDarkState(const StandbyMessage& message);
     void DumpShowDetailInfo(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpEnterSpecifiedState(const std::vector<std::string>& argsInStr, std::string& result);
+    void DumpActivateMotion(const std::vector<std::string>& argsInStr, std::string& result);
     void RecordStateTransition();
 private:
     std::shared_ptr<BaseState> darkStatePtr_ {nullptr};
