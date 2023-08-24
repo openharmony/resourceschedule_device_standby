@@ -267,6 +267,7 @@ ErrCode StateManagerAdapter::TransitToStateInner(uint32_t nextState)
     curStatePtr_ = indexToState_[nextState];
     curStatePtr_->BeginState();
 
+    RecordStateTransition();
     SendNotification(preStatePtr_->GetCurState(), true);
     BaseState::ReleaseStandbyRunningLock();
     return ERR_OK;
@@ -356,7 +357,7 @@ void StateManagerAdapter::DumpShowDetailInfo(const std::vector<std::string>& arg
         curStatePtr_->GetCurState()] + ", current phase: " + std::to_string(curStatePtr_->
         GetCurInnerPhase()) + ", previous state: " + STATE_NAME_LIST[preStatePtr_->GetCurState()] +
         ", scrOffHalfHourCtrl: " + std::to_string(scrOffHalfHourCtrl_) +
-        ", isScreenOn: " + std::to_string(isScreenOn) + "\n";
+        ", isScreenOn: " + std::to_string(isScreenOn_) + "\n";
 
     if (stateRecordList_.empty()) {
         result += "state record is empty\n";

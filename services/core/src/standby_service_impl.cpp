@@ -1061,7 +1061,6 @@ void StandbyServiceImpl::DumpShowDetailInfo(const std::vector<std::string>& args
     std::string& result)
 {
     DumpAllowListInfo(result);
-    // standbyStateManager_->ShellDump(argsInStr, result);
     if (argsInStr.size() < DUMP_DETAILED_INFO_MAX_NUMS) {
         return;
     }
