@@ -138,6 +138,8 @@ private:
 
     void DumpTurnOnOffSwitch(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpChangeConfigParam(const std::vector<std::string>& argsInStr, std::string& result);
+
+    void OnPluginShellDump();
 private:
     std::atomic<bool> isServiceReady_ {false};
     sptr<AppStateObserver> appStateObserver_ = nullptr;

@@ -486,7 +486,6 @@ void BaseNetworkStrategy::ResetFirewallStatus(const StandbyMessage& message)
 
 void BaseNetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
-    result.append("==================================================\n");
     result.append("Network Strategy:\n").append("isFirewallEnabled: " + std::to_string(isFirewallEnabled_))
         .append(" isIdleMaintence: " + std::to_string(isIdleMaintence_)).append("\n");
     result.append("limited app info: \n");

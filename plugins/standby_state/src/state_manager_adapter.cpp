@@ -272,6 +272,16 @@ ErrCode StateManagerAdapter::TransitToStateInner(uint32_t nextState)
     return ERR_OK;
 }
 
+void StateManagerAdapter::RecordStateTransition()
+{
+    auto curTimeStampMs = MiscServices::TimeServiceClient::GetInstance()->GetMonotonicTimeMs();
+    stateRecordList_.empalce_back(std::make_pair(preStatePtr_->GetCurState(),
+        curTimeStampMs));
+    if (stateRecordList_.size() > MAX_RECORD_SIZE) {
+        stateRecordList_.pop_front();
+    }
+}
+
 void StateManagerAdapter::StopEvalution()
 {
     if (isEvalution_) {
@@ -331,6 +341,10 @@ void StateManagerAdapter::ShellDump(const std::vector<std::string>& argsInStr, s
         DumpEnterSpecifiedState(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_SIMULATE_SENSOR) {
         DumpActivateMotion(argsInStr, result);
+    } else if (argsInStr[DUMP_SECOND_PARAM] == DUMP_RESET_STATE) {
+        UnInit();
+        Init();
+        result += "validate debug parameter\n";
     }
     curStatePtr_->ShellDump(argsInStr, result);
 }
@@ -371,12 +385,6 @@ void StateManagerAdapter::DumpActivateMotion(const std::vector<std::string>& arg
         BlockCurrentState();
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--halfhour") {
         OnScreenOffHalfHourInner(true, true);
-    } else if (argsInStr[DUMP_SECOND_PARAM] == "--powersave") {
-        STANDBYSERVICE_LOGD("after 3000ms, start powersavenetwork");
-        UnblockCurrentState();
-        TransitToStateInner(StandbyState::SLEEP);
-        OnScreenOffHalfHourInner(true, true);
-        StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--strategy", "powersave"}, result);
     }
 }
 }  // namespace DevStandbyMgr
