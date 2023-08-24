@@ -394,13 +394,13 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
         GetAndCreateAppInfo(uid, bundleName);
         auto iter = netLimitedAppInfo_.find(uid);
         if (ExemptionTypeFlag::IsExempted(iter->second.appExemptionFlag_)) {
-            SetFirewallAllowedList({uid}, isCreated);
+            SetFirewallAllowedList( {uid}, isCreated);
         }
     } else {
         bool isRunning {false};
         if (AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName(bundleName, isRunning) && !isRunning) {
             netLimitedAppInfo_.erase(uid);
-            SetFirewallAllowedList({uid}, isCreated);
+            SetFirewallAllowedList( {uid}, isCreated);
         }
     }
 }
