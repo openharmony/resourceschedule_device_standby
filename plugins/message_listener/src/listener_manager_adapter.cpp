@@ -39,6 +39,7 @@ bool ListenerManagerAdapter::Init()
         system::GetParameter("const.product.devicetype", "unknown").c_str());
     switch (DEVICE_TYPE) {
         case DeviceType::PHONE:
+        case DeviceType::TABLET:
         case DeviceType::UNKNOWN:
             matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON);
             matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
