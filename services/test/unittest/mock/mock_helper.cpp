@@ -23,6 +23,7 @@
 
 namespace {
     static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
+    static constexpr int32_t EXEMPT_ALL_RESOURCES = 100;
     bool g_mockGetAllRunningProcesses = true;
     bool g_mockGetRunningSystemProcess = true;
     bool g_mockGetBackgroundTask = true;
@@ -68,9 +69,11 @@ void CleanBundleManagerHelper()
 bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
     const int userId, AppExecFwk::ApplicationInfo &appInfo)
 {
-    bool ret {false};
+    bool ret {true};
     if (bundleManagerHelperMock) {
         ret = bundleManagerHelperMock->GetApplicationInfo(appName, flag, userId, appInfo);
+    } else {
+        appInfo.resourcesApply = { EXEMPT_ALL_RESOURCES };
     }
     return ret;
 }
