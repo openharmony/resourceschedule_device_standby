@@ -46,6 +46,8 @@ ErrCode NapState::BeginState()
     if (stateManagerPtr->GetPreState() == StandbyState::MAINTENANCE) {
         nextState_ = StandbyState::MAINTENANCE;
         int64_t maintIntervalTimeOut = CalculateMaintTimeOut(stateManagerPtr, false);
+        STANDBYSERVICE_LOGI("after " SPUBI64 " ms, enter maintenance state", maintIntervalTimeOut);
+
         if (maintIntervalTimeOut != 0) {
             StartStateTransitionTimer(maintIntervalTimeOut);
         }
@@ -58,6 +60,7 @@ ErrCode NapState::BeginState()
         nextState_ = StandbyState::SLEEP;
         int64_t napTimeOut = std::min(TimeConstant::MSEC_PER_SEC * StandbyConfigManager::GetInstance()->
             GetStandbyParam(NAP_TIMEOUT), TimeProvider::GetNapTimeOut());
+        STANDBYSERVICE_LOGI("napTimeOut is " SPUBI64 " ms", napTimeOut);
         StartStateTransitionTimer(napTimeOut);
     }
     handler_->PostTask([napState = shared_from_this()]() {
