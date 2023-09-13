@@ -394,13 +394,13 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
         GetAndCreateAppInfo(uid, bundleName);
         auto iter = netLimitedAppInfo_.find(uid);
         if (ExemptionTypeFlag::IsExempted(iter->second.appExemptionFlag_)) {
-            SetFirewallAllowedList({uid}, isCreated);
+            SetFirewallAllowedList( {uid}, isCreated);
         }
     } else {
         bool isRunning {false};
         if (AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName(bundleName, isRunning) && !isRunning) {
             netLimitedAppInfo_.erase(uid);
-            SetFirewallAllowedList({uid}, isCreated);
+            SetFirewallAllowedList( {uid}, isCreated);
         }
     }
 }
@@ -486,7 +486,6 @@ void BaseNetworkStrategy::ResetFirewallStatus(const StandbyMessage& message)
 
 void BaseNetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
-    result.append("==================================================\n");
     result.append("Network Strategy:\n").append("isFirewallEnabled: " + std::to_string(isFirewallEnabled_))
         .append(" isIdleMaintence: " + std::to_string(isIdleMaintence_)).append("\n");
     result.append("limited app info: \n");

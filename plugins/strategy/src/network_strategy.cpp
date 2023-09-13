@@ -147,8 +147,11 @@ ErrCode NetworkStrategy::SetFirewallStatus(bool enableFirewall)
 
 void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
-    result.append("=================DeviceIdle=======================\n");
-    BaseNetworkStrategy::ShellDump(argsInStr, result);
+    if (argsInStr[DUMP_FIRST_PARAM] == DUMP_DETAIL_INFO &&
+        argsInStr[DUMP_SECOND_PARAM] == DUMP_STRATGY_DETAIL) {
+        result.append("=================DeviceIdle=======================\n");
+        BaseNetworkStrategy::ShellDump(argsInStr, result);
+    }
 }
 } // namespace DevStandbyMgr
 } // namespace OHOS

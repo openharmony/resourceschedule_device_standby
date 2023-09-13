@@ -96,6 +96,8 @@ extern const std::string DUMP_DEBUG_SWITCH;
 extern const std::string DUMP_RESET_STATE;
 extern const std::string DUMP_DETAIL_CONFIG;
 extern const std::string DUMP_STRATGY_DETAIL;
+extern const std::string DUMP_POWEROFF_STRATEGY;
+extern const std::string DUMP_POWERSAVE_FIREWALL;
 
 extern const std::string DUMP_DETAIL_INFO;
 extern const std::string DUMP_ENTER_STATE;

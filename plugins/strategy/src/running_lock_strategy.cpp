@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #include "running_lock_strategy.h"
 #include <algorithm>
 #include "standby_service_log.h"
@@ -30,7 +30,7 @@
 #include "bundle_manager_helper.h"
 #include "standby_service_impl.h"
 #include "common_constant.h"
- 
+
 namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
@@ -71,13 +71,13 @@ void RunningLockStrategy::HandleEvent(const StandbyMessage& message)
             break;
     }
 }
- 
+
 ErrCode RunningLockStrategy::OnCreated()
 {
     PowerMgr::PowerMgrClient::GetInstance().ResetRunningLocks();
     return ERR_OK;
 }
- 
+
 ErrCode RunningLockStrategy::OnDestroy()
 {
     if (isProxied_ && !isIdleMaintence_) {
@@ -581,10 +581,18 @@ void RunningLockStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
     }
 }
 
-// dump detail info of running lock strategy
 void RunningLockStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
-    result.append("==================================================\n");
+    if (argsInStr[DUMP_FIRST_PARAM] == DUMP_DETAIL_INFO &&
+        argsInStr[DUMP_SECOND_PARAM] == DUMP_STRATGY_DETAIL) {
+        DumpShowDetailInfo(argsInStr, result);
+    }
+}
+
+// dump detail info of running lock strategy
+void RunningLockStrategy::DumpShowDetailInfo(const std::vector<std::string>& argsInStr, std::string& result)
+{
+    result.append("=================RunningLock======================\n");
     result.append("Running Lock Strategy:\n").append("isProxied: " + std::to_string(isProxied_))
         .append(" isIdleMaintence: " + std::to_string(isIdleMaintence_)).append("\n");
     result.append("proxied app info: \n");
