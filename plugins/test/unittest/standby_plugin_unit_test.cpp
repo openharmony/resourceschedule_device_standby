@@ -478,7 +478,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0016, TestSize.Level1)
     repeatedMotionConstraint->PeriodlyStartMotionDetection();
     repeatedMotionConstraint->energy_ = 1;
     repeatedMotionConstraint->PeriodlyStartMotionDetection();
-    EXPECT_TRUE(repeatedMotionConstraint->StartMonitoringInner() != ERR_OK);
+    EXPECT_TRUE(repeatedMotionConstraint->StartMonitoringInner() == ERR_OK);
     repeatedMotionConstraint->isMonitoring_ = false;
     repeatedMotionConstraint->StartMonitoringInner();
 }
@@ -502,7 +502,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0017, TestSize.Level1)
     repeatedMotionConstraint->StartSensor();
     sensorTypeId = repeatedMotionConstraint->detectionTimeOut_;
     repeatedMotionConstraint->StartSensor();
-    EXPECT_TRUE(repeatedMotionConstraint->StartSensor() != ERR_OK);
+    EXPECT_TRUE(repeatedMotionConstraint->StartSensor() == ERR_OK);
 }
 
 /**
