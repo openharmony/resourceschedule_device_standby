@@ -41,5 +41,10 @@ bool IStateManagerAdapter::IsScreenOn()
 {
     return isScreenOn_;
 }
+
+bool IStateManagerAdapter::IsScrOffHalfHourCtrl()
+{
+    return scrOffHalfHourCtrl_;
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
