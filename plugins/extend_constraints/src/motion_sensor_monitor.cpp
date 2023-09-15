@@ -23,7 +23,6 @@
 namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
-    const std::vector<int32_t> SENSOR_TYPE_CONFIG = {SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_SIGNIFICANT_MOTION};
     const int32_t COUNT_TIMES = 15;
 }
 
@@ -41,7 +40,7 @@ MotionSensorMonitor::MotionSensorMonitor(int32_t detectionTimeOut, int32_t restT
     handler_ = StandbyServiceImpl::GetInstance()->GetHandler();
 }
 
-bool MotionSensorMonitor::CheckSersorConfig(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId)
+bool MotionSensorMonitor::CheckSersorUsable(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId)
 {
     SensorInfo *pt = sensorInfo + count;
     for (SensorInfo *ps = sensorInfo; ps < pt; ++ps) {
@@ -49,7 +48,7 @@ bool MotionSensorMonitor::CheckSersorConfig(SensorInfo *sensorInfo, int32_t coun
             return true;
         }
     }
-    return true;
+    return false;
 }
 
 void MotionSensorMonitor::AcceleromterCallback(SensorEvent *event)
@@ -125,20 +124,56 @@ bool MotionSensorMonitor::Init()
         STANDBYSERVICE_LOGE("get all sensors failed, sensors are not available");
         return false;
     }
-    for (const auto iter : SENSOR_TYPE_CONFIG) {
-        if (!CheckSersorConfig(sensorInfo, count, iter)) {
-            return false;
-        }
+
+    if (!InitSensorUserMap(sensorInfo, count)) {
+        STANDBYSERVICE_LOGE("do not find any usable sensor to detect motion");
+        return false;
     }
-    if (params_.isRepeatedDetection_) {
-        acceSensorUser_.callback = &RepeatAcceleromterCallback;
-    } else {
-        acceSensorUser_.callback = &AcceleromterCallback;
-    }
-    motionSensorUser_.callback = &MotionSensorCallback;
+
+    // assign callback to accleromtere sensor user and motion sensor user
+    AssignAcclerometerSensorCallBack();
+    AssignMotionSensorCallBack();
+
     auto &constraintManager = StandbyServiceImpl::GetInstance()->GetConstraintManager();
     constraintManager->RegisterConstraintCallback(params_, shared_from_this());
     return true;
+}
+
+bool MotionSensorMonitor::InitSensorUserMap(SensorInfo* sensorInfo, int32_t count)
+{
+    // use acceleromter sensor and significant motion sensor to check motion
+    const std::vector<int32_t> SENSOR_TYPE_CONFIG = {SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_SIGNIFICANT_MOTION};
+
+    for (const auto sensorType : SENSOR_TYPE_CONFIG) {
+        if (CheckSersorUsable(sensorInfo, count, sensorType)) {
+            sensorUserMap_.emplace(sensorType, SensorUser {});
+        }
+    }
+    return sensorUserMap_.size() > 0;
+}
+
+void MotionSensorMonitor::AssignAcclerometerSensorCallBack()
+{
+    auto iter = sensorUserMap_.find(SENSOR_TYPE_ID_ACCELEROMETER);
+    if (iter == sensorUserMap_.end()) {
+        return;
+    }
+
+    if (params_.isRepeatedDetection_) {
+        iter->second.callback = &RepeatAcceleromterCallback;
+    } else {
+        iter->second.callback = &AcceleromterCallback;
+    }
+}
+
+void MotionSensorMonitor::AssignMotionSensorCallBack()
+{
+    auto iter = sensorUserMap_.find(SENSOR_TYPE_ID_SIGNIFICANT_MOTION);
+    if (iter == sensorUserMap_.end()) {
+        return;
+    }
+
+    iter->second.callback = &MotionSensorCallback;
 }
 
 void MotionSensorMonitor::StartMonitoring()
@@ -175,10 +210,12 @@ ErrCode MotionSensorMonitor::StartMonitoringInner()
 {
     energy_ = 0;
     isMonitoring_ = true;
-    if (StartSensor(SENSOR_TYPE_ID_ACCELEROMETER, &acceSensorUser_) == ERR_OK &&
-        StartSensor(SENSOR_TYPE_ID_SIGNIFICANT_MOTION, &motionSensorUser_) == ERR_OK) {
+    if (StartSensor() == ERR_OK) {
         return ERR_OK;
     }
+
+    // if failed to start sensor, must stop sensor, in case of sensor keep callback
+    StopSensor();
     return ERR_STANDBY_START_SENSOR_FAILED;
 }
 
@@ -190,38 +227,43 @@ void MotionSensorMonitor::StopMonitoring()
 
 void MotionSensorMonitor::StopMonitoringInner()
 {
-    StopSensor(SENSOR_TYPE_ID_ACCELEROMETER, &acceSensorUser_);
-    StopSensor(SENSOR_TYPE_ID_SIGNIFICANT_MOTION, &motionSensorUser_);
+    StopSensor();
     isMonitoring_ = false;
 }
 
-ErrCode MotionSensorMonitor::StartSensor(int32_t sensorTypeId, SensorUser* sensorUser)
+ErrCode MotionSensorMonitor::StartSensor()
 {
-    if (SubscribeSensor(sensorTypeId, sensorUser) != 0) {
-        STANDBYSERVICE_LOGE("subscribe sensor failed for sensor ID %{public}d", sensorTypeId);
-        return ERR_STANDBY_START_SENSOR_FAILED;
-    }
-    STANDBYSERVICE_LOGD("subscribe sensor succeed for sensor ID %{public}d", sensorTypeId);
-    SetBatch(sensorTypeId, sensorUser, SENSOR_SAMPLING_RATE, SENSOR_REPORTING_RATE);
-    if (ActivateSensor(sensorTypeId, sensorUser) != 0) {
-        STANDBYSERVICE_LOGE("activate sensor failed for sensor ID %{public}d", sensorTypeId);
-        return ERR_STANDBY_START_SENSOR_FAILED;
+    for (const auto &[sensorTypeId, sensorUser] : sensorUserMap_) {
+        if (SubscribeSensor(sensorTypeId, &sensorUser) != 0) {
+            STANDBYSERVICE_LOGE("subscribe sensor failed for sensor ID %{public}d", sensorTypeId);
+            return ERR_STANDBY_START_SENSOR_FAILED;
+        }
+        STANDBYSERVICE_LOGD("subscribe sensor succeed for sensor ID %{public}d", sensorTypeId);
+
+        SetBatch(sensorTypeId, &sensorUser, SENSOR_SAMPLING_RATE, SENSOR_REPORTING_RATE);
+        if (ActivateSensor(sensorTypeId, &sensorUser) != 0) {
+            STANDBYSERVICE_LOGE("activate sensor failed for sensor ID %{public}d", sensorTypeId);
+            return ERR_STANDBY_START_SENSOR_FAILED;
+        }
     }
     return ERR_OK;
 }
 
-void MotionSensorMonitor::StopSensor(int32_t sensorTypeId, SensorUser* sensorUser)
+void MotionSensorMonitor::StopSensor()
 {
     hasPrevAccelData_ = false;
     previousAccelData_ = {0, 0, 0};
     if (!isMonitoring_) {
         return;
     }
-    if (DeactivateSensor(sensorTypeId, sensorUser) != 0) {
-        STANDBYSERVICE_LOGE("deactivate sensor failed for sensor ID %{public}d", sensorTypeId);
-    }
-    if (UnsubscribeSensor(sensorTypeId, sensorUser) != 0) {
-        STANDBYSERVICE_LOGE("unsubscribe sensor failed for sensor ID %{public}d", sensorTypeId);
+
+    for (const auto &[sensorTypeId, sensorUser] : sensorUserMap_) {
+        if (DeactivateSensor(sensorTypeId, &sensorUser) != 0) {
+            STANDBYSERVICE_LOGE("deactivate sensor failed for sensor ID %{public}d", sensorTypeId);
+        }
+        if (UnsubscribeSensor(sensorTypeId, &sensorUser) != 0) {
+            STANDBYSERVICE_LOGE("unsubscribe sensor failed for sensor ID %{public}d", sensorTypeId);
+        }
     }
 }
 } // DevStandbyMgr
