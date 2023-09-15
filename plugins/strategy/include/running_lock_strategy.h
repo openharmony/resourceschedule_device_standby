@@ -103,6 +103,8 @@ private:
 
     void GetAndCreateAppInfo(uint32_t uid, uint32_t pid, const std::string& bundleName);
     ErrCode GetExemptionConfigForApp(ProxiedProcInfo& appInfo, const std::string& bundleName);
+
+    void DumpShowDetailInfo(const std::vector<std::string>& argsInStr, std::string& result);
 protected:
     bool isProxied_ {false};
 private:

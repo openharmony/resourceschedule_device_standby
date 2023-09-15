@@ -134,11 +134,13 @@ private:
     void DumpChangeModeSwitch(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpEnterSpecifiedState(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpModifyAllowList(const std::vector<std::string>& argsInStr, std::string& result);
-    void DumpActivateMotion(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpSubScriberObserver(const std::vector<std::string>& argsInStr, std::string& result);
 
     void DumpTurnOnOffSwitch(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpChangeConfigParam(const std::vector<std::string>& argsInStr, std::string& result);
+
+    // dispatch dumper command to plugin
+    void OnPluginShellDump(const std::vector<std::string>& argsInStr, std::string& result);
 private:
     std::atomic<bool> isServiceReady_ {false};
     sptr<AppStateObserver> appStateObserver_ = nullptr;

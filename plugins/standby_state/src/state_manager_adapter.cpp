@@ -267,9 +267,20 @@ ErrCode StateManagerAdapter::TransitToStateInner(uint32_t nextState)
     curStatePtr_ = indexToState_[nextState];
     curStatePtr_->BeginState();
 
+    RecordStateTransition();
     SendNotification(preStatePtr_->GetCurState(), true);
     BaseState::ReleaseStandbyRunningLock();
     return ERR_OK;
+}
+
+void StateManagerAdapter::RecordStateTransition()
+{
+    auto curTimeStampMs = MiscServices::TimeServiceClient::GetInstance()->GetMonotonicTimeMs();
+    stateRecordList_.emplace_back(std::make_pair(preStatePtr_->GetCurState(),
+        curTimeStampMs));
+    if (stateRecordList_.size() > MAX_RECORD_SIZE) {
+        stateRecordList_.pop_front();
+    }
 }
 
 void StateManagerAdapter::StopEvalution()
@@ -327,6 +338,9 @@ void StateManagerAdapter::ShellDump(const std::vector<std::string>& argsInStr, s
 {
     if (argsInStr[DUMP_FIRST_PARAM] == DUMP_DETAIL_INFO) {
         DumpShowDetailInfo(argsInStr, result);
+        if (argsInStr[DUMP_SECOND_PARAM] == DUMP_RESET_STATE) {
+            DumpResetState(argsInStr, result);
+        }
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ENTER_STATE) {
         DumpEnterSpecifiedState(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_SIMULATE_SENSOR) {
@@ -341,7 +355,25 @@ void StateManagerAdapter::DumpShowDetailInfo(const std::vector<std::string>& arg
         std::to_string(isBlocked_) + ", current state: " + STATE_NAME_LIST[
         curStatePtr_->GetCurState()] + ", current phase: " + std::to_string(curStatePtr_->
         GetCurInnerPhase()) + ", previous state: " + STATE_NAME_LIST[preStatePtr_->GetCurState()] +
-        ", scrOffHalfHourCtrl: " + std::to_string(scrOffHalfHourCtrl_) + "\n";
+        ", scrOffHalfHourCtrl: " + std::to_string(scrOffHalfHourCtrl_) +
+        ", isScreenOn: " + std::to_string(isScreenOn_) + "\n";
+
+    if (stateRecordList_.empty()) {
+        result += "\nstate record is empty\n";
+    } else {
+        result += "\nstate transition record:\n";
+    }
+
+    for (const auto &[stateIndex, timeStamp] : stateRecordList_) {
+        result += STATE_NAME_LIST[stateIndex] + "\t" + std::to_string(timeStamp) + "\n";
+    }
+}
+
+void StateManagerAdapter::DumpResetState(const std::vector<std::string>& argsInStr, std::string& result)
+{
+    UnInit();
+    Init();
+    result += "\nreset state and validate debug parameter\n";
 }
 
 void StateManagerAdapter::DumpEnterSpecifiedState(const std::vector<std::string>& argsInStr, std::string& result)
@@ -350,7 +382,12 @@ void StateManagerAdapter::DumpEnterSpecifiedState(const std::vector<std::string>
     if (argsInStr[DUMP_THIRD_PARAM] == "false") {
         curStatePtr_->StartTransitNextState(curStatePtr_);
     } else {
-        TransitToStateInner(static_cast<uint32_t>(std::atoi(argsInStr[DUMP_SECOND_PARAM].c_str())));
+        auto iter =  std::find(STATE_NAME_LIST.begin(), STATE_NAME_LIST.end(), argsInStr[DUMP_SECOND_PARAM]);
+        if (iter == STATE_NAME_LIST.end()) {
+            result += "state name is not correct";
+            return;
+        }
+        TransitToStateInner(iter - STATE_NAME_LIST.begin());
     }
 }
 
@@ -367,12 +404,6 @@ void StateManagerAdapter::DumpActivateMotion(const std::vector<std::string>& arg
         BlockCurrentState();
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--halfhour") {
         OnScreenOffHalfHourInner(true, true);
-    } else if (argsInStr[DUMP_SECOND_PARAM] == "--powersave") {
-        STANDBYSERVICE_LOGD("after 3000ms, start powersavenetwork");
-        UnblockCurrentState();
-        TransitToStateInner(StandbyState::SLEEP);
-        OnScreenOffHalfHourInner(true, true);
-        StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--strategy", "powersave"}, result);
     }
 }
 }  // namespace DevStandbyMgr

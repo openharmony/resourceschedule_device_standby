@@ -1042,12 +1042,14 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
         DumpUsage(result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_DETAIL_INFO) {
         DumpShowDetailInfo(argsInStr, result);
+        OnPluginShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ENTER_STATE) {
         DumpEnterSpecifiedState(argsInStr, result);
+        OnPluginShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_APPLY_ALLOW_RECORD) {
         DumpModifyAllowList(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_SIMULATE_SENSOR) {
-        DumpActivateMotion(argsInStr, result);
+        OnPluginShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_SUBSCRIBER_OBSERVER) {
         DumpSubScriberObserver(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_TURN_ON_OFF_SWITCH) {
@@ -1057,6 +1059,14 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
     } else {
         result += "Error params.\n";
     }
+}
+
+void StandbyServiceImpl::OnPluginShellDump(const std::vector<std::string>& argsInStr, std::string& result)
+{
+    standbyStateManager_->ShellDump(argsInStr, result);
+    constraintManager_->ShellDump(argsInStr, result);
+    strategyManager_->ShellDump(argsInStr, result);
+    listenerManager_->ShellDump(argsInStr, result);
 }
 
 void StandbyServiceImpl::DumpUsage(std::string& result)
@@ -1070,15 +1080,19 @@ void StandbyServiceImpl::DumpUsage(std::string& result)
     "        --reset_state                                       reset parameter, validate debug parameter\n"
     "        --strategy                                          dump strategy info\n"
     "    -E                                                 enter the specified state:\n"
-    "        {id of state} {whether skip evalution}         enter the specified state, 0-4 represent respectively\n"
+    "        {name of state} {whether skip evalution}       enter the specified state, respectively named\n"
     "                                                            woking, dark, nap, maintenance, sleep\n"
     "    -A                                                 modify the allow list:\n"
     "        --apply {uid} {name} {type} {duration} {reasoncode} apply the type of the uid to allow list\n"
     "        --unapply {uid} {name} {type}                  delete the type of the uid from allow list\n"
     "        --get {type} {isApp}                                get allow list info\n"
-    "    -S                                                 simulately activate the sensor:\n"
-    "        {--motion or --repeat or --blocked or --halfhour} simulately activate the motion sensor\n"
-    "        {--poweroff}                                      power off strategy\n"
+    "    -S                                                 simulate some action:\n"
+    "        {--motion}                                          activate the motion sensor when enter idle\n"
+    "        {--repeat}                                          be in motion mode, only used in idle state\n"
+    "        {--blocked}                                         block current state\n"
+    "        {--poweroff}                                        power off strategy\n"
+    "        {--powersave}                                       enable power save firwwall\n"
+    "        {--halfhour}                                        screen off for half hour\n"
     "    -T  {switch name} {on or off}                      turn on or turn off some switches, switch can be debug,\n"
     "                                                            nap_switch, sleep_switch, detect_motion, other\n"
     "                                                            switch only be used after open debug switch\n"
@@ -1091,18 +1105,11 @@ void StandbyServiceImpl::DumpShowDetailInfo(const std::vector<std::string>& args
     std::string& result)
 {
     DumpAllowListInfo(result);
-    standbyStateManager_->ShellDump(argsInStr, result);
     if (argsInStr.size() < DUMP_DETAILED_INFO_MAX_NUMS) {
         return;
     }
     if (argsInStr[DUMP_SECOND_PARAM] == DUMP_DETAIL_CONFIG) {
         DumpStandbyConfigInfo(result);
-    } else if (argsInStr[DUMP_SECOND_PARAM] == DUMP_STRATGY_DETAIL) {
-        strategyManager_->ShellDump(argsInStr, result);
-    } else if (argsInStr[DUMP_SECOND_PARAM] == DUMP_RESET_STATE) {
-        standbyStateManager_->UnInit();
-        standbyStateManager_->Init();
-        result += "validate debug parameter\n";
     }
 }
 
@@ -1239,13 +1246,6 @@ void StandbyServiceImpl::DumpChangeConfigParam(const std::vector<std::string>& a
     }
     StandbyConfigManager::GetInstance()->DumpSetParameter(argsInStr[DUMP_SECOND_PARAM],
         std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), result);
-}
-
-void StandbyServiceImpl::DumpActivateMotion(const std::vector<std::string>& argsInStr,
-    std::string& result)
-{
-    standbyStateManager_->ShellDump(argsInStr, result);
-    constraintManager_->ShellDump(argsInStr, result);
 }
 
 void StandbyServiceImpl::DumpSubScriberObserver(const std::vector<std::string>& argsInStr, std::string& result)

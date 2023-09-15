@@ -17,6 +17,8 @@
 
 #include <vector>
 #include <memory>
+#include <list>
+#include <utility>
 
 #include "event_handler.h"
 #include "event_runner.h"
@@ -66,6 +68,10 @@ protected:
     uint64_t scrOffHalfHourTimerId_ {0};
     bool isScreenOn_ {false};
     bool scrOffHalfHourCtrl_ {false};
+
+    // record the history of state transition, the element of stateRecordList_ is (state, timestamp of exit)
+    const uint32_t MAX_RECORD_SIZE = 10;
+    std::list<std::pair<uint32_t, int64_t>> stateRecordList_ {};
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
