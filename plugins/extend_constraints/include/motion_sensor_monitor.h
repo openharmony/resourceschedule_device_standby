@@ -45,11 +45,14 @@ public:
     static void RepeatAcceleromterCallback(SensorEvent *event);
 
 private:
+    bool InitSensorUserMap(SensorInfo* sensorInfo, int32_t count);
+    void AssignAcclerometerSensorCallBack();
+    void AssignMotionSensorCallBack();
     ErrCode StartMonitoringInner();
     void StopMonitoringInner();
-    bool CheckSersorConfig(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId);
-    ErrCode StartSensor(int32_t sensorTypeId, SensorUser* sensorUser);
-    void StopSensor(int32_t sensorTypeId, SensorUser* sensorUser);
+    bool CheckSersorUsable(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId);
+    ErrCode StartSensor();
+    void StopSensor();
     void PeriodlyStartMotionDetection();
     void StopMotionDetection();
 
@@ -58,8 +61,6 @@ private:
     const int32_t restTimeOut_;
     const int32_t totalTimeOut_;
 
-    SensorUser acceSensorUser_ {};
-    SensorUser motionSensorUser_ {};
     static double energy_;
     static bool hasPrevAccelData_;
     static AccelData previousAccelData_;
@@ -67,6 +68,9 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {};
     ConstraintEvalParam params_{};
     bool isMonitoring_ {false};
+
+    // key is sensor type, value is sensorUser with callback function pointer
+    std::map<int32_t, SensorUser> sensorUserMap_ {};
 };
 } // DevStandbyMgr
 } // OHOS
