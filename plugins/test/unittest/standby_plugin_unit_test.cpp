@@ -480,7 +480,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0016, TestSize.Level1)
     repeatedMotionConstraint->PeriodlyStartMotionDetection();
     repeatedMotionConstraint->energy_ = 1;
     repeatedMotionConstraint->PeriodlyStartMotionDetection();
-    EXPECT_TRUE(repeatedMotionConstraint->StartMonitoringInner() != ERR_OK);
+    EXPECT_TRUE(repeatedMotionConstraint->StartMonitoringInner() == ERR_OK);
     repeatedMotionConstraint->isMonitoring_ = false;
     repeatedMotionConstraint->StartMonitoringInner();
 }
@@ -499,12 +499,12 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0017, TestSize.Level1)
     int32_t sensorTypeId = 1;
     SensorUser sensorUser;
     repeatedMotionConstraint->isMonitoring_ = false;
-    repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser);
+    repeatedMotionConstraint->StartSensor();
     repeatedMotionConstraint->isMonitoring_ = true;
-    repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser);
+    repeatedMotionConstraint->StartSensor();
     sensorTypeId = repeatedMotionConstraint->detectionTimeOut_;
-    repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser);
-    EXPECT_TRUE(repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser) != ERR_OK);
+    repeatedMotionConstraint->StartSensor();
+    EXPECT_TRUE(repeatedMotionConstraint->StartSensor() == ERR_OK);
 }
 
 /**
@@ -521,11 +521,11 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0018, TestSize.Level1)
     int32_t sensorTypeId = 1;
     SensorUser sensorUser;
     repeatedMotionConstraint->isMonitoring_ = false;
-    repeatedMotionConstraint->StopSensor(sensorTypeId, &sensorUser);
+    repeatedMotionConstraint->StopSensor();
     repeatedMotionConstraint->isMonitoring_ = true;
-    repeatedMotionConstraint->StopSensor(sensorTypeId, &sensorUser);
+    repeatedMotionConstraint->StopSensor();
     sensorTypeId = repeatedMotionConstraint->detectionTimeOut_;
-    repeatedMotionConstraint->StartSensor(sensorTypeId, &sensorUser);
+    repeatedMotionConstraint->StartSensor();
     EXPECT_TRUE(repeatedMotionConstraint->isMonitoring_ == true);
 }
 
