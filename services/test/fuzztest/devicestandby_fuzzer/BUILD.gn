@@ -15,7 +15,7 @@
 import("//build/config/features.gni")
 import("//build/test.gni")
 import("../../../../standby_service.gni")
-module_output_path = "device_standby/devicestandbyservicetest"
+module_output_path = "device_standby/device_standby"
 
 ##############################fuzztest##########################################
 ohos_fuzztest("DeviceStandbyFuzzTest") {
