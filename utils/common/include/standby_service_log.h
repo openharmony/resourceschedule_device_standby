@@ -30,6 +30,16 @@ namespace DevStandbyMgr {
 #define STANDBYSERVICE_LOG_TAG "StandbyService"
 #endif
 
+#ifdef __aarch64__
+#define SPUBI64  "%{public}ld"
+#define SPUBSize "%{public}lu"
+#define SPUBU64  "%{public}lu"
+#else
+#define SPUBI64  "%{public}lld"
+#define SPUBSize "%{public}u"
+#define SPUBU64  "%{public}llu"
+#endif
+
 enum class StandbyServiceLogLevel : uint8_t { DEBUG = 0, INFO, WARN, ERROR, FATAL };
 
 static constexpr OHOS::HiviewDFX::HiLogLabel STANDBYSERVICE_LABEL = {LOG_CORE, STANDBYSERVICE_LOG_DOMAIN,
