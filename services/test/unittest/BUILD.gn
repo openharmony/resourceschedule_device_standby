@@ -233,7 +233,6 @@ ohos_unittest("mock_standby_service_unit_test") {
     "${standby_service_path}:standby_service_static",
     "${standby_utils_common_path}:standby_utils_common",
     "${standby_utils_policy_path}:standby_utils_policy",
-    "//third_party/googletest:gmock_main",
   ]
 
   external_deps = [

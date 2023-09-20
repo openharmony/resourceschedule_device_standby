@@ -13,6 +13,7 @@
     "name": "device_standby",
     "subsystem": "resourceschedule",
     "syscap": [
+       "SystemCapability.ResourceSchedule.DeviceStandby"
     ],
     "features": [],
     "adapted_system_type": [
@@ -48,7 +49,6 @@
         "wifi"
       ],
       "third_party": [
-        "googletest"
       ]
     },
     "build": {
