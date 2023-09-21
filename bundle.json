@@ -48,7 +48,6 @@
         "wifi"
       ],
       "third_party": [
-        "googletest"
       ]
     },
     "build": {
