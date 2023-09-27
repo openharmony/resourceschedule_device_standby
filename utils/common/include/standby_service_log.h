@@ -32,15 +32,15 @@ namespace DevStandbyMgr {
 
 #ifdef __aarch64__
 #define SPUBI64  "%{public}ld"
-#define SPUBSIZE "%{public}lu"
+#define SPUB_SIZE "%{public}lu"
 #define SPUBU64  "%{public}lu"
 #elif __x86_64__
 #define SPUBI64  "%{public}ld"
-#define SPUBSIZE "%{public}lu"
+#define SPUB_SIZE "%{public}lu"
 #define SPUBU64  "%{public}lu"
 #else
 #define SPUBI64  "%{public}lld"
-#define SPUBSIZE "%{public}u"
+#define SPUB_SIZE "%{public}u"
 #define SPUBU64  "%{public}llu"
 #endif
 
