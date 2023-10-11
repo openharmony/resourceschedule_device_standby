@@ -1045,7 +1045,6 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
         OnPluginShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ENTER_STATE) {
         DumpEnterSpecifiedState(argsInStr, result);
-        OnPluginShellDump(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_APPLY_ALLOW_RECORD) {
         DumpModifyAllowList(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_SIMULATE_SENSOR) {
