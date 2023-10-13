@@ -138,7 +138,7 @@ private:
 
     void DumpTurnOnOffSwitch(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpChangeConfigParam(const std::vector<std::string>& argsInStr, std::string& result);
-
+    void DumpPushStrategyChange(const std::vector<std::string>& argsInStr, std::string& result);
     // dispatch dumper command to plugin
     void OnPluginShellDump(const std::vector<std::string>& argsInStr, std::string& result);
 private:
