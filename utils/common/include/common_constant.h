@@ -106,6 +106,7 @@ extern const std::string DUMP_SIMULATE_SENSOR;
 extern const std::string DUMP_SUBSCRIBER_OBSERVER;
 extern const std::string DUMP_TURN_ON_OFF_SWITCH;
 extern const std::string DUMP_CHANGE_STATE_TIMEOUT;
+extern const std::string DUMP_PUSH_STRATEGY_CHANGE;
 extern const int32_t DUMP_FIRST_PARAM;
 extern const int32_t DUMP_SECOND_PARAM;
 extern const int32_t DUMP_THIRD_PARAM;
