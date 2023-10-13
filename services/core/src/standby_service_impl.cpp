@@ -1257,7 +1257,7 @@ void StandbyServiceImpl::DumpPushStrategyChange(const std::vector<std::string>& 
 {
     if (argsInStr[DUMP_SECOND_PARAM] == "--whitelist") {
         StandbyStateSubscriber::GetInstance()->NotifyAllowChangedByCommonEvent(
-            std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), argsInStr[DUMP_FOURTH_PARAM], 
+            std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), argsInStr[DUMP_FOURTH_PARAM],
             std::atoi(argsInStr[DUMP_FIFTH_PARAM].c_str()), argsInStr[DUMP_SIXTH_PARAM] == "true");
     }
     strategyManager_->ShellDump(argsInStr, result);
