@@ -103,6 +103,7 @@ const std::string DUMP_SIMULATE_SENSOR = "-S";
 const std::string DUMP_SUBSCRIBER_OBSERVER = "-O";
 const std::string DUMP_TURN_ON_OFF_SWITCH  = "-T";
 const std::string DUMP_CHANGE_STATE_TIMEOUT  = "-C";
+const std::string DUMP_PUSH_STRATEGY_CHANGE = "-P";
 
 const int32_t DUMP_FIRST_PARAM = 0;
 const int32_t DUMP_SECOND_PARAM = 1;
