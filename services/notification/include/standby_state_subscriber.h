@@ -44,12 +44,12 @@ public:
     void ReportAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added);
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result);
+    void NotifyAllowChangedByCommonEvent(int32_t uid, const std::string& name, uint32_t allowType, bool added);
 
 private:
     void NotifyIdleModeByCallback(bool napped, bool sleeping);
     void NotifyIdleModeByCommonEvent(bool napped, bool sleeping);
     void NotifyAllowChangedByCallback(int32_t uid, const std::string& name, uint32_t allowType, bool added);
-    void NotifyAllowChangedByCommonEvent(int32_t uid, const std::string& name, uint32_t allowType, bool added);
     std::list<sptr<IStandbyServiceSubscriber>>::iterator FindSubcriberObject(sptr<IRemoteObject>& proxy);
 
 private:

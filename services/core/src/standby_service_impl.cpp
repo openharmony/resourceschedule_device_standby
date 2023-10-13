@@ -1055,6 +1055,8 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
         DumpTurnOnOffSwitch(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_CHANGE_STATE_TIMEOUT) {
         DumpChangeConfigParam(argsInStr, result);
+    } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_PUSH_STRATEGY_CHANGE) {
+        DumpPushStrategyChange(argsInStr, result);
     } else {
         result += "Error params.\n";
     }
@@ -1095,7 +1097,11 @@ void StandbyServiceImpl::DumpUsage(std::string& result)
     "    -T  {switch name} {on or off}                      turn on or turn off some switches, switch can be debug,\n"
     "                                                            nap_switch, sleep_switch, detect_motion, other\n"
     "                                                            switch only be used after open debug switch\n"
-    "    -C  {parameter name} {parameter value}             change config parameter, only can be used when debug\n";
+    "    -C  {parameter name} {parameter value}             change config parameter, only can be used when debug\n"
+    "    -P                                                 sending network limiting and restoring network broadcasts\n"
+    "        {--whitelist} {parameter value}                send whitelist changes event\n"
+    "        {--ctrinetwork}                                send network limiting broadcasts\n"
+    "        {--restorectrlnetwork}                         send restore network broadcasts\n";
 
     result.append(dumpHelpMsg);
 }
@@ -1245,6 +1251,16 @@ void StandbyServiceImpl::DumpChangeConfigParam(const std::vector<std::string>& a
     }
     StandbyConfigManager::GetInstance()->DumpSetParameter(argsInStr[DUMP_SECOND_PARAM],
         std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), result);
+}
+
+void StandbyServiceImpl::DumpPushStrategyChange(const std::vector<std::string>& argsInStr, std::string& result)
+{
+    if (argsInStr[DUMP_SECOND_PARAM] == "--whitelist") {
+        StandbyStateSubscriber::GetInstance()->NotifyAllowChangedByCommonEvent(
+            std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), argsInStr[DUMP_FOURTH_PARAM],
+            std::atoi(argsInStr[DUMP_FIFTH_PARAM].c_str()), argsInStr[DUMP_SIXTH_PARAM] == "true");
+    }
+    strategyManager_->ShellDump(argsInStr, result);
 }
 
 void StandbyServiceImpl::DumpSubScriberObserver(const std::vector<std::string>& argsInStr, std::string& result)
