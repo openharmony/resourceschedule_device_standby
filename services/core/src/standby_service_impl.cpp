@@ -1253,7 +1253,7 @@ void StandbyServiceImpl::DumpChangeConfigParam(const std::vector<std::string>& a
         std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), result);
 }
 
-void standby_service_impl::DumpPushStrategyChange(const std::vector<std::string>& argsInStr, std::string& result)
+void StandbyServiceImpl::DumpPushStrategyChange(const std::vector<std::string>& argsInStr, std::string& result)
 {
     if (argsInStr[DUMP_SECOND_PARAM] == "--whitelist") {
         StandbyStateSubscriber::GetInstance()->NotifyAllowChangedByCommonEvent(
