@@ -305,5 +305,11 @@ int32_t StandbyService::Dump(int32_t fd, const std::vector<std::u16string>& args
     }
     return ERR_OK;
 }
+ErrCode StandbyService::HandleEvent(const uint32_t resType, const int64_t value,
+                                    const std::string &sceneInfo)
+{
+    StandbyServiceImpl::GetInstance()->HandleCommonEvent(resType, value, sceneInfo);
+    return ERR_OK;
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

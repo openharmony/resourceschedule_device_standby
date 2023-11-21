@@ -399,5 +399,37 @@ ErrCode StandbyServiceProxy::InnerTransact(uint32_t code, MessageOption& flags,
         }
     }
 }
+
+ErrCode StandbyServiceProxy::HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(StandbyServiceProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("HandleEvent write descriptor failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteUint32(resType) || !data.WriteInt64(value) || !data.WriteString(sceneInfo)) {
+        STANDBYSERVICE_LOGW("ReportDeviceStateChanged wirte parameter failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::HANDLE_EVENT),
+                                   option, data, reply);
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("HandleEvent fail: transact ErrCode=%{public}d", result);
+        return ERR_STANDBY_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        STANDBYSERVICE_LOGW("HandleEvent fail: read result dailed.");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("HandleEvent failed");
+        return result;
+    }
+    return result;
+    return ERR_STANDBY_TRANSACT_FAILED;
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

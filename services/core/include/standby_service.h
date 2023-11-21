@@ -61,6 +61,7 @@ public:
     int32_t Dump(int32_t fd, const std::vector<std::u16string>& args) override;
     void AddPluginSysAbilityListener(int32_t systemAbilityId);
     ErrCode NotifySystemAbilityStatusChanged(bool isAdded, int32_t systemAbilityId);
+    ErrCode HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo) override;
 
 private:
     void DumpUsage(std::string& result);
