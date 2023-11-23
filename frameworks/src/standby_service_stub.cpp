@@ -66,6 +66,9 @@ ErrCode StandbyServiceStub::OnRemoteRequest(uint32_t code,
         case static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_DEVICE_STATE_CHANGED):
             HandleReportDeviceStateChanged(data, reply);
             break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::HANDLE_EVENT):
+            HandleCommonEvent(data, reply);
+            break;
         default:
             return IRemoteStub<IStandbyService>::OnRemoteRequest(code, data, reply, option);
     }
@@ -256,6 +259,27 @@ ErrCode StandbyServiceStub::HandleReportDeviceStateChanged(MessageParcel& data, 
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
     return ERR_OK;
+}
+
+ErrCode StandbyServiceStub::HandleCommonEvent(MessageParcel& data, MessageParcel& reply)
+{
+    STANDBYSERVICE_LOGW("stub into HandleEvent");
+    uint32_t resType = 0;
+    if (!data.ReadUint32(resType)) {
+        STANDBYSERVICE_LOGW("Failed to read resType");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    int64_t value = 0;
+    if (!data.ReadInt64(value)) {
+        STANDBYSERVICE_LOGW("Failed to read value");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    std::string sceneInfo = "";
+    if (!data.ReadString(sceneInfo)) {
+        STANDBYSERVICE_LOGW("Failed to read sceneInfo");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    return HandleEvent(resType, value, sceneInfo);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

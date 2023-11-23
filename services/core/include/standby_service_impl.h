@@ -15,6 +15,11 @@
 
 #ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_SERVICES_CORE_INCLUDE_STANDBY_SERVICE_IMPL_H
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_SERVICES_CORE_INCLUDE_STANDBY_SERVICE_IMPL_H
+#ifdef STANDBY_SERVICE_UNIT_TEST
+#define WEAK_FUNC __attribute__((weak))
+#else
+#define WEAK_FUNC
+#endif
 
 #include <memory>
 #include <list>
@@ -47,9 +52,35 @@
 #include "app_state_observer.h"
 #include "app_mgr_helper.h"
 #include "common_event_observer.h"
+#include "res_type.h"
+#include "nlohmann/json.hpp"
+
 
 namespace OHOS {
 namespace DevStandbyMgr {
+enum class TelCallState {
+    /**
+    * Indicates the call is unknown
+    */
+    CALL_STATUS_UNKNOWN = -1,
+    /**
+    * Indicates the call is disconnected
+    */
+    CALL_STATUS_DISCONNECTED = 6,
+    /**
+    * Indicates the call is idle
+    */
+    CALL_STATUS_IDLE = 8,
+};
+enum P2pState {
+    P2P_STATE_NONE = 0,
+    P2P_STATE_IDLE,
+    P2P_STATE_STARTING,
+    P2P_STATE_STARTED,
+    P2P_STATE_CLOSING,
+    P2P_STATE_CLOSED,
+};
+
 class StandbyServiceImpl : public std::enable_shared_from_this<StandbyServiceImpl> {
 DECLARE_SINGLE_INSTANCE(StandbyServiceImpl);
 public:
@@ -81,6 +112,7 @@ public:
         uint32_t reasonCode);
     ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled);
     ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled);
+    ErrCode HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
 
     void RegisterPluginInner(IConstraintManagerAdapter* constraintManager,
         IListenerManagerAdapter* listenerManager,
@@ -141,6 +173,9 @@ private:
     void DumpPushStrategyChange(const std::vector<std::string>& argsInStr, std::string& result);
     // dispatch dumper command to plugin
     void OnPluginShellDump(const std::vector<std::string>& argsInStr, std::string& result);
+    void AppEventHandler(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
+    void HandleCallStateChanged(const std::string &sceneInfo);
+    void HandleP2PStateChanged(int32_t state);
 private:
     std::atomic<bool> isServiceReady_ {false};
     sptr<AppStateObserver> appStateObserver_ = nullptr;

@@ -46,6 +46,7 @@
 #include "common_event_observer.h"
 #include "standby_service.h"
 
+
 namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
@@ -988,6 +989,105 @@ ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool 
     standbyMessage.want_->SetParam("DIS_COMP_STATE", enabled);
     DispatchEvent(standbyMessage);
     return ERR_OK;
+}
+
+void WEAK_FUNC StandbyServiceImpl::HandleCallStateChanged(const std::string &sceneInfo)
+{
+    nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
+    if (payload.is_discarded()) {
+        STANDBYSERVICE_LOGE("parse json failed");
+    }
+    int32_t state = payload.at("state").get<int>();
+    bool disable = (state == static_cast<int32_t>(TelCallState::CALL_STATUS_UNKNOWN) ||
+                    state == static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED) ||
+                    state == static_cast<int32_t>(TelCallState::CALL_STATUS_IDLE));
+    DeviceStateCache::GetInstance()->SetDeviceState(
+    static_cast<int32_t>(DeviceStateType::TELEPHONE_STATE_CHANGE), !disable);
+}
+
+void WEAK_FUNC StandbyServiceImpl::HandleP2PStateChanged(int32_t state)
+{
+    bool disable = (state == static_cast<int32_t>(P2pState::P2P_STATE_IDLE) ||
+                    state == static_cast<int32_t>(P2pState::P2P_STATE_NONE) ||
+                    state == static_cast<int32_t>(P2pState::P2P_STATE_CLOSED));
+    DeviceStateCache::GetInstance()->SetDeviceState(
+    static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE), !disable);
+}
+
+ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
+{
+    STANDBYSERVICE_LOGI("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
+                        resType, (long long)(value), sceneInfo.c_str());
+    switch (resType) {
+        case ResType::RES_TYPE_SCREEN_STATUS:
+            if (value == 1) {
+                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                             EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON));
+            } else {
+                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                             EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF));
+            }
+            break;
+        case ResType::RES_TYPE_CHARGING_DISCHARGING:
+            if (value == 0) {
+                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                             EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING));
+            } else {
+                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                             EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING));
+            }
+            break;
+        case ResType::RES_TYPE_USB_DEVICE:
+            if (value == 0) {
+                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                             EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED));
+            } else {
+                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                             EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED));
+            }
+            break;
+        case ResType::RES_TYPE_CALL_STATE_CHANGED:
+            HandleCallStateChanged(sceneInfo);
+            break;
+        case ResType::RES_TYPE_WIFI_P2P_STATE_CHANGED:
+            HandleP2PStateChanged(value);
+            break;
+        default:
+            AppEventHandler(resType, value, sceneInfo);
+            break;
+    }
+    return ERR_OK;
+}
+
+void StandbyServiceImpl::AppEventHandler(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
+{
+    if (resType == ResType::RES_TYPE_APP_INSTALL_UNINSTALL &&
+        (value == ResType::AppInstallStatus::APP_UNINSTALL ||
+         value == ResType::AppInstallStatus::APP_CHANGED ||
+         value == ResType::AppInstallStatus::APP_REPLACED ||
+         value == ResType::AppInstallStatus::BUNDLE_REMOVED ||
+         value == ResType::AppInstallStatus::APP_FULLY_REMOVED)
+        ) {
+        nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
+        if (payload.is_discarded()) {
+            STANDBYSERVICE_LOGE("parse json failed");
+            return;
+        }
+        if (!payload.contains("bundleName") || !payload.contains("uid")) {
+            STANDBYSERVICE_LOGE("HandleCommonEvent,There is no valid bundle name in payload");
+            return;
+        }
+        std::string bundleName = payload.at("bundleName").get<std::string>();
+        int32_t uid = payload.at("uid").get<int>();
+        handler_->PostTask([uid, bundleName]() {
+            StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, true);
+        });
+    } else if (resType == ResType::RES_TYPE_TIMEZONE_CHANGED ||
+               resType == ResType::RES_TYPE_NITZ_TIMEZONE_CHANGED ||
+               resType == ResType::RES_TYPE_TIME_CHANGED ||
+               resType == ResType::RES_TYPE_NITZ_TIME_CHANGED) {
+        handler_->PostTask([]() {StandbyServiceImpl::GetInstance()->ResetTimeObserver(); });
+    }
 }
 
 void StandbyServiceImpl::DispatchEvent(const StandbyMessage& message)

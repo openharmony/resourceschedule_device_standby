@@ -39,19 +39,11 @@ CommonEventListener::CommonEventListener(const EventFwk::CommonEventSubscribeInf
 
 ErrCode WEAK_FUNC CommonEventListener::StartListener()
 {
-    if (!EventFwk::CommonEventManager::SubscribeCommonEvent(shared_from_this())) {
-        STANDBYSERVICE_LOGE("SubscribeCommonEvent occur exception");
-        return ERR_STANDBY_START_LISENER_FAILED;
-    }
     return ERR_OK;
 }
 
 ErrCode WEAK_FUNC CommonEventListener::StopListener()
 {
-    if (!EventFwk::CommonEventManager::UnSubscribeCommonEvent(shared_from_this())) {
-        STANDBYSERVICE_LOGE("UnsubscribeCommonEvent occur exception");
-        return ERR_STANDBY_STOP_LISENER_FAILED;
-    }
     return ERR_OK;
 }
 
@@ -75,25 +67,7 @@ void WEAK_FUNC CommonEventListener::HandleP2PStateChanged(int32_t state)
 
 void CommonEventListener::OnReceiveEvent(const EventFwk::CommonEventData& eventData)
 {
-    AAFwk::Want want = eventData.GetWant();
-    std::string action = want.GetAction();
-
-    STANDBYSERVICE_LOGD("receive common event %{public}s", action.c_str());
-    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
-        StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
-    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF) {
-        StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
-    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING ||
-        action == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED ||
-        action == EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING ||
-        action == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED) {
-        StandbyServiceImpl::GetInstance()->DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, action));
-    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_CALL_STATE_CHANGED) {
-        int32_t state = want.GetIntParam("state", static_cast<int32_t>(TelCallState::CALL_STATUS_UNKNOWN));
-        HandleCallStateChanged(state);
-    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_WIFI_P2P_STATE_CHANGED) {
-        HandleP2PStateChanged(eventData.GetCode());
-    }
+    return;
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

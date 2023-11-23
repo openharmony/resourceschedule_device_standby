@@ -115,6 +115,16 @@ public:
      * @param enabled true if the device state is on.
      */
     ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled) override;
+
+    /**
+     * @brief Unified handing of events
+     *
+     * @param resType scene type
+     * @param vaule extra scene message
+     * @param sceneInfo detail scene message, such as pid, uid and so on
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    ErrCode HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo) override;
 private:
     ErrCode InnerTransact(uint32_t code, MessageOption& flags, MessageParcel& data, MessageParcel& reply);
 

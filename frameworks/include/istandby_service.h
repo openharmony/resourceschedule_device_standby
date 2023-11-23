@@ -27,6 +27,7 @@
 #include "resourcce_request.h"
 #include "standby_service_errors.h"
 #include "istandby_service_subscriber.h"
+#include "standby_res_data.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -132,6 +133,16 @@ public:
      */
     virtual ErrCode IsDeviceInStandby(bool& isStandby) = 0;
 
+    /**
+     * @brief Unified handing of events
+     *
+     * @param resType scene type
+     * @param vaule extra scene message
+     * @param sceneInfo detail scene message, such as pid, uid and so on
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    virtual ErrCode HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IStandbyService");
 
@@ -145,6 +156,7 @@ protected:
         IS_DEVICE_IN_STANDBY,
         REPORT_WORK_SCHEDULER_STATUS,
         REPORT_DEVICE_STATE_CHANGED,
+        HANDLE_EVENT
     };
 };
 }  // namespace DevStandbyMgr

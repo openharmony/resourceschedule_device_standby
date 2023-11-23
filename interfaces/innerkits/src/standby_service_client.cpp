@@ -116,6 +116,16 @@ ErrCode StandbyServiceClient::IsDeviceInStandby(bool& isStandby)
     return standbyServiceProxy_->IsDeviceInStandby(isStandby);
 }
 
+ErrCode StandbyServiceClient::HandleEvent(const std::shared_ptr<ResData> &resData)
+{
+    std::string sceneInfo = resData->payload.dump();
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->HandleEvent(resData->resType, resData->value, sceneInfo);
+}
+
 ErrCode StandbyServiceClient::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
 {
     std::lock_guard<std::mutex> lock(mutex_);

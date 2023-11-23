@@ -12,11 +12,13 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import(
-    "//foundation/resourceschedule/device_standby/standby_service.gni")
+import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 config("standby_innerkits_public_config") {
-  include_dirs = [ "include" ]
+  include_dirs = [
+    "include",
+    "//third_party/json/single_include",
+  ]
 }
 
 ohos_shared_library("standby_innerkits") {

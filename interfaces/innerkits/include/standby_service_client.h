@@ -21,7 +21,7 @@
 
 #include "istandby_service.h"
 #include "standby_service_proxy.h"
-
+#include "standby_res_data.h"
 #include "standby_service_errors.h"
 
 namespace OHOS {
@@ -123,6 +123,14 @@ public:
      * @return ErrCode ERR_OK if success, else fail.
      */
     ErrCode IsDeviceInStandby(bool& isStandby);
+
+    /**
+     * @brief Unified handling of events;
+     *
+     * @param resData event data.
+     * @return ErrCode ERR_OK if success, else fail.
+     */
+    ErrCode HandleEvent(const std::shared_ptr<ResData> &resData);
 
 private:
     bool GetStandbyServiceProxy();

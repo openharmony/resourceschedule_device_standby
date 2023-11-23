@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import(
-    "//foundation/resourceschedule/device_standby/standby_service.gni")
+import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 config("standby_service_public_config") {
   include_dirs = [
@@ -21,6 +20,7 @@ config("standby_service_public_config") {
     "core/include",
     "notification/include",
     "${standby_plugins_path}/ext/include",
+    "//third_party/json/single_include",
   ]
 }
 
@@ -48,8 +48,8 @@ ohos_shared_library("standby_service") {
   public_configs = [ ":standby_service_public_config" ]
 
   deps = [
-    "${standby_service_frameworks_path}:standby_fwk",
     "${standby_innerkits_path}:standby_innerkits",
+    "${standby_service_frameworks_path}:standby_fwk",
     "${standby_utils_common_path}:standby_utils_common",
     "${standby_utils_policy_path}:standby_utils_policy",
   ]
@@ -108,8 +108,8 @@ ohos_static_library("standby_service_static") {
   public_configs = [ ":standby_service_public_config" ]
 
   deps = [
-    "${standby_service_frameworks_path}:standby_fwk",
     "${standby_innerkits_path}:standby_innerkits",
+    "${standby_service_frameworks_path}:standby_fwk",
     "${standby_utils_common_path}:standby_utils_common",
     "${standby_utils_policy_path}:standby_utils_policy",
   ]

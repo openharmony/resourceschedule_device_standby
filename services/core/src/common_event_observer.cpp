@@ -28,55 +28,23 @@ CommonEventObserver::CommonEventObserver(const EventFwk::CommonEventSubscribeInf
 
 bool WEAK_FUNC CommonEventObserver::Subscribe()
 {
-    if (!EventFwk::CommonEventManager::SubscribeCommonEvent(shared_from_this())) {
-        STANDBYSERVICE_LOGI("SubscribeCommonEvent occur exception.");
-        return false;
-    }
     return true;
 }
 
 bool WEAK_FUNC CommonEventObserver::Unsubscribe()
 {
-    if (!EventFwk::CommonEventManager::UnSubscribeCommonEvent(shared_from_this())) {
-        STANDBYSERVICE_LOGI("UnsubscribeCommonEvent occur exception.");
-        return false;
-    }
     return true;
 }
 
 void CommonEventObserver::OnReceiveEvent(const EventFwk::CommonEventData &eventData)
 {
-    AAFwk::Want want = eventData.GetWant();
-    std::string action = want.GetAction();
-    STANDBYSERVICE_LOGI("OnReceiveEvent get action: %{public}s", action.c_str());
-    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED ||
-        action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED ||
-        action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED ||
-        action == EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED ||
-        action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED) {
-        std::string bundleName = want.GetElement().GetBundleName();
-        int32_t uid = want.GetIntParam(AppExecFwk::Constants::UID, -1);
-        handler_->PostTask([uid, bundleName]() {
-            StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, true);
-            });
-    } else {
-        handler_->PostTask([]() { StandbyServiceImpl::GetInstance()->ResetTimeObserver(); });
-    }
+    return;
 }
 
 std::shared_ptr<CommonEventObserver> CommonEventObserver::CreateCommonEventObserver(
     const std::shared_ptr<AppExecFwk::EventHandler>& handler)
 {
     EventFwk::MatchingSkills matchingSkills;
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_TIMEZONE_CHANGED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_NITZ_TIMEZONE_CHANGED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_TIME_CHANGED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_NITZ_TIME_CHANGED);
     EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
     auto observer = std::make_shared<CommonEventObserver>(commonEventSubscribeInfo, handler);
     return observer;

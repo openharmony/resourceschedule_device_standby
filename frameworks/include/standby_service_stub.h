@@ -55,6 +55,7 @@ private:
     ErrCode HandleGetRestrictList(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleIsStrategyEnabled(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleReportDeviceStateChanged(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleCommonEvent(MessageParcel& data, MessageParcel& reply);
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
