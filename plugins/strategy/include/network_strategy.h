@@ -37,6 +37,7 @@ private:
     void UpdateNetResourceConfig(const StandbyMessage& message);
     void StartNetLimit(const StandbyMessage& message);
     void StopNetLimit(const StandbyMessage& message);
+    const static std::int32_t NETMANAGER_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL = 2100202;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
