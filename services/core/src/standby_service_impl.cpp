@@ -997,7 +997,13 @@ void WEAK_FUNC StandbyServiceImpl::HandleCallStateChanged(const std::string &sce
     if (payload.is_discarded()) {
         STANDBYSERVICE_LOGE("parse json failed");
     }
-    int32_t state = payload.at("state").get<int>();
+    int32_t state = -1;
+    if (payload.at("state").is_string()) {
+        state = atoi(payload["state"].get<std::string>().c_str());
+    }
+    if (payload.at("state").is_number_integer()) {
+        state = payload["state"].get<std::int32_t>();
+    }
     bool disable = (state == static_cast<int32_t>(TelCallState::CALL_STATUS_UNKNOWN) ||
                     state == static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED) ||
                     state == static_cast<int32_t>(TelCallState::CALL_STATUS_IDLE));
@@ -1078,7 +1084,13 @@ void StandbyServiceImpl::AppEventHandler(const uint32_t resType, const int64_t v
             return;
         }
         std::string bundleName = payload.at("bundleName").get<std::string>();
-        int32_t uid = payload.at("uid").get<int>();
+        int32_t uid = -1;
+        if (payload.at("uid").is_string()) {
+            uid = atoi(payload["uid"].get<std::string>().c_str());
+        }
+        if (payload.at("uid").is_number_integer()) {
+            uid = payload["uid"].get<std::int32_t>();
+        }
         handler_->PostTask([uid, bundleName]() {
             StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, true);
         });
