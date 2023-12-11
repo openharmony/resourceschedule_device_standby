@@ -22,6 +22,12 @@ config("standby_innerkits_public_config") {
 }
 
 ohos_shared_library("standby_innerkits") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "src/allow_info.cpp",
     "src/allow_type.cpp",

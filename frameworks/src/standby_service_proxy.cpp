@@ -429,7 +429,6 @@ ErrCode StandbyServiceProxy::HandleEvent(const uint32_t resType, const int64_t v
         return result;
     }
     return result;
-    return ERR_STANDBY_TRANSACT_FAILED;
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

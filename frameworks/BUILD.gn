@@ -23,6 +23,12 @@ config("standby_fwk_public_config") {
 }
 
 ohos_shared_library("standby_fwk") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "${standby_innerkits_path}/src/allow_info.cpp",
     "${standby_innerkits_path}/src/resourcce_request.cpp",

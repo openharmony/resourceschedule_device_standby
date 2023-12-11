@@ -76,6 +76,12 @@ StandbyPluginExternalDeps = [
 ]
 
 ohos_shared_library("standby_plugin") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = StandbyPluginSrc
 
   public_configs = [ ":standby_plugin_config" ]
@@ -106,6 +112,12 @@ ohos_shared_library("standby_plugin") {
 }
 
 ohos_static_library("standby_plugin_static") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = StandbyPluginSrc
 
   public_configs = [ ":standby_plugin_config" ]

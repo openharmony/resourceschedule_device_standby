@@ -32,6 +32,12 @@ StandbyUtilsPolicyExternalDeps = [
 ]
 
 ohos_shared_library("standby_utils_policy") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = StandbyUtilsPolicy
 
   public_configs = [ ":standby_utils_policy_config" ]
@@ -52,6 +58,12 @@ ohos_shared_library("standby_utils_policy") {
 }
 
 ohos_static_library("standby_utils_policy_static") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = StandbyUtilsPolicy
 
   public_configs = [ ":standby_utils_policy_config" ]
