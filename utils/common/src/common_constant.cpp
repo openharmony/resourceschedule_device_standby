@@ -39,9 +39,9 @@ const std::string MOTION_DECTION_TASK = "motion_dection_task";
 const std::string NAP_SWITCH = "nap_switch";
 const std::string SLEEP_SWITCH = "sleep_switch";
 
-const int32_t MOTION_DETECTION_TIMEOUT = 3000;
-const int32_t REST_TIMEOUT = 5000;
-const int32_t TOTAL_TIMEOUT = 30000;
+const int32_t MOTION_DETECTION_TIMEOUT = 1500;
+const int32_t REST_TIMEOUT = 1000;
+const int32_t TOTAL_TIMEOUT = 3000;
 
 const int32_t PERIODLY_TASK_DECTION_TIMEOUT = 410;
 const int32_t PERIODLY_TASK_REST_TIMEOUT = 100;
