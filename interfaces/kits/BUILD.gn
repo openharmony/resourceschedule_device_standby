@@ -36,8 +36,8 @@ ohos_shared_library("devicestandby") {
   public_configs = [ ":standby_napi_public_config" ]
 
   deps = [
-    "${standby_service_frameworks_path}:standby_fwk",
     "${standby_interfaces_path}/innerkits:standby_innerkits",
+    "${standby_service_frameworks_path}:standby_fwk",
   ]
 
   external_deps = [
