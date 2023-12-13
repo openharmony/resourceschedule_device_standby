@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import(
-    "//foundation/resourceschedule/device_standby/standby_service.gni")
+import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 cflags = []
 
@@ -22,6 +21,12 @@ config("standby_napi_public_config") {
 }
 
 ohos_shared_library("devicestandby") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "napi/src/common.cpp",
     "napi/src/init.cpp",
@@ -31,8 +36,8 @@ ohos_shared_library("devicestandby") {
   public_configs = [ ":standby_napi_public_config" ]
 
   deps = [
-    "${standby_service_frameworks_path}:standby_fwk",
     "${standby_interfaces_path}/innerkits:standby_innerkits",
+    "${standby_service_frameworks_path}:standby_fwk",
   ]
 
   external_deps = [

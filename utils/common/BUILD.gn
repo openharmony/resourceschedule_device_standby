@@ -10,14 +10,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import(
-    "//foundation/resourceschedule/device_standby/standby_service.gni")
+import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 config("standby_utils_common_config") {
   include_dirs = [ "include" ]
 }
 
 ohos_shared_library("standby_utils_common") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "src/common_constant.cpp",
     "src/standby_service_log.cpp",

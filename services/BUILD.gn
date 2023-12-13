@@ -25,6 +25,12 @@ config("standby_service_public_config") {
 }
 
 ohos_shared_library("standby_service") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   if (!use_clang_coverage) {
     shlib_type = "sa"
   }
@@ -88,6 +94,12 @@ ohos_shared_library("standby_service") {
 }
 
 ohos_static_library("standby_service_static") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   cflags_cc = [ "-DSTANDBY_SERVICE_UNIT_TEST" ]
   sources = [
     "common/src/background_task_helper.cpp",
