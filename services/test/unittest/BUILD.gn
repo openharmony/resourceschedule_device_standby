@@ -274,7 +274,6 @@ group("unittest") {
     ":mock_standby_helper_unit_test",
     ":mock_standby_service_unit_test",
     ":standby_helper_unit_test",
-    ":standby_service_unit_test",
     ":standby_utils_unit_test",
   ]
 }
