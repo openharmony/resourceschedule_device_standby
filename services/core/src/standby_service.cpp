@@ -83,47 +83,46 @@ void StandbyService::OnStart()
 
 void StandbyService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
-    STANDBYSERVICE_LOGI("add system ability, systemAbilityId : %{public}d", systemAbilityId);
+    STANDBYSERVICE_LOGD("add system ability, systemAbilityId : %{public}d", systemAbilityId);
     std::lock_guard<std::mutex> systemAbilityLock(systemAbilityLock_);
     switch (systemAbilityId) {
         case COMMON_EVENT_SERVICE_ID:
-            STANDBYSERVICE_LOGI("common event service is ready!");
+            STANDBYSERVICE_LOGD("common event service is ready!");
             dependsReady_ |= COMMON_EVENT_READY;
             StandbyServiceImpl::GetInstance()->RegisterCommEventObserver();
             break;
         case TIME_SERVICE_ID:
-            STANDBYSERVICE_LOGI("timer service is ready!");
+            STANDBYSERVICE_LOGD("timer service is ready!");
             dependsReady_ |= TIMER_SERVICE_READY;
             StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
             break;
         case ABILITY_MGR_SERVICE_ID:
-            STANDBYSERVICE_LOGI("ability mgr service is ready!");
+            STANDBYSERVICE_LOGD("ability mgr service is ready!");
             dependsReady_ |= ABILITY_SERVICE_READY;
             break;
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
-            STANDBYSERVICE_LOGI("bundle mgr service is ready!");
+            STANDBYSERVICE_LOGD("bundle mgr service is ready!");
             dependsReady_ |= BUNDLE_MGR_READY;
             break;
         case POWER_MANAGER_SERVICE_ID:
-            STANDBYSERVICE_LOGI("power service is ready!");
+            STANDBYSERVICE_LOGD("power service is ready!");
             dependsReady_ |= POWER_SERVICE_READY;
             break;
         case APP_MGR_SERVICE_ID:
-            STANDBYSERVICE_LOGI("app mgr service is ready!");
+            STANDBYSERVICE_LOGD("app mgr service is ready!");
             dependsReady_ |= APP_MGR_SERVICE_READY;
             StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
             break;
         case MULTIMODAL_INPUT_SERVICE_ID:
-            STANDBYSERVICE_LOGI("multi modal input service is ready!");
+            STANDBYSERVICE_LOGD("multi modal input service is ready!");
             dependsReady_ |= MULTIMODAL_INPUT_SERVICE_READY;
             break;
         default:
             NotifySystemAbilityStatusChanged(true, systemAbilityId);
             break;
     }
-    STANDBYSERVICE_LOGI("after add system ability, ready state : %{public}u", dependsReady_);
     if (dependsReady_ == ALL_DEPENDS_READY) {
-        STANDBYSERVICE_LOGI("all necessary system service for standby service has been satisfied!");
+        STANDBYSERVICE_LOGD("all necessary system service for standby service has been satisfied!");
         StandbyServiceImpl::GetInstance()->InitReadyState();
     }
 }

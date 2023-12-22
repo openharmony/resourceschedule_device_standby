@@ -348,7 +348,7 @@ ErrCode RunningLockStrategy::ProxyAppAndProcess(bool isProxied)
         }
         SetProxiedAppList(proxiedAppList, value);
     }
-    STANDBYSERVICE_LOGI("proxied app size: %{public}d", static_cast<int32_t>(proxiedAppList.size()));
+    STANDBYSERVICE_LOGD("proxied app size: %{public}d", static_cast<int32_t>(proxiedAppList.size()));
     ProxyRunningLockList(isProxied, proxiedAppList);
     return ERR_OK;
 }
@@ -356,7 +356,6 @@ ErrCode RunningLockStrategy::ProxyAppAndProcess(bool isProxied)
 ErrCode RunningLockStrategy::StopProxy(const StandbyMessage& message)
 {
     if (!isProxied_) {
-        STANDBYSERVICE_LOGW("current is not in proxed status, do not need to stop proxy");
         return ERR_STANDBY_CURRENT_STATE_NOT_MATCH;
     }
     uint32_t preState = static_cast<uint32_t>(message.want_->GetIntParam(PREVIOUS_STATE, 0));
@@ -534,7 +533,6 @@ void RunningLockStrategy::ProxyRunningLockList(bool isProxied,
     const std::vector<std::pair<int32_t, int32_t>>& proxiedAppList)
 {
     if (proxiedAppList.empty()) {
-        STANDBYSERVICE_LOGI("proxiedAppList is empty");
         return;
     }
     // in maintenance state, disallow proxy running lock
@@ -545,13 +543,12 @@ void RunningLockStrategy::ProxyRunningLockList(bool isProxied,
     if (!PowerMgr::PowerMgrClient::GetInstance().ProxyRunningLocks(isProxied, proxiedAppList)) {
         STANDBYSERVICE_LOGW("failed to ProxyRunningLockList");
     }
-    STANDBYSERVICE_LOGI("secceed ProxyRunningLockList");
 }
 
 void RunningLockStrategy::HandleProcessStatusChanged(const StandbyMessage& message)
 {
     if (!isProxied_) {
-        STANDBYSERVICE_LOGI("RunningLockStrategy is not in proxy, do not need process");
+        STANDBYSERVICE_LOGD("RunningLockStrategy is not in proxy, do not need process");
         return;
     }
     int32_t uid = message.want_->GetIntParam("uid", -1);

@@ -72,7 +72,6 @@ ErrCode StandbyServiceStub::OnRemoteRequest(uint32_t code,
         default:
             return IRemoteStub<IStandbyService>::OnRemoteRequest(code, data, reply, option);
     }
-    STANDBYSERVICE_LOGW("StandbyServiceStub: Failed to call interface %{public}u,", code);
     return ERR_OK;
 }
 
