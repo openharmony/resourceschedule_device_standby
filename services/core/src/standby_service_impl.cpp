@@ -95,7 +95,7 @@ bool StandbyServiceImpl::Init()
 
 void StandbyServiceImpl::InitReadyState()
 {
-    STANDBYSERVICE_LOGI("start init necessary plugin");
+    STANDBYSERVICE_LOGD("start init necessary plugin");
     handler_->PostTask([this]() {
         if (isServiceReady_.load()) {
             STANDBYSERVICE_LOGW("standby service is already ready, do not need repeat");
@@ -203,7 +203,6 @@ void StandbyServiceImpl::DayNightSwitchCallback()
 
 ErrCode StandbyServiceImpl::RegisterTimeObserver()
 {
-    STANDBYSERVICE_LOGI("register time observer");
     std::lock_guard<std::recursive_mutex> lock(timerObserverMutex_);
     if (dayNightSwitchTimerId_ > 0) {
         return ERR_STANDBY_OBSERVER_ALREADY_EXIST;
@@ -231,7 +230,6 @@ ErrCode StandbyServiceImpl::UnregisterCommEventObserver()
 
 ErrCode StandbyServiceImpl::UnregisterTimeObserver()
 {
-    STANDBYSERVICE_LOGI("unregister time observer");
     std::lock_guard<std::recursive_mutex> lock(timerObserverMutex_);
     if (!MiscServices::TimeServiceClient::GetInstance()->StopTimer(dayNightSwitchTimerId_)) {
         STANDBYSERVICE_LOGE("day and night switch observer stop failed");
@@ -245,7 +243,6 @@ ErrCode StandbyServiceImpl::UnregisterTimeObserver()
 
 ErrCode StandbyServiceImpl::ResetTimeObserver()
 {
-    STANDBYSERVICE_LOGI("reset time observer");
     std::lock_guard<std::recursive_mutex> lock(timerObserverMutex_);
     if (UnregisterTimeObserver() != ERR_OK || RegisterTimeObserver() != ERR_OK) {
         STANDBYSERVICE_LOGE("day and night switch observer reset failed");
@@ -456,7 +453,7 @@ ErrCode StandbyServiceImpl::RemoveAppAllowRecord(int32_t uid, const std::string 
 ErrCode StandbyServiceImpl::CheckCallerPermission(uint32_t reasonCode)
 {
     int32_t uid = IPCSkeleton::GetCallingUid();
-    STANDBYSERVICE_LOGI("check caller permission, uid of caller is %{public}d", uid);
+    STANDBYSERVICE_LOGD("check caller permission, uid of caller is %{public}d", uid);
     Security::AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (Security::AccessToken::AccessTokenKit::GetTokenType(tokenId)
         == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
@@ -902,7 +899,7 @@ ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid,
     if (!isServiceReady_.load()) {
         return ERR_STANDBY_SYS_NOT_READY;
     }
-    STANDBYSERVICE_LOGI("work scheduler status changed, isstarted: %{public}d, uid: %{public}d, bundleName: %{public}s",
+    STANDBYSERVICE_LOGD("work scheduler status changed, isstarted: %{public}d, uid: %{public}d, bundleName: %{public}s",
         started, uid, bundleName.c_str());
     Security::AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (CheckNativePermission(tokenId) != ERR_OK) {

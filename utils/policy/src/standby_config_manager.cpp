@@ -429,7 +429,6 @@ bool StandbyConfigManager::ParseTimerResCtrlConfig(const nlohmann::json& resConf
         }
         timerResConfigList_.emplace_back(std::move(timerResourceConfig));
     }
-    STANDBYSERVICE_LOGI("succeed to parse the config of TIMER");
     return true;
 }
 

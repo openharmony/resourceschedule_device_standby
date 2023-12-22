@@ -96,7 +96,7 @@ void StandbyStateSubscriber::ReportStandbyState(uint32_t curState)
 {
     bool napped = curState == StandbyState::NAP;
     bool sleeping = curState == StandbyState::SLEEP;
-    STANDBYSERVICE_LOGI("start ReportStandbyState, napping is %{public}d, sleeping is %{public}d", napped, sleeping);
+    STANDBYSERVICE_LOGD("start ReportStandbyState, napping is %{public}d, sleeping is %{public}d", napped, sleeping);
     NotifyIdleModeByCallback(napped, sleeping);
     NotifyIdleModeByCommonEvent(napped, sleeping);
 }
@@ -105,7 +105,6 @@ void StandbyStateSubscriber::NotifyIdleModeByCallback(bool napped, bool sleeping
 {
     std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
     if (subscriberList_.empty()) {
-        STANDBYSERVICE_LOGW("Sleep Mode Subscriber List is empty");
         return;
     }
     for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {

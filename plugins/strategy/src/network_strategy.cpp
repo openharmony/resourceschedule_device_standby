@@ -59,7 +59,7 @@ void NetworkStrategy::ResetFirewallAllowList()
 
 void NetworkStrategy::HandleEvent(const StandbyMessage& message)
 {
-    STANDBYSERVICE_LOGI("enter NetworkStrategy HandleEvent, eventId is %{public}d", message.eventId_);
+    STANDBYSERVICE_LOGD("enter NetworkStrategy HandleEvent, eventId is %{public}d", message.eventId_);
     switch (message.eventId_) {
         case StandbyMessageType::ALLOW_LIST_CHANGED:
             UpdateAllowedList(message);
@@ -132,7 +132,6 @@ void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, 
         STANDBYSERVICE_LOGW("failed to SetFireWallAllowedList, err code is %{public}d", ret);
         return;
     }
-    STANDBYSERVICE_LOGI("SetFireWallAllowedList succeed!");
 }
 
 ErrCode NetworkStrategy::SetFirewallStatus(bool enableFirewall)

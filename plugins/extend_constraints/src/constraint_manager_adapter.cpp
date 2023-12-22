@@ -101,7 +101,6 @@ ErrCode ConstraintManagerAdapter::StopEvalution()
     }
     isEvaluation_ = false;
     if (!curMonitor_) {
-        STANDBYSERVICE_LOGW("current monitor is nullptr");
         return ERR_OK;
     }
     curMonitor_->StopMonitoring();

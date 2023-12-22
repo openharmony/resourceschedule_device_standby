@@ -322,7 +322,7 @@ void StateManagerAdapter::OnScreenOffHalfHourInner(bool scrOffHalfHourCtrl, bool
 void StateManagerAdapter::SendNotification(uint32_t preState, bool needDispatchEvent)
 {
     uint32_t curState = curStatePtr_->GetCurState();
-    STANDBYSERVICE_LOGI("state transit succeed, previous is %{public}s, current is %{public}s",
+    STANDBYSERVICE_LOGD("state transit succeed, previous is %{public}s, current is %{public}s",
         STATE_NAME_LIST[preState].c_str(), STATE_NAME_LIST[curState].c_str());
     if (needDispatchEvent) {
         StandbyMessage message(StandbyMessageType::STATE_TRANSIT);
