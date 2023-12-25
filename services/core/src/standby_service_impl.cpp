@@ -514,7 +514,7 @@ uint32_t StandbyServiceImpl::GetExemptedResourceType(uint32_t resourceType)
 
     // traverse resourcesApply and get exempted resource type
     for (const uint32_t resourceType : resourcesApply) {
-        if (resourceType < EXEMPT_ALL_RESOURCES || resourceType > EXEMPT_ALL_RESOURCES + MAX_ALLOW_TYPE_NUM + 1) {
+        if (resourceType <= EXEMPT_ALL_RESOURCES || resourceType > EXEMPT_ALL_RESOURCES + MAX_ALLOW_TYPE_NUM + 1) {
             continue;
         }
         // maps number in resourceApply to resourceType defined in allow_type.h
