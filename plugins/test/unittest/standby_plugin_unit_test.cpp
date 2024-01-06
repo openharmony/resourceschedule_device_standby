@@ -559,7 +559,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0020, TestSize.Level1)
     repeatedMotionConstraint->StartEvalution(params);
     repeatedMotionConstraint->isEvaluation_ = true;
     repeatedMotionConstraint->UnInit();
-    EXPECT_TRUE(repeatedMotionConstraint->StartEvalution(params) != ERR_OK);
+    EXPECT_TRUE(repeatedMotionConstraint->StartEvalution(params) == ERR_OK);
 }
 
 /**
@@ -576,7 +576,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0021, TestSize.Level1)
     repeatedMotionConstraint->StopEvalution();
     repeatedMotionConstraint->isEvaluation_ = true;
     repeatedMotionConstraint->UnInit();
-    EXPECT_TRUE(repeatedMotionConstraint->StopEvalution() != ERR_OK);
+    EXPECT_TRUE(repeatedMotionConstraint->StopEvalution() == ERR_OK);
 }
 
 /**

@@ -755,19 +755,6 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_025, TestSize.Level1, 2
 }
 
 /**
- * @tc.name: StandbyServiceUnitTest_026
- * @tc.desc: test multithread uninit of StandbyService.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_026, TestSize.Level1, 20)
-{
-    StandbyServiceImpl::GetInstance()->UninitReadyState();
-    EXPECT_FALSE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());
-    StandbyServiceUnitTest::SleepForFC();
-}
-
-/**
  * @tc.name: StandbyServiceUnitTest_027
  * @tc.desc: test multithread DayNightSwitchCallback of StandbyService.
  * @tc.type: FUNC
@@ -775,8 +762,6 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_026, TestSize.Level1, 2
  */
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_027, TestSize.Level1, 20)
 {
-    StandbyServiceImpl::GetInstance()->InitReadyState();
-    StandbyServiceUnitTest::SleepForFC();
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     StandbyServiceUnitTest::SleepForFC();
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());
@@ -1199,6 +1184,19 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_047, TestSize.Level1)
     type = 2;
     DeviceStateCache::GetInstance()->deviceState_ = {true, true, false};
     EXPECT_EQ(DeviceStateCache::GetInstance()->SetDeviceState(type, enabled), true);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_026
+ * @tc.desc: test multithread uninit of StandbyService.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_026, TestSize.Level1, 20)
+{
+    StandbyServiceImpl::GetInstance()->UninitReadyState();
+    EXPECT_FALSE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());
+    StandbyServiceUnitTest::SleepForFC();
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
