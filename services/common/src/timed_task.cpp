@@ -18,6 +18,7 @@
 #include "standby_service_log.h"
 #include "common_constant.h"
 #include "time_provider.h"
+#include "standby_config_manager.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -35,6 +36,9 @@ TimedTask::TimedTask(bool repeat, uint64_t interval, bool isExact, bool isIdle)
     this->type = TIMER_TYPE_WAKEUP;
     if (isExact) {
         this->type = TIMER_TYPE_WAKEUP + TIMER_TYPE_EXACT;
+    }
+    if (StandbyConfigManager::GetInstance()->GetStandbySwitch(S3_SWITCH)) {
+        this->type = TIMER_TYPE_EXACT;
     }
     if (isIdle) {
         this->type = TIMER_TYPE_IDLE;
