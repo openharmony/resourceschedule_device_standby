@@ -55,6 +55,7 @@ extern const int64_t HALF_HOUR;
 
 extern const std::string NAP_SWITCH;
 extern const std::string SLEEP_SWITCH;
+extern const std::string S3_SWITCH;
 
 extern const std::string PREVIOUS_STATE;
 extern const std::string CURRENT_STATE;
