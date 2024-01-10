@@ -47,7 +47,7 @@ void NetworkStrategy::ResetFirewallAllowList()
     }
     
     int32_t ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->SetDeviceIdlePolicy(false);
-    if (ret != 0 && ret != NETMANAGER_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL) {
+    if (ret != 0 && ret != NETMANAGER_ERR_STATUS_EXIST) {
         STANDBYSERVICE_LOGE("SetDeviceIdlePolicy netLimited is false");
         return;
     }
