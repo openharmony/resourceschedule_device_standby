@@ -720,11 +720,11 @@ void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& na
     std::lock_guard<std::mutex> allowRecordLock(allowRecordMutex_);
     auto iter = allowInfoMap_.find(keyStr);
     if (iter == allowInfoMap_.end()) {
-        STANDBYSERVICE_LOGW("uid has no corresponding allow list");
+        STANDBYSERVICE_LOGD("uid has no corresponding allow list");
         return;
     }
     if ((allowType & iter->second->allowType_) == 0) {
-        STANDBYSERVICE_LOGW("allow list has no corresponding allow type");
+        STANDBYSERVICE_LOGD("allow list has no corresponding allow type");
         return;
     }
     auto& allowRecordPtr = iter->second;
