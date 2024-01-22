@@ -25,7 +25,6 @@ ohos_shared_library("standby_utils_common") {
   }
   sources = [
     "src/common_constant.cpp",
-    "src/standby_service_log.cpp",
   ]
 
   public_configs = [ ":standby_utils_common_config" ]

@@ -16,20 +16,20 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_INCLUDE_STANDBY_SERVICE_LOG_H
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_INCLUDE_STANDBY_SERVICE_LOG_H
 
-#include <string>
-
 #include "hilog/log.h"
+
+#ifdef LOG_DOMAIN
+#undef LOG_DOMAIN
+#endif
+#define LOG_DOMAIN 0xD001718
+
+#ifdef LOG_TAG
+#undef LOG_TAG
+#endif
+#define LOG_TAG "StandbyService"
 
 namespace OHOS {
 namespace DevStandbyMgr {
-#ifndef STANDBYSERVICE_LOG_DOMAIN
-#define STANDBYSERVICE_LOG_DOMAIN 0xD001718
-#endif
-
-#ifndef STANDBYSERVICE_LOG_TAG
-#define STANDBYSERVICE_LOG_TAG "StandbyService"
-#endif
-
 #ifdef __aarch64__
 #define SPUBI64  "%{public}ld"
 #define SPUB_SIZE "%{public}lu"
@@ -44,48 +44,25 @@ namespace DevStandbyMgr {
 #define SPUBU64  "%{public}llu"
 #endif
 
-enum class StandbyServiceLogLevel : uint8_t { DEBUG = 0, INFO, WARN, ERROR, FATAL };
+#ifndef FILENAME
+#define FILENAME  (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
+#endif
 
-static constexpr OHOS::HiviewDFX::HiLogLabel STANDBYSERVICE_LABEL = {LOG_CORE, STANDBYSERVICE_LOG_DOMAIN,
-    STANDBYSERVICE_LOG_TAG};
+#ifndef FORMAT_LOG
+#define FORMAT_LOG(fmt, ...)  "[%{public}s(%{public}s):%{public}d] " fmt, FILENAME, __FUNCTION__, __LINE__, ##__VA_ARGS__
+#endif
 
-class StandbyServiceLog {
-public:
-    StandbyServiceLog() = delete;
-    ~StandbyServiceLog() = delete;
+#define STANDBYSERVICE_PRINT_LOGD(fmt, ...)  HILOG_DEBUG(LOG_CORE, fmt, ##__VA_ARGS__)
+#define STANDBYSERVICE_PRINT_LOGI(fmt, ...)  HILOG_INFO(LOG_CORE, fmt, ##__VA_ARGS__)
+#define STANDBYSERVICE_PRINT_LOGW(fmt, ...)  HILOG_WARN(LOG_CORE, fmt, ##__VA_ARGS__)
+#define STANDBYSERVICE_PRINT_LOGE(fmt, ...)  HILOG_ERROR(LOG_CORE, fmt, ##__VA_ARGS__)
+#define STANDBYSERVICE_PRINT_LOGF(fmt, ...)  HILOG_FATAL(LOG_CORE, fmt, ##__VA_ARGS__)
 
-    static bool JudgeLevel(const StandbyServiceLogLevel& level);
-
-    static void SetLogLevel(const StandbyServiceLogLevel& level)
-    {
-        level_ = level;
-    }
-
-    static const StandbyServiceLogLevel& GetLogLevel()
-    {
-        return level_;
-    }
-
-    static std::string GetCurrFileName(const char *str);
-
-private:
-    static StandbyServiceLogLevel level_;
-};
-
-#define STANDBYSERVICE_PRINT_LOG(LEVEL, Level, fmt, ...)                                         \
-    if (StandbyServiceLog::JudgeLevel(StandbyServiceLogLevel::LEVEL))     \
-    OHOS::HiviewDFX::HiLog::Level(STANDBYSERVICE_LABEL,                        \
-        "[%{public}s(%{public}s):%{public}d] " fmt,                                    \
-        StandbyServiceLog::GetCurrFileName(__FILE__).c_str(),                            \
-        __FUNCTION__,                                                                  \
-        __LINE__,                                                                      \
-        ##__VA_ARGS__)
-
-#define STANDBYSERVICE_LOGD(fmt, ...) STANDBYSERVICE_PRINT_LOG(DEBUG, Debug, fmt, ##__VA_ARGS__)
-#define STANDBYSERVICE_LOGI(fmt, ...) STANDBYSERVICE_PRINT_LOG(INFO, Info, fmt, ##__VA_ARGS__)
-#define STANDBYSERVICE_LOGW(fmt, ...) STANDBYSERVICE_PRINT_LOG(WARN, Warn, fmt, ##__VA_ARGS__)
-#define STANDBYSERVICE_LOGE(fmt, ...) STANDBYSERVICE_PRINT_LOG(ERROR, Error, fmt, ##__VA_ARGS__)
-#define STANDBYSERVICE_LOGF(fmt, ...) STANDBYSERVICE_PRINT_LOG(FATAL, Fatal, fmt, ##__VA_ARGS__)
+#define STANDBYSERVICE_LOGD(...)  STANDBYSERVICE_PRINT_LOGD(FORMAT_LOG(__VA_ARGS__))
+#define STANDBYSERVICE_LOGI(...)  STANDBYSERVICE_PRINT_LOGI(FORMAT_LOG(__VA_ARGS__))
+#define STANDBYSERVICE_LOGW(...)  STANDBYSERVICE_PRINT_LOGW(FORMAT_LOG(__VA_ARGS__))
+#define STANDBYSERVICE_LOGE(...)  STANDBYSERVICE_PRINT_LOGE(FORMAT_LOG(__VA_ARGS__))
+#define STANDBYSERVICE_LOGF(...)  STANDBYSERVICE_PRINT_LOGF(FORMAT_LOG(__VA_ARGS__))
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_INCLUDE_STANDBY_SERVICE_LOG_H
