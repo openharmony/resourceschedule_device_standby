@@ -49,7 +49,7 @@ namespace DevStandbyMgr {
 #endif
 
 #ifndef FORMAT_LOG
-#define FORMAT_LOG(fmt, ...)  "[%{public}s(%{public}s):%{public}d] " fmt, FILENAME, __FUNCTION__, __LINE__, ##__VA_ARGS__
+#define FORMAT_LOG(fmt, ...) "[%{public}s(%{public}s):%{public}d] " fmt, FILENAME, __FUNCTION__, __LINE__, ##__VA_ARGS__
 #endif
 
 #define STANDBYSERVICE_PRINT_LOGD(fmt, ...)  HILOG_DEBUG(LOG_CORE, fmt, ##__VA_ARGS__)
