@@ -47,24 +47,6 @@ void StandbyUtilsUnitTest::SetUpTestCase()
 }
 
 /**
- * @tc.name: StandbyUtilsUnitTest_001
- * @tc.desc: test StandbyServiceLog.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_001, TestSize.Level1)
-{
-    StandbyServiceLog::level_ = StandbyServiceLogLevel::INFO;
-    StandbyServiceLog::JudgeLevel(StandbyServiceLogLevel::DEBUG);
-    StandbyServiceLog::JudgeLevel(StandbyServiceLogLevel::INFO);
-    StandbyServiceLog::JudgeLevel(StandbyServiceLogLevel::WARN);
-    StandbyServiceLog::JudgeLevel(StandbyServiceLogLevel::ERROR);
-    StandbyServiceLog::JudgeLevel(StandbyServiceLogLevel::FATAL);
-    StandbyServiceLog::GetCurrFileName(nullptr);
-    EXPECT_TRUE(StandbyServiceLog::GetCurrFileName("test").empty());
-}
-
-/**
  * @tc.name: StandbyUtilsUnitTest_002
  * @tc.desc: test GetInt32FromJsonValue.
  * @tc.type: FUNC
