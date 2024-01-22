@@ -169,7 +169,7 @@ uint32_t StateManagerAdapter::GetPreState()
 
 ErrCode StateManagerAdapter::StartEvalCurrentState(const ConstraintEvalParam& params)
 {
-    STANDBYSERVICE_LOGD("start evalution current state, current: %{public}u, %{public}u, next:"\
+    STANDBYSERVICE_LOGI("start evalution current state, current: %{public}u, %{public}u, next:"\
         " %{public}u, %{public}u", params.curState_, params.curPhase_, params.nextState_,
         params.nextPhase_);
     isEvalution_ = true;
@@ -322,7 +322,7 @@ void StateManagerAdapter::OnScreenOffHalfHourInner(bool scrOffHalfHourCtrl, bool
 void StateManagerAdapter::SendNotification(uint32_t preState, bool needDispatchEvent)
 {
     uint32_t curState = curStatePtr_->GetCurState();
-    STANDBYSERVICE_LOGD("state transit succeed, previous is %{public}s, current is %{public}s",
+    STANDBYSERVICE_LOGI("state transit succeed, previous is %{public}s, current is %{public}s",
         STATE_NAME_LIST[preState].c_str(), STATE_NAME_LIST[curState].c_str());
     if (needDispatchEvent) {
         StandbyMessage message(StandbyMessageType::STATE_TRANSIT);

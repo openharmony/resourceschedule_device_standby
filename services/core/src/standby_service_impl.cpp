@@ -761,7 +761,7 @@ void StandbyServiceImpl::OnProcessStatusChanged(int32_t uid, int32_t pid, const 
         STANDBYSERVICE_LOGD("standby service is not ready");
         return;
     }
-    STANDBYSERVICE_LOGD("process status change, uid: %{piblic}d, pid: %{piblic}d, name: %{piblic}s, alive: %{piblic}d",
+    STANDBYSERVICE_LOGD("process status change, uid: %{public}d, pid: %{public}d, name: %{public}s, alive: %{public}d",
         uid, pid, bundleName.c_str(), isCreated);
     StandbyMessage standbyMessage {StandbyMessageType::PROCESS_STATE_CHANGED};
     standbyMessage.want_ = AAFwk::Want {};
