@@ -127,6 +127,7 @@ protected:
     std::unordered_map<std::int32_t, NetLimtedAppInfo> netLimitedAppInfo_;
     uint32_t nightExemptionTaskType_ {0};
     uint32_t condition_ {0};
+    const static std::int32_t NETMANAGER_ERR_STATUS_EXIST = 2100209;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

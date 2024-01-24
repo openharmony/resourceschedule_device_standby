@@ -313,12 +313,12 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
 {
     std::vector<uint32_t> uids;
     for (const auto& [key, value] : netLimitedAppInfo_) {
-        STANDBYSERVICE_LOGD("uid: %{public}d, name: %{public}s, isAllow: %{public}d",
-            key, value.name_.c_str(), isAllow);
         if (!ExemptionTypeFlag::IsExempted(value.appExemptionFlag_)) {
             continue;
         }
         uids.emplace_back(key);
+        STANDBYSERVICE_LOGD("uid: %{public}d, name: %{public}s, isAllow: %{public}d",
+            key, value.name_.c_str(), isAllow);
     }
     STANDBYSERVICE_LOGD("all application size: %{public}d, network allow: %{public}d",
         static_cast<int32_t>(netLimitedAppInfo_.size()), static_cast<int32_t>(uids.size()));

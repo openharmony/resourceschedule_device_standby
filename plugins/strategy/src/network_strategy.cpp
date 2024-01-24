@@ -136,13 +136,15 @@ void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, 
 
 ErrCode NetworkStrategy::SetFirewallStatus(bool enableFirewall)
 {
-    if (DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
-        SetDeviceIdlePolicy(enableFirewall) != 0) {
-        STANDBYSERVICE_LOGE("SetDeviceIdlePolicy enableFirewall is %{public}d", enableFirewall);
-        return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
+    int32_t ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
+        SetDeviceIdlePolicy(enableFirewall);
+    if (ret == 0 || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
+        SetNetAllowApps(enableFirewall);
+        return ERR_OK;
     }
-    SetNetAllowApps(enableFirewall);
-    return ERR_OK;
+    STANDBYSERVICE_LOGE("SetDeviceIdlePolicy enableFirewall is %{public}d res is %{public}d",
+        enableFirewall, ret);
+    return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
 }
 
 void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
