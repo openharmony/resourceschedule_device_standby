@@ -37,7 +37,6 @@ private:
     void UpdateNetResourceConfig(const StandbyMessage& message);
     void StartNetLimit(const StandbyMessage& message);
     void StopNetLimit(const StandbyMessage& message);
-    const static std::int32_t NETMANAGER_ERR_STATUS_EXIST = 2100209;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
