@@ -17,10 +17,9 @@
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_POLICY_INCLUDE_JSON_UTILS_H
 
 #include <string>
-#include "nlohmann/json.hpp"
 
+#include "nlohmann/json.hpp"
 #include "standby_service_errors.h"
-#include "standby_service_log.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

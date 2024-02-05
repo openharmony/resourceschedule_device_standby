@@ -21,40 +21,36 @@
 #define WEAK_FUNC
 #endif
 
+#include <array>
+#include <map>
 #include <memory>
 #include <list>
+#include <set>
+#include <string>
 #include <unordered_map>
 #include <vector>
-#include <string>
-#include <map>
-#include <set>
-#include <array>
 
 #include "accesstoken_kit.h"
-#include "ipc_skeleton.h"
-#include "event_runner.h"
-#include "event_handler.h"
-
-#include "istandby_service.h"
 #include "allow_info.h"
 #include "allow_record.h"
-#include "resourcce_request.h"
-#include "standby_state_subscriber.h"
-#include "istandby_service_subscriber.h"
+#include "app_mgr_client.h"
+#include "app_mgr_helper.h"
+#include "app_state_observer.h"
+#include "common_event_observer.h"
+#include "event_runner.h"
+#include "event_handler.h"
 #include "iconstraint_manager_adapter.h"
 #include "ilistener_manager_adapter.h"
-#include "istrategy_manager_adapter.h"
+#include "ipc_skeleton.h"
+#include "istandby_service.h"
+#include "istandby_service_subscriber.h"
 #include "istate_manager_adapter.h"
-#include "standby_service_log.h"
-#include "single_instance.h"
-
-#include "app_mgr_client.h"
-#include "app_state_observer.h"
-#include "app_mgr_helper.h"
-#include "common_event_observer.h"
-#include "res_type.h"
+#include "istrategy_manager_adapter.h"
 #include "nlohmann/json.hpp"
-
+#include "resourcce_request.h"
+#include "res_type.h"
+#include "single_instance.h"
+#include "standby_state_subscriber.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

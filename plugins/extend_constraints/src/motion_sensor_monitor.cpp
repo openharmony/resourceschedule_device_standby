@@ -14,11 +14,14 @@
  */
 
 #include "motion_sensor_monitor.h"
+
 #include <vector>
 #include <string>
+
+#include "istate_manager_adapter.h"
 #include "standby_config_manager.h"
 #include "standby_service_impl.h"
-#include "istate_manager_adapter.h"
+#include "standby_service_log.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
