@@ -15,12 +15,13 @@
 
 #include "json_utils.h"
 
+#include <climits>
 #include <fcntl.h>
 #include <fstream>
-#include <unistd.h>
-#include <climits>
 #include <sstream>
-#include <fstream>
+#include <unistd.h>
+
+#include "standby_service_log.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

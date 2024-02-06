@@ -16,10 +16,10 @@
 #include "input_manager_listener.h"
 
 #include "input_manager.h"
-#include "want.h"
-
-#include "standby_service_impl.h"
 #include "istate_manager_adapter.h"
+#include "standby_service_impl.h"
+#include "standby_service_log.h"
+#include "want.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

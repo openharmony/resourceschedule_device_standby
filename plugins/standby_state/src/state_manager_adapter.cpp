@@ -15,16 +15,16 @@
 
 #include "state_manager_adapter.h"
 
-#include "common_event_support.h"
-#include "standby_service_impl.h"
-#include "standby_state_subscriber.h"
-#include "standby_config_manager.h"
-
 #include "base_state.h"
+#include "common_event_support.h"
 #include "dark_state.h"
 #include "maintenance_state.h"
 #include "nap_state.h"
 #include "sleep_state.h"
+#include "standby_config_manager.h"
+#include "standby_service_impl.h"
+#include "standby_service_log.h"
+#include "standby_state_subscriber.h"
 #include "working_state.h"
 
 namespace OHOS {

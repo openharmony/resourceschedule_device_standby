@@ -22,18 +22,16 @@
 #define WEAK_FUNC
 #endif
 
-#include <unordered_map>
 #include <memory>
+#include <unordered_map>
 
 #include "common_event_manager.h"
 #include "common_event_subscriber.h"
 #include "common_event_subscribe_info.h"
 #include "event_handler.h"
-
-#include "standby_service_log.h"
-#include "standby_service_errors.h"
 #include "imessage_listener.h"
 #include "istate_manager_adapter.h"
+#include "standby_service_errors.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

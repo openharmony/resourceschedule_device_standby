@@ -20,8 +20,6 @@
 #include <iservice_registry.h>
 #include <string_ex.h>
 
-#include "standby_service_log.h"
-
 namespace OHOS {
 namespace DevStandbyMgr {
 #define READ_PARCEL(in, type, data)                         \

@@ -15,37 +15,35 @@
 
 #include "standby_service_impl.h"
 
-#include <set>
 #include <algorithm>
-#include <vector>
-#include <string>
-#include <functional>
-#include <sstream>
-
 #include <dlfcn.h>
+#include <functional>
+#include <set>
+#include <sstream>
+#include <string>
+#include <vector>
 
-#include "event_runner.h"
-#include "system_ability_definition.h"
-#include "iservice_registry.h"
-#include "tokenid_kit.h"
-#include "accesstoken_kit.h"
+#include "ability_manager_helper.h"
 #include "access_token.h"
-#include "time_service_client.h"
-#include "common_event_support.h"
-
-#include "json_utils.h"
-#include "timed_task.h"
-#include "time_provider.h"
-#include "istandby_service.h"
-#include "device_standby_switch.h"
-#include "standby_config_manager.h"
+#include "accesstoken_kit.h"
 #include "allow_type.h"
 #include "app_mgr_helper.h"
-#include "ability_manager_helper.h"
 #include "bundle_manager_helper.h"
 #include "common_event_observer.h"
+#include "common_event_support.h"
+#include "device_standby_switch.h"
+#include "event_runner.h"
+#include "iservice_registry.h"
+#include "istandby_service.h"
+#include "json_utils.h"
+#include "standby_config_manager.h"
 #include "standby_service.h"
-
+#include "standby_service_log.h"
+#include "system_ability_definition.h"
+#include "timed_task.h"
+#include "time_provider.h"
+#include "time_service_client.h"
+#include "tokenid_kit.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

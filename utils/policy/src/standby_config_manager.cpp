@@ -15,16 +15,16 @@
 
 #include "standby_config_manager.h"
 
+#include <functional>
 #include <string>
 #include <sstream>
-#include <functional>
 #include <unistd.h>
 
 #ifdef STANDBY_CONFIG_POLICY_ENABLE
 #include "config_policy_utils.h"
 #endif
-
 #include "json_utils.h"
+#include "standby_service_log.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

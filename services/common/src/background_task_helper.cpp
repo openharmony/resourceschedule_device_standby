@@ -15,6 +15,8 @@
 
 #include "background_task_helper.h"
 
+#include "standby_service_log.h"
+
 namespace OHOS {
 namespace DevStandbyMgr {
 IMPLEMENT_SINGLE_INSTANCE(BackgroundTaskHelper);

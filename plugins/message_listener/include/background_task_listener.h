@@ -22,19 +22,18 @@
 #define WEAK_FUNC
 #endif // STANDBY_SERVICE_UNIT_TEST
 
-#include <vector>
 #include <memory>
+#include <vector>
+
+#include "background_task_mgr_helper.h"
+#include "background_task_subscriber.h"
+#include "imessage_listener.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
-#include "background_task_subscriber.h"
-#include "background_task_mgr_helper.h"
-#include "resource_callback_info.h"
-
-#include "standby_service_log.h"
-#include "standby_service_errors.h"
-#include "imessage_listener.h"
 #include "istate_manager_adapter.h"
+#include "resource_callback_info.h"
 #include "single_instance.h"
+#include "standby_service_errors.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

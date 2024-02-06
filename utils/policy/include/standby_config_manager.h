@@ -16,19 +16,18 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_POLICY_INCLUDE_STANDBY_CONFIG_MANAGER_H
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_POLICY_INCLUDE_STANDBY_CONFIG_MANAGER_H
 
-#include <unordered_map>
-#include <vector>
-#include <string>
+#include <list>
 #include <memory>
 #include <mutex>
-#include <list>
 #include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 
 #include "json_utils.h"
-#include "standby_service_errors.h"
-#include "standby_service_log.h"
 #include "single_instance.h"
-
+#include "standby_service_errors.h"
 namespace OHOS {
 namespace DevStandbyMgr {
 class ConditionType {
