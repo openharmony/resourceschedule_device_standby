@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "charge_state_monitor.h""
+#include "charge_state_monitor.h"
 
 #include "battery_srv_client.h"
 #include "standby_service_impl.h"
