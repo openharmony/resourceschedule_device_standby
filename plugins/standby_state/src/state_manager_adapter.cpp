@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "power_mgr_client.h"
 #include "state_manager_adapter.h"
 
 #include "base_state.h"
@@ -57,6 +58,7 @@ bool StateManagerAdapter::Init()
     }
     curStatePtr_ = workingStatePtr_;
     preStatePtr_ = curStatePtr_;
+    isScreenOn_ = PowerMgr::PowerMgrClient::GetInstance().IsScreenOn();
     if (curStatePtr_->BeginState() != ERR_OK) {
         return false;
     }
