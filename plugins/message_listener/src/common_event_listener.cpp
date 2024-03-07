@@ -28,8 +28,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-using namespace OHOS::Telephony;
-using namespace OHOS::Wifi;
 CommonEventListener::CommonEventListener(const EventFwk::CommonEventSubscribeInfo& subscribeInfo)
     : EventFwk::CommonEventSubscriber(subscribeInfo)
 {
