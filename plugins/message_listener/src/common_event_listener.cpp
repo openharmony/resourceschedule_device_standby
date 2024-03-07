@@ -14,17 +14,7 @@
  */
 
 #include "common_event_listener.h"
-
-#include "bundle_constants.h"
-#include "want.h"
-#include "common_event_manager.h"
-#include "common_event_support.h"
-
 #include "standby_service_impl.h"
-#include "istate_manager_adapter.h"
-#include "istandby_service.h"
-#include "call_manager_inner_type.h"
-#include "wifi_p2p_msg.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -43,24 +33,6 @@ ErrCode WEAK_FUNC CommonEventListener::StartListener()
 ErrCode WEAK_FUNC CommonEventListener::StopListener()
 {
     return ERR_OK;
-}
-
-void WEAK_FUNC CommonEventListener::HandleCallStateChanged(int32_t state)
-{
-    bool disabled = (state == static_cast<int32_t>(TelCallState::CALL_STATUS_UNKNOWN) ||
-        state == static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED) ||
-        state == static_cast<int32_t>(TelCallState::CALL_STATUS_IDLE));
-    DeviceStateCache::GetInstance()->SetDeviceState(
-        static_cast<int32_t>(DeviceStateType::TELEPHONE_STATE_CHANGE), !disabled);
-}
-
-void WEAK_FUNC CommonEventListener::HandleP2PStateChanged(int32_t state)
-{
-    bool disabled = (state == static_cast<int32_t>(P2pState::P2P_STATE_IDLE) ||
-        state == static_cast<int32_t>(P2pState::P2P_STATE_NONE) ||
-        state == static_cast<int32_t>(P2pState::P2P_STATE_CLOSED));
-    DeviceStateCache::GetInstance()->SetDeviceState(
-        static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE), !disabled);
 }
 
 void CommonEventListener::OnReceiveEvent(const EventFwk::CommonEventData& eventData)
