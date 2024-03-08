@@ -45,9 +45,6 @@ public:
     void OnReceiveEvent(const EventFwk::CommonEventData& eventData) override;
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler>& handler);
 private:
-    void HandleCallStateChanged(int32_t state);
-    void HandleP2PStateChanged(int32_t state);
-private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
 };
 }  // namespace DevStandbyMgr
