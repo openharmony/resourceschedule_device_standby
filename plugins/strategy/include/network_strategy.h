@@ -27,9 +27,7 @@ public:
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
 
 protected:
-    ErrCode SetFirewallStatus(bool enableFirewall) override;
     virtual void SetFirewallAllowedList(const std::vector<uint32_t>& uids, bool isAdded) override;
-    void ResetFirewallAllowList() override;
     void UpdateDeviceIdleIptable(bool enableFirewall);
 
 private:
