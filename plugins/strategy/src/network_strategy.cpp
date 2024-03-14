@@ -38,25 +38,6 @@ ErrCode NetworkStrategy::OnDestroy()
     return ERR_OK;
 }
 
-void NetworkStrategy::ResetFirewallAllowList()
-{
-    STANDBYSERVICE_LOGI("ResetFirewallAllowList list");
-    std::vector<uint32_t> uids;
-    if (DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->GetDeviceIdleTrustlist(uids) != 0) {
-        return;
-    }
-    
-    int32_t ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->SetDeviceIdlePolicy(false);
-    if (ret != 0 && ret != NETMANAGER_ERR_STATUS_EXIST) {
-        STANDBYSERVICE_LOGE("SetDeviceIdlePolicy netLimited is false");
-        return;
-    }
-    if (DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
-        SetDeviceIdleTrustlist(uids, false) != 0) {
-        STANDBYSERVICE_LOGW("SetFireWallAllowedList failed");
-    }
-}
-
 void NetworkStrategy::HandleEvent(const StandbyMessage& message)
 {
     STANDBYSERVICE_LOGD("enter NetworkStrategy HandleEvent, eventId is %{public}d", message.eventId_);
@@ -94,7 +75,7 @@ void NetworkStrategy::UpdateNetResourceConfig(const StandbyMessage& message)
 {
     condition_ = static_cast<uint32_t>(message.want_->GetIntParam(RES_CTRL_CONDITION, 0));
     STANDBYSERVICE_LOGD("enter NetworkStrategy HandleEvent, current condition is %{public}u", condition_);
-    OnDayNightSwitched(message);
+    UpdateFirewallAllowList();
 }
 
 void NetworkStrategy::StartNetLimit(const StandbyMessage& message)
@@ -132,19 +113,6 @@ void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, 
         STANDBYSERVICE_LOGW("failed to SetFireWallAllowedList, err code is %{public}d", ret);
         return;
     }
-}
-
-ErrCode NetworkStrategy::SetFirewallStatus(bool enableFirewall)
-{
-    int32_t ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
-        SetDeviceIdlePolicy(enableFirewall);
-    if (ret == 0 || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
-        SetNetAllowApps(enableFirewall);
-        return ERR_OK;
-    }
-    STANDBYSERVICE_LOGE("SetDeviceIdlePolicy enableFirewall is %{public}d res is %{public}d",
-        enableFirewall, ret);
-    return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
 }
 
 void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
