@@ -64,6 +64,7 @@ extern const std::string CURRENT_PHASE;
 extern const std::string SENSOR_DETECTION;
 extern const std::string RES_CTRL_CONDITION;
 extern const std::string SCR_OFF_HALF_HOUR_STATUS;
+extern const std::string NET_IDLE_POLICY_STATUS;
 extern const std::string BG_TASK_TYPE;
 extern const std::string BG_TASK_STATUS;
 extern const std::string BG_TASK_UID;
