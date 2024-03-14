@@ -47,6 +47,10 @@ const std::map<std::string, uint8_t> BGTASK_EXEMPTION_FLAG_MAP {
 
 using namespace OHOS::BackgroundTaskMgr;
 
+bool BaseNetworkStrategy::isUserSleep_ = false;
+bool BaseNetworkStrategy::isFirewallEnabled_ = false;
+std::unordered_map<std::int32_t, NetLimitedAppInfo> BaseNetworkStrategy::netLimitedAppInfo_;
+
 void BaseNetworkStrategy::HandleEvent(const StandbyMessage& message)
 {
     STANDBYSERVICE_LOGD("BaseNetworkStrategy revceived message %{public}u, action: %{public}s",
@@ -75,6 +79,7 @@ ErrCode BaseNetworkStrategy::OnCreated()
     ResetFirewallAllowList();
     isFirewallEnabled_ = false;
     isIdleMaintence_ = false;
+    isUserSleep_ = false;
     return ERR_OK;
 }
 
@@ -109,9 +114,9 @@ ErrCode BaseNetworkStrategy::UpdateExemptionList(const StandbyMessage& message)
     return ERR_OK;
 }
 
-ErrCode BaseNetworkStrategy::OnDayNightSwitched(const StandbyMessage& message)
+ErrCode BaseNetworkStrategy::UpdateFirewallAllowList()
 {
-    SetNetAllowApps(false);
+    ResetFirewallAllowList();
     netLimitedAppInfo_.clear();
     if (InitNetLimitedAppInfo() != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
@@ -152,7 +157,13 @@ ErrCode BaseNetworkStrategy::InitNetLimitedAppInfo()
     if (GetAllRunningAppInfo() != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-
+    if (isUserSleep_) {
+        if (GetExemptionConfig() != ERR_OK) {
+            STANDBYSERVICE_LOGE("get exemption config err");
+            return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
+        }
+        return ERR_OK;
+    }
     std::vector<AppExecFwk::ApplicationInfo> applicationInfos {};
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfos(
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
@@ -316,6 +327,10 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
         if (!ExemptionTypeFlag::IsExempted(value.appExemptionFlag_)) {
             continue;
         }
+        if ((condition_ == ConditionType::NIGHT_STANDBY) &&
+            (!ExemptionTypeFlag::IsExempted(value.appExemptionFlag_ & (~ExemptionTypeFlag::UNRESTRICTED)))) {
+            continue;
+        }
         uids.emplace_back(key);
         STANDBYSERVICE_LOGD("uid: %{public}d, name: %{public}s, isAllow: %{public}d",
             key, value.name_.c_str(), isAllow);
@@ -325,10 +340,24 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
     SetFirewallAllowedList(uids, isAllow);
 }
 
+bool BaseNetworkStrategy::GetIsUserSleep()
+{
+    return isUserSleep_;
+}
+
+void BaseNetworkStrategy::SetIsUserSleep(bool isUserSleep)
+{
+    isUserSleep_ = isUserSleep;
+}
+
 ErrCode BaseNetworkStrategy::DisableNetworkFirewall(const StandbyMessage& message)
 {
     if (!isFirewallEnabled_) {
         return ERR_STANDBY_CURRENT_STATE_NOT_MATCH;
+    }
+    if (isUserSleep_) {
+        STANDBYSERVICE_LOGD("current user is sleeping, do nothing");
+        return ERR_OK;
     }
     uint32_t preState = static_cast<uint32_t>(message.want_->GetIntParam(PREVIOUS_STATE, 0));
     uint32_t curState = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_STATE, 0));
@@ -336,10 +365,12 @@ ErrCode BaseNetworkStrategy::DisableNetworkFirewall(const StandbyMessage& messag
         // restart net limit mode
         SetFirewallStatus(false);
         isIdleMaintence_ = true;
+        isFirewallEnabled_ = false;
     } else if ((curState == StandbyState::SLEEP) && (preState == StandbyState::MAINTENANCE)) {
         isIdleMaintence_ = false;
         // stop net limit mode
         SetFirewallStatus(true);
+        isFirewallEnabled_ = true;
     } else if (preState == StandbyState::SLEEP || preState == StandbyState::MAINTENANCE) {
         DisableNetworkFirewallInner();
         isIdleMaintence_ = false;
@@ -351,9 +382,23 @@ ErrCode BaseNetworkStrategy::DisableNetworkFirewall(const StandbyMessage& messag
 ErrCode BaseNetworkStrategy::DisableNetworkFirewallInner()
 {
     STANDBYSERVICE_LOGD("stop net limit mode");
-    SetFirewallStatus(false);
+    ResetFirewallAllowList();
     netLimitedAppInfo_.clear();
     return ERR_OK;
+}
+
+int32_t BaseNetworkStrategy::HandleDeviceIdlePolicy(bool enableFirewall)
+{
+    int32_t ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
+        SetDeviceIdlePolicy(enableFirewall);
+    if (ret == 0 || ret == NETMANAGER_ERR_STATUS_EXIST) {
+        StandbyMessage standbyMessage {StandbyMessageType::DEVICE_NET_IDLE_POLICY_TRANSIT};
+        standbyMessage.want_ = AAFwk::Want{};
+        standbyMessage.want_->SetParam(NET_IDLE_POLICY_STATUS, enableFirewall);
+        StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
+    }
+    STANDBYSERVICE_LOGI("set net limit status is %{public}d, ret is %{public}d", enableFirewall, ret);
+    return ret;
 }
 
 ErrCode BaseNetworkStrategy::UpdateBgTaskAppStatus(const StandbyMessage& message)
@@ -418,7 +463,11 @@ void BaseNetworkStrategy::AddExemptionFlag(uint32_t uid, const std::string& bund
     }
     auto lastAppExemptionFlag = iter->second.appExemptionFlag_;
     iter->second.appExemptionFlag_ |= flag;
-    if (!ExemptionTypeFlag::IsExempted(lastAppExemptionFlag) &&
+    if ((condition_ == ConditionType::NIGHT_STANDBY) &&
+        (!ExemptionTypeFlag::IsExempted(lastAppExemptionFlag & (~ExemptionTypeFlag::UNRESTRICTED))) &&
+        ExemptionTypeFlag::IsExempted(iter->second.appExemptionFlag_)) {
+        SetFirewallAllowedList({iter->first}, true);
+    } else if (!ExemptionTypeFlag::IsExempted(lastAppExemptionFlag) &&
         ExemptionTypeFlag::IsExempted(iter->second.appExemptionFlag_)) {
         SetFirewallAllowedList({iter->first}, true);
     }
@@ -438,9 +487,48 @@ void BaseNetworkStrategy::RemoveExemptionFlag(uint32_t uid, uint8_t flag)
     STANDBYSERVICE_LOGD("RemoveExemptionFlag uid is flag is %{public}d, flag is %{public}d", uid, flag);
     auto lastAppExemptionFlag = iter->second.appExemptionFlag_;
     iter->second.appExemptionFlag_ &= (~flag);
-    if (ExemptionTypeFlag::IsExempted(lastAppExemptionFlag) &&
+    if ((condition_ == ConditionType::NIGHT_STANDBY) &&
+        (!ExemptionTypeFlag::IsExempted(iter->second.appExemptionFlag_ &
+        (~ExemptionTypeFlag::UNRESTRICTED))) &&
+        ExemptionTypeFlag::IsExempted(lastAppExemptionFlag)) {
+        SetFirewallAllowedList({iter->first}, false);
+    } else if (ExemptionTypeFlag::IsExempted(lastAppExemptionFlag) &&
         !ExemptionTypeFlag::IsExempted(iter->second.appExemptionFlag_)) {
         SetFirewallAllowedList({iter->first}, false);
+    }
+}
+
+void BaseNetworkStrategy::ResetFirewallAllowList()
+{
+    STANDBYSERVICE_LOGI("start reset firewall allow list");
+    std::vector<uint32_t> uids;
+    if (DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
+        GetDeviceIdleTrustlist(uids) != 0) {
+        STANDBYSERVICE_LOGE("get deviceIdle netLimited list is faile");
+        return;
+    }
+    int32_t ret = HandleDeviceIdlePolicy(false);
+    if (ret != 0 &&ret != NETMANAGER_ERR_STATUS_EXIST) {
+        STANDBYSERVICE_LOGI("handle device idle policy netLimited is false");
+        return;
+    }
+    if (DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
+        SetDeviceIdlePolicy(uids, false) != 0) {
+        STANDBYSERVICE_LOGW("SetFirewallAllowedList failed");
+    }
+}
+
+ErrCode BaseNetworkStrategy::SetFirewallStatus(bool enableFirewall)
+{
+    int32_t ret = HandleDeviceIdlePolicy(enableFirewall);
+    STANDBYSERVICE_LOGD("set status of powersaving firewall: %{public}d , res: %{public}d",
+        enableFirewall, ret);
+    if (ret == 0 || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
+        SetNetAllowApps(enableFirewall);
+        return ERR_OK;
+    } else {
+        STANDBYSERVICE_LOGE("Failed to enable or disable powersaving firewall");
+        return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
 }
 
