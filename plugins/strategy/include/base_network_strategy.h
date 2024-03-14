@@ -64,7 +64,7 @@ protected:
     /**
      * @brief set net limited mode, if netLimited is true, start net limited mode, else stop net limited mode.
      */
-    virtual ErrCode SetFirewallStatus(bool enableFirewall) = 0;
+    ErrCode SetFirewallStatus(bool enableFirewall);
 
     /**
      * @brief update exemption list when received exemption list changed event.
