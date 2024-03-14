@@ -46,11 +46,15 @@ public:
      */
     ErrCode OnDestroy() override;
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
+
+    bool GetIsUserSleep();
+    void SetIsUserSleep(bool isUserSleep);
+    virtual int32_t HandleDeviceIdlePolicy(bool enableFirewall);
 protected:
     /**
      * @brief stop power save mode, clean all exemption uid.
      */
-    virtual void ResetFirewallAllowList() = 0;
+    void ResetFirewallAllowList();
 
     /**
      * @brief get all apps, system apps defaultly not be restricted.
@@ -68,9 +72,9 @@ protected:
     virtual ErrCode UpdateExemptionList(const StandbyMessage& message);
 
     /**
-     * @brief update resource config when received message of day night switch.
+     * @brief update resource config when received message of day night switch or sleep stat change.
      */
-    virtual ErrCode OnDayNightSwitched(const StandbyMessage& message);
+    virtual ErrCode UpdateFirewallAllowList();
 
     /**
      * @brief start net limited mode when has recerved reletive event.
@@ -122,9 +126,10 @@ protected:
     void RemoveExemptionFlag(uint32_t uid, uint8_t flag);
     void GetAndCreateAppInfo(uint32_t uid, const std::string& bundleName);
 protected:
-    bool isFirewallEnabled_ {false};
+    static bool isFirewallEnabled_;
+    static bool isUserSleep_;
     bool isIdleMaintence_ {false};
-    std::unordered_map<std::int32_t, NetLimtedAppInfo> netLimitedAppInfo_;
+    static std::unordered_map<std::int32_t, NetLimtedAppInfo> netLimitedAppInfo_;
     uint32_t nightExemptionTaskType_ {0};
     uint32_t condition_ {0};
     const static std::int32_t NETMANAGER_ERR_STATUS_EXIST = 2100209;
