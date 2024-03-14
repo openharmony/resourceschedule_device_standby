@@ -49,7 +49,7 @@ using namespace OHOS::BackgroundTaskMgr;
 
 bool BaseNetworkStrategy::isUserSleep_ = false;
 bool BaseNetworkStrategy::isFirewallEnabled_ = false;
-std::unordered_map<std::int32_t, NetLimitedAppInfo> BaseNetworkStrategy::netLimitedAppInfo_;
+std::unordered_map<std::int32_t, NetLimtedAppInfo> BaseNetworkStrategy::netLimitedAppInfo_;
 
 void BaseNetworkStrategy::HandleEvent(const StandbyMessage& message)
 {
@@ -508,12 +508,12 @@ void BaseNetworkStrategy::ResetFirewallAllowList()
         return;
     }
     int32_t ret = HandleDeviceIdlePolicy(false);
-    if (ret != 0 &&ret != NETMANAGER_ERR_STATUS_EXIST) {
+    if (ret != 0 && ret != NETMANAGER_ERR_STATUS_EXIST) {
         STANDBYSERVICE_LOGI("handle device idle policy netLimited is false");
         return;
     }
     if (DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
-        SetDeviceIdlePolicy(uids, false) != 0) {
+        SetDeviceIdleTrustlist(uids, false) != 0) {
         STANDBYSERVICE_LOGW("SetFirewallAllowedList failed");
     }
 }
