@@ -462,7 +462,7 @@ void BaseNetworkStrategy::AddExemptionFlag(uint32_t uid, const std::string& bund
     auto lastAppExemptionFlag = iter->second.appExemptionFlag_;
     iter->second.appExemptionFlag_ |= flag;
     if (GetExemptedFlag(lastAppExemptionFlag, iter->second.appExemptionFlag_)) {
-        SetFirewallAllowedList({iter->first}, false);
+        SetFirewallAllowedList({iter->first}, true);
     }
     iter->second.appExemptionFlag_ |= flag;
 }
