@@ -47,8 +47,21 @@ public:
     ErrCode OnDestroy() override;
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
 
+    /**
+     * @brief get user sleep state.
+     */
     bool GetIsUserSleep();
+
+    /**
+     * @brief set user sleep state.
+     */
     void SetIsUserSleep(bool isUserSleep);
+
+    /**
+     * @brief set net limit status.
+     *
+     * @return NetPolicy handle ret.
+     */
     virtual int32_t HandleDeviceIdlePolicy(bool enableFirewall);
 protected:
     /**
@@ -125,6 +138,7 @@ protected:
     void AddExemptionFlag(uint32_t uid, const std::string& bundleName, uint8_t flag);
     void RemoveExemptionFlag(uint32_t uid, uint8_t flag);
     void GetAndCreateAppInfo(uint32_t uid, const std::string& bundleName);
+    bool GetExemptedFlag(uint8_t appNoExemptionFlag, uint8_t appExemptionFlag);
 protected:
     static bool isFirewallEnabled_;
     static bool isUserSleep_;
@@ -132,6 +146,7 @@ protected:
     static std::unordered_map<std::int32_t, NetLimtedAppInfo> netLimitedAppInfo_;
     uint32_t nightExemptionTaskType_ {0};
     uint32_t condition_ {0};
+    const static std::int32_t NETMANAGER_SUCCESS = 0;
     const static std::int32_t NETMANAGER_ERR_STATUS_EXIST = 2100209;
 };
 }  // namespace DevStandbyMgr
