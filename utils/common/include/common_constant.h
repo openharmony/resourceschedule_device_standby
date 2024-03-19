@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,6 +56,7 @@ extern const int64_t HALF_HOUR;
 extern const std::string NAP_SWITCH;
 extern const std::string SLEEP_SWITCH;
 extern const std::string S3_SWITCH;
+extern const std::string DEVICE_STANGDY_MODE;
 
 extern const std::string PREVIOUS_STATE;
 extern const std::string CURRENT_STATE;
