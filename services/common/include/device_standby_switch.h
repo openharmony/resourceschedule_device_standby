@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,18 +21,19 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-enum class DeviceType : uint32_t {
+const int32_t MODE_MAX_NUM = 5;
+enum class StandbyMode : int32_t {
     UNKNOWN = 0,
-    TABLET,
-    PHONE,
-    WATCH,
-    TV,
-    IVI,
+    TABLETMODE,
+    PHONEMODE,
+    WATCHMODE,
+    TVMODE,
+    IVIMODE = MODE_MAX_NUM,
 };
 
-extern const DeviceType DEVICE_TYPE;
+extern StandbyMode STANDBT_MODE;
 
-DeviceType GetDeviceType();
+void InitStandyMode();
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_SERVICES_COMMON_INCLUDE_DEVICE_STANDBY_SWITCH_H

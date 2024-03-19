@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,31 +13,27 @@
  * limitations under the License.
  */
 
-#include "device_standby_switch.h"
-
 #include <string>
+
+#include "device_standby_switch.h"
+#include "common_constant.h"
+#include "standby_config_manager.h"
+#include "standby_service_log.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
-const std::string KEY_BUILD_CHARACTER = "const.product.devicetype";
-
-DeviceType GetDeviceType()
+void InitStandyMode()
 {
-    std::string deviceType = system::GetParameter(KEY_BUILD_CHARACTER, "unknown");
-    if (deviceType == "phone" || deviceType == "default") {
-        return DeviceType::PHONE;
-    } else if (deviceType == "tablet" || deviceType == "2in1") {
-        return DeviceType::TABLET;
-    } else if (deviceType == "watch") {
-        return DeviceType::WATCH;
-    } else if (deviceType == "tv") {
-        return DeviceType::TV;
-    } else if (deviceType == "car") {
-        return DeviceType::IVI;
+    int32_t mode = 0;
+    mode = StandbyConfigManager::GetInstance()->GetStandbyParam(DEVICE_STANGDY_MODE);
+    if (mode > 0 && mode <= MODE_MAX_NUM) {
+        STANDBT_MODE = (StandbyMode)mode;
+    } else {
+        STANDBT_MODE = StandbyMode::PHONEMODE;
     }
-    return DeviceType::UNKNOWN;
+    STANDBYSERVICE_LOGI("StandBy mode: %{public}d ", STANDBT_MODE);
 }
 
-const DeviceType DEVICE_TYPE = GetDeviceType();
+StandbyMode STANDBT_MODE = StandbyMode::UNKNOWN;
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

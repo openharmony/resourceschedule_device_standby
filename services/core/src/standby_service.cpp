@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,6 +66,7 @@ void StandbyService::OnStart()
         STANDBYSERVICE_LOGE("failed to init device standby service");
         return;
     }
+    InitStandyMode();
     AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
     AddSystemAbilityListener(TIME_SERVICE_ID);
     AddSystemAbilityListener(ABILITY_MGR_SERVICE_ID);

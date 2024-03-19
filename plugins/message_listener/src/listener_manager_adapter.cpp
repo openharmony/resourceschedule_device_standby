@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,10 +37,10 @@ bool ListenerManagerAdapter::Init()
     EventFwk::MatchingSkills matchingSkills;
     STANDBYSERVICE_LOGD("device type const.product.devicetype is: %{public}s",
         system::GetParameter("const.product.devicetype", "unknown").c_str());
-    switch (DEVICE_TYPE) {
-        case DeviceType::PHONE:
-        case DeviceType::TABLET:
-        case DeviceType::UNKNOWN:
+    switch (STANDBT_MODE) {
+        case StandbyMode::PHONEMODE:
+        case StandbyMode::TABLETMODE:
+        case StandbyMode::UNKNOWN:
             matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON);
             matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
             matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING);
