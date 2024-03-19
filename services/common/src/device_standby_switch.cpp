@@ -26,7 +26,7 @@ void InitStandyMode()
 {
     int32_t mode = 0;
     mode = StandbyConfigManager::GetInstance()->GetStandbyParam(DEVICE_STANGDY_MODE);
-    if( mode > 0 && mode <= MODE_MAX_NUM ) {
+    if (mode > 0 && mode <= MODE_MAX_NUM) {
         STANDBT_MODE = (StandbyMode)mode;
     } else {
         STANDBT_MODE = StandbyMode::PHONEMODE;
