@@ -60,6 +60,7 @@ const std::string SENSOR_DETECTION = "sensor_detection";
 
 const std::string RES_CTRL_CONDITION = "res_ctrl_condition";
 const std::string SCR_OFF_HALF_HOUR_STATUS = "scr_off_half_hour_status";
+const std::string NET_IDLE_POLICY_STATUS = "net_idle_policy_status";
 
 const std::string LID_CLOSE = "LID_CLOSE";
 const std::string LID_OPEN = "LID_OPEN";

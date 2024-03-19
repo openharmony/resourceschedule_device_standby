@@ -46,11 +46,28 @@ public:
      */
     ErrCode OnDestroy() override;
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
+
+    /**
+     * @brief get user sleep state.
+     */
+    bool GetIsUserSleep();
+
+    /**
+     * @brief set user sleep state.
+     */
+    void SetIsUserSleep(bool isUserSleep);
+
+    /**
+     * @brief set net limit status.
+     *
+     * @return NetPolicy handle ret.
+     */
+    virtual int32_t HandleDeviceIdlePolicy(bool enableFirewall);
 protected:
     /**
      * @brief stop power save mode, clean all exemption uid.
      */
-    virtual void ResetFirewallAllowList() = 0;
+    void ResetFirewallAllowList();
 
     /**
      * @brief get all apps, system apps defaultly not be restricted.
@@ -60,7 +77,7 @@ protected:
     /**
      * @brief set net limited mode, if netLimited is true, start net limited mode, else stop net limited mode.
      */
-    virtual ErrCode SetFirewallStatus(bool enableFirewall) = 0;
+    ErrCode SetFirewallStatus(bool enableFirewall);
 
     /**
      * @brief update exemption list when received exemption list changed event.
@@ -68,9 +85,9 @@ protected:
     virtual ErrCode UpdateExemptionList(const StandbyMessage& message);
 
     /**
-     * @brief update resource config when received message of day night switch.
+     * @brief update resource config when received message of day night switch or sleep stat change.
      */
-    virtual ErrCode OnDayNightSwitched(const StandbyMessage& message);
+    virtual ErrCode UpdateFirewallAllowList();
 
     /**
      * @brief start net limited mode when has recerved reletive event.
@@ -121,12 +138,15 @@ protected:
     void AddExemptionFlag(uint32_t uid, const std::string& bundleName, uint8_t flag);
     void RemoveExemptionFlag(uint32_t uid, uint8_t flag);
     void GetAndCreateAppInfo(uint32_t uid, const std::string& bundleName);
+    bool GetExemptedFlag(uint8_t appNoExemptionFlag, uint8_t appExemptionFlag);
 protected:
-    bool isFirewallEnabled_ {false};
+    static bool isFirewallEnabled_;
+    static bool isUserSleep_;
     bool isIdleMaintence_ {false};
-    std::unordered_map<std::int32_t, NetLimtedAppInfo> netLimitedAppInfo_;
+    static std::unordered_map<std::int32_t, NetLimtedAppInfo> netLimitedAppInfo_;
     uint32_t nightExemptionTaskType_ {0};
     uint32_t condition_ {0};
+    const static std::int32_t NETMANAGER_SUCCESS = 0;
     const static std::int32_t NETMANAGER_ERR_STATUS_EXIST = 2100209;
 };
 }  // namespace DevStandbyMgr
