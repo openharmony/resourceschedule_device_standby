@@ -31,7 +31,6 @@ ohos_shared_library("standby_fwk") {
   sources = [
     "${standby_innerkits_path}/src/allow_info.cpp",
     "${standby_innerkits_path}/src/resourcce_request.cpp",
-    "src/standby_service_proxy.cpp",
     "src/standby_service_stub.cpp",
     "src/standby_service_subscriber_proxy.cpp",
   ]
