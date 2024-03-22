@@ -22,6 +22,7 @@
     *ReasonCodeEnum*;
     *ResourceRequest*;
     *StandbyServiceClient*;
+    *StandbyServiceProxy*;
     *StandbyServiceSubscriberStub*;
     *StandbyState*;
     *NapStatePhase*;

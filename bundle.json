@@ -46,7 +46,8 @@
         "sensor",
         "time_service",
         "work_scheduler",
-        "wifi"
+        "wifi",
+        "json"
       ],
       "third_party": [
       ]

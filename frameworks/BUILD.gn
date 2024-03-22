@@ -18,7 +18,6 @@ config("standby_fwk_public_config") {
   include_dirs = [
     "include",
     "${standby_innerkits_path}/include",
-    "//third_party/json/single_include",
   ]
 }
 
@@ -45,6 +44,7 @@ ohos_shared_library("standby_fwk") {
     "c_utils:utils",
     "hilog:libhilog",
     "ipc:ipc_single",
+    "json:nlohmann_json_static",
     "samgr:samgr_proxy",
   ]
 
