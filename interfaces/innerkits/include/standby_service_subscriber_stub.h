@@ -25,7 +25,7 @@ namespace OHOS {
 namespace DevStandbyMgr {
 class StandbyServiceSubscriberStub : public IRemoteStub<IStandbyServiceSubscriber> {
 public:
-    StandbyServiceSubscriberStub();
+    StandbyServiceSubscriberStub(bool serialInvokeFlag = true) : IRemoteStub(serialInvokeFlag) {};
     ~StandbyServiceSubscriberStub() override;
     DISALLOW_COPY_AND_MOVE(StandbyServiceSubscriberStub);
 

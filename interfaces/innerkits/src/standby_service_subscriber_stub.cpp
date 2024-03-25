@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-StandbyServiceSubscriberStub::StandbyServiceSubscriberStub() {}
 StandbyServiceSubscriberStub::~StandbyServiceSubscriberStub() {}
 
 ErrCode StandbyServiceSubscriberStub::OnRemoteRequest(uint32_t code,
