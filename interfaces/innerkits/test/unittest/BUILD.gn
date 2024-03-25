@@ -13,8 +13,7 @@
 
 import("//build/ohos.gni")
 import("//build/test.gni")
-import(
-    "//foundation/resourceschedule/device_standby/standby_service.gni")
+import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 module_output_path = "${standby_service_part_name}/unittest"
 
@@ -27,7 +26,8 @@ ohos_unittest("standby_client_unit_test") {
 
   include_dirs = [ "${standby_innerkits_path}/include" ]
 
-  sources = [ "${standby_innerkits_path}/test/unittest/standby_client_unit_test.cpp" ]
+  sources =
+      [ "${standby_innerkits_path}/test/unittest/standby_client_unit_test.cpp" ]
 
   deps = [
     "${standby_innerkits_path}:standby_innerkits",
@@ -82,7 +82,7 @@ group("unittest") {
   testonly = true
 
   deps = [
-    ":standby_client_unit_test",
     ":mock_standby_client_unit_test",
+    ":stanby_client_unit_test",
   ]
 }
