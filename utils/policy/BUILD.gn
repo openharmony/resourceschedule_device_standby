@@ -14,10 +14,7 @@
 import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
 config("standby_utils_policy_config") {
-  include_dirs = [
-    "include",
-    "//third_party/json/single_include",
-  ]
+  include_dirs = [ "include" ]
 }
 
 StandbyUtilsPolicy = [
@@ -29,6 +26,7 @@ StandbyUtilsPolicyExternalDeps = [
   "c_utils:utils",
   "hilog:libhilog",
   "ipc:ipc_single",
+  "json:nlohmann_json_static",
 ]
 
 ohos_shared_library("standby_utils_policy") {

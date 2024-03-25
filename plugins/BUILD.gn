@@ -87,7 +87,7 @@ ohos_shared_library("standby_plugin") {
 
   public_configs = [ ":standby_plugin_config" ]
 
-  public_deps = [
+  deps = [
     "${standby_service_frameworks_path}:standby_fwk",
     "${standby_service_path}:standby_service",
     "${standby_utils_common_path}:standby_utils_common",
@@ -123,7 +123,7 @@ ohos_static_library("standby_plugin_static") {
 
   public_configs = [ ":standby_plugin_config" ]
 
-  public_deps = [
+  deps = [
     "${standby_service_frameworks_path}:standby_fwk",
     "${standby_service_path}:standby_service",
     "${standby_utils_common_path}:standby_utils_common",

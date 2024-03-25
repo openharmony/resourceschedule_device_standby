@@ -17,7 +17,8 @@ import("//foundation/resourceschedule/device_standby/standby_service.gni")
 config("standby_innerkits_public_config") {
   include_dirs = [
     "include",
-    "//third_party/json/single_include",
+    "${standby_service_frameworks_path}/include",
+    "${standby_utils_common_path}/include",
   ]
 }
 
@@ -33,12 +34,13 @@ ohos_shared_library("standby_innerkits") {
     "src/allow_type.cpp",
     "src/resourcce_request.cpp",
     "src/standby_service_client.cpp",
+    "src/standby_service_proxy.cpp",
     "src/standby_service_subscriber_stub.cpp",
   ]
 
   public_configs = [ ":standby_innerkits_public_config" ]
 
-  public_deps = [
+  deps = [
     "${standby_service_frameworks_path}:standby_fwk",
     "${standby_utils_common_path}:standby_utils_common",
   ]
@@ -47,6 +49,7 @@ ohos_shared_library("standby_innerkits") {
     "c_utils:utils",
     "hilog:libhilog",
     "ipc:ipc_single",
+    "json:nlohmann_json_static",
     "samgr:samgr_proxy",
   ]
 
