@@ -83,6 +83,6 @@ group("unittest") {
 
   deps = [
     ":mock_standby_client_unit_test",
-    ":stanby_client_unit_test",
+    ":standby_client_unit_test",
   ]
 }
