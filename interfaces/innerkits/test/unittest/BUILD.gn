@@ -29,7 +29,10 @@ ohos_unittest("standby_client_unit_test") {
 
   sources = [ "${standby_innerkits_path}/test/unittest/standby_client_unit_test.cpp" ]
 
-  deps = [ "${standby_innerkits_path}:standby_innerkits" ]
+  deps = [
+    "${standby_innerkits_path}:standby_innerkits",
+    "${standby_service_frameworks_path}:standby_fwk",
+  ]
 
   external_deps = [
     "ability_base:want",
