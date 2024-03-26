@@ -42,6 +42,7 @@ const uint32_t ALL_DEPENDS_READY = 127;
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     StandbyService::GetInstance().get());
 const bool SOFTWARE_SLEEP = system::GetBoolParameter("persist.sys.standby_switch", true);
+const std::string RSS_PROCESS_NAME = "resource_schedule_service";
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyService);
