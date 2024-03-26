@@ -305,9 +305,20 @@ int32_t StandbyService::Dump(int32_t fd, const std::vector<std::u16string>& args
     }
     return ERR_OK;
 }
+
 ErrCode StandbyService::HandleEvent(const uint32_t resType, const int64_t value,
                                     const std::string &sceneInfo)
 {
+    Security::AccessToken::NativeToKenInfo nativeTokenInfo;
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
+    auto tokenType = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(accessToken);
+    int32_t result = Security::AccessToken::AccessTokenKit::GetNativeToKenInfo(accessToken, nativeTokenInfo);
+    if (tokenType != Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE ||
+            result != ERR_OK || nativeTokenInfo.processName != RSS_PROCESS_NAME){
+        STANDBYSERVICE_LOGE("check processName failed,tokenType=%{public}d,processName=%{public}s",
+            tokenType, nativeTokenInfo.processName.c_str());
+        return ERR_OK;
+    }
     StandbyServiceImpl::GetInstance()->HandleCommonEvent(resType, value, sceneInfo);
     return ERR_OK;
 }
