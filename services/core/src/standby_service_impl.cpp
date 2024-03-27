@@ -1077,6 +1077,10 @@ void StandbyServiceImpl::AppEventHandler(const uint32_t resType, const int64_t v
             STANDBYSERVICE_LOGE("HandleCommonEvent,There is no valid bundle name in payload");
             return;
         }
+        if (!payload.at("bundleName").is_string()) {
+            STANDBYSERVICE_LOGE("bundle name is invaild");
+            return;
+        }
         std::string bundleName = payload.at("bundleName").get<std::string>();
         int32_t uid = -1;
         if (payload.at("uid").is_string()) {
