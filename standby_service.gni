@@ -26,7 +26,8 @@ standby_service_constraints_path = "${standby_plugins_path}/extend_constraints"
 
 standby_service_strategy_path = "${standby_plugins_path}/strategy"
 
-standby_service_message_listener_path = "${standby_plugins_path}/message_listener"
+standby_service_message_listener_path =
+    "${standby_plugins_path}/message_listener"
 
 standby_service_standby_state_path = "${standby_plugins_path}/standby_state"
 
@@ -78,7 +79,7 @@ declare_args() {
   }
 
   standby_communication_netmanager_base_enable = true
-  if (defined(global_parts_info) && 
+  if (defined(global_parts_info) &&
       !defined(global_parts_info.communication_netmanager_base)) {
     standby_communication_netmanager_base_enable = false
   }
