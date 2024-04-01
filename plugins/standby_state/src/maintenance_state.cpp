@@ -19,7 +19,6 @@
 #include "standby_config_manager.h"
 #include "iconstraint_manager_adapter.h"
 #include "istate_manager_adapter.h"
-#include "standby_service_impl.h"
 #include "time_provider.h"
 
 namespace OHOS {

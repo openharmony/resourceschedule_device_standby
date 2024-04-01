@@ -21,7 +21,6 @@
 #include <utility>
 
 #include "event_handler.h"
-#include "event_runner.h"
 
 #include "standby_service_errors.h"
 #include "base_state.h"

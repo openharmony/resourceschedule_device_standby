@@ -17,7 +17,6 @@
 
 #include "ibase_strategy.h"
 
-#include "power_mode_info.h"
 namespace OHOS {
 namespace DevStandbyMgr {
 struct NetLimtedAppInfo {

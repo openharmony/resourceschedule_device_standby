@@ -15,10 +15,8 @@
 
 #include "bundle_manager_helper.h"
 
-#include "accesstoken_kit.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
-#include "tokenid_kit.h"
 
 #include "standby_service_errors.h"
 #include "standby_service_log.h"

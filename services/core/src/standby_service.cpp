@@ -18,11 +18,11 @@
 #include <functional>
 #include <map>
 
-#include "accesstoken_kit.h"
 #include "ipc_skeleton.h"
 #include "file_ex.h"
 #include "string_ex.h"
 
+#include "system_ability_definition.h"
 #include "device_standby_switch.h"
 #include "standby_service_impl.h"
 #include "standby_service_log.h"

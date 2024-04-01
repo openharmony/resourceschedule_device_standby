@@ -25,7 +25,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include "common_event_manager.h"
 #include "common_event_subscriber.h"
 #include "common_event_subscribe_info.h"
 #include "event_handler.h"

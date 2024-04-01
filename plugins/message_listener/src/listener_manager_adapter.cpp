@@ -16,19 +16,22 @@
 
 #include "listener_manager_adapter.h"
 
-#include "common_event_manager.h"
 #include "common_event_support.h"
 
 #include "standby_service_log.h"
 #include "device_standby_switch.h"
 #include "standby_service_impl.h"
+#ifdef STANDBY_MULTIMODALINPUT_INPUT_ENABLE
 #include "input_manager_listener.h"
+#endif
 #include "standby_service.h"
 
 #include "standby_config_manager.h"
 #include "common_event_listener.h"
 #include "system_ability_definition.h"
+#ifdef ENAMLE_BACKGROUND_TASK_MGR
 #include "background_task_listener.h"
+#endif
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -56,11 +59,15 @@ bool ListenerManagerAdapter::Init()
     }
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     messageListenerList_.emplace_back(std::make_shared<CommonEventListener>(subscriberInfo));
+    #ifdef STANDBY_MULTIMODALINPUT_INPUT_ENABLE
     messageListenerList_.emplace_back(std::make_shared<InputManagerListener>());
+    #endif
+    #ifdef ENAMLE_BACKGROUND_TASK_MGR
     // network and running lock strategy need background task listener
     STANDBYSERVICE_LOGI("add background task listener");
     std::shared_ptr<IMesssageListener> bgtaskListener_ = std::make_shared<BackgroundTaskListener>();
     listenerPluginMap_.emplace(BACKGROUND_TASK_MANAGER_SERVICE_ID, bgtaskListener_);
+    #endif
     STANDBYSERVICE_LOGI("listener manager plugin initialization succeed");
     return true;
 }

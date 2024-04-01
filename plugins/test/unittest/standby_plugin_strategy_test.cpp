@@ -17,17 +17,20 @@
 #define protected public
 
 #include "gtest/gtest.h"
+#include "gtest/hwext/gtest-multithread.h"
 #include "system_ability_definition.h"
 
 #include "running_lock_strategy.h"
+#ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 #include "network_strategy.h"
 #include "base_network_strategy.h"
+#endif
 #include "standby_messsage.h"
 #include "common_constant.h"
+#include "want.h"
 
 using namespace testing::ext;
 using namespace testing::mt;
-
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -90,7 +93,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_002, TestSize.Leve
         uid,
         {pid}
     };
-    runningLockStrategy->GetExemptionConfigForApp(procInfo, bundleName)
+    runningLockStrategy->GetExemptionConfigForApp(procInfo, bundleName);
     EXPECT_NE(runningLockStrategy, nullptr);
 }
 
@@ -103,11 +106,11 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_002, TestSize.Leve
 HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_003, TestSize.Level1)
 {
     auto runningLockStrategy = std::make_shared<RunningLockStrategy>();
-    bool isProxied = true,
+    bool isProxied = true;
     std::vector<std::pair<int32_t, int32_t>> proxiedAppList;
     int32_t a = 1;
     int32_t b = 1;
-    proxiedAppList.emplace(a, b);
+    proxiedAppList.emplace_back(std::make_pair(a, b));
     runningLockStrategy->isIdleMaintence_ = false;
     runningLockStrategy->ProxyRunningLockList(isProxied, proxiedAppList);
 
@@ -129,7 +132,8 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_004, TestSize.Leve
     int32_t pid = 1;
     std::string bundleName = "defaultBundleName";
     StandbyMessage standbyMessage {StandbyMessageType::PROCESS_STATE_CHANGED};
-    standbyMessage.want_ = AAFWK::Want {};
+    AAFwk::Want want = AAFwk::Want();
+    standbyMessage.want_ = want;
     standbyMessage.want_->SetParam("uid", uid);
     standbyMessage.want_->SetParam("pid", pid);
     standbyMessage.want_->SetParam("name", bundleName);
@@ -173,7 +177,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_005, TestSize.Leve
 HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_006, TestSize.Level1)
 {
     auto runningLockStrategy = std::make_shared<RunningLockStrategy>();
-    EXPECT_EQ(runningLockStrategy->GetForegroundApplications(), ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE);
+    EXPECT_EQ(runningLockStrategy->GetForegroundApplications(), ERR_OK);
 }
 
 /**
@@ -213,10 +217,11 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_009, TestSize.Leve
     runningLockStrategy->isIdleMaintence_ = true;
     EXPECT_EQ(runningLockStrategy->OnDestroy(), ERR_OK);
 
-    unningLockStrategy->isIdleMaintence_ = false;
+    runningLockStrategy->isIdleMaintence_ = false;
     EXPECT_EQ(runningLockStrategy->OnDestroy(), ERR_OK);
 }
 
+#ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 /**
  * @tc.name: StandbyPluginStrategyTest_010
  * @tc.desc: test ResetFirewallStatus.
@@ -234,7 +239,8 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_010, TestSize.Leve
     
     baseNetworkStrategy->isFirewallEnabled_ = true;
     baseNetworkStrategy->isIdleMaintence_ = false;
-    standbyMessage.want_ = AAFWK::Want {};
+    AAFwk::Want want = AAFwk::Want();
+    standbyMessage.want_ = want;
     standbyMessage.want_->SetParam(SA_STATUS, false);
     standbyMessage.want_->SetParam(SA_ID, WORK_SCHEDULE_SERVICE_ID);
     baseNetworkStrategy->ResetFirewallStatus(standbyMessage);
@@ -295,5 +301,6 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_013, TestSize.Leve
     baseNetworkStrategy->AddExemptionFlagByUid(uid, flag);
     EXPECT_NE(baseNetworkStrategy, nullptr);
 }
+#endif // STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

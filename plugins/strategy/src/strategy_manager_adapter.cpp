@@ -17,7 +17,9 @@
 
 #include "ibase_strategy.h"
 #include "standby_service_log.h"
+#ifdef STANDBY_COMMUNICATON_NETMANAGER_BASE_ENABLE
 #include "network_strategy.h"
+#endif
 #include "standby_config_manager.h"
 #include "running_lock_strategy.h"
 
@@ -25,7 +27,9 @@ namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
 const std::map<std::string, std::shared_ptr<IBaseStrategy>> strategyMap_ {
+    #ifdef STANDBY_COMMUNICATON_NETMANAGER_BASE_ENABLE
     { "NETWORK", std::make_shared<NetworkStrategy>() },
+    #endif
     { "RUNNING_LOCK", std::make_shared<RunningLockStrategy>() },
 };
 }

@@ -21,9 +21,9 @@
 #include <unordered_map>
 
 #include "event_handler.h"
-#include "event_runner.h"
+#ifdef STANDBY_POWER_MANAGER_ENABLE
 #include "power_mgr_client.h"
-
+#endif
 #include "common_constant.h"
 #include "standby_service_errors.h"
 #include "standby_messsage.h"
@@ -100,7 +100,9 @@ protected:
     uint64_t enterStandbyTimerId_ {};
     std::unordered_map<std::string, uint64_t> timedTaskMap_ {};
     static bool runningLockStatus_;
+    #ifdef STANDBY_POWER_MANAGER_ENABLE
     static std::shared_ptr<PowerMgr::RunningLock> standbyRunningLock_;
+    #endif
 };
 
 class StateWithMaint {

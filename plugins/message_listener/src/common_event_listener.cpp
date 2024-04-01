@@ -15,6 +15,8 @@
 
 #include "common_event_listener.h"
 #include "standby_service_impl.h"
+#include "istate_manager_adapter.h"
+#include "istandby_service.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

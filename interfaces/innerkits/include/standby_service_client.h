@@ -20,9 +20,8 @@
 #include <nocopyable.h>
 
 #include "istandby_service.h"
-#include "standby_service_proxy.h"
+#include "istandby_service_subscriber.h"
 #include "standby_res_data.h"
-#include "standby_service_errors.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

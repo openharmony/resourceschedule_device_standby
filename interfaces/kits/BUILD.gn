@@ -41,7 +41,6 @@ ohos_shared_library("devicestandby") {
   ]
 
   external_deps = [
-    "ability_base:want",
     "ability_runtime:ability_context_native",
     "ability_runtime:abilitykit_native",
     "ability_runtime:napi_base_context",

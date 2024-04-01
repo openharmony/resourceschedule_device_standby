@@ -25,6 +25,7 @@
 #include "resourcce_request.h"
 #include "standby_ipc_interface_code.h"
 #include "standby_service_client.h"
+#include "standby_service_proxy.h"
 #include "standby_service_subscriber_stub.h"
 #include "standby_service_subscriber_proxy.h"
 

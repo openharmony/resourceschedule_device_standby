@@ -22,6 +22,7 @@
 #include "gtest/gtest.h"
 #include "gtest/hwext/gtest-multithread.h"
 #include "singleton.h"
+#include "system_ability_definition.h"
 
 #include "device_standby_switch.h"
 #include "time_provider.h"
@@ -268,8 +269,8 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_005, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--config"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D", "--conf"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-E"}, result);
-    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-E", "0", "false"}, result);
-    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-E", "0", "true"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-E", "working", "false"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-E", "working", "true"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-A"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-A", "--apply"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-A", "--unapply"}, result);
@@ -671,7 +672,6 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_022, TestSize.Level1)
     std::list<SystemProcessInfo> systemProcessInfos {};
     AbilityManagerHelper::GetInstance()->GetRunningSystemProcess(systemProcessInfos);
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos {};
-    AppMgrHelper::GetInstance()->GetAllRunningProcesses(allAppProcessInfos);
     AppMgrHelper::GetInstance()->GetAllRunningProcesses(allAppProcessInfos);
     AppMgrHelper::GetInstance()->appMgrProxy_ = nullptr;
     AppMgrHelper::GetInstance()->GetAllRunningProcesses(allAppProcessInfos);

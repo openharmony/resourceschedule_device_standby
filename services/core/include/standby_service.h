@@ -26,7 +26,6 @@
 
 #include "singleton.h"
 #include "system_ability.h"
-#include "system_ability_definition.h"
 
 #include "standby_service_stub.h"
 #include "single_instance.h"

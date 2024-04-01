@@ -31,10 +31,7 @@ StandbyPluginSrc = [
   "${standby_plugins_path}/ext/src/istate_manager_adapter.cpp",
   "${standby_service_constraints_path}/src/charge_state_monitor.cpp",
   "${standby_service_constraints_path}/src/constraint_manager_adapter.cpp",
-  "${standby_service_constraints_path}/src/motion_sensor_monitor.cpp",
-  "${standby_service_message_listener_path}/src/background_task_listener.cpp",
   "${standby_service_message_listener_path}/src/common_event_listener.cpp",
-  "${standby_service_message_listener_path}/src/input_manager_listener.cpp",
   "${standby_service_message_listener_path}/src/listener_manager_adapter.cpp",
   "${standby_service_standby_state_path}/src/dark_state.cpp",
   "${standby_service_standby_state_path}/src/export_plugin.cpp",
@@ -50,31 +47,69 @@ StandbyPluginSrc = [
 ]
 
 StandbyPluginExternalDeps = [
-  "ability_base:base",
   "ability_base:want",
-  "ability_base:zuri",
   "ability_runtime:app_manager",
   "ability_runtime:wantagent_innerkits",
   "access_token:libaccesstoken_sdk",
-  "access_token:libtokenid_sdk",
-  "battery_manager:batterysrv_client",
-  "bundle_framework:appexecfwk_core",
   "c_utils:utils",
-  "call_manager:tel_call_manager_api",
   "common_event_service:cesfwk_innerkits",
   "eventhandler:libeventhandler",
   "hilog:libhilog",
   "init:libbegetutil",
-  "input:libmmi-client",
   "ipc:ipc_single",
-  "netmanager_base:net_policy_manager_if",
-  "power_manager:powermgr_client",
   "samgr:samgr_proxy",
-  "sensor:sensor_interface_native",
   "time_service:time_client",
-  "wifi:wifi_sdk",
-  "work_scheduler:workschedclient",
 ]
+
+StandbyPluginDefine = []
+
+if (enable_standby_configpolicy) {
+  StandbyPluginExternalDeps += [ "config_policy:configpolicy_util" ]
+  StandbyPluginDefine += [ "STANDBY_CONFIG_POLICY_ENABLE" ]
+}
+
+if (enable_background_task_mgr) {
+  StandbyPluginExternalDeps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+  StandbyPluginSrc += [
+    "${standby_service_message_listener_path}/src/background_task_listener.cpp",
+  ]
+  StandbyPluginDefine += [ "ENABLE_BACKGROUND_TASK_MGR" ]
+}
+
+if (standby_power_manager_enable) {
+  StandbyPluginExternalDeps += [ "power_manager:powermgr_client" ]
+  StandbyPluginDefine += [ "STANDBY_POWER_MANAGER_ENABLE" ]
+}
+
+if (standby_battery_manager_enable) {
+  StandbyPluginExternalDeps += [ "battery_manager:batterysrv_client" ]
+  StandbyPluginDefine += [ "STANDBY_BATTERY_MANAGER_ENABLE" ]
+}
+
+if (standby_multimodalinput_input_enable) {
+  StandbyPluginExternalDeps += [ "input:libmmi-client" ]
+  StandbyPluginDefine += [ "STANDBY_MULTIMODALINPUT_INPUT_ENABLE" ]
+  StandbyPluginSrc += [
+    "${standby_service_message_listener_path}/src/input_manager_listener.cpp",
+  ]
+}
+
+if (standby_sensors_sensor_enable) {
+  StandbyPluginExternalDeps += [ "sensor:sensor_interface_native" ]
+  StandbyPluginDefine += [ "STANDBY_SENSORS_SENSOR_ENABLE" ]
+  StandbyPluginSrc +=
+      [ "${standby_service_constraints_path}/src/motion_sensor_monitor.cpp" ]
+}
+
+if (standby_communication_netmanager_base_enable) {
+  StandbyPluginExternalDeps += [ "netmanager_base:net_policy_manager_if" ]
+  StandbyPluginDefine += [ "STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE" ]
+}
+
+if (standby_rss_work_scheduler_enable) {
+  StandbyPluginExternalDeps += [ "work_scheduler:workschedclient" ]
+  StandbyPluginDefine += [ "STANDBY_RSS_WORK_SCHEDULER_ENABLE" ]
+}
 
 ohos_shared_library("standby_plugin") {
   branch_protector_ret = "pac_ret"
@@ -96,16 +131,7 @@ ohos_shared_library("standby_plugin") {
 
   external_deps = StandbyPluginExternalDeps
 
-  defines = []
-  if (enable_standby_configpolicy) {
-    external_deps += [ "config_policy:configpolicy_util" ]
-    defines += [ "STANDBY_CONFIG_POLICY_ENABLE" ]
-  }
-
-  if (enable_background_task_mgr) {
-    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
-    defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
-  }
+  defines = StandbyPluginDefine
 
   subsystem_name = "resourceschedule"
   part_name = "${standby_service_part_name}"
@@ -132,26 +158,15 @@ ohos_static_library("standby_plugin_static") {
 
   external_deps = StandbyPluginExternalDeps
 
-  defines = []
-  if (enable_standby_configpolicy) {
-    external_deps += [ "config_policy:configpolicy_util" ]
-    defines += [ "STANDBY_CONFIG_POLICY_ENABLE" ]
-  }
-
-  if (enable_background_task_mgr) {
-    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
-    defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
-  }
+  defines = StandbyPluginDefine
 
   subsystem_name = "resourceschedule"
   part_name = "${standby_service_part_name}"
 }
 
-config("standby_service_state_plugin_config") {
-  include_dirs = [
-    "${standby_plugins_path}/ext/include",
-    "${standby_service_standby_state_path}/include",
-    "${standby_utils_common_path}/include",
-    "${standby_utils_policy_path}/include",
-  ]
+group("standby_plugin_group") {
+  deps = []
+  if (device_standby_plugin_enable) {
+    deps += [ ":standby_plugin" ]
+  }
 }

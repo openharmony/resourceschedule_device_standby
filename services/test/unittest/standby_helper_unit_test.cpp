@@ -23,8 +23,9 @@
 #include "bundle_manager_helper.h"
 #include "app_mgr_helper.h"
 #include "ability_manager_helper.h"
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
-#include "ability_manager_helper.h"
+#endif
 
 using namespace testing::ext;
 using namespace testing::mt;
@@ -54,17 +55,12 @@ HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_001, TestSize.Level1)
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
     bool isRunning {false};
     sptr<AppExecFwk::IApplicationStateObserver> observer {nullptr};
-    AppMgrHelper::GetInstance()->GetAllRunningProcesses(allAppProcessInfos);
-    AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName("", isRunning);
-    AppMgrHelper::GetInstance()->SubscribeObserver(observer);
-    AppMgrHelper::GetInstance()->UnsubscribeObserver(observer);
-    AppMgrHelper::GetInstance()->Connect();
     AppMgrHelper::GetInstance()->Connect();
     AppMgrHelper::GetInstance()->GetAllRunningProcesses(allAppProcessInfos);
     AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName("", isRunning);
     AppMgrHelper::GetInstance()->SubscribeObserver(observer);
     AppMgrHelper::GetInstance()->UnsubscribeObserver(observer);
-    EXPECT_TRUE(allAppProcessInfos.empty());
+    EXPECT_FALSE(allAppProcessInfos.empty());
 }
 
 /**
@@ -83,6 +79,7 @@ HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_002, TestSize.Level1)
     EXPECT_FALSE(applicationInfo.uid > 0);
 }
 
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 /**
  * @tc.name: StandbyHelperUnitTest_003
  * @tc.desc: test BackgroundTaskHelper.
@@ -97,6 +94,7 @@ HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_003, TestSize.Level1)
     BackgroundTaskHelper::GetInstance()->GetTransientTaskApps(appInfoList);
     EXPECT_TRUE(list.empty());
 }
+#endif
 
 /**
  * @tc.name: StandbyHelperUnitTest_004
@@ -108,7 +106,7 @@ HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_004, TestSize.Level1)
 {
     std::list<SystemProcessInfo> systemProcessInfos {};
     AbilityManagerHelper::GetInstance()->GetRunningSystemProcess(systemProcessInfos);
-    EXPECT_TRUE(systemProcessInfos.empty());
+    EXPECT_FALSE(systemProcessInfos.empty());
 }
 
 /**

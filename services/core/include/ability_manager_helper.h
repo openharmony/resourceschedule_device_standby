@@ -22,8 +22,8 @@
 #define WEAK_FUNC
 #endif
 
-#include "if_system_ability_manager.h"
-#include "system_ability_manager_proxy.h"
+#include <list>
+#include "isystem_process_status_change.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
 #include "single_instance.h"

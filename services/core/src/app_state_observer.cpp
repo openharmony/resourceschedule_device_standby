@@ -17,10 +17,8 @@
 
 #include "app_mgr_constants.h"
 #include "app_mgr_helper.h"
-#include "iservice_registry.h"
 #include "standby_service_impl.h"
 #include "standby_service_log.h"
-#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

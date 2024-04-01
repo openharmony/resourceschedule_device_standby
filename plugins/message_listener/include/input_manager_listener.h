@@ -22,7 +22,6 @@
 #define WEAK_FUNC
 #endif
 
-#include "input_manager.h"
 #include "event_handler.h"
 #include "imessage_listener.h"
 

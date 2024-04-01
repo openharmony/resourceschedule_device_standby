@@ -32,7 +32,6 @@
 #include "common_event_observer.h"
 #include "common_event_support.h"
 #include "event_runner.h"
-#include "iservice_registry.h"
 #include "istandby_service.h"
 #include "json_utils.h"
 #include "standby_config_manager.h"

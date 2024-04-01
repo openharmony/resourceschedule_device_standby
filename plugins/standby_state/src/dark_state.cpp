@@ -15,14 +15,14 @@
 
 #include "dark_state.h"
 
+#include "time_provider.h"
+#include "timed_task.h"
+
 #include "standby_service_log.h"
 #include "standby_config_manager.h"
-#include "time_provider.h"
 #include "iconstraint_manager_adapter.h"
-#include "standby_service_impl.h"
 #include "istate_manager_adapter.h"
 
-#include "timed_task.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

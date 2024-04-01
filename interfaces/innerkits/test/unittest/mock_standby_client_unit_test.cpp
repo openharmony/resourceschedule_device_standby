@@ -22,6 +22,7 @@
 
 #include "allow_type.h"
 #include "standby_service_client.h"
+#include "standby_service_proxy.h"
 #include "standby_service_subscriber_stub.h"
 using namespace testing::ext;
 

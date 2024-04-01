@@ -15,11 +15,14 @@
 
 #include "network_strategy.h"
 
+#ifdef STANDBY_CPMMUNICATION_NETMANAGER_BASE_ENABLE
+#include "net_policy_client.h"
+#endif
+
 #include "standby_state.h"
 #include "time_provider.h"
 #include "istandby_service.h"
 #include "standby_service_log.h"
-#include "net_policy_client.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -108,11 +111,13 @@ void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, 
         STANDBYSERVICE_LOGI("current is idle maintenance, do not need remove allow list");
         return;
     }
+    #ifdef STANDBY_CPMMUNICATION_NETMANAGER_BASE_ENABLE
     if (auto ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
         SetDeviceIdleTrustlist(uids, isAdded); ret != 0) {
         STANDBYSERVICE_LOGW("failed to SetFireWallAllowedList, err code is %{public}d", ret);
         return;
     }
+    #endif
 }
 
 void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
