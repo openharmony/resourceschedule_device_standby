@@ -41,10 +41,10 @@ nlohmann::json AllowRecord::ParseToJson()
 
 bool AllowRecord::setAllowTime(const nlohmann::json& persistTime)
 {
-    bool checkAllowTypeIndex = !value.contains("allowTypeIndex")
-        || !value["allowTypeIndex"].is_number_integer();
-    bool checkEndTime = !value.contains("endTime") || !value["endTime"].is_number_integer();
-    bool checkReason = !value.contains("reason") || !value["reason"].is_string();
+    bool checkAllowTypeIndex = !persistTime.contains("allowTypeIndex")
+        || !persistTime["allowTypeIndex"].is_number_integer();
+    bool checkEndTime = !persistTime.contains("endTime") || !persistTime["endTime"].is_number_integer();
+    bool checkReason = !persistTime.contains("reason") || !persistTime["reason"].is_string();
     if (checkAllowTypeIndex || checkEndTime || checkReason) {
         return false;
     }
