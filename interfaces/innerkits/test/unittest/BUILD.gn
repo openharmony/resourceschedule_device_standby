@@ -35,7 +35,6 @@ ohos_unittest("standby_client_unit_test") {
   ]
 
   external_deps = [
-    "ability_base:want",
     "ability_runtime:abilitykit_native",
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
@@ -62,10 +61,12 @@ ohos_unittest("mock_standby_client_unit_test") {
     "${standby_innerkits_path}/test/unittest/mock_standby_client_unit_test.cpp",
   ]
 
-  deps = [ "${standby_innerkits_path}:standby_innerkits" ]
+  deps = [
+    "${standby_innerkits_path}:standby_innerkits",
+    "${standby_service_frameworks_path}:standby_fwk",
+  ]
 
   external_deps = [
-    "ability_base:want",
     "ability_runtime:abilitykit_native",
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",

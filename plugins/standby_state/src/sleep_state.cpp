@@ -16,13 +16,11 @@
 #include "sleep_state.h"
 
 #include <cmath>
-#include "itimer_info.h"
 #include "time_service_client.h"
 
 #include "standby_service_log.h"
 #include "standby_config_manager.h"
 #include "iconstraint_manager_adapter.h"
-#include "standby_service_impl.h"
 #include "istate_manager_adapter.h"
 #include "time_provider.h"
 #include "timed_task.h"

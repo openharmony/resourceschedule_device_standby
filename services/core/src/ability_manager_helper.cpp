@@ -14,7 +14,6 @@
  */
 
 #include "ability_manager_helper.h"
-#include "system_ability_definition.h"
 #include "iservice_registry.h"
 
 #include "standby_service_log.h"

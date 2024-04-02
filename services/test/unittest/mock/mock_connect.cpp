@@ -18,7 +18,9 @@
 #include "app_mgr_helper.h"
 #include "bundle_manager_helper.h"
 #include "common_event_observer.h"
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
+#endif
 
 namespace OHOS {
 namespace DevStandbyMgr {

@@ -25,10 +25,10 @@
 #include <memory>
 #include <vector>
 
-#include "background_task_mgr_helper.h"
+#include "continuous_task_callback_info.h"
+#include "transient_task_app_info.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
-#include "resource_callback_info.h"
 #include "single_instance.h"
 #include "standby_service_errors.h"
 

@@ -20,8 +20,6 @@
 #include "application_state_observer_stub.h"
 #include "event_handler.h"
 #include "iremote_object.h"
-#include "app_mgr_client.h"
-
 
 namespace OHOS {
 namespace DevStandbyMgr {

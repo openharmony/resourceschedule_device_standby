@@ -15,11 +15,6 @@
 
 #include "common_event_observer.h"
 
-#include "bundle_constants.h"
-#include "common_event_support.h"
-
-#include "standby_service_impl.h"
-
 namespace OHOS {
 namespace DevStandbyMgr {
 CommonEventObserver::CommonEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo,

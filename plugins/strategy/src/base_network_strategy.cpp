@@ -14,22 +14,23 @@
  */
 #include "base_network_strategy.h"
 #include <algorithm>
-#include "common_event_data.h"
-#include "common_event_manager.h"
-#include "common_event_support.h"
 #include "system_ability_definition.h"
-#include "power_mgr_client.h"
+#ifdef STANDBY_RSS_WORK_SCHEDILER_ENABLE
 #include "workscheduler_srv_client.h"
+#endif
 
 #include "standby_service_log.h"
+#ifdef ENABLE_BACKGROUND_TASK_MSG
 #include "background_task_helper.h"
+#endif
+#ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
+#include "net_policy_client.h"
+#endif
 #include "app_mgr_helper.h"
 #include "standby_service.h"
 #include "allow_type.h"
 #include "standby_state.h"
 #include "bundle_manager_helper.h"
-#include "net_policy_client.h"
-#include "background_mode.h"
 #include "standby_config_manager.h"
 #include "time_provider.h"
 #include "standby_service_impl.h"
@@ -44,8 +45,6 @@ const std::map<std::string, uint8_t> BGTASK_EXEMPTION_FLAG_MAP {
     {WORK_SCHEDULER, ExemptionTypeFlag::WORK_SCHEDULER},
 };
 }
-
-using namespace OHOS::BackgroundTaskMgr;
 
 bool BaseNetworkStrategy::isUserSleep_ = false;
 bool BaseNetworkStrategy::isFirewallEnabled_ = false;
@@ -218,6 +217,7 @@ ErrCode BaseNetworkStrategy::GetForegroundApplications()
 
 ErrCode BaseNetworkStrategy::GetBackgroundTaskApp()
 {
+    #ifdef ENABLE_BACKGROUND_TASK_MSG
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> continuousTaskList;
     if (!BackgroundTaskHelper::GetInstance()->GetContinuousTaskApps(continuousTaskList)) {
         STANDBYSERVICE_LOGW("get continuous task app failed");
@@ -244,11 +244,13 @@ ErrCode BaseNetworkStrategy::GetBackgroundTaskApp()
     for (const auto& task : transientTaskList) {
         AddExemptionFlagByUid(task->GetUid(), ExemptionTypeFlag::TRANSIENT_TASK);
     }
+    #endif
     return ERR_OK;
 }
 
 ErrCode BaseNetworkStrategy::GetWorkSchedulerTask()
 {
+    #ifdef STANDBY_RSS_WORK_SCHEDILER_ENABLE
     std::list<std::shared_ptr<WorkScheduler::WorkInfo>> workInfos;
     if (WorkScheduler::WorkSchedulerSrvClient::GetInstance().GetAllRunningWorks(workInfos) != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
@@ -257,6 +259,7 @@ ErrCode BaseNetworkStrategy::GetWorkSchedulerTask()
     for (const auto& task : workInfos) {
         AddExemptionFlagByUid(task->GetUid(), ExemptionTypeFlag::WORK_SCHEDULER);
     }
+    #endif
     return ERR_OK;
 }
 
@@ -388,7 +391,9 @@ ErrCode BaseNetworkStrategy::DisableNetworkFirewallInner()
 
 int32_t BaseNetworkStrategy::HandleDeviceIdlePolicy(bool enableFirewall)
 {
-    int32_t ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
+    int32_t ret = 0;
+    #ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
+    ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
         SetDeviceIdlePolicy(enableFirewall);
     if (ret == NETMANAGER_SUCCESS || ret == NETMANAGER_ERR_STATUS_EXIST) {
         StandbyMessage standbyMessage {StandbyMessageType::DEVICE_NET_IDLE_POLICY_TRANSIT};
@@ -396,6 +401,7 @@ int32_t BaseNetworkStrategy::HandleDeviceIdlePolicy(bool enableFirewall)
         standbyMessage.want_->SetParam(NET_IDLE_POLICY_STATUS, enableFirewall);
         StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
     }
+    #endif
     return ret;
 }
 
@@ -437,13 +443,13 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
         GetAndCreateAppInfo(uid, bundleName);
         auto iter = netLimitedAppInfo_.find(uid);
         if (ExemptionTypeFlag::IsExempted(iter->second.appExemptionFlag_)) {
-            SetFirewallAllowedList( {uid}, isCreated);
+            SetFirewallAllowedList({uid}, isCreated);
         }
     } else {
         bool isRunning {false};
         if (AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName(bundleName, isRunning) && !isRunning) {
             netLimitedAppInfo_.erase(uid);
-            SetFirewallAllowedList( {uid}, isCreated);
+            SetFirewallAllowedList({uid}, isCreated);
         }
     }
 }
@@ -501,6 +507,7 @@ bool BaseNetworkStrategy::GetExemptedFlag(uint8_t appNoExemptionFlag, uint8_t ap
 
 void BaseNetworkStrategy::ResetFirewallAllowList()
 {
+    #ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
     STANDBYSERVICE_LOGI("start reset firewall allow list");
     std::vector<uint32_t> uids;
     if (DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
@@ -517,6 +524,7 @@ void BaseNetworkStrategy::ResetFirewallAllowList()
         SetDeviceIdleTrustlist(uids, false) != NETMANAGER_SUCCESS) {
         STANDBYSERVICE_LOGE("SetFirewallAllowedList failed");
     }
+    #endif
 }
 
 ErrCode BaseNetworkStrategy::SetFirewallStatus(bool enableFirewall)

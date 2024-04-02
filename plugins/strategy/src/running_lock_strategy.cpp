@@ -19,12 +19,17 @@
 #include "system_ability_definition.h"
 
 #include "ability_manager_helper.h"
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
+#endif
 #include "app_mgr_helper.h"
 #include "standby_service.h"
+#ifdef STANDBY_POWER_MANAGER_ENABLE
 #include "power_mgr_client.h"
+#endif
+#ifdef STANDBY_RSS_WORK_SCHEDILER_ENABLE
 #include "workscheduler_srv_client.h"
-
+#endif
 #include "allow_type.h"
 #include "standby_state.h"
 #include "bundle_manager_helper.h"
@@ -74,7 +79,9 @@ void RunningLockStrategy::HandleEvent(const StandbyMessage& message)
 
 ErrCode RunningLockStrategy::OnCreated()
 {
+    #ifdef STANDBY_POWER_MANAGER_ENABLE
     PowerMgr::PowerMgrClient::GetInstance().ResetRunningLocks();
+    #endif
     return ERR_OK;
 }
 
@@ -229,6 +236,7 @@ ErrCode RunningLockStrategy::GetAllRunningAppInfo()
 
 ErrCode RunningLockStrategy::GetWorkSchedulerTask()
 {
+    #ifdef STANDBY_RSS_WORK_SCHEDILER_ENABLE
     std::list<std::shared_ptr<WorkScheduler::WorkInfo>> workInfos;
     if (WorkScheduler::WorkSchedulerSrvClient::GetInstance().GetAllRunningWorks(workInfos) != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
@@ -241,6 +249,7 @@ ErrCode RunningLockStrategy::GetWorkSchedulerTask()
             iter->second.appExemptionFlag_ |= ExemptionTypeFlag::WORK_SCHEDULER;
         }
     }
+    #endif
     return ERR_OK;
 }
 
@@ -263,6 +272,7 @@ ErrCode RunningLockStrategy::GetForegroundApplications()
 
 ErrCode RunningLockStrategy::GetBackgroundTaskApp()
 {
+    #ifdef ENABLE_BACKGROUND_TASK_MGR
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> continuousTaskList;
     if (!BackgroundTaskHelper::GetInstance()->GetContinuousTaskApps(continuousTaskList)) {
         STANDBYSERVICE_LOGE("get continuous task app failed");
@@ -299,6 +309,7 @@ ErrCode RunningLockStrategy::GetBackgroundTaskApp()
             iter->second.appExemptionFlag_ |= ExemptionTypeFlag::TRANSIENT_TASK;
         }
     }
+    #endif
     return ERR_OK;
 }
 
@@ -540,9 +551,11 @@ void RunningLockStrategy::ProxyRunningLockList(bool isProxied,
         STANDBYSERVICE_LOGI("current is idle maintenance, can not proxy running lock");
         return;
     }
+    #ifdef STANDBY_POWER_MANAGER_ENABLE
     if (!PowerMgr::PowerMgrClient::GetInstance().ProxyRunningLocks(isProxied, proxiedAppList)) {
         STANDBYSERVICE_LOGW("failed to ProxyRunningLockList");
     }
+    #endif
 }
 
 void RunningLockStrategy::HandleProcessStatusChanged(const StandbyMessage& message)

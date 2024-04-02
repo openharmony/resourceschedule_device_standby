@@ -19,7 +19,7 @@
 
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
-
+#include "standby_service_errors.h"
 #include "standby_service_log.h"
 #include "standby_service_proxy.h"
 

@@ -14,7 +14,6 @@
  */
 
 #include "background_task_listener.h"
-#include "system_ability_definition.h"
 #include "standby_service_impl.h"
 #include "standby_service_log.h"
 

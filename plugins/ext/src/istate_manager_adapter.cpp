@@ -15,10 +15,9 @@
 
 #include "base_state.h"
 
+#include "istate_manager_adapter.h"
 #include "standby_messsage.h"
 #include "standby_service_log.h"
-
-#include "standby_service_impl.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {

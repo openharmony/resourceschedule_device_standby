@@ -15,7 +15,9 @@
     "syscap": [
       "SystemCapability.ResourceSchedule.DeviceStandby"
     ],
-    "features": [],
+    "features": [
+      "device_standby_plugin_enable"
+    ],
     "adapted_system_type": [
       "standard"
     ],
@@ -46,10 +48,7 @@
         "sensor",
         "time_service",
         "work_scheduler",
-        "wifi",
         "json"
-      ],
-      "third_party": [
       ]
     },
     "build": {
@@ -65,7 +64,7 @@
           "service_group" : [
             "//foundation/resourceschedule/device_standby/sa_profile:device_standby_sa_profile",
             "//foundation/resourceschedule/device_standby/interfaces/innerkits:standby_innerkits",
-            "//foundation/resourceschedule/device_standby/plugins:standby_plugin",
+            "//foundation/resourceschedule/device_standby/plugins:standby_plugin_group",
             "//foundation/resourceschedule/device_standby/services:standby_service",
             "//foundation/resourceschedule/device_standby/utils/policy:standby_service_config"
           ]

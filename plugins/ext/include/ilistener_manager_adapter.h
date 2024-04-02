@@ -20,9 +20,6 @@
 #include <memory>
 #include <map>
 
-#include "event_handler.h"
-#include "event_runner.h"
-
 #include "standby_service_errors.h"
 #include "imessage_listener.h"
 #include "istate_manager_adapter.h"
