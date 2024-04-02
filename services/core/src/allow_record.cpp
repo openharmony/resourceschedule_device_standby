@@ -87,7 +87,7 @@ bool AllowRecord::ParseFromJson(const nlohmann::json& value)
             const nlohmann::json &persistTime = allowTimeVal.at(i);
             if (!setAllowTime(persistTime)) {
                 return false;
-                }           
+            }
         }
     }
     return true;
