@@ -79,7 +79,7 @@ bool AllowRecord::ParseFromJson(const nlohmann::json& value)
 {
     if (value.empty() || !setAllowRecordField(value)) {
         return false;
-    }    
+    }
     if (value.contains("allowTimeList") && value["allowTimeList"].is_array()) {
         const nlohmann::json &allowTimeVal = value.at("allowTimeList");
         auto nums = static_cast<int32_t>(allowTimeVal.size());
