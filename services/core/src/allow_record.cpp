@@ -39,9 +39,32 @@ nlohmann::json AllowRecord::ParseToJson()
     return value;
 }
 
-bool AllowRecord::ParseFromJson(const nlohmann::json& value)
+bool AllowRecord::setAllowTime(const nlohmann::json& persistTime)
 {
-    if (value.empty()) {
+    bool checkAllowTypeIndex = !persistTime.contains("allowTypeIndex")
+        || !persistTime["allowTypeIndex"].is_number_integer();
+    bool checkEndTime = !persistTime.contains("endTime") || !persistTime["endTime"].is_number_integer();
+    bool checkReason = !persistTime.contains("reason") || !persistTime["reason"].is_string();
+    if (checkAllowTypeIndex || checkEndTime || checkReason) {
+        return false;
+    }
+    uint32_t allowTypeIndex = persistTime.at("allowTypeIndex").get<uint32_t>();
+    int64_t endTime_ = persistTime.at("endTime").get<int64_t>();
+    std::string reason_ = persistTime.at("reason").get<std::string>();
+    this->allowTimeList_.emplace_back(AllowTime {allowTypeIndex, endTime_,
+                reason_});
+    return true;
+}
+
+bool AllowRecord::setAllowRecordField(const nlohmann::json& value)
+{
+    bool checkUid = !value.contains("uid") || !value["uid"].is_number_integer();
+    bool checkPid = !value.contains("pid") || !value["pid"].is_number_integer();
+    bool checkName = !value.contains("name") || !value["name"].is_string();
+    bool checkAllowType = !value.contains("allowType") || !value["allowType"].is_number_integer();
+    bool checkReasonCode = !value.contains("reasonCode") || !value["reasonCode"].is_number_integer();
+    bool checkParam = checkUid || checkPid || checkName || checkAllowType || checkReasonCode;
+    if (checkParam) {
         return false;
     }
     this->uid_ = value.at("uid").get<int32_t>();
@@ -49,16 +72,22 @@ bool AllowRecord::ParseFromJson(const nlohmann::json& value)
     this->name_ = value.at("name").get<std::string>();
     this->allowType_ = value.at("allowType").get<uint32_t>();
     this->reasonCode_ = value.at("reasonCode").get<uint32_t>();
-    if (value.contains("allowTimeList")) {
+    return true;
+}
+
+bool AllowRecord::ParseFromJson(const nlohmann::json& value)
+{
+    if (value.empty() || !setAllowRecordField(value)) {
+        return false;
+    }
+    if (value.contains("allowTimeList") && value["allowTimeList"].is_array()) {
         const nlohmann::json &allowTimeVal = value.at("allowTimeList");
         auto nums = static_cast<int32_t>(allowTimeVal.size());
         for (int i = 0; i < nums; ++i) {
             const nlohmann::json &persistTime = allowTimeVal.at(i);
-            uint32_t allowTypeIndex = persistTime.at("allowTypeIndex").get<uint32_t>();
-            int64_t endTime_ = persistTime.at("endTime").get<int64_t>();
-            std::string reason_ = persistTime.at("reason").get<std::string>();
-            this->allowTimeList_.emplace_back(AllowTime {allowTypeIndex, endTime_,
-                reason_});
+            if (!setAllowTime(persistTime)) {
+                return false;
+            }
         }
     }
     return true;

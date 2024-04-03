@@ -37,6 +37,8 @@ struct AllowRecord {
     AllowRecord(int32_t uid, int32_t pid, const std::string& name, uint32_t allowType)
         : uid_(uid), pid_(pid), name_(name), allowType_(allowType) {}
     nlohmann::json ParseToJson();
+    bool setAllowTime(const nlohmann::json& persistTime);
+    bool setAllowRecordField(const nlohmann::json& value);
     bool ParseFromJson(const nlohmann::json& value);
 
     int32_t uid_ {-1};
