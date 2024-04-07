@@ -46,7 +46,6 @@ const std::map<std::string, uint8_t> BGTASK_EXEMPTION_FLAG_MAP {
 };
 }
 
-bool BaseNetworkStrategy::isUserSleep_ = false;
 bool BaseNetworkStrategy::isFirewallEnabled_ = false;
 std::unordered_map<std::int32_t, NetLimtedAppInfo> BaseNetworkStrategy::netLimitedAppInfo_;
 
@@ -78,7 +77,6 @@ ErrCode BaseNetworkStrategy::OnCreated()
     ResetFirewallAllowList();
     isFirewallEnabled_ = false;
     isIdleMaintence_ = false;
-    isUserSleep_ = false;
     return ERR_OK;
 }
 
@@ -155,13 +153,6 @@ ErrCode BaseNetworkStrategy::InitNetLimitedAppInfo()
 {
     if (GetAllRunningAppInfo() != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
-    }
-    if (isUserSleep_) {
-        if (GetExemptionConfig() != ERR_OK) {
-            STANDBYSERVICE_LOGE("get exemption config err");
-            return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
-        }
-        return ERR_OK;
     }
     std::vector<AppExecFwk::ApplicationInfo> applicationInfos {};
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfos(
@@ -343,24 +334,10 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
     SetFirewallAllowedList(uids, isAllow);
 }
 
-bool BaseNetworkStrategy::GetIsUserSleep()
-{
-    return isUserSleep_;
-}
-
-void BaseNetworkStrategy::SetIsUserSleep(bool isUserSleep)
-{
-    isUserSleep_ = isUserSleep;
-}
-
 ErrCode BaseNetworkStrategy::DisableNetworkFirewall(const StandbyMessage& message)
 {
     if (!isFirewallEnabled_) {
         return ERR_STANDBY_CURRENT_STATE_NOT_MATCH;
-    }
-    if (isUserSleep_) {
-        STANDBYSERVICE_LOGD("current user is sleeping, do nothing");
-        return ERR_OK;
     }
     uint32_t preState = static_cast<uint32_t>(message.want_->GetIntParam(PREVIOUS_STATE, 0));
     uint32_t curState = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_STATE, 0));
@@ -391,7 +368,7 @@ ErrCode BaseNetworkStrategy::DisableNetworkFirewallInner()
 
 int32_t BaseNetworkStrategy::HandleDeviceIdlePolicy(bool enableFirewall)
 {
-    int32_t ret = 0;
+    int32_t ret = NETMANAGER_SUCCESS;
     #ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
     ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
         SetDeviceIdlePolicy(enableFirewall);
