@@ -56,6 +56,8 @@ const std::string SYSTEM_SO_PATH = "/system/lib/";
 #endif
 const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPTION";
 const uint32_t EXEMPT_ALL_RESOURCES = 100;
+const std::string COMMON_EVENT_TIMER_SA_ABILITY = "COMMON_EVENT_TIMER_SA_ABILITY";
+const uint32_t ONE_SECOND = 1000;
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyServiceImpl);
@@ -200,6 +202,10 @@ void StandbyServiceImpl::DayNightSwitchCallback()
 ErrCode StandbyServiceImpl::RegisterTimeObserver()
 {
     std::lock_guard<std::recursive_mutex> lock(timerObserverMutex_);
+    handler_->PostTask([=]() {
+            StandbyMessage message(StandbyMessageType::COMMON_EVENT, COMMON_EVENT_TIMER_SA_ABILITY);
+            StandbyServiceImpl::GetInstance()->DispatchEvent(message);
+        }, ONE_SECOND);
     if (dayNightSwitchTimerId_ > 0) {
         return ERR_STANDBY_OBSERVER_ALREADY_EXIST;
     }
