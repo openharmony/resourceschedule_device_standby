@@ -47,16 +47,6 @@ public:
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
 
     /**
-     * @brief get user sleep state.
-     */
-    bool GetIsUserSleep();
-
-    /**
-     * @brief set user sleep state.
-     */
-    void SetIsUserSleep(bool isUserSleep);
-
-    /**
      * @brief set net limit status.
      *
      * @return NetPolicy handle ret.
@@ -140,7 +130,6 @@ protected:
     bool GetExemptedFlag(uint8_t appNoExemptionFlag, uint8_t appExemptionFlag);
 protected:
     static bool isFirewallEnabled_;
-    static bool isUserSleep_;
     bool isIdleMaintence_ {false};
     static std::unordered_map<std::int32_t, NetLimtedAppInfo> netLimitedAppInfo_;
     uint32_t nightExemptionTaskType_ {0};
