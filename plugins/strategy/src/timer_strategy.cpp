@@ -33,5 +33,10 @@ ErrCode TimerStrategy::OnDestroy()
 {
     return ERR_OK;
 }
+
+void TimerStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
+{
+    STANDBYSERVICE_LOGD("Timer Strategy Dump");
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

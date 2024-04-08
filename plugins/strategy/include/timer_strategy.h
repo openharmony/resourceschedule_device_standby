@@ -20,9 +20,11 @@
 namespace OHOS {
 namespace DevStandbyMgr {
 class TimerStrategy : public IBaseStrategy {
+public:
     void HandleEvent(const StandbyMessage& message) override;
     ErrCode OnCreated() override;
     ErrCode OnDestroy() override;
+    void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
