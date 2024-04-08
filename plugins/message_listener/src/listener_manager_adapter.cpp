@@ -29,7 +29,7 @@
 #include "standby_config_manager.h"
 #include "common_event_listener.h"
 #include "system_ability_definition.h"
-#ifdef ENAMLE_BACKGROUND_TASK_MGR
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_listener.h"
 #endif
 
@@ -60,7 +60,7 @@ bool ListenerManagerAdapter::Init()
     #ifdef STANDBY_MULTIMODALINPUT_INPUT_ENABLE
     messageListenerList_.emplace_back(std::make_shared<InputManagerListener>());
     #endif
-    #ifdef ENAMLE_BACKGROUND_TASK_MGR
+    #ifdef ENABLE_BACKGROUND_TASK_MGR
     // network and running lock strategy need background task listener
     STANDBYSERVICE_LOGI("add background task listener");
     std::shared_ptr<IMesssageListener> bgtaskListener_ = std::make_shared<BackgroundTaskListener>();
