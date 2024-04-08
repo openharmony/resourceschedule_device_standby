@@ -38,8 +38,6 @@ namespace DevStandbyMgr {
 bool ListenerManagerAdapter::Init()
 {
     EventFwk::MatchingSkills matchingSkills;
-    STANDBYSERVICE_LOGD("device type const.product.devicetype is: %{public}s",
-        system::GetParameter("const.product.devicetype", "unknown").c_str());
     switch (STANDBT_MODE) {
         case StandbyMode::PHONEMODE:
         case StandbyMode::TABLETMODE:
