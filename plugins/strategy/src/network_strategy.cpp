@@ -15,7 +15,7 @@
 
 #include "network_strategy.h"
 
-#ifdef STANDBY_CPMMUNICATION_NETMANAGER_BASE_ENABLE
+#ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 #include "net_policy_client.h"
 #endif
 
@@ -111,7 +111,7 @@ void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, 
         STANDBYSERVICE_LOGI("current is idle maintenance, do not need remove allow list");
         return;
     }
-    #ifdef STANDBY_CPMMUNICATION_NETMANAGER_BASE_ENABLE
+    #ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
     if (auto ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
         SetDeviceIdleTrustlist(uids, isAdded); ret != 0) {
         STANDBYSERVICE_LOGW("failed to SetFireWallAllowedList, err code is %{public}d", ret);
