@@ -42,6 +42,7 @@ StandbyPluginSrc = [
   "${standby_service_strategy_path}/src/base_network_strategy.cpp",
   "${standby_service_strategy_path}/src/network_strategy.cpp",
   "${standby_service_strategy_path}/src/running_lock_strategy.cpp",
+  "${standby_service_strategy_path}/src/timer_strategy.cpp",
   "${standby_service_strategy_path}/src/strategy_manager_adapter.cpp",
 ]
 
