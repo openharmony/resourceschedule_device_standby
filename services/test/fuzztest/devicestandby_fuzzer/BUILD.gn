@@ -71,13 +71,13 @@ ohos_fuzztest("DeviceStandbyFuzzTest") {
     defines += [ "STANDBY_POWER_MANAGER_ENABLE" ]
   }
   if (device_standby_access_token_enable) {
-      external_deps += [
-      "access_token:libaccesstoken_sdk",
-      "access_token:libtokenid_sdk",
-      "access_token:libtoken_setproc",
-      "access_token:libtokenid_sdk",
-      ]
-      defines += [ "DEVICE_STANDBY_ACCESS_TOKEN_ENABLE" ]
+    external_deps += [
+    "access_token:libaccesstoken_sdk",
+    "access_token:libtokenid_sdk",
+    "access_token:libtoken_setproc",
+    "access_token:libtokenid_sdk",
+    ]
+    defines += [ "DEVICE_STANDBY_ACCESS_TOKEN_ENABLE" ]
   }
 }
 
