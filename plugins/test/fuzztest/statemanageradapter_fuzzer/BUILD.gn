@@ -73,7 +73,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":ConfigManagerFuzzTest",
+    ":StateManagerAdapterFuzzTest",
   ]
 }
 ###############################################################################
