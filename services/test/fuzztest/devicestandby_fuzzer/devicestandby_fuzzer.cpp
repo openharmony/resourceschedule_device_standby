@@ -98,8 +98,8 @@ namespace DevStandbyMgr {
         datas.WriteString(GetData<std::string>());
         datas.RewindRead(0);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_WORK_SCHEDULER_STATUS),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_WORK_SCHEDULER_STATUS),
+            datas, reply, option);
     }
 
     void CoverageHandleGetAllowList()
@@ -109,14 +109,14 @@ namespace DevStandbyMgr {
         MessageOption option = {MessageOption::TF_SYNC};
         datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST),
+            datas, reply, option);
         datas.WriteUint32(GetData<uint32_t>());
         datas.WriteUint32(GetData<uint32_t>());
         datas.RewindRead(0);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST),
+            datas, reply, option);
     }
 
     void CoverageHandleSubscribeStandbyCallback()
@@ -153,8 +153,8 @@ namespace DevStandbyMgr {
         datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
         resourceRequest->Marshalling(datas);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::APPLY_ALLOW_RESOURCE),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::APPLY_ALLOW_RESOURCE),
+            datas, reply, option);
     }
 
     void CoverageUnHandleApplyAllowResource()
@@ -165,8 +165,8 @@ namespace DevStandbyMgr {
         datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
         resourceRequest->Marshalling(datas);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::UNAPPLY_ALLOW_RESOURCE),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::UNAPPLY_ALLOW_RESOURCE),
+            datas, reply, option);
     }
 
     void PreciseCoverage()
@@ -204,7 +204,7 @@ namespace DevStandbyMgr {
             datas.RewindRead(0);
             MessageParcel reply;
             MessageOption option;
-            DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(i,datas, reply, option);
+            DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(i, datas, reply, option);
         }
         return true;
     }
