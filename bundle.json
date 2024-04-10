@@ -164,8 +164,8 @@
         "//foundation/resourceschedule/device_standby/services/test/unittest:unittest",
         "//foundation/resourceschedule/device_standby/plugins/test/unittest:unittest",
         "//foundation/resourceschedule/device_standby/services/test/fuzztest:fuzztest",
-        "//foundation/resourceschedule/device_standby/plugins/test/unittest:fuzztest",
-        "//foundation/resourceschedule/device_standby/utils/test/unittest:fuzztest"
+        "//foundation/resourceschedule/device_standby/plugins/test/fuzztest:fuzztest",
+        "//foundation/resourceschedule/device_standby/utils/test/fuzztest:fuzztest"
       ]
     }
   }
