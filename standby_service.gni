@@ -90,6 +90,12 @@ declare_args() {
     standby_rss_work_scheduler_enable = false
   }
 
+  device_standby_access_token_enable = true
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.security_access_token)) {
+    device_standby_access_token_enable = false
+  }
+
   # features
   device_standby_plugin_enable = true
 }

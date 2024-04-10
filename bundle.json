@@ -144,7 +144,6 @@
               "extend_constraints/include/charge_state_monitor.h",
               "extend_constraints/include/constraint_manager_adapter.h",
               "extend_constraints/include/motion_sensor_monitor.h",
-              "message_listener/include/common_event_listener.h",
               "message_listener/include/input_manager_listener.h",
               "message_listener/include/listener_manager_adapter.h",
               "standby_state/include/dark_state.h",
@@ -164,7 +163,9 @@
         "//foundation/resourceschedule/device_standby/interfaces/innerkits/test/unittest:unittest",
         "//foundation/resourceschedule/device_standby/services/test/unittest:unittest",
         "//foundation/resourceschedule/device_standby/plugins/test/unittest:unittest",
-        "//foundation/resourceschedule/device_standby/services/test/fuzztest:fuzztest"
+        "//foundation/resourceschedule/device_standby/services/test/fuzztest:fuzztest",
+        "//foundation/resourceschedule/device_standby/plugins/test/unittest:fuzztest",
+        "//foundation/resourceschedule/device_standby/utils/test/unittest:fuzztest"
       ]
     }
   }

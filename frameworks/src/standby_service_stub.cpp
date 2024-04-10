@@ -262,7 +262,6 @@ ErrCode StandbyServiceStub::HandleReportDeviceStateChanged(MessageParcel& data, 
 
 ErrCode StandbyServiceStub::HandleCommonEvent(MessageParcel& data, MessageParcel& reply)
 {
-    STANDBYSERVICE_LOGW("stub into HandleEvent");
     uint32_t resType = 0;
     if (!data.ReadUint32(resType)) {
         STANDBYSERVICE_LOGW("Failed to read resType");

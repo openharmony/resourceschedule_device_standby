@@ -31,7 +31,6 @@ StandbyPluginSrc = [
   "${standby_plugins_path}/ext/src/istate_manager_adapter.cpp",
   "${standby_service_constraints_path}/src/charge_state_monitor.cpp",
   "${standby_service_constraints_path}/src/constraint_manager_adapter.cpp",
-  "${standby_service_message_listener_path}/src/common_event_listener.cpp",
   "${standby_service_message_listener_path}/src/listener_manager_adapter.cpp",
   "${standby_service_standby_state_path}/src/dark_state.cpp",
   "${standby_service_standby_state_path}/src/export_plugin.cpp",
@@ -43,7 +42,6 @@ StandbyPluginSrc = [
   "${standby_service_strategy_path}/src/base_network_strategy.cpp",
   "${standby_service_strategy_path}/src/network_strategy.cpp",
   "${standby_service_strategy_path}/src/running_lock_strategy.cpp",
-  "${standby_service_strategy_path}/src/timer_strategy.cpp",
   "${standby_service_strategy_path}/src/strategy_manager_adapter.cpp",
 ]
 

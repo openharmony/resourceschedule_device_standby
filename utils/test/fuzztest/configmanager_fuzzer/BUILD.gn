@@ -18,14 +18,12 @@ import("//foundation/resourceschedule/device_standby/standby_service.gni")
 module_output_path = "device_standby/device_standby"
 
 ##############################fuzztest##########################################
-ohos_fuzztest("DeviceStandbyFuzzTest") {
+ohos_fuzztest("ConfigManagerFuzzTest") {
   module_out_path = module_output_path
   fuzz_config_file =
       "${standby_service_path}/test/fuzztest/devicestandby_fuzzer"
 
   include_dirs = [
-    "${standby_service_path}/include",
-    "${standby_innerkits_path}:standby_innerkits",
     "${standby_utils_common_path}:standby_utils_common",
     "${standby_utils_policy_path}:standby_utils_policy",
   ]
@@ -38,47 +36,18 @@ ohos_fuzztest("DeviceStandbyFuzzTest") {
   ]
 
   deps = [
-    "${standby_innerkits_path}:standby_innerkits",
-    "${standby_service_frameworks_path}:standby_fwk",
-    "${standby_service_path}:standby_service_static",
     "${standby_utils_common_path}:standby_utils_common",
-    "${standby_utils_policy_path}:standby_utils_policy",
+    "${standby_utils_policy_path}:standby_utils_policy_static",
   ]
 
   sources = [ "devicestandby_fuzzer.cpp" ]
 
   external_deps = [
-    "ability_base:base",
-    "ability_base:want",
-    "ability_base:zuri",
-    "ability_runtime:app_manager",
-    "ability_runtime:wantagent_innerkits",
-    "bundle_framework:appexecfwk_base",
     "c_utils:utils",
-    "common_event_service:cesfwk_innerkits",
-    "eventhandler:libeventhandler",
     "hilog:libhilog",
-    "init:libbegetutil",
     "ipc:ipc_single",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
-    "time_service:time_client",
+    "json:nlohmann_json_static",
   ]
-
-  defines = []
-  if (standby_power_manager_enable) {
-    external_deps += [ "power_manager:powermgr_client" ]
-    defines += [ "STANDBY_POWER_MANAGER_ENABLE" ]
-  }
-  if (device_standby_access_token_enable) {
-      external_deps += [
-      "access_token:libaccesstoken_sdk",
-      "access_token:libtokenid_sdk",
-      "access_token:libtoken_setproc",
-      "access_token:libtokenid_sdk",
-      ]
-      defines += [ "DEVICE_STANDBY_ACCESS_TOKEN_ENABLE" ]
-  }
 }
 
 ###############################################################################
@@ -87,7 +56,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":DeviceStandbyFuzzTest",
+    ":ConfigManagerFuzzTest",
   ]
 }
 ###############################################################################
