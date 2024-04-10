@@ -128,8 +128,8 @@ namespace DevStandbyMgr {
         datas.WriteRemoteObject(subscriber->AsObject());
         datas.WriteString(GetData<std::string>());
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::SUBSCRIBE_STANDBY_CALLBACK),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::SUBSCRIBE_STANDBY_CALLBACK),
+            datas, reply, option);
     }
 
     void CoverageHandleUnSubscribeStandbyCallback()
@@ -141,8 +141,8 @@ namespace DevStandbyMgr {
         datas.WriteRemoteObject(subscriber->AsObject());
         datas.WriteString(GetData<std::string>());
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::UNSUBSCRIBE_STANDBY_CALLBACK),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::UNSUBSCRIBE_STANDBY_CALLBACK),
+            datas, reply, option);
     }
 
     void CoverageHandleApplyAllowResource()
