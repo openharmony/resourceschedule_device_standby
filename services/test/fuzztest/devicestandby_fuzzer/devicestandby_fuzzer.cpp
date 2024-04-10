@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "securec.h"
-#include "devicestandby_fuzzer.h"
 
+#include "devicestandby_fuzzer.h"
+#include "securec.h"
 #ifdef DEVICE_STANDBY_ACCESS_TOKEN_ENABLE
 #include "access_token.h"
 #include "accesstoken_kit.h"
@@ -22,11 +22,7 @@
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
 #endif
-#define private public
-#define protected public
 #include "resourcce_request.h"
-#undef private
-#undef protected
 #include "istandby_service_subscriber.h"
 #include "standby_service.h"
 #include "istandby_ipc_inteface_code.h"

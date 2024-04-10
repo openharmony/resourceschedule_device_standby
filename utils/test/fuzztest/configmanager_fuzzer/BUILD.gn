@@ -21,7 +21,7 @@ module_output_path = "device_standby/device_standby"
 ohos_fuzztest("ConfigManagerFuzzTest") {
   module_out_path = module_output_path
   fuzz_config_file =
-      "${standby_service_path}/test/fuzztest/configmanager_fuzzer"
+      "${standby_service_utils_path}/test/fuzztest/configmanager_fuzzer"
 
   include_dirs = [
     "${standby_utils_common_path}:standby_utils_common",
@@ -33,6 +33,11 @@ ohos_fuzztest("ConfigManagerFuzzTest") {
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
+  ]
+
+  cflags_cc = [
+    "-Dprivate=public",
+    "-Dprotected=public",
   ]
 
   deps = [

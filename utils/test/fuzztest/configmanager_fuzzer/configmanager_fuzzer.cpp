@@ -12,14 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "securec.h"
 #include "configmanager_fuzzer.h"
-
-#define  private public
-#include "standby_config_manager.h"
-#undef private
+#include "securec.h"
 #include "json_utils.h"
 #include "nlohmann/json.hpp"
+#include "standby_config_manager.h"
+
 
 namespace OHOS {
 namespace DevStandbyMgr {

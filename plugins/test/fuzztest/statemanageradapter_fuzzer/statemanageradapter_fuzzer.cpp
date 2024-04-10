@@ -12,14 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "securec.h"
 #include "statemanageradapter_fuzzer.h"
-
-#define  private public
-#define  protected public
+#include "securec.h"
 #include "state_manager_adapter.h"
-#undef private
-#undef protected
 #include "common_event_support.h"
 #include "standby_service_impl.h"
 #include "working_state.h"
