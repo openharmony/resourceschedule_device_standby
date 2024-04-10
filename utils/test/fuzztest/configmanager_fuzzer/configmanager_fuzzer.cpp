@@ -67,8 +67,10 @@ namespace DevStandbyMgr {
         defaultResConfigPtr->emplace_back(std::move(defaultResourceConfig01));
         DelayedSingleton<StandbyConfigManager>::GetInstance()->
             defaultResourceConfigMap_[TAG_TEST_ONE] = defaultResConfigPtr;
-        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetEligibleAllowTimeConfig(TAG_TEST_ONE, 0, false, false);
-        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetEligibleAllowTimeConfig(TAG_TEST_ONE, 0, false, true);
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->
+            GetEligibleAllowTimeConfig(TAG_TEST_ONE, 0, false, false);
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->
+            GetEligibleAllowTimeConfig(TAG_TEST_ONE, 0, false, true);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->
             GetEligibleAllowConfig<TimeLtdProcess>(TAG_TEST_ONE, 0, false, false, func);
         nlohmann::json jsonValue = nlohmann::json::parse("{\"apps_limit\":[\"1\",\"2\"]}", nullptr, false);
