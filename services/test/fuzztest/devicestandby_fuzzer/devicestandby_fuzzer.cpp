@@ -75,13 +75,13 @@ namespace DevStandbyMgr {
             datas, reply, option);
         datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::IS_STRATEGY_ENABLED),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::IS_STRATEGY_ENABLED),
+            datas, reply, option);
         datas.WriteString(GetData<std::string>());
         datas.RewindRead(0);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::IS_STRATEGY_ENABLED),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::IS_STRATEGY_ENABLED),
+            datas, reply, option);
     }
 
     void CoverageHandleReportWorkSchedulerStatus()
@@ -91,8 +91,8 @@ namespace DevStandbyMgr {
         MessageOption option = {MessageOption::TF_SYNC};
         datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
-                static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_WORK_SCHEDULER_STATUS),
-                datas, reply, option);
+            static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_WORK_SCHEDULER_STATUS),
+            datas, reply, option);
         datas.WriteBool(GetData<bool>());
         datas.WriteInt32(GetData<int32_t>());
         datas.WriteString(GetData<std::string>());
