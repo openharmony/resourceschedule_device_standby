@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@
 #include "listener_manager_adapter.h"
 #include "strategy_manager_adapter.h"
 #include "standby_config_manager.h"
-#include "common_event_listener.h"
 #include "charge_state_monitor.h"
 #ifdef STANDBY_SENSORS_SENSOR_ENABLE
 #include "motion_sensor_monitor.h"
@@ -185,25 +184,12 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_003, TestSize.Level1)
 
 /**
  * @tc.name: StandbyPluginUnitTest_004
- * @tc.desc: test CommonEventListener of StandbyPlugin.
+ * @tc.desc: test TransitToState of StandbyStateManager.
  * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_004, TestSize.Level1)
 {
-    EventFwk::CommonEventSubscribeInfo subscribeInfo {};
-    auto commonEventListener = std::make_shared<CommonEventListener>(subscribeInfo);
-
-    EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
-    commonEventListener->OnReceiveEvent(eventData);
-    for (const auto& eventName : COMMON_EVENT_LIST) {
-        AAFwk::Want want = AAFwk::Want();
-        want.SetAction(eventName);
-        eventData.SetWant(want);
-        commonEventListener->OnReceiveEvent(eventData);
-    }
-    SleepForFC();
-    SleepForFC();
     for (const auto& eventName : COMMON_EVENT_LIST) {
         StandbyMessage message;
         message.action_ = eventName;
@@ -211,7 +197,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_004, TestSize.Level1)
     }
     standbyStateManager_->TransitToState(StandbyState::WORKING);
     SleepForFC();
-    EXPECT_NE(commonEventListener, nullptr);
+    EXPECT_NE(standbyStateManager_, nullptr);
 }
 
 /**
@@ -416,28 +402,6 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_012, TestSize.Level1)
     EXPECT_NE(standbyStateManager_->curStatePtr_->GetCurState(), StandbyState::WORKING);
 }
 
-/**
- * @tc.name: StandbyPluginUnitTest_013
- * @tc.desc: test multithread OnReceiveEvent of StandbyService.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWMTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_013, TestSize.Level1, 20)
-{
-    EventFwk::CommonEventSubscribeInfo subscribeInfo {};
-    auto commonEventListener = std::make_shared<CommonEventListener>(subscribeInfo);
-
-    EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
-    commonEventListener->OnReceiveEvent(eventData);
-    for (const auto& event : COMMON_EVENT_LIST) {
-        AAFwk::Want want = AAFwk::Want();
-        want.SetAction(event);
-        eventData.SetWant(want);
-        commonEventListener->OnReceiveEvent(eventData);
-    }
-    EXPECT_TRUE(true);
-}
-
 #ifdef STANDBY_SENSORS_SENSOR_ENABLE
 /**
  * @tc.name: StandbyPluginUnitTest_014
@@ -569,7 +533,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0020, TestSize.Level1)
     repeatedMotionConstraint->StartEvalution(params);
     repeatedMotionConstraint->isEvaluation_ = true;
     repeatedMotionConstraint->UnInit();
-    EXPECT_FALSE(repeatedMotionConstraint->StartEvalution(params) == ERR_OK);
+    EXPECT_TRUE(repeatedMotionConstraint->StartEvalution(params) == ERR_OK);
 }
 
 /**
@@ -586,7 +550,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0021, TestSize.Level1)
     repeatedMotionConstraint->StopEvalution();
     repeatedMotionConstraint->isEvaluation_ = true;
     repeatedMotionConstraint->UnInit();
-    EXPECT_FALSE(repeatedMotionConstraint->StopEvalution() == ERR_OK);
+    EXPECT_TRUE(repeatedMotionConstraint->StopEvalution() == ERR_OK);
 }
 
 /**

@@ -27,7 +27,6 @@
 #include "standby_service.h"
 
 #include "standby_config_manager.h"
-#include "common_event_listener.h"
 #include "system_ability_definition.h"
 #ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_listener.h"
@@ -37,26 +36,12 @@ namespace OHOS {
 namespace DevStandbyMgr {
 bool ListenerManagerAdapter::Init()
 {
-    EventFwk::MatchingSkills matchingSkills;
-    switch (STANDBT_MODE) {
-        case StandbyMode::PHONEMODE:
-        case StandbyMode::TABLETMODE:
-        case StandbyMode::UNKNOWN:
-            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON);
-            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
-            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING);
-            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED);
-            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING);
-            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED);
-            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_CALL_STATE_CHANGED);
-            matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_WIFI_P2P_STATE_CHANGED);
-            break;
-        default:
-            STANDBYSERVICE_LOGD("listener manager plugin initialization failed");
-            return false;
+    if (STANDBT_MODE != StandbyMode::PHONEMODE &&
+            STANDBT_MODE != StandbyMode::TABLETMODE &&
+            STANDBT_MODE != StandbyMode::UNKNOWN) {
+        STANDBYSERVICE_LOGD("listener manager plugin initialization failed");
+        return false;
     }
-    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    messageListenerList_.emplace_back(std::make_shared<CommonEventListener>(subscriberInfo));
     #ifdef STANDBY_MULTIMODALINPUT_INPUT_ENABLE
     messageListenerList_.emplace_back(std::make_shared<InputManagerListener>());
     #endif

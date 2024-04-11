@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Copyright (c) 2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -31,7 +31,6 @@ StandbyPluginSrc = [
   "${standby_plugins_path}/ext/src/istate_manager_adapter.cpp",
   "${standby_service_constraints_path}/src/charge_state_monitor.cpp",
   "${standby_service_constraints_path}/src/constraint_manager_adapter.cpp",
-  "${standby_service_message_listener_path}/src/common_event_listener.cpp",
   "${standby_service_message_listener_path}/src/listener_manager_adapter.cpp",
   "${standby_service_standby_state_path}/src/dark_state.cpp",
   "${standby_service_standby_state_path}/src/export_plugin.cpp",

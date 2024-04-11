@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -262,7 +262,6 @@ ErrCode StandbyServiceStub::HandleReportDeviceStateChanged(MessageParcel& data, 
 
 ErrCode StandbyServiceStub::HandleCommonEvent(MessageParcel& data, MessageParcel& reply)
 {
-    STANDBYSERVICE_LOGW("stub into HandleEvent");
     uint32_t resType = 0;
     if (!data.ReadUint32(resType)) {
         STANDBYSERVICE_LOGW("Failed to read resType");

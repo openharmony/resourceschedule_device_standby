@@ -48,7 +48,7 @@ public:
 HWTEST_F(AllowRecordUnitTest, AllowRecordUnitTest_001, TestSize.Level1)
 {
     std::shared_ptr<AllowRecord> allowRecord = std::make_shared<AllowRecord>();
-    nlohmann::json& payload;
+    nlohmann::json payload;
     EXPECT_EQ(allowRecord->ParseFromJson(payload), false);
     payload["uid"] = DEFAULT_UID;
     EXPECT_EQ(allowRecord->ParseFromJson(payload), false);
@@ -62,7 +62,7 @@ HWTEST_F(AllowRecordUnitTest, AllowRecordUnitTest_001, TestSize.Level1)
     EXPECT_EQ(allowRecord->ParseFromJson(payload), true);
     payload["allowTimeList"] = DEFAULT_UID;
     EXPECT_EQ(allowRecord->ParseFromJson(payload), true);
-    nlohmann::json& persistTime;
+    nlohmann::json persistTime;
     std::vector<nlohmann::json> vector{persistTime};
     payload["allowTimeList"] = vector;
     EXPECT_EQ(allowRecord->ParseFromJson(payload), false);
