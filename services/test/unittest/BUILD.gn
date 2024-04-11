@@ -133,9 +133,9 @@ ohos_unittest("standby_helper_unit_test") {
   ]
 
   sources = [
+    "allow_record_unit_test.cpp",
     "mock/mock_helper.cpp",
     "standby_helper_unit_test.cpp",
-    "allow_record_unit_test.cpp",
   ]
 
   deps = [
