@@ -165,6 +165,21 @@ namespace DevStandbyMgr {
             datas, reply, option);
     }
 
+    void CoverageHandleCommonEvent()
+    {
+        MessageParcel datas;
+        MessageParcel reply;
+        MessageOption option;
+        datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
+        datas.WriteUint32(GetData<uint32_t>());
+        datas.WriteInt64(GetData<uint64_t>());
+        datas.WriteString(GetData<std::string>());
+        datas.RewindRead(0);
+        DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
+            static_cast<uint32_t>(IStandbyInterfaceCode::HANDLE_EVENT),
+            datas, reply, option);
+    }
+
     void PreciseCoverage()
     {
         CoverageHandleIsStrategyEnabled();
@@ -174,6 +189,7 @@ namespace DevStandbyMgr {
         CoverageHandleUnSubscribeStandbyCallback();
         CoverageHandleApplyAllowResource();
         CoverageUnHandleApplyAllowResource();
+        CoverageHandleCommonEvent();
         if (g_initFlag) {
             return;
         }
