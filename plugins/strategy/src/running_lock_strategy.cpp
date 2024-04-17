@@ -27,7 +27,7 @@
 #ifdef STANDBY_POWER_MANAGER_ENABLE
 #include "power_mgr_client.h"
 #endif
-#ifdef STANDBY_RSS_WORK_SCHEDILER_ENABLE
+#ifdef STANDBY_RSS_WORK_SCHEDULER_ENABLE
 #include "workscheduler_srv_client.h"
 #endif
 #include "allow_type.h"
@@ -236,7 +236,7 @@ ErrCode RunningLockStrategy::GetAllRunningAppInfo()
 
 ErrCode RunningLockStrategy::GetWorkSchedulerTask()
 {
-    #ifdef STANDBY_RSS_WORK_SCHEDILER_ENABLE
+    #ifdef STANDBY_RSS_WORK_SCHEDULER_ENABLE
     std::list<std::shared_ptr<WorkScheduler::WorkInfo>> workInfos;
     if (WorkScheduler::WorkSchedulerSrvClient::GetInstance().GetAllRunningWorks(workInfos) != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
