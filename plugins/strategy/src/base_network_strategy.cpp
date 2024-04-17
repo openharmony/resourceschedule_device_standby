@@ -15,12 +15,12 @@
 #include "base_network_strategy.h"
 #include <algorithm>
 #include "system_ability_definition.h"
-#ifdef STANDBY_RSS_WORK_SCHEDILER_ENABLE
+#ifdef STANDBY_RSS_WORK_SCHEDULER_ENABLE
 #include "workscheduler_srv_client.h"
 #endif
 
 #include "standby_service_log.h"
-#ifdef ENABLE_BACKGROUND_TASK_MSG
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
 #endif
 #ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
@@ -208,7 +208,7 @@ ErrCode BaseNetworkStrategy::GetForegroundApplications()
 
 ErrCode BaseNetworkStrategy::GetBackgroundTaskApp()
 {
-    #ifdef ENABLE_BACKGROUND_TASK_MSG
+    #ifdef ENABLE_BACKGROUND_TASK_MGR
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> continuousTaskList;
     if (!BackgroundTaskHelper::GetInstance()->GetContinuousTaskApps(continuousTaskList)) {
         STANDBYSERVICE_LOGW("get continuous task app failed");
@@ -241,7 +241,7 @@ ErrCode BaseNetworkStrategy::GetBackgroundTaskApp()
 
 ErrCode BaseNetworkStrategy::GetWorkSchedulerTask()
 {
-    #ifdef STANDBY_RSS_WORK_SCHEDILER_ENABLE
+    #ifdef STANDBY_RSS_WORK_SCHEDULER_ENABLE
     std::list<std::shared_ptr<WorkScheduler::WorkInfo>> workInfos;
     if (WorkScheduler::WorkSchedulerSrvClient::GetInstance().GetAllRunningWorks(workInfos) != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
