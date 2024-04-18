@@ -14,20 +14,11 @@
  */
 
 #include "common_event_manager.h"
+#include "mock_common_event.h"
 
 namespace {
     bool g_mockPublishCommonEvent = true;
     bool g_mockSubscribeCommonEvent = true;
-}
-
-void MockPublishCommonEvent(bool mockRet)
-{
-    g_mockPublishCommonEvent = mockRet;
-}
-
-void MockSubscribeCommonEvent(bool mockRet)
-{
-    g_mockSubscribeCommonEvent = mockRet;
 }
 
 namespace OHOS {
@@ -47,4 +38,15 @@ bool CommonEventManager::UnSubscribeCommonEvent(const std::shared_ptr<CommonEven
     return g_mockSubscribeCommonEvent;
 }
 }  // namespace EventFwk
+namespace DevStandbyMgr {
+void MockCommonEvent::MockPublishCommonEvent(bool mockRet)
+{
+    g_mockPublishCommonEvent = mockRet;
+}
+
+void MockCommonEvent::MockSubscribeCommonEvent(bool mockRet)
+{
+    g_mockSubscribeCommonEvent = mockRet;
+}
+}
 }  // namespace OHOS

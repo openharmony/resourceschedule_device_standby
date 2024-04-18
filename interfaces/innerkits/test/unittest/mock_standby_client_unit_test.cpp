@@ -24,10 +24,9 @@
 #include "standby_service_client.h"
 #include "standby_service_proxy.h"
 #include "standby_service_subscriber_stub.h"
+#include "mock_sa_service.h"
 using namespace testing::ext;
 
-extern void MockGetSystemAbilityManager(bool mockRet);
-extern void MockSendRequest(bool mockRet);
 namespace OHOS {
 namespace DevStandbyMgr {
 class StandbyServiceClientUnitTest : public testing::Test {
@@ -46,7 +45,7 @@ public:
  */
 HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, TestSize.Level1)
 {
-    MockGetSystemAbilityManager(false);
+    MockSaService::MockGetSystemAbilityManager(false);
     sptr<IStandbyServiceSubscriber> nullSubscriber = nullptr;
     EXPECT_NE(StandbyServiceClient::GetInstance().SubscribeStandbyCallback(nullSubscriber), ERR_OK);
     EXPECT_NE(StandbyServiceClient::GetInstance().UnsubscribeStandbyCallback(nullSubscriber), ERR_OK);
@@ -60,7 +59,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, Tes
     bool isStandby {false};
     EXPECT_NE(StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby), ERR_OK);
     StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(false, -1, "");
-    MockGetSystemAbilityManager(true);
+    MockSaService::MockGetSystemAbilityManager(true);
     StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby);
     StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(true, -1, "");
 }
@@ -75,7 +74,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_002, Tes
 {
     sptr<IRemoteObject> impl {};
     sptr<StandbyServiceProxy> proxy = new (std::nothrow) StandbyServiceProxy(impl);
-    MockSendRequest(true);
+    MockSaService::MockSendRequest(true);
     sptr<IStandbyServiceSubscriber> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
     EXPECT_NE(proxy->SubscribeStandbyCallback(subscriber), ERR_OK);
     EXPECT_NE(proxy->UnsubscribeStandbyCallback(subscriber), ERR_OK);
@@ -88,7 +87,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_002, Tes
     proxy->IsDeviceInStandby(isStandby);
     proxy->ReportWorkSchedulerStatus(false, -1, "");
 
-    MockSendRequest(false);
+    MockSaService::MockSendRequest(false);
     EXPECT_NE(proxy->SubscribeStandbyCallback(subscriber), ERR_OK);
     EXPECT_NE(proxy->UnsubscribeStandbyCallback(subscriber), ERR_OK);
     EXPECT_NE(proxy->ApplyAllowResource(resouarceRequest), ERR_OK);

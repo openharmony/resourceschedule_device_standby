@@ -16,20 +16,11 @@
 #include "ipc_skeleton.h"
 #include "time_service_client.h"
 #include "accesstoken_kit.h"
+#include "mock_ipc.h"
 
 namespace {
     bool g_mockStartTimer = true;
     bool g_mockGetTokenTypeFlag = true;
-}
-
-void MockStartTimer(bool mockRet)
-{
-    g_mockStartTimer = mockRet;
-}
-
-void MockGetTokenTypeFlag(bool mockRet)
-{
-    g_mockGetTokenTypeFlag = mockRet;
 }
 
 namespace OHOS {
@@ -79,6 +70,18 @@ ATokenTypeEnum AccessTokenKit::GetTokenTypeFlag(AccessTokenID tokenID)
     }
     return TypeATokenTypeEnum::TOKEN_HAP;
 }
+}
+}
+
+namespace DevStandbyMgr {
+void MockIpc::MockStartTimer(bool mockRet)
+{
+    g_mockStartTimer = mockRet;
+}
+
+void MockIpc::MockGetTokenTypeFlag(bool mockRet)
+{
+    g_mockGetTokenTypeFlag = mockRet;
 }
 }
 }  // namespace OHOS

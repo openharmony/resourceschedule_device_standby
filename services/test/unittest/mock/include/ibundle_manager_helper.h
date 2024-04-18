@@ -23,6 +23,10 @@ public:
     virtual ~IBundleManagerHelper() = default;
     virtual bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
         const int userId, AppExecFwk::ApplicationInfo &appInfo) = 0;
+    static void MockGetAllRunningProcesses(bool mockRet);
+    static void MockGetRunningSystemProcess(bool mockRet);
+    static void MockSubscribeObserver(bool mockRet);
+    static void MockGetBackgroundTask(bool mockRet);
 };
 
 void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock);

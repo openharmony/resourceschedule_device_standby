@@ -21,7 +21,7 @@
 #ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
 #endif
-#include "include/ibundle_manager_helper.h"
+#include "ibundle_manager_helper.h"
 
 namespace {
     static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
@@ -30,26 +30,6 @@ namespace {
     bool g_mockGetRunningSystemProcess = true;
     bool g_mockGetBackgroundTask = true;
     bool g_mockSubscribeObserver = true;
-}
-
-void MockGetAllRunningProcesses(bool mockRet)
-{
-    g_mockGetAllRunningProcesses = mockRet;
-}
-
-void MockGetRunningSystemProcess(bool mockRet)
-{
-    g_mockGetRunningSystemProcess = mockRet;
-}
-
-void MockGetBackgroundTask(bool mockRet)
-{
-    g_mockGetBackgroundTask = mockRet;
-}
-
-void MockSubscribeObserver(bool mockRet)
-{
-    g_mockSubscribeObserver = mockRet;
 }
 
 namespace OHOS {
@@ -160,6 +140,26 @@ bool AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObs
 bool AppMgrHelper::UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
 {
     return g_mockSubscribeObserver;
+}
+
+void IBundleManagerHelper::MockGetAllRunningProcesses(bool mockRet)
+{
+    g_mockGetAllRunningProcesses = mockRet;
+}
+
+void IBundleManagerHelper::MockGetRunningSystemProcess(bool mockRet)
+{
+    g_mockGetRunningSystemProcess = mockRet;
+}
+
+void IBundleManagerHelper::MockGetBackgroundTask(bool mockRet)
+{
+    g_mockGetBackgroundTask = mockRet;
+}
+
+void IBundleManagerHelper::MockSubscribeObserver(bool mockRet)
+{
+    g_mockSubscribeObserver = mockRet;
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
