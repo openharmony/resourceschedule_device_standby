@@ -57,7 +57,10 @@ ohos_unittest("mock_standby_client_unit_test") {
     "-Dprotected=public",
   ]
 
-  include_dirs = [ "${standby_innerkits_path}/include" ]
+  include_dirs = [
+    "${standby_innerkits_path}/include",
+    "${standby_innerkits_path}/test/unittest/mock/include",
+  ]
 
   sources = [
     "${standby_innerkits_path}/test/unittest/mock/mock_sa_service.cpp",
