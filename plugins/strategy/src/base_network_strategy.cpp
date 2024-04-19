@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,6 +48,7 @@ const std::map<std::string, uint8_t> BGTASK_EXEMPTION_FLAG_MAP {
 
 bool BaseNetworkStrategy::isFirewallEnabled_ = false;
 std::unordered_map<std::int32_t, NetLimtedAppInfo> BaseNetworkStrategy::netLimitedAppInfo_;
+static std::mutex mutex_;
 
 void BaseNetworkStrategy::HandleEvent(const StandbyMessage& message)
 {
@@ -187,6 +188,7 @@ ErrCode BaseNetworkStrategy::GetAllRunningAppInfo()
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
     STANDBYSERVICE_LOGI("current running processes size %{public}d", static_cast<int32_t>(allAppProcessInfos.size()));
+    std::lock_guard<std::mutex> lock(mutex_);
     for (const auto &info : allAppProcessInfos) {
         netLimitedAppInfo_.emplace(info.uid_, NetLimtedAppInfo {info.processName_});
     }
@@ -425,6 +427,7 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
     } else {
         bool isRunning {false};
         if (AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName(bundleName, isRunning) && !isRunning) {
+            std::lock_guard<std::mutex> lock(mutex_);
             netLimitedAppInfo_.erase(uid);
             SetFirewallAllowedList({uid}, isCreated);
         }
@@ -525,6 +528,7 @@ void BaseNetworkStrategy::GetAndCreateAppInfo(uint32_t uid, const std::string& b
     if (iter != netLimitedAppInfo_.end()) {
         return;
     }
+    std::lock_guard<std::mutex> lock(mutex_);
     std::tie(iter, std::ignore) = netLimitedAppInfo_.emplace(uid, NetLimtedAppInfo {bundleName});
 
     bool isSystemApp {false};

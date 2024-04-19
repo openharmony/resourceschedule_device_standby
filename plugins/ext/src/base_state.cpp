@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -208,14 +208,15 @@ int64_t StateWithMaint::CalculateMaintTimeOut(const std::shared_ptr<IStateManage
     bool isFirstInterval)
 {
     int64_t maintIntervalTimeOut {0};
-    if (maintInterval_.empty()) {
+    auto mainIntervalSize = static_cast<int32_t>(maintInterval_.size());
+    if (mainIntervalSize <= 0) {
         STANDBYSERVICE_LOGE("maintenance interval config error, can not enter maintence state");
         return 0;
     }
     if (isFirstInterval) {
         maintIntervalTimeOut = maintInterval_[maintIntervalIndex_];
     } else {
-        maintIntervalIndex_ = std::min(maintIntervalIndex_ + 1, static_cast<int32_t>(maintInterval_.size() - 1));
+        maintIntervalIndex_ = std::min(maintIntervalIndex_ + 1, mainIntervalSize - 1);
         maintIntervalTimeOut =  maintInterval_[maintIntervalIndex_];
     }
     int64_t timeDiff {0};

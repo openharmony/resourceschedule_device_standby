@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,23 +15,13 @@
 
 #include "system_ability.h"
 #include "iservice_registry.h"
-
+#include "mock_sa_service.h"
 #include "ipc_skeleton.h"
 
 namespace {
     bool g_mockGetSystemAbilityManager = true;
     bool g_mockSendRequest = true;
     const int32_t TEST_RETVAL_ONREMOTEREQUEST = 10000;
-}
-
-void MockGetSystemAbilityManager(bool mockRet)
-{
-    g_mockGetSystemAbilityManager = mockRet;
-}
-
-void MockSendRequest(bool mockRet)
-{
-    g_mockSendRequest = mockRet;
 }
 
 namespace OHOS {
@@ -56,5 +46,17 @@ int IPCObjectStub::SendRequest(uint32_t code, MessageParcel& data, MessageParcel
         return NO_ERROR;
     }
     return ERR_DEAD_OBJECT;
+}
+
+namespace DevStandbyMgr {
+void MockSaService::MockGetSystemAbilityManager(bool mockRet)
+{
+    g_mockGetSystemAbilityManager = mockRet;
+}
+
+void MockSaService::MockSendRequest(bool mockRet)
+{
+    g_mockSendRequest = mockRet;
+}
 }
 }  // namespace OHOS

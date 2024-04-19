@@ -24,6 +24,8 @@ ohos_unittest("standby_service_unit_test") {
     "-Dprotected=public",
   ]
 
+  include_dirs = [ "${standby_service_path}/test/unittest/mock/include" ]
+
   sources = [
     "mock/mock_common_event.cpp",
     "mock/mock_helper.cpp",
@@ -131,6 +133,8 @@ ohos_unittest("standby_helper_unit_test") {
     "-Dprivate=public",
     "-Dprotected=public",
   ]
+
+  include_dirs = [ "${standby_service_path}/test/unittest/mock/include" ]
 
   sources = [
     "allow_record_unit_test.cpp",

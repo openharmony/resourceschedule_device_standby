@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,10 @@ public:
     virtual ~IBundleManagerHelper() = default;
     virtual bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
         const int userId, AppExecFwk::ApplicationInfo &appInfo) = 0;
+    static void MockGetAllRunningProcesses(bool mockRet);
+    static void MockGetRunningSystemProcess(bool mockRet);
+    static void MockSubscribeObserver(bool mockRet);
+    static void MockGetBackgroundTask(bool mockRet);
 };
 
 void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock);

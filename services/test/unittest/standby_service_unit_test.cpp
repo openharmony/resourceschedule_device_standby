@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,17 +49,11 @@
 #include "standby_config_manager.h"
 #include "app_state_observer.h"
 #include "app_mgr_constants.h"
+#include "mock_common_event.h"
+#include "ibundle_manager_helper.h"
+#include "mock_ipc.h"
 using namespace testing::ext;
 using namespace testing::mt;
-
-extern void MockPublishCommonEvent(bool mockRet);
-extern void MockSubscribeCommonEvent(bool mockRet);
-extern void MockSubscribeCommonEvent(bool mockRet);
-extern void MockGetAllRunningProcesses(bool mockRet);
-extern void MockGetRunningSystemProcess(bool mockRet);
-extern void MockSubscribeObserver(bool mockRet);
-extern void MockGetTokenTypeFlag(bool mockRet);
-extern void MockStartTimer(bool mockRet);
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -228,10 +222,10 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_004, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->isServiceReady_ = false;
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     SleepForFC();
-    MockStartTimer(false);
+    MockIpc::MockStartTimer(false);
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     SleepForFC();
-    MockStartTimer(true);
+    MockIpc::MockStartTimer(true);
     StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(DEFAULT_UID, DEFAULT_BUNDLENAME, true);
     sptr<ResourceRequest> resourceRequest = new (std::nothrow) ResourceRequest();
     StandbyServiceImpl::GetInstance()->ApplyAllowResource(resourceRequest);
@@ -354,9 +348,9 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_008, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->DumpPersistantData();
     StandbyServiceImpl::GetInstance()->ParsePersistentData();
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->allowInfoMap_.empty());
-    MockGetAllRunningProcesses(false);
+    IBundleManagerHelper::MockGetAllRunningProcesses(false);
     StandbyServiceImpl::GetInstance()->ParsePersistentData();
-    MockGetAllRunningProcesses(true);
+    IBundleManagerHelper::MockGetAllRunningProcesses(true);
 
     auto emptyRecord = std::make_shared<AllowRecord>(0, 0, "name", 0);
     emptyRecord->allowTimeList_.emplace_back(AllowTime{0, 0, "reason"});
@@ -376,9 +370,9 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_008, TestSize.Level1)
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_009, TestSize.Level1)
 {
     StandbyServiceImpl::GetInstance()->ResetTimeObserver();
-    MockStartTimer(false);
+    MockIpc::MockStartTimer(false);
     StandbyServiceImpl::GetInstance()->ResetTimeObserver();
-    MockStartTimer(true);
+    MockIpc::MockStartTimer(true);
     EXPECT_NE(StandbyServiceImpl::GetInstance()->dayNightSwitchTimerId_, 0);
 }
 
@@ -422,10 +416,10 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_012, TestSize.Level1)
 {
     StandbyServiceImpl::GetInstance()->CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API);
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->CheckCallerPermission(ReasonCodeEnum::REASON_APP_API), ERR_OK);
-    MockGetTokenTypeFlag(false);
+    MockIpc::MockGetTokenTypeFlag(false);
     StandbyServiceImpl::GetInstance()->CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API);
     StandbyServiceImpl::GetInstance()->CheckCallerPermission(ReasonCodeEnum::REASON_APP_API);
-    MockGetTokenTypeFlag(true);
+    MockIpc::MockGetTokenTypeFlag(true);
     Security::AccessToken::AccessTokenID tokenId {};
     StandbyServiceImpl::GetInstance()->IsSystemAppWithPermission(-1, tokenId, ReasonCodeEnum::REASON_APP_API);
     StandbyServiceImpl::GetInstance()->IsSystemAppWithPermission(-1, tokenId, ReasonCodeEnum::REASON_NATIVE_API);
@@ -494,18 +488,18 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_016, TestSize.Level1)
     SleepForFC();
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     SleepForFC();
-    MockStartTimer(false);
+    MockIpc::MockStartTimer(false);
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     SleepForFC();
-    MockStartTimer(true);
+    MockIpc::MockStartTimer(true);
     StandbyServiceImpl::GetInstance()->UnregisterTimeObserver();
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
     StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
     SleepForFC();
     EXPECT_NE(StandbyServiceImpl::GetInstance()->dayNightSwitchTimerId_, 0);
-    MockStartTimer(false);
+    MockIpc::MockStartTimer(false);
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
-    MockStartTimer(true);
+    MockIpc::MockStartTimer(true);
     SleepForFC();
 }
 
@@ -707,12 +701,12 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_023, TestSize.Level1)
     std::unordered_map<int32_t, std::string> pidNameMap {};
     StandbyServiceImpl::GetInstance()->GetPidAndProcName(pidNameMap);
     EXPECT_NE(pidNameMap.size(), 0);
-    MockGetAllRunningProcesses(false);
+    IBundleManagerHelper::MockGetAllRunningProcesses(false);
     StandbyServiceImpl::GetInstance()->GetPidAndProcName(pidNameMap);
-    MockGetAllRunningProcesses(true);
-    MockGetRunningSystemProcess(false);
+    IBundleManagerHelper::MockGetAllRunningProcesses(true);
+    IBundleManagerHelper::MockGetRunningSystemProcess(false);
     StandbyServiceImpl::GetInstance()->GetPidAndProcName(pidNameMap);
-    MockGetRunningSystemProcess(true);
+    IBundleManagerHelper::MockGetRunningSystemProcess(true);
 }
 
 /**
@@ -733,10 +727,10 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_024, TestSize.Level1, 2
     }
     StandbyServiceUnitTest::SleepForFC();
     EXPECT_NE(StandbyServiceImpl::GetInstance()->commonEventObserver_, nullptr);
-    MockSubscribeCommonEvent(false);
+    MockCommonEvent::MockSubscribeCommonEvent(false);
     StandbyServiceImpl::GetInstance()->commonEventObserver_->Subscribe();
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->commonEventObserver_->Unsubscribe());
-    MockSubscribeCommonEvent(true);
+    MockCommonEvent::MockSubscribeCommonEvent(true);
     StandbyServiceImpl::GetInstance()->commonEventObserver_->Subscribe();
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->commonEventObserver_->Unsubscribe());
 }
@@ -858,10 +852,10 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_033, TestSize.Level1, 2
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->UnregisterCommEventObserver(), ERR_OK);
     StandbyServiceImpl::GetInstance()->RegisterCommEventObserver();
     StandbyServiceImpl::GetInstance()->RegisterCommEventObserver();
-    MockSubscribeCommonEvent(false);
+    MockCommonEvent::MockSubscribeCommonEvent(false);
     StandbyServiceImpl::GetInstance()->RegisterCommEventObserver();
     StandbyServiceImpl::GetInstance()->UnregisterCommEventObserver();
-    MockSubscribeCommonEvent(true);
+    MockCommonEvent::MockSubscribeCommonEvent(true);
 }
 
 /**
@@ -878,13 +872,13 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_034, TestSize.Level1, 2
     StandbyServiceImpl::GetInstance()->dayNightSwitchTimerId_ = 1;
     StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
     StandbyServiceImpl::GetInstance()->dayNightSwitchTimerId_ = 0;
-    MockSubscribeCommonEvent(false);
+    MockCommonEvent::MockSubscribeCommonEvent(false);
     StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
-    MockStartTimer(false);
+    MockIpc::MockStartTimer(false);
     StandbyServiceImpl::GetInstance()->dayNightSwitchTimerId_ = 0;
     StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
-    MockStartTimer(true);
-    MockSubscribeCommonEvent(true);
+    MockIpc::MockStartTimer(true);
+    MockCommonEvent::MockSubscribeCommonEvent(true);
 }
 
 /**
@@ -898,15 +892,15 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_035, TestSize.Level1, 2
     sptr<IStandbyServiceSubscriber> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
     StandbyStateSubscriber::GetInstance()->AddSubscriber(subscriber);
     StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber);
-    MockPublishCommonEvent(true);
+    MockCommonEvent::MockPublishCommonEvent(true);
     StandbyStateSubscriber::GetInstance()->ReportStandbyState(StandbyState::WORKING);
     StandbyStateSubscriber::GetInstance()->ReportStandbyState(StandbyState::NAP);
     StandbyStateSubscriber::GetInstance()->ReportStandbyState(StandbyState::SLEEP);
-    MockPublishCommonEvent(false);
+    MockCommonEvent::MockPublishCommonEvent(false);
     StandbyStateSubscriber::GetInstance()->ReportStandbyState(StandbyState::WORKING);
     StandbyStateSubscriber::GetInstance()->ReportStandbyState(StandbyState::NAP);
     StandbyStateSubscriber::GetInstance()->ReportStandbyState(StandbyState::SLEEP);
-    MockPublishCommonEvent(true);
+    MockCommonEvent::MockPublishCommonEvent(true);
     EXPECT_TRUE(true);
 }
 
@@ -981,7 +975,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_038, TestSize.Level1)
     uint64_t timerId {0};
     timedTask->StartDayNightSwitchTimer(timerId);
     std::function<void()> callBack {};
-    MockStartTimer(false);
+    MockIpc::MockStartTimer(false);
     uint64_t zeroTimeId {0};
     uint64_t negativeTimeId {-1};
     EXPECT_TRUE(timedTask->RegisterDayNightSwitchTimer(zeroTimeId, false, 0, callBack));
@@ -994,7 +988,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_038, TestSize.Level1)
     StandbyServiceUnitTest::SleepForFC();
     StandbyServiceImpl::GetInstance()->ResetTimeObserver();
     StandbyServiceUnitTest::SleepForFC();
-    MockStartTimer(true);
+    MockIpc::MockStartTimer(true);
     timedTask->RegisterDayNightSwitchTimer(zeroTimeId, false, 0, callBack);
     timedTask->RegisterDayNightSwitchTimer(negativeTimeId, false, 0, callBack);
 }
@@ -1009,9 +1003,9 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_039, TestSize.Level1)
 {
     Security::AccessToken::AccessTokenID tokenId {};
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->CheckNativePermission(tokenId), ERR_OK);
-    MockGetTokenTypeFlag(false);
+    MockIpc::MockGetTokenTypeFlag(false);
     StandbyServiceImpl::GetInstance()->CheckNativePermission(tokenId);
-    MockGetTokenTypeFlag(true);
+    MockIpc::MockGetTokenTypeFlag(true);
 }
 
 /**
@@ -1047,11 +1041,11 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_041, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();
     StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->appStateObserver_, nullptr);
-    MockSubscribeObserver(true);
+    IBundleManagerHelper::MockSubscribeObserver(true);
     StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
     StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
     StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();
-    MockSubscribeObserver(false);
+    IBundleManagerHelper::MockSubscribeObserver(false);
     StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
     StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
     StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();

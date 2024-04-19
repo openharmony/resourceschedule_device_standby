@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,20 +16,11 @@
 #include "ipc_skeleton.h"
 #include "time_service_client.h"
 #include "accesstoken_kit.h"
+#include "mock_ipc.h"
 
 namespace {
     bool g_mockStartTimer = true;
     bool g_mockGetTokenTypeFlag = true;
-}
-
-void MockStartTimer(bool mockRet)
-{
-    g_mockStartTimer = mockRet;
-}
-
-void MockGetTokenTypeFlag(bool mockRet)
-{
-    g_mockGetTokenTypeFlag = mockRet;
 }
 
 namespace OHOS {
@@ -79,6 +70,18 @@ ATokenTypeEnum AccessTokenKit::GetTokenTypeFlag(AccessTokenID tokenID)
     }
     return TypeATokenTypeEnum::TOKEN_HAP;
 }
+}
+}
+
+namespace DevStandbyMgr {
+void MockIpc::MockStartTimer(bool mockRet)
+{
+    g_mockStartTimer = mockRet;
+}
+
+void MockIpc::MockGetTokenTypeFlag(bool mockRet)
+{
+    g_mockGetTokenTypeFlag = mockRet;
 }
 }
 }  // namespace OHOS
