@@ -32,7 +32,7 @@ ohos_unittest("standby_plugin_unit_test") {
     "${standby_service_strategy_path}/include",
     "${standby_utils_common_path}/include",
     "${standby_utils_policy_path}/include",
-    "${standby_innerkits_path}/test/unittest/mock/include",
+    "${standby_service_path}/test/unittest/mock/include",
   ]
 
   sources = [
@@ -108,7 +108,7 @@ ohos_unittest("standby_plugin_strategy_test") {
     "${standby_service_strategy_path}/include",
     "${standby_utils_common_path}/include",
     "${standby_utils_policy_path}/include",
-    "${standby_innerkits_path}/test/unittest/mock/include",
+    "${standby_service_path}/test/unittest/mock/include",
   ]
 
   sources = [
