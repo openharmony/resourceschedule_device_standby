@@ -54,7 +54,6 @@ public:
     static int32_t GetRandomDelay(int32_t low, int32_t high);
     static bool DiffToFixedClock(int64_t curTimeStamp, int32_t tmHour, int32_t tmMin, int64_t& timeDiff);
 
-
 #ifdef STANDBY_POWER_MANAGER_ENABLE
 private:
     static bool IsPowerSaveMode();
