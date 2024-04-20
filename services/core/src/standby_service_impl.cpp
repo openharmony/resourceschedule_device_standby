@@ -1057,12 +1057,33 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
         case ResType::RES_TYPE_WIFI_P2P_STATE_CHANGED:
             HandleP2PStateChanged(value);
             break;
+#ifdef STANDBY_POWER_MANAGER_ENABLE
+        case ResType::RES_TYPE_POWER_MODE_CHANGED:
+            HandlePowerModeChanged(static_cast<PowerMgr::PowerMode>(value));
+            break;
+#endif
         default:
             AppEventHandler(resType, value, sceneInfo);
             break;
     }
     return ERR_OK;
 }
+
+#ifdef STANDBY_POWER_MANAGER_ENABLE
+void StandbyServiceImpl::HandlePowerModeChanged(PowerMgr::PowerMode mode)
+{
+    bool isSaveMode = false;
+    if (mode == PowerMgr::PowerMode::POWER_SAVE_MODE || mode == PowerMgr::PowerMode::EXTREME_POWER_SAVE_MODE) {
+        isSaveMode = true;
+    }
+    
+    StandbyMessage message(StandbyMessageType::COMMON_EVENT);
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_POWER_SAVE_MODE_CHANGED;
+    message.want_ = AAFwk::Want {};
+    message.want_->SetParam("current_power_mode", isSaveMode);
+    DispatchEvent(message);
+}
+#endif
 
 void StandbyServiceImpl::AppEventHandler(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {
