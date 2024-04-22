@@ -70,6 +70,11 @@ ohos_fuzztest("StateManagerAdapterFuzzTest") {
     "samgr:samgr_proxy",
     "time_service:time_client",
   ]
+
+  if (standby_power_manager_enable) {
+    external_deps += [ "power_manager:powermgr_client" ]
+    defines = [ "STANDBY_POWER_MANAGER_ENABLE" ]
+  }
 }
 
 ###############################################################################

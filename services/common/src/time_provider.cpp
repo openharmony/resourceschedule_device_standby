@@ -20,6 +20,10 @@
 #include "timed_task.h"
 #include "standby_service_log.h"
 #include "standby_config_manager.h"
+#ifdef STANDBY_POWER_MANAGER_ENABLE
+#include "power_mode_info.h"
+#include "power_mgr_client.h"
+#endif
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -35,6 +39,9 @@ namespace {
     constexpr int32_t NIGHT_TWENTY_THREE_CLOCK = 23;
     constexpr int32_t NIGHT_FIVE_CLOCK = 5;
     constexpr int32_t THREE_QUARTERS = 45;
+#ifdef STANDBY_POWER_MANAGER_ENABLE
+    constexpr int32_t SAVE_MODE_ENTRANCE_MIN = 0;
+#endif
 }
 
 bool TimeProvider::ConvertTimeStampToLocalTime(int64_t curTimeStamp, struct tm& curLocalTime)
@@ -107,6 +114,11 @@ int64_t TimeProvider::GetNapTimeOut()
     int64_t curSecTimeStamp = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs() / MSEC_PER_SEC;
     int32_t napTimeOut = TWENTY_MIN_ENTRANCE_MIN;
     struct tm curLocalTime {};
+#ifdef STANDBY_POWER_MANAGER_ENABLE
+    if (IsPowerSaveMode()) {
+        return SAVE_MODE_ENTRANCE_MIN * MSEC_PER_MIN;
+    }
+#endif
     if (!ConvertTimeStampToLocalTime(curSecTimeStamp, curLocalTime)) {
         return napTimeOut * MSEC_PER_MIN;
     }
@@ -120,6 +132,14 @@ int64_t TimeProvider::GetNapTimeOut()
     }
     return napTimeOut * MSEC_PER_MIN;
 }
+
+#ifdef STANDBY_POWER_MANAGER_ENABLE
+bool TimeProvider::IsPowerSaveMode()
+{
+    PowerMgr::PowerMode mode = PowerMgr::PowerMgrClient::GetInstance().GetDeviceMode();
+    return (mode == PowerMgr::PowerMode::POWER_SAVE_MODE || mode == PowerMgr::PowerMode::EXTREME_POWER_SAVE_MODE);
+}
+#endif
 
 int32_t TimeProvider::GetRandomDelay(int32_t low, int32_t high)
 {

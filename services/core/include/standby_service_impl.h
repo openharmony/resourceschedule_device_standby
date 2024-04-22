@@ -47,6 +47,9 @@
 #include "istate_manager_adapter.h"
 #include "istrategy_manager_adapter.h"
 #include "nlohmann/json.hpp"
+#ifdef STANDBY_POWER_MANAGER_ENABLE
+#include "power_mode_info.h"
+#endif
 #include "resourcce_request.h"
 #include "res_type.h"
 #include "single_instance.h"
@@ -172,6 +175,9 @@ private:
     void AppEventHandler(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
     void HandleCallStateChanged(const std::string &sceneInfo);
     void HandleP2PStateChanged(int32_t state);
+#ifdef STANDBY_POWER_MANAGER_ENABLE
+    void HandlePowerModeChanged(PowerMgr::PowerMode mode);
+#endif
 private:
     std::atomic<bool> isServiceReady_ {false};
     sptr<AppStateObserver> appStateObserver_ = nullptr;
