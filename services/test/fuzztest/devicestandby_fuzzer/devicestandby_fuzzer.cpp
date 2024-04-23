@@ -31,7 +31,7 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-    constexpr size_t U32_AT_SIZE = 4;
+    constexpr size_t U32_AT_SIZE = 17;
     constexpr uint32_t MAX_CODE = 13;
     constexpr uint32_t CONSTANT_ONE = 1;
     constexpr int32_t CONSTANT_TWO = 2;
