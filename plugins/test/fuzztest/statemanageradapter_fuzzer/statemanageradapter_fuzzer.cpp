@@ -153,7 +153,7 @@ namespace DevStandbyMgr {
         g_baseFuzzSize = size;
         g_baseFuzzPos = 0;
         uint32_t  uintParam = GetData<uint32_t>();
-        std::string strParam = GetData<std::string>();
+        std::string strParam((const char *) g_baseFuzzData + g_baseFuzzPos, g_baseFuzzSize - g_baseFuzzPos);
         StandbyMessage standbyMessage{uintParam, strParam};
         PreciseCoverage();
         StandbyServiceImpl::GetInstance()->GetStateManager()->HandleEvent(standbyMessage);
