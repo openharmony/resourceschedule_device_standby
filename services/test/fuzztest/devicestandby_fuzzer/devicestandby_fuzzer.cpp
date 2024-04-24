@@ -31,7 +31,7 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-    constexpr size_t U32_AT_SIZE = 4;
+    constexpr size_t U32_AT_SIZE = 17;
     constexpr uint32_t MAX_CODE = 13;
     constexpr uint32_t CONSTANT_ONE = 1;
     constexpr int32_t CONSTANT_TWO = 2;
@@ -45,6 +45,11 @@ namespace DevStandbyMgr {
     const uint8_t *g_baseFuzzData = nullptr;
     size_t g_baseFuzzSize = 0;
     size_t g_baseFuzzPos;
+    bool g_paramBool;
+    int32_t g_paramInt32;
+    uint32_t g_paramUint32;
+    uint64_t g_paramUint64;
+    std::string g_paramString;
 
     template <class T> T GetData()
     {
@@ -61,6 +66,16 @@ namespace DevStandbyMgr {
         return object;
     }
 
+    void InitParam()
+    {
+        g_paramBool = GetData<bool>();
+        g_paramInt32 = GetData<int32_t>();
+        g_paramUint32 = GetData<uint32_t>();
+        g_paramUint64 = GetData<uint64_t>();
+        std::string strParam((const char *) g_baseFuzzData + g_baseFuzzPos, g_baseFuzzSize - g_baseFuzzPos);
+        g_paramString = strParam;
+    }
+
     void CoverageHandleIsStrategyEnabled()
     {
         MessageParcel datas;
@@ -73,7 +88,7 @@ namespace DevStandbyMgr {
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::IS_STRATEGY_ENABLED),
             datas, reply, option);
-        datas.WriteString(GetData<std::string>());
+        datas.WriteString(g_paramString);
         datas.RewindRead(0);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::IS_STRATEGY_ENABLED),
@@ -89,9 +104,9 @@ namespace DevStandbyMgr {
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_WORK_SCHEDULER_STATUS),
             datas, reply, option);
-        datas.WriteBool(GetData<bool>());
-        datas.WriteInt32(GetData<int32_t>());
-        datas.WriteString(GetData<std::string>());
+        datas.WriteBool(g_paramBool);
+        datas.WriteInt32(g_paramInt32);
+        datas.WriteString(g_paramString);
         datas.RewindRead(0);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::REPORT_WORK_SCHEDULER_STATUS),
@@ -107,8 +122,8 @@ namespace DevStandbyMgr {
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST),
             datas, reply, option);
-        datas.WriteUint32(GetData<uint32_t>());
-        datas.WriteUint32(GetData<uint32_t>());
+        datas.WriteUint32(g_paramUint32);
+        datas.WriteUint32(g_paramUint32);
         datas.RewindRead(0);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::GET_ALLOW_LIST),
@@ -122,7 +137,7 @@ namespace DevStandbyMgr {
         MessageOption option;
         datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
         datas.WriteRemoteObject(subscriber->AsObject());
-        datas.WriteString(GetData<std::string>());
+        datas.WriteString(g_paramString);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::SUBSCRIBE_STANDBY_CALLBACK),
             datas, reply, option);
@@ -135,7 +150,7 @@ namespace DevStandbyMgr {
         MessageOption option;
         datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
         datas.WriteRemoteObject(subscriber->AsObject());
-        datas.WriteString(GetData<std::string>());
+        datas.WriteString(g_paramString);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::UNSUBSCRIBE_STANDBY_CALLBACK),
             datas, reply, option);
@@ -171,9 +186,9 @@ namespace DevStandbyMgr {
         MessageParcel reply;
         MessageOption option;
         datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
-        datas.WriteUint32(GetData<uint32_t>());
-        datas.WriteInt64(GetData<uint64_t>());
-        datas.WriteString(GetData<std::string>());
+        datas.WriteUint32(g_paramUint32);
+        datas.WriteInt64(g_paramUint64);
+        datas.WriteString(g_paramString);
         datas.RewindRead(0);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyInterfaceCode::HANDLE_EVENT),
@@ -209,9 +224,9 @@ namespace DevStandbyMgr {
         for (uint32_t i = 0; i < MAX_CODE; i++) {
             MessageParcel datas;
             datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
-            datas.WriteString(GetData<std::string>());
-            datas.WriteUint32(GetData<uint32_t>());
-            datas.WriteUint32(GetData<uint32_t>());
+            datas.WriteString(g_paramString);
+            datas.WriteUint32(g_paramUint32);
+            datas.WriteUint32(g_paramUint32);
             datas.WriteBuffer(data, size);
             datas.RewindRead(0);
             MessageParcel reply;

@@ -21,7 +21,7 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-    constexpr size_t U32_AT_SIZE = 4;
+    constexpr size_t U32_AT_SIZE = 6;
     const std::string TAG_APPS_LIMIT = "apps_limit";
     const std::string TAG_TEST = "test";
     const std::string TAG_TEST_ONE = "test01";
@@ -133,11 +133,10 @@ namespace DevStandbyMgr {
         g_baseFuzzData = data;
         g_baseFuzzSize = size;
         g_baseFuzzPos = 0;
-        std::string str = GetData<std::string>();
-        std::string paramName = GetData<std::string>();
         uint32_t  condition = GetData<uint32_t>();
         bool debugMode = GetData<bool>();
         bool isAllow = GetData<bool>();
+        std::string str((const char *) g_baseFuzzData + g_baseFuzzPos, g_baseFuzzSize - g_baseFuzzPos);
         PreciseCoverage();
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetStandbyDurationList(str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetStandbySwitch(str);
@@ -145,15 +144,15 @@ namespace DevStandbyMgr {
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetStrategySwitch(str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetHalfHourSwitch(str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetResCtrlConfig(str);
-        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetMaxDuration(str, paramName,
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetMaxDuration(str, str,
             condition, debugMode);
-        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetEligibleAllowTimeConfig(paramName,
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetEligibleAllowTimeConfig(str,
             condition, debugMode, isAllow);
-        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetEligiblePersistAllowConfig(paramName,
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetEligiblePersistAllowConfig(str,
             condition, debugMode, isAllow);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpSetDebugMode(debugMode);
-        DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpSetSwitch(str, debugMode, paramName);
-        DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpSetParameter(str, condition, paramName);
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpSetSwitch(str, debugMode, str);
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpSetParameter(str, condition, str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpStandbyConfigInfo(str);
         return true;
     }
