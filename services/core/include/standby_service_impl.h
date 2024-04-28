@@ -178,6 +178,8 @@ private:
 #ifdef STANDBY_POWER_MANAGER_ENABLE
     void HandlePowerModeChanged(PowerMgr::PowerMode mode);
 #endif
+    void HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo);
+    void HandleScreenStateChanged(const int64_t value);
 private:
     std::atomic<bool> isServiceReady_ {false};
     sptr<AppStateObserver> appStateObserver_ = nullptr;

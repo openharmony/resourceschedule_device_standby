@@ -1019,19 +1019,58 @@ void WEAK_FUNC StandbyServiceImpl::HandleP2PStateChanged(int32_t state)
     static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE), !disable);
 }
 
+void StandbyServiceImpl::HandleScreenStateChanged(const int64_t value)
+{
+    if (value == 1) {
+            DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                         EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON));
+    } else {
+            DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                         EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF));
+    }
+}
+
+void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo)
+{
+        bool isApply = false;
+        if (value == ResType::EfficiencyResourcesStatus::APP_EFFICIENCY_RESOURCES_APPLY ||
+            value == ResType::EfficiencyResourcesStatus::PROC_EFFICIENCY_RESOURCES_APPLY) {
+            isApply = true;
+        }
+        nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
+        if (payload.is_discarded()) {
+            STANDBYSERVICE_LOGE("parse json failed");
+            return;
+        }
+        if (!payload.contains("bundleName") || !payload.contains("resourceNumber")) {
+            STANDBYSERVICE_LOGE("param does not exist");
+            return;
+        }
+        if (!payload.at("bundleName").is_string()) {
+            STANDBYSERVICE_LOGE("bundle name param is invalid");
+            return;
+        }
+        std::string bundleName = payload.at("bundleName").get<std::string>();
+        if (!payload.at("resourceNumber").is_number_unsigned()) {
+            STANDBYSERVICE_LOGE("resource number param is invalid");
+            return;
+        }
+        uint32_t resourceNumber = payload["resourceNumber"].get<std::uint32_t>();
+        StandbyMessage standbyMessage {StandbyMessageType::BG_EFFICIENCY_RESOURCE_APPLY};
+        standbyMessage.want_ = AAFwk::Want {};
+        standbyMessage.want_->SetParam(BG_TASK_BUNDLE_NAME, bundleName);
+        standbyMessage.want_->SetParam(BG_TASK_RESOURCE_STATUS, isApply);
+        standbyMessage.want_->SetParam(BG_TASK_TYPE, static_cast<int32_t>(resourceNumber));
+        DispatchEvent(standbyMessage);
+}
+
 ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {
     STANDBYSERVICE_LOGI("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
                         resType, (long long)(value), sceneInfo.c_str());
     switch (resType) {
         case ResType::RES_TYPE_SCREEN_STATUS:
-            if (value == 1) {
-                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                             EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON));
-            } else {
-                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                             EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF));
-            }
+            HandleScreenStateChanged(value);
             break;
         case ResType::RES_TYPE_CHARGING_DISCHARGING:
             if (value == 0) {
@@ -1062,6 +1101,9 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             HandlePowerModeChanged(static_cast<PowerMgr::PowerMode>(value));
             break;
 #endif
+        case ResType::RES_TYPE_EFFICIENCY_RESOURCES_STATE_CHANGED:
+            HandleResourcesStateChanged(value, sceneInfo);
+            break;
         default:
             AppEventHandler(resType, value, sceneInfo);
             break;

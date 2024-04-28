@@ -1192,5 +1192,46 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_026, TestSize.Level1, 2
     EXPECT_FALSE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());
     StandbyServiceUnitTest::SleepForFC();
 }
+
+/**
+ * @tc.name: StandbyServiceUnitTest_048
+ * @tc.desc: test common event timer sa ability.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_048, TestSize.Level1)
+{
+    StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
+    EXPECT_EQ(StandbyServiceImpl::GetInstance()->UnregisterTimeObserver(), ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_049
+ * @tc.desc: test resources state changed.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_049, TestSize.Level1)
+{
+    int64_t value = 0;
+    std::string sceneInfo = "{\"bundleName\":\"com.timeradjust.test\",\"pid\":5569,"
+                             "\"resourceNumber\":4,\"uid\":20020139}";
+    StandbyServiceImpl::GetInstance()->HandleResourcesStateChanged(value, sceneInfo);
+    value = 1;
+    StandbyServiceImpl::GetInstance()->HandleResourcesStateChanged(value, sceneInfo);
+    sceneInfo = "{\"bundleNameTest\":\"com.timeradjust.test\",\"pid\":5569,"
+                             "\"resourceNumberTest\":4,\"uid\":20020139}";
+    StandbyServiceImpl::GetInstance()->HandleResourcesStateChanged(value, sceneInfo);
+    sceneInfo = "{\"bundleName\": 1,\"pid\":5569,"
+                             "\"resourceNumber\":4,\"uid\":20020139}";
+    StandbyServiceImpl::GetInstance()->HandleResourcesStateChanged(value, sceneInfo);
+    sceneInfo = "{\"bundleName\":\"com.timeradjust.test\",\"pid\":\"com.timeradjust.test\","
+                             "\"resourceNumber\":4,\"uid\":20020139}";
+    StandbyServiceImpl::GetInstance()->HandleResourcesStateChanged(value, sceneInfo);
+    StandbyServiceImpl::GetInstance()->HandleScreenStateChanged(value);
+    value = 0;
+    StandbyServiceImpl::GetInstance()->HandleScreenStateChanged(value);
+    EXPECT_NE(StandbyServiceImpl::GetInstance(), nullptr);
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
