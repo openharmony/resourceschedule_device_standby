@@ -40,7 +40,7 @@ namespace {
     constexpr int32_t NIGHT_FIVE_CLOCK = 5;
     constexpr int32_t THREE_QUARTERS = 45;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
-    constexpr int32_t SAVE_MODE_ENTRANCE_MIN = 0;
+    constexpr int32_t SAVE_MODE_ENTRANCE_MIN = 1;
 #endif
 }
 
