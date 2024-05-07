@@ -191,6 +191,7 @@ void StandbyStateSubscriber::HandleSubscriberDeath(const wptr<IRemoteObject>& re
 
 void StandbyStateSubscriber::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
+    std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
     if (subscriberList_.empty()) {
         result += "subscriber observer record is empty\n";
         return;
