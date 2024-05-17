@@ -30,6 +30,9 @@
 #include "standby_service_errors.h"
 namespace OHOS {
 namespace DevStandbyMgr {
+namespace {
+    using GetExtConfigFunc = int32_t (*)(int32_t, std::vector<std::string>&);
+}
 class ConditionType {
 public:
     enum Type : uint32_t {
@@ -119,6 +122,7 @@ private:
     uint32_t ParseCondition(const std::string& conditionStr);
     template<typename T> void DumpResCtrlConfig(const char* name, const std::vector<T>& configArray,
         std::stringstream& stream, const std::function<void(const T&)>& func);
+    void LoadGetExtConfigFunc();
 private:
     std::mutex configMutex_;
     std::string pluginName_;
@@ -133,6 +137,7 @@ private:
 
     std::unordered_map<std::string, bool> backStandbySwitchMap_;
     std::unordered_map<std::string, int32_t> backStandbyParaMap_;
+    GetExtConfigFunc getExtConfigFunc_ = nullptr;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

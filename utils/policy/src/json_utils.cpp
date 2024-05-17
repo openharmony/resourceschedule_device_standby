@@ -29,6 +29,24 @@ namespace {
     constexpr uint32_t JSON_FORMAT = 4;
 }
 
+bool JsonUtils::LoadJsonValueFromContent(nlohmann::json& jsonValue, const std::string& content)
+{
+    if (content.empty()) {
+        STANDBYSERVICE_LOGE("content is empty");
+        return false;
+    }
+    jsonValue = nlohmann::json::parse(content, nullptr, false);
+    if (jsonValue.is_discarded()) {
+        STANDBYSERVICE_LOGE("failed to parse content");
+        return false;
+    }
+    if (!jsonValue.is_object()) {
+        STANDBYSERVICE_LOGE("the content is not an object");
+        return false;
+    }
+    return true;
+}
+
 bool JsonUtils::LoadJsonValueFromFile(nlohmann::json& jsonValue, const std::string& filePath)
 {
     std::string content;
