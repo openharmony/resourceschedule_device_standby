@@ -148,6 +148,7 @@ void StandbyConfigManager::LoadGetExtConfigFunc()
     auto handle = dlopen(EXT_CONFIG_LIB, RTLD_NOW);
     if (!handle) {
         STANDBYSERVICE_LOGE("not find lib");
+        return;
     }
     getExtConfigFunc_ = reinterpret_cast<GetExtConfigFunc>(dlsym(handle, "GetExtMultiConfig"));
     if (!getExtConfigFunc_) {
