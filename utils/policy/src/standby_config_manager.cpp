@@ -19,6 +19,7 @@
 #include <string>
 #include <sstream>
 #include <unistd.h>
+#include <dlfcn.h>
 
 #ifdef STANDBY_CONFIG_POLICY_ENABLE
 #include "config_policy_utils.h"
@@ -31,7 +32,10 @@ namespace DevStandbyMgr {
 namespace {
     const std::string DEFAULT_CONFIG_ROOT_DIR = "/system";
     const std::string STANDBY_CONFIG_PATH = "/etc/standby_service/device_standby_config.json";
+    const int32_t STANDBY_CONFIG_INDEX = 5;
     const std::string STRATEGY_CONFIG_PATH = "/etc/standby_service/standby_strategy_config.json";
+    const int32_t STRATEGY_CONFIG_INDEX = 6;
+    const char* EXT_CONFIG_LIB = "libsuspend_manager_service.z.so";
     const std::string TAG_PLUGIN_NAME = "plugin_name";
     const std::string TAG_STANDBY = "standby";
     const std::string TAG_MAINTENANCE_LIST = "maintenance_list";
@@ -74,32 +78,83 @@ StandbyConfigManager::~StandbyConfigManager() {}
 ErrCode StandbyConfigManager::Init()
 {
     STANDBYSERVICE_LOGI("start to read config");
-
-    std::vector<std::string> configFileList = GetConfigFileList(STANDBY_CONFIG_PATH);
-    for (const auto& configFile : configFileList) {
-        nlohmann::json devStandbyConfigRoot;
-        // if failed to load one json file, read next config file
-        if (!JsonUtils::LoadJsonValueFromFile(devStandbyConfigRoot, configFile)) {
-            STANDBYSERVICE_LOGE("load config file %{public}s failed", configFile.c_str());
-            continue;
-        }
-        if (!ParseDeviceStanbyConfig(devStandbyConfigRoot)) {
-            STANDBYSERVICE_LOGE("parse config file %{public}s failed", configFile.c_str());
-        }
-    }
-
-    configFileList = GetConfigFileList(STRATEGY_CONFIG_PATH);
-    for (const auto& configFile : configFileList) {
-        nlohmann::json resCtrlConfigRoot;
-        if (!JsonUtils::LoadJsonValueFromFile(resCtrlConfigRoot, configFile)) {
-            STANDBYSERVICE_LOGE("load config file %{public}s failed", configFile.c_str());
-            continue;
-        }
-        if (!ParseResCtrlConfig(resCtrlConfigRoot)) {
-            STANDBYSERVICE_LOGE("parse config file %{public}s failed", configFile.c_str());
-        }
-    }
+    LoadGetExtConfigFunc();
+    GetAndParseStandbyConfig();
+    GetAndParseStrategyConfig();
     return ERR_OK;
+}
+
+void StandbyConfigManager::GetAndParseStandbyConfig()
+{
+    std::vector<std::string> configContentList;
+    if (getExtConfigFunc_ != nullptr && getExtConfigFunc_(STANDBY_CONFIG_INDEX, configContentList) != ERR_OK) {
+        for (const auto& content : configContentList) {
+            nlohmann::json devStandbyConfigRoot;
+            if (!JsonUtils::LoadJsonValueFromContent(devStandbyConfigRoot, content)) {
+                STANDBYSERVICE_LOGE("load config failed");
+                continue;
+            }
+            if (!ParseDeviceStanbyConfig(devStandbyConfigRoot)) {
+                STANDBYSERVICE_LOGE("parse config failed");
+            }
+        }
+    } else {
+        std::vector<std::string> configFileList = GetConfigFileList(STANDBY_CONFIG_PATH);
+        for (const auto& configFile : configFileList) {
+            nlohmann::json devStandbyConfigRoot;
+            // if failed to load one json file, read next config file
+            if (!JsonUtils::LoadJsonValueFromFile(devStandbyConfigRoot, configFile)) {
+                STANDBYSERVICE_LOGE("load config file %{public}s failed", configFile.c_str());
+                continue;
+            }
+            if (!ParseDeviceStanbyConfig(devStandbyConfigRoot)) {
+                STANDBYSERVICE_LOGE("parse config file %{public}s failed", configFile.c_str());
+            }
+        }
+    }
+}
+
+void StandbyConfigManager::GetAndParseStrategyConfig()
+{
+    std::vector<std::string> configContentList;
+    if (getExtConfigFunc_ != nullptr && getExtConfigFunc_(STRATEGY_CONFIG_INDEX, configContentList) != ERR_OK) {
+        for (const auto& content : configContentList) {
+            nlohmann::json resCtrlConfigRoot;
+            if (!JsonUtils::LoadJsonValueFromContent(resCtrlConfigRoot, content)) {
+                STANDBYSERVICE_LOGE("load config failed");
+                continue;
+            }
+            if (!ParseResCtrlConfig(resCtrlConfigRoot)) {
+                STANDBYSERVICE_LOGE("parse config failed");
+            }
+        }
+    } else {
+        std::vector<std::string> configFileList = GetConfigFileList(STRATEGY_CONFIG_PATH);
+        for (const auto& configFile : configFileList) {
+            nlohmann::json resCtrlConfigRoot;
+            if (!JsonUtils::LoadJsonValueFromFile(resCtrlConfigRoot, configFile)) {
+                STANDBYSERVICE_LOGE("load config file %{public}s failed", configFile.c_str());
+                continue;
+            }
+            if (!ParseResCtrlConfig(resCtrlConfigRoot)) {
+                STANDBYSERVICE_LOGE("parse config file %{public}s failed", configFile.c_str());
+            }
+        }
+    }
+}
+
+void StandbyConfigManager::LoadGetExtConfigFunc()
+{
+    auto handle = dlopen(EXT_CONFIG_LIB, RTLD_NOW);
+    if (!handle) {
+        STANDBYSERVICE_LOGE("not find lib");
+        return;
+    }
+    getExtConfigFunc_ = reinterpret_cast<GetExtConfigFunc>(dlsym(handle, "GetExtMultiConfig"));
+    if (!getExtConfigFunc_) {
+        STANDBYSERVICE_LOGE("get func failed");
+        dlclose(handle);
+    }
 }
 
 std::vector<std::string> StandbyConfigManager::GetConfigFileList(const std::string& relativeConfigPath)

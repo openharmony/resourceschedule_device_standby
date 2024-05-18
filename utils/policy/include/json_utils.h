@@ -37,6 +37,15 @@ public:
     static bool LoadJsonValueFromFile(nlohmann::json& jsonValue, const std::string& filePath);
 
     /**
+     * @brief load json value from string
+     *
+     * @param jsonValue json value from the string
+     * @param content string content
+     * @return true true if succeed
+     */
+    static bool LoadJsonValueFromContent(nlohmann::json& jsonValue, const std::string& content);
+
+    /**
      * @brief dump json value to file
      *
      * @param jsonValue json value to be dumped to the file
