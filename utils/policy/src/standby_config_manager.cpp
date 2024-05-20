@@ -87,7 +87,7 @@ ErrCode StandbyConfigManager::Init()
 void StandbyConfigManager::GetAndParseStandbyConfig()
 {
     std::vector<std::string> configContentList;
-    if (getExtConfigFunc_ != nullptr && getExtConfigFunc_(STANDBY_CONFIG_INDEX, configContentList) != ERR_OK) {
+    if (getExtConfigFunc_ != nullptr && getExtConfigFunc_(STANDBY_CONFIG_INDEX, configContentList) == ERR_OK) {
         for (const auto& content : configContentList) {
             nlohmann::json devStandbyConfigRoot;
             if (!JsonUtils::LoadJsonValueFromContent(devStandbyConfigRoot, content)) {
@@ -117,7 +117,7 @@ void StandbyConfigManager::GetAndParseStandbyConfig()
 void StandbyConfigManager::GetAndParseStrategyConfig()
 {
     std::vector<std::string> configContentList;
-    if (getExtConfigFunc_ != nullptr && getExtConfigFunc_(STRATEGY_CONFIG_INDEX, configContentList) != ERR_OK) {
+    if (getExtConfigFunc_ != nullptr && getExtConfigFunc_(STRATEGY_CONFIG_INDEX, configContentList) == ERR_OK) {
         for (const auto& content : configContentList) {
             nlohmann::json resCtrlConfigRoot;
             if (!JsonUtils::LoadJsonValueFromContent(resCtrlConfigRoot, content)) {
