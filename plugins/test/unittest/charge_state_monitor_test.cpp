@@ -34,21 +34,14 @@ public:
     void TearDown() override {}
 };
 
-void ChargeStateMonitorTest::TearDownTestCase()
-{
-}
+void ChargeStateMonitorTest::TearDownTestCase() {}
 
-void ChargeStateMonitorTest::SetUpTestCase()
-{
-}
+void ChargeStateMonitorTest::SetUpTestCase() {}
 
 void ChargeStateMonitorTest::SetUp()
 {
-    StandbyServiceImpl::GetInstance()->constraintManager_ = 
-        std::shared_ptr<IConstraintManagerAdapter>(new ConstraintManagerAdapter());
-
-    StandbyServiceImpl::GetInstance()->standbyStateManager_ = 
-        std::shared_ptr<IStateManagerAdapter>(new StateManagerAdapter());
+    StandbyServiceImpl::GetInstance()->constraintManager_ = std::make_shared<ConstraintManagerAdapter>();
+    StandbyServiceImpl::GetInstance()->standbyStateManager_ = std::make_shared<StateManagerAdapter>();
 }
 
 /**

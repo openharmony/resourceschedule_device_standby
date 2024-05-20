@@ -40,8 +40,7 @@ void ConstraintManagerAdapterTest::SetUpTestCase() {}
 
 void ConstraintManagerAdapterTest::SetUp()
 {
-    StandbyServiceImpl::GetInstance()->standbyStateManager_ =
-        std::make_shared<IStateManagerAdapter>(new StateManagerAdapter());
+    StandbyServiceImpl::GetInstance()->standbyStateManager_ = std::make_shared<StateManagerAdapter>();
 }
 
 /**
@@ -96,8 +95,7 @@ HWTEST_F(ConstraintManagerAdapterTest, StartEvalution002, TestSize.Level1)
     ConstraintEvalParam params;
     constraintManagerAdapter->isEvaluation_ = false;
     constraintManagerAdapter->constraintMap_.clear();
-    std::shared_ptr<StateManagerAdapter> stateManagerAdapter =
-        std::make_shared<StateManagerAdapter>(new StateManagerAdapter());
+    std::shared_ptr<StateManagerAdapter> stateManagerAdapter = std::make_shared<StateManagerAdapter>();
     stateManagerAdapter->isEvalution_ = false;
     constraintManagerAdapter->stateManager_ = stateManagerAdapter;
     constraintManagerAdapter->StartEvalution(params);

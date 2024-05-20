@@ -43,10 +43,8 @@ void MotionSensorMonitorTest::SetUpTestCase() {}
 
 void MotionSensorMonitorTest::SetUp()
 {
-    StandbyServiceImpl::GetInstance()->standbyStateManager_ =
-        std::make_shared<IStateManagerAdapter>(new StateManagerAdapter());
-    StandbyServiceImpl::GetInstance()->constraintManager_ =
-        std::make_shared<IConstraintManagerAdapter>(new ConstraintManagerAdapter());
+    StandbyServiceImpl::GetInstance()->standbyStateManager_ = std::make_shared<StateManagerAdapter>();
+    StandbyServiceImpl::GetInstance()->constraintManager_ = std::make_shared<ConstraintManagerAdapter>();
     StandbyServiceImpl::GetInstance()->Init();
 }
 
