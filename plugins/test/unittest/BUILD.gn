@@ -176,6 +176,10 @@ ohos_unittest("standby_plugin_strategy_test") {
 
 ohos_unittest("standby_plugin_constraints_test") {
   module_out_path = module_output_path
+  cflags_cc = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
 
   include_dirs = [ "${standby_service_constraints_path}/include" ]
 

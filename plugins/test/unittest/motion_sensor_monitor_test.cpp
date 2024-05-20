@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 
-#define private public
-#define protected public
-
 #include "gtest/gtest.h"
 #include "motion_sensor_monitor.h"
 #include "common_constant.h"
