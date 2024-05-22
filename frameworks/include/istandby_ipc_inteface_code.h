@@ -32,7 +32,8 @@ namespace DevStandbyMgr {
         GET_RESTRICT_LIST,
         IS_STRATEGY_ENABLED,
         REPORT_DEVICE_STATE_CHANGED,
-        HANDLE_EVENT
+        HANDLE_EVENT,
+        SET_NAT_INTERVAL
     };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

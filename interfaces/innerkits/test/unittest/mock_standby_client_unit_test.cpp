@@ -58,9 +58,14 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, Tes
     EXPECT_NE(StandbyServiceClient::GetInstance().GetAllowList(0, allowInfoList, 0), ERR_OK);
     bool isStandby {false};
     EXPECT_NE(StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby), ERR_OK);
+    uint32_t type = 1;
+    bool enable = true;
+    uint32_t interval = 300;
+    EXPECT_NE(StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval), ERR_OK);
     StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(false, -1, "");
     MockSaService::MockGetSystemAbilityManager(true);
     StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby);
+    StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval);
     StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(true, -1, "");
 }
 
@@ -86,6 +91,10 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_002, Tes
     bool isStandby {false};
     proxy->IsDeviceInStandby(isStandby);
     proxy->ReportWorkSchedulerStatus(false, -1, "");
+    uint32_t type = 1;
+    bool enable = true;
+    uint32_t interval = 300;
+    proxy->SetNatInterval(type, enable, interval);
 
     MockSaService::MockSendRequest(false);
     EXPECT_NE(proxy->SubscribeStandbyCallback(subscriber), ERR_OK);
@@ -95,6 +104,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_002, Tes
     EXPECT_NE(proxy->GetAllowList(0, allowInfoList, 0), ERR_OK);
     proxy->IsDeviceInStandby(isStandby);
     proxy->ReportWorkSchedulerStatus(false, -1, "");
+    proxy->SetNatInterval(type, enable, interval);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

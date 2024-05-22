@@ -134,6 +134,16 @@ public:
     virtual ErrCode IsDeviceInStandby(bool& isStandby) = 0;
 
     /**
+     * @brief set nat timeout interval.
+     *
+     * @param type detect type.
+     * @param enable adjust or not.
+     * @param interval nat timeout interval.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    virtual ErrCode SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval) = 0;
+
+    /**
      * @brief Unified handing of events
      *
      * @param resType scene type

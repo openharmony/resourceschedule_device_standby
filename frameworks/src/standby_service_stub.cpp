@@ -69,6 +69,9 @@ ErrCode StandbyServiceStub::OnRemoteRequest(uint32_t code,
         case static_cast<uint32_t>(IStandbyInterfaceCode::HANDLE_EVENT):
             HandleCommonEvent(data, reply);
             break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::SET_NAT_INTERVAL):
+            HandleSetNatInterval(data, reply);
+            break;
         default:
             return IRemoteStub<IStandbyService>::OnRemoteRequest(code, data, reply, option);
     }
@@ -239,6 +242,23 @@ ErrCode StandbyServiceStub::HandleIsDeviceInStandby(MessageParcel& data, Message
     }
     if (!reply.WriteBool(isStandby)) {
         STANDBYSERVICE_LOGW("HandleIsDeviceInStandby Write isStandby failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceStub::HandleSetNatInterval(MessageParcel& data, MessageParcel& reply)
+{
+    uint32_t type {0};
+    bool enable {false};
+    uint32_t interval {0};
+    if (!data.ReadUint32(type) || !data.ReadBool(enable) || !data.ReadUint32(interval)) {
+        STANDBYSERVICE_LOGW("HandleSetNatInterval ReadParcelable failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    ErrCode result = SetNatInterval(type, enable, interval);
+    if (!reply.WriteInt32(result)) {
+        STANDBYSERVICE_LOGW("HandleSetNatInterval Write result failed, ErrCode=%{public}d", result);
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
     return ERR_OK;

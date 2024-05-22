@@ -74,6 +74,9 @@ extern const std::string BG_TASK_BUNDLE_NAME;
 extern const std::string BG_TASK_RESOURCE_STATUS;
 extern const std::string SA_STATUS;
 extern const std::string SA_ID;
+extern const std::string MESSAGE_TYPE;
+extern const std::string MESSAGE_ENABLE;
+extern const std::string MESSAGE_INTERVAL;
 
 extern const std::string CONTINUOUS_TASK;
 extern const std::string TRANSIENT_TASK;

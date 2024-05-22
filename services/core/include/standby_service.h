@@ -52,6 +52,7 @@ public:
     ErrCode GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
         uint32_t reasonCode) override;
     ErrCode IsDeviceInStandby(bool& isStandby) override;
+    ErrCode SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval) override;
     ErrCode ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName) override;
     ErrCode GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
         uint32_t reasonCode) override;
