@@ -18,7 +18,18 @@
     "nap_interval": [300, 600, 900],
     "sleep_interval": [3600, 7200, 14400, 21600]
   },
-  "strategy_list": ["NETWORK", "TIMER", "RUNNING_LOCK", "WORK_SCHEDULER"],
+  "strategy_list": {
+    "NETWORK": true,
+    "TIMER": true,
+    "RUNNING_LOCK": true,
+    "WORK_SCHEDULER": true,
+    "FREEZE": true,
+    "PUSH": true,
+    "SLEEP_CLEAN": true,
+    "POWER_SAVE_CLEAN": true,
+    "SLEEP_DETECTION": true,
+    "DEVICE_SETTING": true
+  },
   "halfhour_switch_setting": {
   }
 }
