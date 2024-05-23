@@ -84,6 +84,7 @@ public:
     std::shared_ptr<std::vector<DefaultResourceConfig>> GetResCtrlConfig(const std::string& switchName);
     const std::vector<TimerResourceConfig>& GetTimerResConfig();
     const std::vector<std::string>& GetStrategyConfigList();
+    bool GetStrategyConfigList(const std::string& switchName);
     std::vector<int32_t> GetStandbyDurationList(const std::string& switchName);
 
     std::set<TimeLtdProcess> GetEligibleAllowTimeConfig(const std::string& paramName,
@@ -131,6 +132,7 @@ private:
     std::unordered_map<std::string, bool> standbySwitchMap_;
     std::unordered_map<std::string, int32_t> standbyParaMap_;
     std::unordered_map<std::string, bool> strategySwitchMap_;
+    std::unordered_map<std::string, bool> strategyListMap_;
     std::vector<std::string> strategyList_;
     std::unordered_map<std::string, bool> halfhourSwitchMap_;
     std::unordered_map<std::string, std::shared_ptr<std::vector<DefaultResourceConfig>>> defaultResourceConfigMap_;

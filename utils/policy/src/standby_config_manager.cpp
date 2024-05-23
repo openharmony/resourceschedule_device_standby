@@ -238,6 +238,11 @@ const std::vector<TimerResourceConfig>& StandbyConfigManager::GetTimerResConfig(
     return timerResConfigList_;
 }
 
+bool StandbyConfigManager::GetStrategyConfigList(const std::string& switchName)
+{
+    return GetConfigWithName(switchName, strategyListMap_);
+}
+
 const std::vector<std::string>& StandbyConfigManager::GetStrategyConfigList()
 {
     return strategyList_;
@@ -347,7 +352,7 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
         STANDBYSERVICE_LOGW("failed to parse standby interval list in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
-    if (JsonUtils::GetArrayFromJsonValue(devStandbyConfigRoot, TAG_STRATEGY_LIST, standbyListConfig) &&
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STRATEGY_LIST, standbyListConfig) &&
         !ParseStrategyListConfig(standbyListConfig)) {
         STANDBYSERVICE_LOGW("failed to parse strategy list config in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
@@ -406,15 +411,20 @@ bool StandbyConfigManager::ParseIntervalList(const nlohmann::json& standbyInterv
 
 bool StandbyConfigManager::ParseStrategyListConfig(const nlohmann::json& standbyListConfig)
 {
-    if (!standbyListConfig.is_array()) {
-        STANDBYSERVICE_LOGW("there is error in strategy list config");
-        return false;
+    bool ret = true;
+    for (const auto& element : standbyListConfig.items()) {
+        if (!element.value().is_boolean()) {
+            STANDBYSERVICE_LOGW("there is unexpected type of value in half hour standby switch config %{public}s",
+                element.key().c_str());
+            ret = false;
+            continue;
+        }
+        if (strategyListMap_.find(element.key()) == strategyListMap_.end()) {
+            strategyList_.push_back(element.key());
+        }
+        strategyListMap_[element.key()] = element.value().get<bool>();
     }
-    strategyList_.clear();
-    for (const auto& element : standbyListConfig) {
-        strategyList_.emplace_back(element.get<std::string>());
-    }
-    return true;
+    return ret;
 }
 
 bool StandbyConfigManager::ParseHalfHourSwitchConfig(const nlohmann::json& halfHourSwitchConfig)
@@ -623,9 +633,8 @@ void StandbyConfigManager::DumpStandbyConfigInfo(std::string& result)
     for (const auto& [strategyName, strategyVal] : strategySwitchMap_) {
         stream << strategyName << ": " << (strategyVal ? "true" : "false") << "\n";
     }
-    stream << "strategy:";
-    for (const auto& strategy : strategyList_) {
-        stream << " " << strategy;
+    for (const auto& [strategyListName, strategyListVal] : strategyListMap_) {
+        stream << strategyListName << ": " << (strategyListVal ? "true" : "false") << "\n";
     }
     stream << "\n";
     auto printConditions = [&stream](const int32_t& condition) { stream << "\t\t" << condition << " "; };
