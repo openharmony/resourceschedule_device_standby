@@ -259,5 +259,20 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_013, TestSiz
     uint32_t reasonCode = ReasonCodeEnum::REASON_APP_API;
     EXPECT_EQ(StandbyServiceClient::GetInstance().GetRestrictList(restrictType, restrictInfoList, reasonCode), ERR_OK);
 }
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_014
+ * @tc.desc: test IsDeviceInStandby.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_014, TestSize.Level1)
+{
+    uint32_t type = 1;
+    bool enable = true;
+    uint32_t interval = 300;
+    EXPECT_EQ(StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval), ERR_PERMISSION_DENIED);
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

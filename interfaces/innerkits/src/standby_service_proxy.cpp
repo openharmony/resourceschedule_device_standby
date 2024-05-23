@@ -237,6 +237,38 @@ ErrCode StandbyServiceProxy::IsDeviceInStandby(bool& isStandby)
     return result;
 }
 
+ErrCode StandbyServiceProxy::SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(StandbyServiceProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("SetNatInterval write descriptor failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteUint32(type) || !data.WriteBool(enable) || !data.WriteUint32(interval)) {
+        STANDBYSERVICE_LOGW("SetNatInterval write parameter failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::SET_NAT_INTERVAL),
+        option, data, reply);
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("SetNatInterval fail: transact ErrCode=%{public}d", result);
+        return ERR_STANDBY_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        STANDBYSERVICE_LOGW("SetNatInterval fail: read result failed.");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("SetNatInterval failed");
+        return result;
+    }
+    return result;
+}
+
 ErrCode StandbyServiceProxy::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
 {
     MessageParcel data;

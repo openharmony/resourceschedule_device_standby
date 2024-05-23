@@ -1233,5 +1233,20 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_049, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->HandleScreenStateChanged(value);
     EXPECT_NE(StandbyServiceImpl::GetInstance(), nullptr);
 }
+
+/**
+ * @tc.name: StandbyServiceUnitTest_057
+ * @tc.desc: test nat interval changed.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_057, TestSize.Level1)
+{
+    uint32_t type = 1;
+    bool enable = true;
+    uint32_t interval = 300;
+    ErrCode code = DelayedSingleton<StandbyService>::GetInstance()->SetNatInterval(type, enable, interval);
+    EXPECT_EQ(code, ERR_PERMISSION_DENIED);
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

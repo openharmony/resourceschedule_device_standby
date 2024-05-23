@@ -116,6 +116,16 @@ ErrCode StandbyServiceClient::IsDeviceInStandby(bool& isStandby)
     return standbyServiceProxy_->IsDeviceInStandby(isStandby);
 }
 
+ErrCode StandbyServiceClient::SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->SetNatInterval(type, enable, interval);
+}
+
 ErrCode StandbyServiceClient::HandleEvent(const std::shared_ptr<ResData> &resData)
 {
     std::string sceneInfo = resData->payload.dump();

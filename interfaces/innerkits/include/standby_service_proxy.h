@@ -81,6 +81,16 @@ public:
     ErrCode IsDeviceInStandby(bool& isStandby) override;
 
     /**
+     * @brief set nat timeout interval;
+     *
+     * @param type detect type.
+     * @param enable adjust or not.
+     * @param interval nat timeout interval.
+     * @return ErrCode ERR_OK if success, else fail.
+     */
+    ErrCode SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval) override;
+
+    /**
      * @brief Construct a new Report Work Scheduler Status object.
      *
      * @param started true if the work is triggered, else false.

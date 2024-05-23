@@ -43,6 +43,7 @@ const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     StandbyService::GetInstance().get());
 const bool SOFTWARE_SLEEP = system::GetBoolParameter("persist.sys.standby_switch", true);
 const std::string RSS_PROCESS_NAME = "resource_schedule_service";
+const std::string PUSH_PROCESS_NAME = "push_manager_service";
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyService);
@@ -228,6 +229,21 @@ ErrCode StandbyService::IsDeviceInStandby(bool& isStandby)
         return ERR_STANDBY_SYS_NOT_READY;
     }
     return StandbyServiceImpl::GetInstance()->IsDeviceInStandby(isStandby);
+}
+
+ErrCode StandbyService::SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval)
+{
+    if (!CheckProcessNamePermission(PUSH_PROCESS_NAME)) {
+        STANDBYSERVICE_LOGE("set nat interval permission check fail");
+        return ERR_PERMISSION_DENIED;
+    }
+    StandbyMessage standbyMessage{StandbyMessageType::NAT_DETECT_INTERVAL_CHANGED};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam(MESSAGE_TYPE, static_cast<int32_t>(type));
+    standbyMessage.want_->SetParam(MESSAGE_ENABLE, enable);
+    standbyMessage.want_->SetParam(MESSAGE_INTERVAL, static_cast<int32_t>(interval));
+    StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
+    return ERR_OK;
 }
 
 void StandbyService::AddPluginSysAbilityListener(int32_t systemAbilityId)

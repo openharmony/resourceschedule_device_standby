@@ -75,6 +75,10 @@ const std::string BG_TASK_RESOURCE_STATUS = "applyed";
 const std::string SA_STATUS = "isAdded";
 const std::string SA_ID = "systemAbilityId";
 
+const std::string MESSAGE_TYPE = "type";
+const std::string MESSAGE_ENABLE = "enable";
+const std::string MESSAGE_INTERVAL = "interval";
+
 const std::string CONTINUOUS_TASK = "continuous_task";
 const std::string TRANSIENT_TASK = "transient_task";
 const std::string WORK_SCHEDULER = "work_scheduler";

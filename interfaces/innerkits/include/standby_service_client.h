@@ -124,6 +124,16 @@ public:
     ErrCode IsDeviceInStandby(bool& isStandby);
 
     /**
+     * @brief set nat timeout interval;
+     *
+     * @param type detect type.
+     * @param enable adjust or not.
+     * @param interval nat timeout interval.
+     * @return ErrCode ERR_OK if success, else fail.
+     */
+    ErrCode SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval);
+
+    /**
      * @brief Unified handling of events;
      *
      * @param resData event data.

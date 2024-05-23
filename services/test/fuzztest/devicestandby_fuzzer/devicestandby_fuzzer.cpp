@@ -195,6 +195,20 @@ namespace DevStandbyMgr {
             datas, reply, option);
     }
 
+    void CoverageHandleSetNatInterval()
+    {
+        MessageParcel datas;
+        MessageParcel reply;
+        MessageOption option;
+        datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
+        datas.WriteUint32(g_paramUint32);
+        datas.WriteBool(g_paramBool);
+        datas.WriteUint32(g_paramUint32);
+        DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
+            static_cast<uint32_t>(IStandbyInterfaceCode::SET_NAT_INTERVAL),
+            datas, reply, option);
+    }
+
     void PreciseCoverage()
     {
         CoverageHandleIsStrategyEnabled();
@@ -205,6 +219,7 @@ namespace DevStandbyMgr {
         CoverageHandleApplyAllowResource();
         CoverageUnHandleApplyAllowResource();
         CoverageHandleCommonEvent();
+        CoverageHandleSetNatInterval();
         if (g_initFlag) {
             return;
         }
