@@ -477,7 +477,7 @@ bool StandbyConfigManager::ParseTimerResCtrlConfig(const nlohmann::json& resConf
     timerResConfigList_.clear();
     for (const auto &singleConfigItem : resConfigArray) {
         TimerResourceConfig timerResourceConfig;
-        if (!singleConfigItem.contains(TAG_TIME_CLOCK_APPS)) {
+        if (!singleConfigItem.contains(TAG_TIME_CLOCK_APPS) || !singleConfigItem.at(TAG_TIME_CLOCK_APPS).is_array()) {
             timerResConfigList_.emplace_back(std::move(timerResourceConfig));
             continue;
         }
