@@ -93,7 +93,7 @@ void AppStateObserver::OnForegroundApplicationChanged(const AppExecFwk::AppState
             message.want_->SetParam("cur_foreground_app_pid", pid);
             message.want_->SetParam("cur_foreground_app_name", bundleName);
             StandbyServiceImpl::GetInstance()->DispatchEvent(message);
-        })
+        });
     }
 }
 }  // namespace DevStandbyMgr
