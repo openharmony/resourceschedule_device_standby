@@ -51,6 +51,13 @@ public:
      */
     void OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData) override;
 
+    /**
+     * Application foreground changed callback.
+     *
+     * @param appStateData Application Process data.
+     */
+    void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override;
+
 private:
     bool CheckAlivedApp(const std::string &bundleName);
 
