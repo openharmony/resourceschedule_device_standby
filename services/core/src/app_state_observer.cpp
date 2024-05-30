@@ -74,5 +74,27 @@ void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData 
         });
     }
 }
+
+void AppStateObserver::OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData)
+{
+    if (!(appStateData.uid > 0 && appStateData.bundleName.size() > 0)) {
+        STANDBYSERVICE_LOGD("%{public}s : validate app state data failed!", __func__);
+        return;
+    }
+    auto pid = appStateData.pid;
+    auto bundleName = appStateData.bundleName;
+    auto state = appStateData.state;
+    auto isFocused = appStateData.isFocused;
+    STANDBYSERVICE_LOGD("fg app changed, state: %{public}d, bunddlename: %{public}s", state, bundleName.c_str());
+    if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) && isFocused) {
+        handler_->PostTask([pid, bundleName]() {
+            StandbyMessage message(StandbyMessageType::FG_APPLICATION_CHANGED);
+            message.want_ = AAFwk::Want{};
+            message.want_->SetParam("cur_foreground_app_pid", pid);
+            message.want_->SetParam("cur_foreground_app_name", bundleName);
+            StandbyServiceImpl::GetInstance()->DispatchEvent(message);
+        });
+    }
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

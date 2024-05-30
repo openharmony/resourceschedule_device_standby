@@ -43,7 +43,8 @@ struct StandbyMessageType {
         USER_SLEEP_STATE_CHANGED, // user is sleep or not
         DEVICE_NET_IDLE_POLICY_TRANSIT, // netlimit or not
         BG_EFFICIENCY_RESOURCE_APPLY, // application apply or unapply efficiency resources
-        NAT_DETECT_INTERVAL_CHANGED // push report nat timeout interval
+        NAT_DETECT_INTERVAL_CHANGED, // push report nat timeout interval
+        FG_APPLICATION_CHANGED,
     };
 };
 
