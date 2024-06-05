@@ -112,7 +112,7 @@ void StandbyConfigManager::GetAndParseStandbyConfig()
             }
         }
     }
-    StrategyConfigMaptoList(strategyListMap_);
+    GetStrategyList();
 }
 
 void StandbyConfigManager::GetAndParseStrategyConfig()
@@ -425,10 +425,10 @@ bool StandbyConfigManager::ParseStrategyListConfig(const nlohmann::json& standby
     return ret;
 }
 
-void StandbyConfigManager::StrategyConfigMaptoList(const std::unordered_map<std::string, bool>& strategyListMap)
+void StandbyConfigManager::GetStrategyList()
 {
     strategyList_.clear();
-    for (const auto& it : strategyListMap) {
+    for (const auto& it : strategyListMap_) {
         if (it.second) {
             strategyList_.emplace_back(it.first);
         }
