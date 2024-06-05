@@ -85,6 +85,7 @@ public:
     const std::vector<TimerResourceConfig>& GetTimerResConfig();
     const std::vector<std::string>& GetStrategyConfigList();
     bool GetStrategyConfigList(const std::string& switchName);
+    void GetStrategyList();
     std::vector<int32_t> GetStandbyDurationList(const std::string& switchName);
 
     std::set<TimeLtdProcess> GetEligibleAllowTimeConfig(const std::string& paramName,
@@ -113,7 +114,6 @@ private:
     bool ParseStandbyConfig(const nlohmann::json& standbyConfig);
     bool ParseIntervalList(const nlohmann::json& standbyIntervalList);
     bool ParseStrategyListConfig(const nlohmann::json& standbyListConfig);
-    void StrategyConfigMaptoList(const std::unordered_map<std::string, bool>& strategyListMap);
     bool ParseHalfHourSwitchConfig(const nlohmann::json& halfHourSwitchConfig);
     bool ParseResCtrlConfig(const nlohmann::json& resCtrlConfigRoot);
     bool ParseTimerResCtrlConfig(const nlohmann::json& resConfigArray);
