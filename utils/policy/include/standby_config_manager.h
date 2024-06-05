@@ -85,6 +85,7 @@ public:
     const std::vector<TimerResourceConfig>& GetTimerResConfig();
     const std::vector<std::string>& GetStrategyConfigList();
     bool GetStrategyConfigList(const std::string& switchName);
+    void UpdateStrategyList();
     std::vector<int32_t> GetStandbyDurationList(const std::string& switchName);
 
     std::set<TimeLtdProcess> GetEligibleAllowTimeConfig(const std::string& paramName,

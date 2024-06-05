@@ -112,6 +112,7 @@ void StandbyConfigManager::GetAndParseStandbyConfig()
             }
         }
     }
+    UpdateStrategyList();
 }
 
 void StandbyConfigManager::GetAndParseStrategyConfig()
@@ -419,12 +420,22 @@ bool StandbyConfigManager::ParseStrategyListConfig(const nlohmann::json& standby
             ret = false;
             continue;
         }
-        if (strategyListMap_.find(element.key()) == strategyListMap_.end()) {
-            strategyList_.push_back(element.key());
-        }
         strategyListMap_[element.key()] = element.value().get<bool>();
     }
     return ret;
+}
+
+void StandbyConfigManager::UpdateStrategyList()
+{
+    strategyList_.clear();
+    for (const auto& it : strategyListMap_) {
+        if (it.second) {
+            strategyList_.emplace_back(it.first);
+        }
+    }
+    if (strategyList_.empty()) {
+        STANDBYSERVICE_LOGI("No strategy is set to true.");
+    }
 }
 
 bool StandbyConfigManager::ParseHalfHourSwitchConfig(const nlohmann::json& halfHourSwitchConfig)
