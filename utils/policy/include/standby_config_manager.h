@@ -113,6 +113,7 @@ private:
     bool ParseStandbyConfig(const nlohmann::json& standbyConfig);
     bool ParseIntervalList(const nlohmann::json& standbyIntervalList);
     bool ParseStrategyListConfig(const nlohmann::json& standbyListConfig);
+    void StrategyConfigMaptoList(const std::unordered_map<std::string, bool>& strategyListMap);
     bool ParseHalfHourSwitchConfig(const nlohmann::json& halfHourSwitchConfig);
     bool ParseResCtrlConfig(const nlohmann::json& resCtrlConfigRoot);
     bool ParseTimerResCtrlConfig(const nlohmann::json& resConfigArray);
