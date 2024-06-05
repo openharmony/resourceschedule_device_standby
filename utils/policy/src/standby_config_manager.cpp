@@ -112,7 +112,7 @@ void StandbyConfigManager::GetAndParseStandbyConfig()
             }
         }
     }
-    GetStrategyList();
+    UpdateStrategyList();
 }
 
 void StandbyConfigManager::GetAndParseStrategyConfig()
@@ -425,7 +425,7 @@ bool StandbyConfigManager::ParseStrategyListConfig(const nlohmann::json& standby
     return ret;
 }
 
-void StandbyConfigManager::GetStrategyList()
+void StandbyConfigManager::UpdateStrategyList()
 {
     strategyList_.clear();
     for (const auto& it : strategyListMap_) {
