@@ -429,11 +429,11 @@ void StandbyConfigManager::StrategyConfigMaptoList(const std::unordered_map<std:
 {
     strategyList_.clear();
     for (const auto& it : strategyListMap) {
-        if(it.second) {
+        if (it.second) {
             strategyList_.emplace_back(it.first);
         }
     }
-    if(strategyList_.empty()) {
+    if (strategyList_.empty()) {
         STANDBYSERVICE_LOGI("No strategy is set to true.");
     }
 }
