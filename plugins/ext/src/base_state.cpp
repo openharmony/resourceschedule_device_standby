@@ -32,6 +32,7 @@ namespace OHOS {
 namespace DevStandbyMgr {
 #ifdef STANDBY_POWER_MANAGER_ENABLE
 std::shared_ptr<PowerMgr::RunningLock> BaseState::standbyRunningLock_ = nullptr;
+const int32_t RUNNINGLOCK_TIMEOUT = 5000;
 #endif
 bool BaseState::runningLockStatus_ = false;
 
@@ -186,7 +187,7 @@ void BaseState::AcquireStandbyRunningLock()
             "StandbyRunningLock", PowerMgr::RunningLockType::RUNNINGLOCK_BACKGROUND);
     }
     if (standbyRunningLock_ != nullptr) {
-        standbyRunningLock_->Lock();
+        standbyRunningLock_->Lock(RUNNINGLOCK_TIMEOUT);
     }
 #endif
     runningLockStatus_ = true;
