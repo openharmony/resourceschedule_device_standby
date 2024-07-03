@@ -57,6 +57,7 @@ StandbyPluginExternalDeps = [
   "hilog:libhilog",
   "init:libbegetutil",
   "ipc:ipc_single",
+  "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
   "time_service:time_client",
 ]
