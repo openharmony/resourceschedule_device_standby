@@ -29,7 +29,6 @@
         "background_task_mgr",
         "battery_manager",
         "bundle_framework",
-        "call_manager",
         "common_event_service",
         "config_policy",
         "c_utils",
