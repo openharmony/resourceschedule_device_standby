@@ -461,7 +461,7 @@ ErrCode StandbyServiceImpl::CheckCallerPermission(uint32_t reasonCode)
         == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         return IsSystemAppWithPermission(uid, tokenId, reasonCode);
     }
-    return CheckNativePermission(tokenId);
+    return ERR_OK;
 }
 
 ErrCode StandbyServiceImpl::IsSystemAppWithPermission(int32_t uid,
@@ -485,18 +485,6 @@ ErrCode StandbyServiceImpl::IsSystemAppWithPermission(int32_t uid,
         return ERR_STANDBY_PERMISSION_DENIED;
     }
     return ERR_OK;
-}
-
-ErrCode StandbyServiceImpl::CheckNativePermission(Security::AccessToken::AccessTokenID tokenId)
-{
-    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
-    if (tokenFlag == Security::AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
-        return ERR_OK;
-    }
-    if (tokenFlag == Security::AccessToken::TypeATokenTypeEnum::TOKEN_SHELL) {
-        return ERR_OK;
-    }
-    return ERR_STANDBY_PERMISSION_DENIED;
 }
 
 uint32_t StandbyServiceImpl::GetExemptedResourceType(uint32_t resourceType)
@@ -551,10 +539,6 @@ int32_t StandbyServiceImpl::GetUserIdByUid(int32_t uid)
 ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
     STANDBYSERVICE_LOGI("add %{public}s subscriber to stanby service", subscriber->GetSubscriberName().c_str());
-    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
-        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
-        return ERR_STANDBY_PERMISSION_DENIED;
-    }
     const auto& strategyConfigList = StandbyConfigManager::GetInstance()->GetStrategyConfigList();
     auto item = std::find(strategyConfigList.begin(), strategyConfigList.end(), subscriber->GetSubscriberName());
     if (item == strategyConfigList.end()) {
@@ -567,10 +551,6 @@ ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceS
 ErrCode StandbyServiceImpl::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
     STANDBYSERVICE_LOGI("add subscriber to stanby service succeed");
-    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
-        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
-        return ERR_STANDBY_PERMISSION_DENIED;
-    }
     return StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber);
 }
 
@@ -903,11 +883,6 @@ ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid,
     }
     STANDBYSERVICE_LOGD("work scheduler status changed, isstarted: %{public}d, uid: %{public}d, bundleName: %{public}s",
         started, uid, bundleName.c_str());
-    Security::AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (CheckNativePermission(tokenId) != ERR_OK) {
-        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
-        return ERR_STANDBY_PERMISSION_DENIED;
-    }
     StandbyMessage standbyMessage {StandbyMessageType::BG_TASK_STATUS_CHANGE};
     standbyMessage.want_ = AAFwk::Want {};
     standbyMessage.want_->SetParam(BG_TASK_TYPE, WORK_SCHEDULER);
@@ -925,10 +900,6 @@ ErrCode StandbyServiceImpl::GetRestrictList(uint32_t restrictType, std::vector<A
         return ERR_STANDBY_SYS_NOT_READY;
     }
     STANDBYSERVICE_LOGD("start GetRestrictList");
-    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
-        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
-        return ERR_STANDBY_PERMISSION_DENIED;
-    }
     if (!CheckAllowTypeInfo(restrictType)) {
         STANDBYSERVICE_LOGE("restrictType param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
@@ -958,10 +929,6 @@ ErrCode StandbyServiceImpl::IsStrategyEnabled(const std::string& strategyName, b
         return ERR_STANDBY_SYS_NOT_READY;
     }
     STANDBYSERVICE_LOGD("start IsStrategyEnabled");
-    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
-        STANDBYSERVICE_LOGW("invoker is unpermitted due to not native process or shell");
-        return ERR_STANDBY_PERMISSION_DENIED;
-    }
     const auto& strategyConfigList = StandbyConfigManager::GetInstance()->GetStrategyConfigList();
     auto item = std::find(strategyConfigList.begin(), strategyConfigList.end(), strategyName);
     isStandby = item != strategyConfigList.end();
@@ -975,10 +942,6 @@ ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool 
     }
     STANDBYSERVICE_LOGI("device state changed, state type: %{public}d, enabled: %{public}d",
         static_cast<int32_t>(type), enabled);
-    if (CheckNativePermission(OHOS::IPCSkeleton::GetCallingTokenID()) != ERR_OK) {
-        STANDBYSERVICE_LOGE("dump user is unpermitted due to not native process or shell");
-        return ERR_STANDBY_PERMISSION_DENIED;
-    }
     DeviceStateCache::GetInstance()->SetDeviceState(static_cast<int32_t>(type), enabled);
     if (!enabled) {
         return ERR_OK;
@@ -1199,12 +1162,6 @@ void StandbyServiceImpl::ShellDump(const std::vector<std::string>& argsInStr,
 {
     if (!isServiceReady_.load()) {
         result += "standby service manager is not ready";
-        return;
-    }
-    Security::AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (CheckNativePermission(tokenId) != ERR_OK) {
-        STANDBYSERVICE_LOGE("dump user is unpermitted due to not native process or shell");
-        result += "please using root identity\n";
         return;
     }
     handler_->PostSyncTask([this, &argsInStr, &result]() {
