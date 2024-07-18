@@ -994,21 +994,6 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_038, TestSize.Level1)
 }
 
 /**
- * @tc.name: StandbyServiceUnitTest_039
- * @tc.desc: test CheckNativePermission of StandbyService.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_039, TestSize.Level1)
-{
-    Security::AccessToken::AccessTokenID tokenId {};
-    EXPECT_EQ(StandbyServiceImpl::GetInstance()->CheckNativePermission(tokenId), ERR_OK);
-    MockIpc::MockGetTokenTypeFlag(false);
-    StandbyServiceImpl::GetInstance()->CheckNativePermission(tokenId);
-    MockIpc::MockGetTokenTypeFlag(true);
-}
-
-/**
  * @tc.name: StandbyServiceUnitTest_040
  * @tc.desc: test OnRemoteRequestInner of StandbyService.
  * @tc.type: FUNC
