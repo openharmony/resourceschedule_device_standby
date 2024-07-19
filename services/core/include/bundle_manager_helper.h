@@ -29,6 +29,7 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
+     
 class BundleManagerHelper {
 DECLARE_SINGLE_INSTANCE(BundleManagerHelper);
 public:
