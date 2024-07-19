@@ -164,7 +164,7 @@ ErrCode BaseNetworkStrategy::InitNetLimitedAppInfo()
     }
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfos(
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
-        SPECIAL_USERID, applicationInfos)) {
+        UserSpace::SPECIAL_USERID, applicationInfos)) {
         STANDBYSERVICE_LOGW("failed to get special applicationInfos");
     }
     STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d",
