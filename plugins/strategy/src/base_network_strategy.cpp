@@ -162,7 +162,11 @@ ErrCode BaseNetworkStrategy::InitNetLimitedAppInfo()
         STANDBYSERVICE_LOGW("failed to get all applicationInfos");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-     
+    if (!BundleManagerHelper::GetInstance()->GetApplicationInfos(
+        AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
+        SPECIAL_USERID, applicationInfos)) {
+        STANDBYSERVICE_LOGW("failed to get special applicationInfos");
+    }
     STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d",
         static_cast<int32_t>(applicationInfos.size()));
     for (const auto& info : applicationInfos) {
