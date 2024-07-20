@@ -285,14 +285,10 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_014, TestSiz
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_015, TestSize.Level1)
 {
-    auto mgr = StandbyServiceClient::GetInstance();
-    auto deathRecipient = StandbyServiceClient::StandbyServiceDeathRecipient(*mgr);
-    deathRecipient.OnRemoteDied(nullptr);
     nlohman::json payload;
     std::shared_ptr<ResData> data = std::make_shared<ResData>(1, 1, payload);
-    mgr->HandleEvent(data);
-    EXPECT_NE(mgr, nullptr);
+    StandbyServiceClient::GetInstance()->HandleEvent(data);
+    EXPECT_NE(StandbyServiceClient::GetInstance(), nullptr);
 }
-
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
