@@ -1261,8 +1261,8 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_058, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->debugMode_ = false;
     EXPECT_NE(DelayedSingleton<StandbyServiceImpl>::GetInstance()->GetListenerManager(), nullptr);
     EXPECT_EQ(DelayedSingleton<StandbyServiceImpl>::GetInstance()->IsDebugMode(), false);
-    DelayedSingleton<StandbyServiceImpl>::GetInstance()->OnStop();
-    EXPECT_EQ(DelayedSingleton<StandbyService>::GetInstance()->state_, ServiceRunningState::STATE_NOTSTART);
+    DelayedSingleton<StandbyService>::GetInstance()->OnStop();
+    EXPECT_EQ(DelayedSingleton<StandbyService>::GetInstance()->state_, ServiceRunningState::STATE_NOT_START);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
