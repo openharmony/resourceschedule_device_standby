@@ -330,5 +330,20 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_014, TestSize.Level1)
     devStandbyConfigRoot = nlohmann::json::parse(content, nullptr, false);
     StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(devStandbyConfigRoot);
 }
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_015
+ * @tc.desc: test StandbyConfigManager.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_015, TestSize.Level1)
+{
+    StandbyConfigManager::GetInstance()->GetStrategySwitch("test");
+    StandbyConfigManager::GetInstance()->GetTimerResConfig();
+    TimeLtdProcess process1 {"process1", 10};
+    TimeLtdProcess process2 {"process2", 20};
+    EXPECT_TRUE(process1 < process2);
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

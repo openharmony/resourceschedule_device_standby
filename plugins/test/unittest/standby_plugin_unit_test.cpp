@@ -962,6 +962,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_042, TestSize.Level1)
     standbyStateManager_->workingStatePtr_->stateManager_.reset();
     standbyStateManager_->workingStatePtr_->EndState();
     standbyStateManager_->workingStatePtr_->EndEvalCurrentState(false);
+    standbyStateManager_->workingStatePtr_->IsInFinalPhase();
     standbyStateManager_->workingStatePtr_->stateManager_ = standbyStateManager_;
 }
 
@@ -996,6 +997,22 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_044, TestSize.Level1)
     standbyStateManager_->sleepStatePtr_->EndEvalCurrentState(false);
     SleepForFC();
     EXPECT_TRUE(standbyStateManager_->workingStatePtr_->timedTaskMap_.empty());
+}
+
+/**
+ * @tc.name: StandbyPluginUnitTest_045
+ * @tc.desc: test SleepState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_045, TestSize.Level1)
+{
+    standbyStateManager_->napStatePtr_->OnStateBlocked();
+    standbyStateManager_->maintStatePtr_->EndEvalCurrentState(false);
+    std::shared_ptr<IStateManagerAdapter> stateManager = std::make_shared<StateManagerAdapter>();
+    stateManager->SetEvalution(true);
+    stateManager->IsScrOffHalfHourCtrl();
+    EXPECT_NE(standbyStateManager_, nullptr);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
