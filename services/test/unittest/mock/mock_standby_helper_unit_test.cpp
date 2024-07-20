@@ -19,7 +19,9 @@
 #include "bundle_manager_helper.h"
 #include "app_mgr_helper.h"
 #include "ability_manager_helper.h"
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
+#endif
 #include "ability_manager_helper.h"
 
 using namespace testing::ext;
@@ -75,6 +77,7 @@ HWTEST_F(MockStandbyHelperUnitTest, MockStandbyHelperUnitTest_002, TestSize.Leve
     EXPECT_FALSE(appInfo.runningResourcesApply);
 }
 
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 /**
  * @tc.name: MockStandbyHelperUnitTest_003
  * @tc.desc: test BackgroundTaskHelper.
@@ -89,5 +92,6 @@ HWTEST_F(MockStandbyHelperUnitTest, MockStandbyHelperUnitTest_003, TestSize.Leve
     std::vector<std::shared_ptr<OHOS::BackgroundTaskMgr::TransientTaskAppInfo>> appInfoList;
     BackgroundTaskHelper::GetInstance()->GetTransientTaskApps(appInfoList);
 }
+#endif
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

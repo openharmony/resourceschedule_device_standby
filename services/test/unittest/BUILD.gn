@@ -231,7 +231,7 @@ ohos_unittest("mock_standby_service_unit_test") {
 
   deps = [
     "${standby_innerkits_path}:standby_innerkits",
-    "${standby_plugins_path}:standby_plugin",
+    "${standby_plugins_path}:standby_plugin_group",
     "${standby_service_frameworks_path}:standby_fwk",
     "${standby_service_path}:standby_service_static",
     "${standby_utils_common_path}:standby_utils_common",
@@ -278,7 +278,9 @@ group("unittest") {
     ":mock_standby_helper_unit_test",
     ":mock_standby_service_unit_test",
     ":standby_helper_unit_test",
-    ":standby_service_unit_test",
     ":standby_utils_unit_test",
   ]
+  if (device_standby_plugin_enable) {
+    deps += [ ":standby_service_unit_test" ]
+  }
 }

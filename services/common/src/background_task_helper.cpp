@@ -30,19 +30,23 @@ BackgroundTaskHelper::~BackgroundTaskHelper()
 bool WEAK_FUNC BackgroundTaskHelper::GetContinuousTaskApps(
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
+    #ifdef ENABLE_BACKGROUND_TASK_MGR
     if (BackgroundTaskMgrHelper::GetContinuousTaskApps(list) != OHOS::ERR_OK) {
         STANDBYSERVICE_LOGW("Get continuous task failed");
         return false;
     }
+    #endif
     return true;
 }
 
 bool WEAK_FUNC BackgroundTaskHelper::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
 {
+    #ifdef ENABLE_BACKGROUND_TASK_MGR
     if (BackgroundTaskMgrHelper::GetTransientTaskApps(list) != OHOS::ERR_OK) {
         STANDBYSERVICE_LOGE("Get transient task failed");
         return false;
     }
+    #endif
     return true;
 }
 } // OHOS

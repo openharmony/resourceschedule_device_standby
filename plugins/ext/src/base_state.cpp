@@ -30,7 +30,9 @@
 using namespace OHOS::MiscServices;
 namespace OHOS {
 namespace DevStandbyMgr {
+#ifdef STANDBY_POWER_MANAGER_ENABLE
 std::shared_ptr<PowerMgr::RunningLock> BaseState::standbyRunningLock_ = nullptr;
+#endif
 bool BaseState::runningLockStatus_ = false;
 
 ErrCode BaseState::Init(const std::shared_ptr<BaseState>& statePtr)
@@ -167,8 +169,10 @@ void BaseState::DestroyAllTimedTask()
 void BaseState::InitRunningLock()
 {
     runningLockStatus_ = false;
+#ifdef STANDBY_POWER_MANAGER_ENABLE
     standbyRunningLock_ = PowerMgr::PowerMgrClient::GetInstance().CreateRunningLock("StandbyRunningLock",
         PowerMgr::RunningLockType::RUNNINGLOCK_BACKGROUND);
+#endif
 }
 
 void BaseState::AcquireStandbyRunningLock()
@@ -176,7 +180,9 @@ void BaseState::AcquireStandbyRunningLock()
     if (runningLockStatus_) {
         return;
     }
+#ifdef STANDBY_POWER_MANAGER_ENABLE
     standbyRunningLock_->Lock();
+#endif
     runningLockStatus_ = true;
     STANDBYSERVICE_LOGD("acquire standby running lock, status is %{public}d", runningLockStatus_);
 }
@@ -186,7 +192,9 @@ void BaseState::ReleaseStandbyRunningLock()
     if (!runningLockStatus_) {
         return;
     }
+#ifdef STANDBY_POWER_MANAGER_ENABLE
     standbyRunningLock_->UnLock();
+#endif
     runningLockStatus_ = false;
     STANDBYSERVICE_LOGD("release standby running lock, status is %{public}d", runningLockStatus_);
 }

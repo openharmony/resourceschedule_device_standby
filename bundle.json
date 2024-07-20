@@ -15,7 +15,9 @@
     "syscap": [
       "SystemCapability.ResourceSchedule.DeviceStandby"
     ],
-    "features": [],
+    "features": [
+      "device_standby_plugin_enable"
+    ],
     "adapted_system_type": [
       "standard"
     ],
@@ -53,20 +55,20 @@
     "build": {
       "group_type": {
         "base_group" : [
-            "//foundation/resourceschedule/device_standby/utils/common:standby_utils_common",
-            "//foundation/resourceschedule/device_standby/utils/policy:standby_utils_policy"
-          ],
-          "fwk_group" : [
-            "//foundation/resourceschedule/device_standby/frameworks:standby_fwk",
-            "//foundation/resourceschedule/device_standby/interfaces:standby_interfaces"
-          ],
-          "service_group" : [
-            "//foundation/resourceschedule/device_standby/sa_profile:device_standby_sa_profile",
-            "//foundation/resourceschedule/device_standby/interfaces/innerkits:standby_innerkits",
-            "//foundation/resourceschedule/device_standby/plugins:standby_plugin",
-            "//foundation/resourceschedule/device_standby/services:standby_service",
-            "//foundation/resourceschedule/device_standby/utils/policy:standby_service_config"
-          ]
+          "//foundation/resourceschedule/device_standby/utils/common:standby_utils_common",
+          "//foundation/resourceschedule/device_standby/utils/policy:standby_utils_policy"
+        ],
+        "fwk_group" : [
+          "//foundation/resourceschedule/device_standby/frameworks:standby_fwk",
+          "//foundation/resourceschedule/device_standby/interfaces:standby_interfaces"
+        ],
+        "service_group" : [
+          "//foundation/resourceschedule/device_standby/sa_profile:device_standby_sa_profile",
+          "//foundation/resourceschedule/device_standby/interfaces/innerkits:standby_innerkits",
+          "//foundation/resourceschedule/device_standby/plugins:standby_plugin_group",
+          "//foundation/resourceschedule/device_standby/services:standby_service",
+          "//foundation/resourceschedule/device_standby/utils/policy:standby_service_config"
+        ]
       },
       "inner_kits": [
         {
@@ -121,7 +123,7 @@
           "header": {
             "header_base": "//foundation/resourceschedule/device_standby/utils/policy/include",
             "header_files": [
-              "json_utils.h",
+              "json_utils.h", 
               "standby_config_manager.h"
             ]
           },
@@ -156,7 +158,7 @@
               "strategy/include/strategy_manager_adapter.h"
             ]
           },
-          "name": "//foundation/resourceschedule/device_standby/plugins:standby_plugin"
+          "name": "//foundation/resourceschedule/device_standby/plugins:standby_plugin_group"
         }
       ],
       "test": [

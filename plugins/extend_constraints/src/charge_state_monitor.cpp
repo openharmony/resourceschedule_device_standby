@@ -15,7 +15,9 @@
 
 #include "charge_state_monitor.h"
 #include "standby_service_impl.h"
+#ifdef STANDBY_BATTERY_MANAGER_ENABLE
 #include "battery_srv_client.h"
+#endif
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -30,12 +32,14 @@ bool ChargeStateMonitor::Init()
 void ChargeStateMonitor::StartMonitoring()
 {
     bool res {true};
+    #ifdef STANDBY_BATTERY_MANAGER_ENABLE
     auto chargingStatus = PowerMgr::BatterySrvClient::GetInstance().GetChargingStatus();
     if (chargingStatus == PowerMgr::BatteryChargeState::CHARGE_STATE_ENABLE || chargingStatus ==
         PowerMgr::BatteryChargeState::CHARGE_STATE_FULL) {
         STANDBYSERVICE_LOGI("can not enter next state due to the charging status");
         res = false;
     }
+    #endif
     StandbyServiceImpl::GetInstance()->GetStateManager()->EndEvalCurrentState(res);
 }
 

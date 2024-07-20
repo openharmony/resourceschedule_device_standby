@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Copyright (c) 2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -42,15 +42,59 @@ standby_service_path = "${standby_service_root_path}/services"
 
 declare_args() {
   enable_standby_configpolicy = true
-  enable_background_task_mgr = true
-
   if (defined(global_parts_info) &&
     !defined(global_parts_info.customization_config_policy)) {
         enable_standby_configpolicy = false
   }
 
+  enable_background_task_mgr = true
   if (defined(global_parts_info) &&
     !defined(global_parts_info.resourceschedule_background_task_mgr)) {
         enable_background_task_mgr = false
   }
+
+  standby_power_manager_enable = true
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.powermgr_power_manager)) {
+    standby_power_manager_enable = false
+  }
+
+  standby_battery_manager_enable = true
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.powermgr_battery_manager)) {
+    standby_battery_manager_enable = false
+  }
+
+  standby_multimodalinput_input_enable = true
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.multimodalinput_input)) {
+    standby_multimodalinput_input_enable = false
+  }
+
+  standby_sensors_sensor_enable = true
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.sensors_sensor)) {
+    standby_sensors_sensor_enable = false
+  }
+
+  standby_communication_netmanager_base_enable = true
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.communication_netmanager_base)) {
+    standby_communication_netmanager_base_enable = false
+  }
+
+  standby_rss_work_scheduler_enable = true
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.resourceschedule_work_scheduler)) {
+    standby_rss_work_scheduler_enable = false
+  }
+
+  device_standby_access_token_enable = true
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.security_access_token)) {
+    device_standby_access_token_enable = false
+  }
+
+  # features
+  device_standby_plugin_enable = true
 }
