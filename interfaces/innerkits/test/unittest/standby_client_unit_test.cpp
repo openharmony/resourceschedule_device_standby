@@ -276,19 +276,5 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_014, TestSiz
     uint32_t interval = 300;
     EXPECT_EQ(StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval), ERR_PERMISSION_DENIED);
 }
-
-/**
- * @tc.name: StandbyServiceClientUnitTest_015
- * @tc.desc: test OnRemoteDied.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_015, TestSize.Level1)
-{
-    nlohman::json payload;
-    std::shared_ptr<ResData> data = std::make_shared<ResData>(1, 1, payload);
-    StandbyServiceClient::GetInstance()->HandleEvent(data);
-    EXPECT_NE(StandbyServiceClient::GetInstance(), nullptr);
-}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
