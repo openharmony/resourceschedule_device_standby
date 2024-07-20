@@ -134,7 +134,6 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_001, TestSize.Level1)
 {
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
     StandbyService::GetInstance()->OnStart();
-    InitStandbyMode();
     EXPECT_NE(StandbyServiceImpl::GetInstance()->handler_, nullptr);
     StandbyServiceImpl::GetInstance()->InitReadyState();
     SleepForFC();
@@ -1260,7 +1259,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_058, TestSize.Level1)
 {
     StandbyServiceImpl::GetInstance()->listenerManager_ = std::make_shared<ListenerManagerAdapter>();
     StandbyServiceImpl::GetInstance()->debugMode_ = false;
-    EXPECT_NE(DelayedSingleton<StandbyServiceImpl>::GetInstance()->GetListernerManager, nullptr);
+    EXPECT_NE(DelayedSingleton<StandbyServiceImpl>::GetInstance()->GetListenerManager(), nullptr);
     EXPECT_EQ(DelayedSingleton<StandbyServiceImpl>::GetInstance()->IsDebugMode(), false);
     DelayedSingleton<StandbyServiceImpl>::GetInstance()->OnStop();
     EXPECT_EQ(DelayedSingleton<StandbyService>::GetInstance()->state_, ServiceRunningState::STATE_NOTSTART);
