@@ -119,6 +119,9 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_004, TestSiz
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_005, TestSize.Level1)
 {
+    auto allowInfo = std::make_shared<AllowInfo>();
+    MessageParcel out;
+    EXPECT_TRUE(allowInfo->Marshalling(out));
     MessageParcel data;
     EXPECT_EQ(AllowInfo::Unmarshalling(data), nullptr);
     EXPECT_EQ(ResourceRequest::Unmarshalling(data), nullptr);
@@ -273,6 +276,5 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_014, TestSiz
     uint32_t interval = 300;
     EXPECT_EQ(StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval), ERR_PERMISSION_DENIED);
 }
-
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

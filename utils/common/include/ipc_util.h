@@ -54,11 +54,6 @@ namespace DevStandbyMgr {
         }                                                   \
     } while (0)
 
-static inline sptr<IRemoteObject> GetSystemService(const std::string& name)
-{
-    auto registry = ServiceRegistry::GetInstance();
-    return (registry != nullptr) ? registry->GetService(Str8ToStr16(name)) : nullptr;
-}
 };  // namespace DevStandbyMgr
 };  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_IPC_UTIL_H

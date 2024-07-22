@@ -594,6 +594,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_018, TestSize.Level1)
     StandbyStateSubscriber::GetInstance()->deathRecipient_ = new (std::nothrow) SubscriberDeathRecipient();
 
     remote = nullptr;
+    StandbyStateSubscriber::GetInstance()->deathRecipient_->OnRemoteDied(remote);
     StandbyStateSubscriber::GetInstance()->HandleSubscriberDeath(remote);
     sptr<IRemoteObject> proxy {nullptr};
     remote = proxy;
@@ -637,6 +638,10 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_020, TestSize.Level1)
     TimeProvider::TimeDiffToDayNightSwitch(timeDiff);
     TimeProvider::DiffToFixedClock(0, 0, 0, timeDiff);
     TimeProvider::GetNapTimeOut();
+    int low = 0;
+    int high = -1;
+    int32_t unexpectedValue = 999;
+    EXPECT_TRUE(TimeProvider::GetRandomDelay(low, high) != unexpectedValue);
 }
 
 /**
@@ -991,6 +996,14 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_038, TestSize.Level1)
     MockIpc::MockStartTimer(true);
     timedTask->RegisterDayNightSwitchTimer(zeroTimeId, false, 0, callBack);
     timedTask->RegisterDayNightSwitchTimer(negativeTimeId, false, 0, callBack);
+    timedTask->SetType(zeroTimeId);
+    timedTask->SetRepeat(false);
+    timedTask->SetInterval(zeroTimeId);
+    timedTask->SetWantAgent(nullptr);
+    EXPECT_TRUE(timedTask->type == zeroTimeId);
+    EXPECT_TRUE(timedTask->repeat == false);
+    EXPECT_TRUE(timedTask->interval == zeroTimeId);
+    EXPECT_TRUE(timedTask->wantAgent == nullptr);
 }
 
 /**
@@ -1065,6 +1078,8 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_042, TestSize.Level1)
     appStateObserver->OnApplicationStateChanged(appStateData);
     appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
     appStateObserver->OnApplicationStateChanged(appStateData);
+    appStateObserver->OnProcessCreated(processData);
+    appStateObserver->OnForegroundApplicationChanged(appStateData);
     SleepForFC();
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->allowInfoMap_.empty());
 }
@@ -1232,6 +1247,22 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_057, TestSize.Level1)
     uint32_t interval = 300;
     ErrCode code = DelayedSingleton<StandbyService>::GetInstance()->SetNatInterval(type, enable, interval);
     EXPECT_EQ(code, ERR_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_058
+ * @tc.desc: test StandbyService stop/state.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_058, TestSize.Level1)
+{
+    StandbyServiceImpl::GetInstance()->listenerManager_ = std::make_shared<ListenerManagerAdapter>();
+    StandbyServiceImpl::GetInstance()->debugMode_ = false;
+    EXPECT_NE(DelayedSingleton<StandbyServiceImpl>::GetInstance()->GetListenerManager(), nullptr);
+    EXPECT_EQ(DelayedSingleton<StandbyServiceImpl>::GetInstance()->IsDebugMode(), false);
+    DelayedSingleton<StandbyService>::GetInstance()->OnStop();
+    EXPECT_EQ(DelayedSingleton<StandbyService>::GetInstance()->state_, ServiceRunningState::STATE_NOT_START);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
