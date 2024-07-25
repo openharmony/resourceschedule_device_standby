@@ -20,6 +20,7 @@
 #include <fstream>
 #include <sstream>
 #include <unistd.h>
+#include <vector>
 
 #include "standby_service_log.h"
 
@@ -214,6 +215,24 @@ bool JsonUtils::GetRealPath(const std::string& partialPath, std::string& fullPat
     }
     fullPath = tmpPath;
     return true;
+}
+
+bool JsonUtils::IsFileExists(const std::string& file)
+{
+    return access(file.c_str(), F_OK) == 0;
+}
+
+std::vector<std::string> JsonUtils::SplitVersion(const std::string& versionStr, char versionDelim)
+{
+    std::vector<std::string> tokens;
+    std::stringstream ss(versionStr);
+    std::string token;
+    while (std::getline(ss, token, versionDelim)) {
+        if (!token.empty()) {
+            tokens.push_back(token);
+        }
+    }
+    return tokens;
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

@@ -32,6 +32,7 @@ namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
     using GetExtConfigFunc = int32_t (*)(int32_t, std::vector<std::string>&);
+    using GetSingleExtConfigFunc = int32_t (*)(int32_t, std::string&);
 }
 class ConditionType {
 public:
@@ -97,7 +98,7 @@ public:
     void DumpSetDebugMode(bool debugMode);
     void DumpSetSwitch(const std::string& switchName, bool switchStatus, std::string& result);
     void DumpSetParameter(const std::string& paramName, int32_t paramValue, std::string& result);
-
+    bool NeedsToReadCloudConfig();
     /**
      * @brief dump config info
      */
@@ -127,6 +128,22 @@ private:
     void LoadGetExtConfigFunc();
     void GetAndParseStandbyConfig();
     void GetAndParseStrategyConfig();
+    void GetCloudConfig();
+    void ParseCloudConfig(const nlohmann::json& devConfigRoot);
+    bool GetParamVersion(const int32_t& fileIndex, const std::string& version);
+    bool GetCloudVersion(const int32_t& fileIndex, const std::string& version);
+    /**
+     * @brief Get a larger verison
+     *
+     * @param configVerA The version that needs to be compared
+     * @param configVerB The version that needs to be compared
+     * @return 1 if configVerA is larger
+     * @return 0 if configVerB is larger
+     * @return -1 if someting was wrong during the comparison
+     */
+    int CompareVersion(const std::string& configVerA, const std::string& configVerB);
+    bool ParseVersionConfig(const nlohmann::json& standbyConfig, const std::string& version);
+
 private:
     std::mutex configMutex_;
     std::string pluginName_;
