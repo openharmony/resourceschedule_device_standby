@@ -228,7 +228,7 @@ bool StandbyConfigManager::NeedsToReadCloudConfig()
     }
     bool ret = CompareVersion(cloudConfigVer, temp) > 0;
     STANDBYSERVICE_LOGI("cloud config:%{public}d, cloud:%{public}s, device:%{public}s, strategy:%{public}s",
-        ret, cloudConfigVer.c_str() : deviceConfigVer.c_str(), strategyConfigVer.c_str());
+        ret, cloudConfigVer.c_str(), deviceConfigVer.c_str(), strategyConfigVer.c_str());
     return ret;
 }
 
