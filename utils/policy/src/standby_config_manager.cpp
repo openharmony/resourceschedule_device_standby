@@ -259,7 +259,7 @@ int StandbyConfigManager::CompareVersion(const std::string& configVerA, const st
             return -1;
         }
         if (segB[i] != segA[i]) {
-            int ret = strtol(segB[i].c_str(), nullptr, DEC) < strtol(segA[i].c_str(), nullptr, DEC) ? 1 : 0;
+            int ret = (strtol(segB[i].c_str(), nullptr, DEC) < strtol(segA[i].c_str(), nullptr, DEC)) ? 1 : 0;
             return ret;
         }
     }
