@@ -45,6 +45,13 @@ TimedTask::TimedTask(bool repeat, uint64_t interval, bool isExact, bool isIdle)
     }
 }
 
+TimedTask::TimedTask(bool repeat, uint64_t interval, int type)
+{
+    this->repeat = repeat;
+    this->interval = interval;
+    this->type = type;
+}
+
 TimedTask::~TimedTask()
 {}
 
@@ -87,6 +94,14 @@ uint64_t WEAK_FUNC TimedTask::CreateTimer(bool repeat, uint64_t interval, bool i
     const std::function<void()>& callBack)
 {
     auto timedTask = std::make_shared<TimedTask>(repeat, interval, isExact, isIdle);
+    timedTask->SetCallbackInfo(callBack);
+    return MiscServices::TimeServiceClient::GetInstance()->CreateTimer(timedTask);
+}
+
+uint64_t WEAK_FUNC TimedTask::CreateTimer(bool repeat, uint64_t interval, int type,
+    const std::function<void()>& callBack)
+{
+    auto timedTask = std::make_shared<TimedTask>(repeat, interval, type);
     timedTask->SetCallbackInfo(callBack);
     return MiscServices::TimeServiceClient::GetInstance()->CreateTimer(timedTask);
 }
