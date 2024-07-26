@@ -266,7 +266,7 @@ int StandbyConfigManager::CompareVersion(const std::string& configVerA, const st
     return 1;
 }
 
-bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, const std::string& version)
+bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string& version)
 {
     if (fileIndex != STANDBY_CONFIG_INDEX && fileIndex != STRATEGY_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
@@ -295,7 +295,7 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, const std::
     return true;
 }
 
-bool StandbyConfigManager::GetCloudVersion(const int32_t& fileIndex, const std::string& version)
+bool StandbyConfigManager::GetCloudVersion(const int32_t& fileIndex, std::string& version)
 {
     bool ret = true;
     if (fileIndex != CLOUD_CONFIG_INDEX) {
