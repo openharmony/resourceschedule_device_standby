@@ -217,11 +217,6 @@ bool JsonUtils::GetRealPath(const std::string& partialPath, std::string& fullPat
     return true;
 }
 
-bool JsonUtils::IsFileExists(const std::string& file)
-{
-    return access(file.c_str(), F_OK) == 0;
-}
-
 std::vector<std::string> JsonUtils::SplitVersion(const std::string& versionStr, char versionDelim)
 {
     std::vector<std::string> tokens;
