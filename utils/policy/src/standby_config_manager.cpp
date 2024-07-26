@@ -49,7 +49,7 @@ namespace {
     const std::string TAG_VER = "version";
     const int VERSION_LEN = 4;
     const int DEC = 10;
-    const char versionDelim = '.';
+    const char VERSION_DELIM = '.';
     const std::string TAG_CONDITION = "condition";
     const std::string TAG_ACTION = "action";
     const std::string TAG_ALLOW = "allow";
