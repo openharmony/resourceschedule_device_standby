@@ -160,6 +160,7 @@ private:
     std::unordered_map<std::string, bool> backStandbySwitchMap_;
     std::unordered_map<std::string, int32_t> backStandbyParaMap_;
     GetExtConfigFunc getExtConfigFunc_ = nullptr;
+    GetSingleExtConfigFunc GetSingleExtConfigFunc_ = nullptr;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
