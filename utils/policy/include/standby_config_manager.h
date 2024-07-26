@@ -130,8 +130,8 @@ private:
     void GetAndParseStrategyConfig();
     void GetCloudConfig();
     void ParseCloudConfig(const nlohmann::json& devConfigRoot);
-    bool GetParamVersion(const int32_t& fileIndex, const std::string& version);
-    bool GetCloudVersion(const int32_t& fileIndex, const std::string& version);
+    bool GetParamVersion(const int32_t& fileIndex, std::string& version);
+    bool GetCloudVersion(const int32_t& fileIndex, std::string& version);
     /**
      * @brief Get a larger verison
      *
@@ -142,7 +142,7 @@ private:
      * @return -1 if there is an error during the comparison.
      */
     int CompareVersion(const std::string& configVerA, const std::string& configVerB);
-    bool ParseVersionConfig(const nlohmann::json& standbyConfig, const std::string& version);
+    bool ParseVersionConfig(const nlohmann::json& standbyConfig, std::string& version);
 
 private:
     std::mutex configMutex_;
