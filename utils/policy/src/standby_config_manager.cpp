@@ -243,12 +243,12 @@ int StandbyConfigManager::CompareVersion(const std::string& configVerA, const st
     if (configVerA.empty() && configVerB.empty()) {
         return -1;
     }
-    std::vector<std::string> segA = JsonUtils::SplitVersion(configVerA, ".");
+    std::vector<std::string> segA = JsonUtils::SplitVersion(configVerA, VERSION_DELIM);
     if (segA.size() != VERSION_LEN) {
         STANDBYSERVICE_LOGE("segment size error: %{public}s", configVerA.c_str());
         return -1;
     }
-    std::vector<std::string> segB = JsonUtils::SplitVersion(configVerB, ".");
+    std::vector<std::string> segB = JsonUtils::SplitVersion(configVerB, VERSION_DELIM);
     if (segB.size() != VERSION_LEN) {
         STANDBYSERVICE_LOGE("segment size error: %{public}s", configVerB.c_str());
         return -1;
