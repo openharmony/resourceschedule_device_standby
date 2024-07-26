@@ -36,6 +36,7 @@ class TimedTask : public MiscServices::ITimerInfo {
 public:
     TimedTask();
     TimedTask(bool repeat, uint64_t interval, bool isExact, bool isIdle = false);
+    TimedTask(bool repeat, uint64_t interval, int type);
     virtual ~TimedTask();
     void OnTrigger() override;
     void SetType(const int &type) override;
@@ -46,6 +47,7 @@ public:
 
     static uint64_t CreateTimer(bool repeat, uint64_t interval, bool isExact, bool isIdle,
         const std::function<void()>& callBack);
+    static uint64_t CreateTimer(bool repeat, uint64_t interval, int type, const std::function<void()>& callBack);
     static bool StartDayNightSwitchTimer(uint64_t& timeId);
     static bool RegisterDayNightSwitchTimer(uint64_t& timeId, bool repeat, uint64_t interval,
         const std::function<void()>& callBack);
