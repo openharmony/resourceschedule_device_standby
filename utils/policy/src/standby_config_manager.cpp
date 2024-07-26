@@ -284,7 +284,7 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, const std::
             STANDBYSERVICE_LOGE("load config failed");
             continue;
         }
-        if (!GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, tempVersion)) {
+        if (!JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, tempVersion)) {
             STANDBYSERVICE_LOGE("failed to get version");
             continue;
         }
