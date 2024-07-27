@@ -163,7 +163,7 @@ void StandbyConfigManager::GetCloudConfig()
         JsonUtils::LoadJsonValueFromContent(ConfigRoot, configCloud);
         ParseCloudConfig(ConfigRoot);
     } else {
-        STANDBYSERVICE_LOGE("Decrypt errcode: %{public}d", returnCode);
+        STANDBYSERVICE_LOGE("Decrypt errcode: %{public}d.", returnCode);
     }
     UpdateStrategyList();
 }
@@ -175,14 +175,14 @@ void StandbyConfigManager::ParseCloudConfig(const nlohmann::json& devConfigRoot)
 
     if (JsonUtils::GetObjFromJsonValue(devConfigRoot, TAG_SETTING_LIST, settingConfig) &&
         !ParseStandbyConfig(settingConfig)) {
-        STANDBYSERVICE_LOGW("Failed to parse standby config in %{public}s", TAG_SETTING_LIST.c_str());
+        STANDBYSERVICE_LOGW("Failed to parse cloud config in %{public}s", TAG_SETTING_LIST.c_str());
     }
     if (JsonUtils::GetObjFromJsonValue(devConfigRoot, TAG_STRATEGY_LIST, listConfig) &&
-        !ParseStandbyConfig(listConfig)) {
-        STANDBYSERVICE_LOGW("Failed to parse standby config in %{public}s", TAG_STRATEGY_LIST.c_str());
+        !ParseStrategyListConfig(listConfig)) {
+        STANDBYSERVICE_LOGW("Failed to parse cloud config in %{public}s", TAG_STRATEGY_LIST.c_str());
     }
     if (!ParseResCtrlConfig(devConfigRoot)) {
-        STANDBYSERVICE_LOGE("Failed to parse standby config in standby strategy.");
+        STANDBYSERVICE_LOGW("Failed to parse cloud config in standby strategy.");
     }
 }
 
@@ -221,7 +221,7 @@ bool StandbyConfigManager::NeedsToReadCloudConfig()
     std::string temp;
     int result = CompareVersion(deviceConfigVer, strategyConfigVer);
     if (result < 0) {
-        STANDBYSERVICE_LOGE("do not need to read cloud config.");
+        STANDBYSERVICE_LOGI("do not need to read cloud config.");
         return false;
     } else {
         temp = (result > 0)? deviceConfigVer : strategyConfigVer;
@@ -232,7 +232,7 @@ bool StandbyConfigManager::NeedsToReadCloudConfig()
     return ret;
 }
 
-int StandbyConfigManager::CompareVersion(const std::string& configVerA, const std::string& configVerB)
+int StandbyConfigManager::CompareVersion(std::string& configVerA, std::string& configVerB)
 {
     if (!configVerA.empty() && configVerB.empty()) {
         return 1;
@@ -254,7 +254,7 @@ int StandbyConfigManager::CompareVersion(const std::string& configVerA, const st
         return -1;
     }
     for (int i = 0; i < VERSION_LEN; i++) {
-        if (!isdigit(segA[i][0] || !isdigit(segB[i][0]))) {
+        if (!isdigit(segA[i][0]) || !isdigit(segB[i][0])) {
             STANDBYSERVICE_LOGE("segment not digit");
             return -1;
         }
@@ -270,10 +270,11 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string
 {
     if (fileIndex != STANDBY_CONFIG_INDEX && fileIndex != STRATEGY_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
+        return false;
     }
     std::vector<std::string> configContentList;
     int32_t returnCode = getExtConfigFunc_(fileIndex, configContentList);
-    if (getExtConfigFunc_ == nullptr && returnCode != ERR_OK) {
+    if (getExtConfigFunc_ == nullptr || returnCode != ERR_OK) {
         STANDBYSERVICE_LOGE("Decrypt fail.");
         return false;
     }
@@ -297,24 +298,22 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string
 
 bool StandbyConfigManager::GetCloudVersion(const int32_t& fileIndex, std::string& version)
 {
-    bool ret = true;
     if (fileIndex != CLOUD_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
+        return false;
     }
     std::string configCloud;
     int32_t returnCode = getSingleExtConfigFunc_(fileIndex, configCloud);
-    if (getSingleExtConfigFunc_ == nullptr && returnCode != ERR_OK) {
+    if (getSingleExtConfigFunc_ == nullptr || returnCode != ERR_OK) {
         STANDBYSERVICE_LOGE("Decrypt fail.");
         return false;
     }
     nlohmann::json devStandbyConfigRoot;
     if (!JsonUtils::LoadJsonValueFromContent(devStandbyConfigRoot, configCloud)) {
         STANDBYSERVICE_LOGE("load config failed");
-        continue;
     }
-    if (!GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, version)) {
+    if (!JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, version)) {
         STANDBYSERVICE_LOGE("failed to get version");
-        continue;
     }
     return true;
 }
