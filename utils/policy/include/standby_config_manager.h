@@ -141,7 +141,7 @@ private:
      * @return 0 if configVerB is larger than configVerA.
      * @return -1 if there is an error during the comparison.
      */
-    int CompareVersion(const std::string& configVerA, const std::string& configVerB);
+    int CompareVersion(std::string& configVerA, std::string& configVerB);
     bool ParseVersionConfig(const nlohmann::json& standbyConfig, std::string& version);
 
 private:
