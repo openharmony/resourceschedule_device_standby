@@ -232,7 +232,7 @@ bool StandbyConfigManager::NeedsToReadCloudConfig()
     return ret;
 }
 
-int StandbyConfigManager::CompareVersion(std::string& configVerA, std::string& configVerB)
+int StandbyConfigManager::CompareVersion(const std::string& configVerA, const std::string& configVerB)
 {
     if (!configVerA.empty() && configVerB.empty()) {
         return 1;
