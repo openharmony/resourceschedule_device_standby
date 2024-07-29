@@ -115,7 +115,6 @@ public:
     static bool GetStrArrFromJsonValue(const nlohmann::json& jsonValue, const std::string& key,
         std::vector<std::string>& strArray);
     static bool GetRealPath(const std::string& partialPath, std::string& fullPath);
-    static std::vector<std::string> SplitVersion(const std::string& versionStr, char versionDelim);
 private:
     static bool CreateNodeFile(const std::string &filePath);
     static bool GetFileContent(const std::string& filePath, std::string& content);
