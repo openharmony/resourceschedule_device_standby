@@ -36,7 +36,7 @@ namespace {
     const int32_t STANDBY_CONFIG_INDEX = 5;
     const std::string STRATEGY_CONFIG_PATH = "/etc/standby_service/standby_strategy_config.json";
     const int32_t STRATEGY_CONFIG_INDEX = 6;
-    const std::string CLOUD_CONFIG_PATH = "/standby_service/pg_config.json";
+    const std::string CLOUD_CONFIG_PATH = "/device_standby/pg_config.json";
     const int32_t CLOUD_CONFIG_INDEX = 7;
     const char* EXT_CONFIG_LIB = "libsuspend_manager_service.z.so";
     const std::string TAG_PLUGIN_NAME = "plugin_name";
@@ -335,7 +335,7 @@ bool StandbyConfigManager::GetCloudVersion(const int32_t& fileIndex, std::string
         std::string filePath = CONFIG_DATA_DIR + CLOUD_CONFIG_PATH;
         nlohmann::json ConfigRoot;
         JsonUtils::LoadJsonValueFromFile(ConfigRoot, filePath);
-        if (!JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, version)) {
+        if (!JsonUtils::GetStringFromJsonValue(ConfigRoot, TAG_VER, version)) {
             STANDBYSERVICE_LOGE("failed to get version");
         }
         return true;
