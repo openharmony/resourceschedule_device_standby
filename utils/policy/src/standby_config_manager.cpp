@@ -276,6 +276,7 @@ int StandbyConfigManager::CompareVersion(const std::string& configVerA, const st
 
 bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string& version)
 {
+    std::string path;
     if (fileIndex != STANDBY_CONFIG_INDEX && fileIndex != STRATEGY_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
         return false;
