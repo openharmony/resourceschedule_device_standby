@@ -280,7 +280,7 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string
     if (fileIndex != STANDBY_CONFIG_INDEX && fileIndex != STRATEGY_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
         return false;
-    } else if (fileIndex == STANDBY_CONFIG_INDEX){
+    } else if (fileIndex == STANDBY_CONFIG_INDEX) {
         path = STANDBY_CONFIG_PATH;
     } else {
         path = STRATEGY_CONFIG_PATH;
@@ -290,7 +290,7 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string
         std::vector<std::string> configFileList = GetConfigFileList(path);
         for (const auto& configFile : configFileList) {
             nlohmann::json devStandbyConfigRoot;
-            if(!JsonUtils::LoadJsonValueFromFile(devStandbyConfigRoot, configFile)) {
+            if (!JsonUtils::LoadJsonValueFromFile(devStandbyConfigRoot, configFile)) {
                 continue;
             }
             if (!JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, tempVersion)) {
