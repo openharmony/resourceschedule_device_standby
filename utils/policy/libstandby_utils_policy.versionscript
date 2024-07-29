@@ -31,8 +31,6 @@
     *DumpSetParameter*;
     *GetHalfHourSwitch*;
     *GetInstance*;
-    *NeedsToReadCloudConfig*;
-    *SplitVersion*;
   local:
     *;
 };
