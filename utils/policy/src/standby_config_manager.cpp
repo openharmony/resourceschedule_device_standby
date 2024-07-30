@@ -35,7 +35,6 @@ namespace {
     const int32_t STANDBY_CONFIG_INDEX = 5;
     const std::string STRATEGY_CONFIG_PATH = "/etc/standby_service/standby_strategy_config.json";
     const int32_t STRATEGY_CONFIG_INDEX = 6;
-    const std::string CLOUD_CONFIG_PATH = "/standby_service/pg_config.json";
     const int32_t CLOUD_CONFIG_INDEX = 7;
     const char* EXT_CONFIG_LIB = "libsuspend_manager_service.z.so";
     const std::string TAG_PLUGIN_NAME = "plugin_name";
@@ -156,9 +155,12 @@ void StandbyConfigManager::GetAndParseStrategyConfig()
 
 void StandbyConfigManager::GetCloudConfig()
 {
+    if (getSingleExtConfigFunc_ == nullptr) {
+        return;
+    }
     std::string configCloud;
     int32_t returnCode = getSingleExtConfigFunc_(CLOUD_CONFIG_INDEX, configCloud);
-    if (getSingleExtConfigFunc_ != nullptr && returnCode == ERR_OK) {
+    if (returnCode == ERR_OK) {
         nlohmann::json ConfigRoot;
         JsonUtils::LoadJsonValueFromContent(ConfigRoot, configCloud);
         ParseCloudConfig(ConfigRoot);
@@ -268,13 +270,16 @@ int StandbyConfigManager::CompareVersion(const std::string& configVerA, const st
 
 bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string& version)
 {
+    if (getExtConfigFunc_ == nullptr) {
+        return true;
+    }
     if (fileIndex != STANDBY_CONFIG_INDEX && fileIndex != STRATEGY_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
         return false;
     }
     std::vector<std::string> configContentList;
     int32_t returnCode = getExtConfigFunc_(fileIndex, configContentList);
-    if (getExtConfigFunc_ == nullptr || returnCode != ERR_OK) {
+    if (returnCode != ERR_OK) {
         STANDBYSERVICE_LOGE("Decrypt fail.");
         return false;
     }
@@ -282,7 +287,6 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string
     for (const auto& content : configContentList) {
         nlohmann::json devStandbyConfigRoot;
         if (!JsonUtils::LoadJsonValueFromContent(devStandbyConfigRoot, content)) {
-            STANDBYSERVICE_LOGE("load config failed");
             continue;
         }
         if (!JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, tempVersion)) {
@@ -298,20 +302,21 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string
 
 bool StandbyConfigManager::GetCloudVersion(const int32_t& fileIndex, std::string& version)
 {
+    if (getSingleExtConfigFunc_ == nullptr) {
+        return true;
+    }
     if (fileIndex != CLOUD_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
         return false;
     }
     std::string configCloud;
     int32_t returnCode = getSingleExtConfigFunc_(fileIndex, configCloud);
-    if (getSingleExtConfigFunc_ == nullptr || returnCode != ERR_OK) {
+    if (returnCode != ERR_OK) {
         STANDBYSERVICE_LOGE("Decrypt fail.");
         return false;
     }
     nlohmann::json devStandbyConfigRoot;
-    if (!JsonUtils::LoadJsonValueFromContent(devStandbyConfigRoot, configCloud)) {
-        STANDBYSERVICE_LOGE("load config failed");
-    }
+    JsonUtils::LoadJsonValueFromContent(devStandbyConfigRoot, configCloud);
     if (!JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, version)) {
         STANDBYSERVICE_LOGE("failed to get version");
     }
