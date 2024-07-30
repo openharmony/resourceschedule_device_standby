@@ -158,10 +158,6 @@ void StandbyConfigManager::GetAndParseStrategyConfig()
 void StandbyConfigManager::GetCloudConfig()
 {
     if (getSingleExtConfigFunc_ == nullptr) {
-        std::string filePath = CONFIG_DATA_DIR + CLOUD_CONFIG_PATH;
-        nlohmann::json ConfigRoot;
-        JsonUtils::LoadJsonValueFromFile(ConfigRoot, filePath);
-        ParseCloudConfig(ConfigRoot);
         return;
     }
     std::string configCloud;
@@ -276,34 +272,15 @@ int StandbyConfigManager::CompareVersion(const std::string& configVerA, const st
 
 bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string& version)
 {
-    std::string path;
+    if (getExtConfigFunc_ == nullptr) {
+        return true;
+    }
     if (fileIndex != STANDBY_CONFIG_INDEX && fileIndex != STRATEGY_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
         return false;
-    } else if (fileIndex == STANDBY_CONFIG_INDEX) {
-        path = STANDBY_CONFIG_PATH;
-    } else {
-        path = STRATEGY_CONFIG_PATH;
-    }
-    std::string tempVersion;
-    if (getExtConfigFunc_ == nullptr) {
-        std::vector<std::string> configFileList = GetConfigFileList(path);
-        for (const auto& configFile : configFileList) {
-            nlohmann::json devStandbyConfigRoot;
-            if (!JsonUtils::LoadJsonValueFromFile(devStandbyConfigRoot, configFile)) {
-                continue;
-            }
-            if (!JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_VER, tempVersion)) {
-                STANDBYSERVICE_LOGE("failed to get version");
-                continue;
-            }
-            if (CompareVersion(tempVersion, version)) {
-                version = tempVersion;
-            }
-        }
-        return true;
     }
     std::vector<std::string> configContentList;
+    std::string tempVersion;
     int32_t returnCode = getExtConfigFunc_(fileIndex, configContentList);
     if (returnCode != ERR_OK) {
         STANDBYSERVICE_LOGE("Decrypt fail.");
@@ -327,18 +304,12 @@ bool StandbyConfigManager::GetParamVersion(const int32_t& fileIndex, std::string
 
 bool StandbyConfigManager::GetCloudVersion(const int32_t& fileIndex, std::string& version)
 {
+    if (getSingleExtConfigFunc_ == nullptr) {
+        return true;
+    }
     if (fileIndex != CLOUD_CONFIG_INDEX) {
         STANDBYSERVICE_LOGE("invalid input when getting version.");
         return false;
-    }
-    if (getSingleExtConfigFunc_ == nullptr) {
-        std::string filePath = CONFIG_DATA_DIR + CLOUD_CONFIG_PATH;
-        nlohmann::json ConfigRoot;
-        JsonUtils::LoadJsonValueFromFile(ConfigRoot, filePath);
-        if (!JsonUtils::GetStringFromJsonValue(ConfigRoot, TAG_VER, version)) {
-            STANDBYSERVICE_LOGE("failed to get version");
-        }
-        return true;
     }
     std::string configCloud;
     int32_t returnCode = getSingleExtConfigFunc_(fileIndex, configCloud);
