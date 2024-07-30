@@ -31,7 +31,6 @@ namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
     const std::string DEFAULT_CONFIG_ROOT_DIR = "/system";
-    const std::string CONFIG_DATA_DIR = "/data/service/el1/public";
     const std::string STANDBY_CONFIG_PATH = "/etc/standby_service/device_standby_config.json";
     const int32_t STANDBY_CONFIG_INDEX = 5;
     const std::string STRATEGY_CONFIG_PATH = "/etc/standby_service/standby_strategy_config.json";
