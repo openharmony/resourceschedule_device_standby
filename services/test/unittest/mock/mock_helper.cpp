@@ -18,7 +18,9 @@
 #include "app_mgr_helper.h"
 #include "bundle_manager_helper.h"
 #include "common_event_observer.h"
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
+#endif
 #include "include/ibundle_manager_helper.h"
 
 namespace {
@@ -132,6 +134,7 @@ bool CommonEventObserver::Unsubscribe()
     return true;
 }
 
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 bool BackgroundTaskHelper::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
     return g_mockGetBackgroundTask;
@@ -141,6 +144,7 @@ bool BackgroundTaskHelper::GetTransientTaskApps(std::vector<std::shared_ptr<Tran
 {
     return g_mockGetBackgroundTask;
 }
+#endif
 
 bool AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
 {

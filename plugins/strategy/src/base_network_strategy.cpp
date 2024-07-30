@@ -19,16 +19,22 @@
 #include "common_event_support.h"
 #include "system_ability_definition.h"
 #include "power_mgr_client.h"
+#ifdef STANDBY_RSS_WORK_SCHEDULER_ENABLE
 #include "workscheduler_srv_client.h"
+#endif
 
 #include "standby_service_log.h"
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
+#endif
 #include "app_mgr_helper.h"
 #include "standby_service.h"
 #include "allow_type.h"
 #include "standby_state.h"
 #include "bundle_manager_helper.h"
+#ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 #include "net_policy_client.h"
+#endif
 #include "background_mode.h"
 #include "standby_config_manager.h"
 #include "time_provider.h"
@@ -207,6 +213,7 @@ ErrCode BaseNetworkStrategy::GetForegroundApplications()
 
 ErrCode BaseNetworkStrategy::GetBackgroundTaskApp()
 {
+    #ifdef ENABLE_BACKGROUND_TASK_MGR
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> continuousTaskList;
     if (!BackgroundTaskHelper::GetInstance()->GetContinuousTaskApps(continuousTaskList)) {
         STANDBYSERVICE_LOGW("get continuous task app failed");
@@ -233,11 +240,13 @@ ErrCode BaseNetworkStrategy::GetBackgroundTaskApp()
     for (const auto& task : transientTaskList) {
         AddExemptionFlagByUid(task->GetUid(), ExemptionTypeFlag::TRANSIENT_TASK);
     }
+    #endif
     return ERR_OK;
 }
 
 ErrCode BaseNetworkStrategy::GetWorkSchedulerTask()
 {
+    #ifdef STANDBY_RSS_WORK_SCHEDULER_ENABLE
     std::list<std::shared_ptr<WorkScheduler::WorkInfo>> workInfos;
     if (WorkScheduler::WorkSchedulerSrvClient::GetInstance().GetAllRunningWorks(workInfos) != ERR_OK) {
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
@@ -246,6 +255,7 @@ ErrCode BaseNetworkStrategy::GetWorkSchedulerTask()
     for (const auto& task : workInfos) {
         AddExemptionFlagByUid(task->GetUid(), ExemptionTypeFlag::WORK_SCHEDULER);
     }
+    #endif
     return ERR_OK;
 }
 

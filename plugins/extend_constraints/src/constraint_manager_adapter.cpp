@@ -17,7 +17,9 @@
 #include "standby_service_impl.h"
 #include "standby_service_log.h"
 #include "standby_config_manager.h"
+#ifdef STANDBY_SENSORS_SENSOR_ENABLE
 #include "motion_sensor_monitor.h"
+#endif
 #include "charge_state_monitor.h"
 #include "base_state.h"
 
@@ -32,6 +34,7 @@ bool ConstraintManagerAdapter::Init()
     }
     constraintMonitorList_.emplace_back(std::make_shared<ChargeStateMonitor>());
     if (StandbyConfigManager::GetInstance()->GetStandbySwitch(DETECT_MOTION_CONFIG)) {
+        #ifdef STANDBY_SENSORS_SENSOR_ENABLE
         ConstraintEvalParam motionDetectParams{StandbyState::NAP, NapStatePhase::END, StandbyState::SLEEP,
             SleepStatePhase::SYS_RES_DEEP};
         motionConstraint_ = std::make_shared<MotionSensorMonitor>(MOTION_DETECTION_TIMEOUT, REST_TIMEOUT,
@@ -44,6 +47,7 @@ bool ConstraintManagerAdapter::Init()
         repeatedMotionConstraint_ = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
             PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
         constraintMonitorList_.emplace_back(repeatedMotionConstraint_);
+        #endif
     }
     for (const auto& constraintMonitor : constraintMonitorList_) {
         constraintMonitor->Init();

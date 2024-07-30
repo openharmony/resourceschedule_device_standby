@@ -23,7 +23,9 @@
 #include "bundle_manager_helper.h"
 #include "app_mgr_helper.h"
 #include "ability_manager_helper.h"
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
+#endif
 #include "ability_manager_helper.h"
 
 using namespace testing::ext;
@@ -83,6 +85,7 @@ HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_002, TestSize.Level1)
     EXPECT_FALSE(applicationInfo.uid > 0);
 }
 
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 /**
  * @tc.name: StandbyHelperUnitTest_003
  * @tc.desc: test BackgroundTaskHelper.
@@ -97,6 +100,7 @@ HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_003, TestSize.Level1)
     BackgroundTaskHelper::GetInstance()->GetTransientTaskApps(appInfoList);
     EXPECT_TRUE(list.empty());
 }
+#endif
 
 /**
  * @tc.name: StandbyHelperUnitTest_004

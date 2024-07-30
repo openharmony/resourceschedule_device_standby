@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Copyright (c) 2023-2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -57,7 +57,6 @@ ohos_unittest("standby_plugin_unit_test") {
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
     "access_token:libtokenid_sdk",
-    "battery_manager:batterysrv_client",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
@@ -66,8 +65,6 @@ ohos_unittest("standby_plugin_unit_test") {
     "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_single",
-    "power_manager:powermgr_client",
-    "sensor:sensor_interface_native",
     "time_service:time_client",
   ]
 
@@ -75,6 +72,26 @@ ohos_unittest("standby_plugin_unit_test") {
   if (enable_background_task_mgr) {
     external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
     defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
+  }
+
+  if (standby_power_manager_enable) {
+    external_deps += [ "power_manager:powermgr_client" ]
+    defines += [ "STANDBY_POWER_MANAGER_ENABLE" ]
+  }
+
+  if (standby_battery_manager_enable) {
+    external_deps += [ "battery_manager:batterysrv_client" ]
+    defines += [ "STANDBY_BATTERY_MANAGER_ENABLE" ]
+  }
+
+  if (standby_multimodalinput_input_enable) {
+    external_deps += [ "input:libmmi-client" ]
+    defines += [ "STANDBY_MULTIMODALINPUT_INPUT_ENABLE" ]
+  }
+
+  if (standby_sensors_sensor_enable) {
+    external_deps += [ "sensor:sensor_interface_native" ]
+    defines += [ "STANDBY_SENSORS_SENSOR_ENABLE" ]
   }
 
   subsystem_name = "resourceschedule"
@@ -117,7 +134,6 @@ ohos_unittest("standby_plugin_strategy_test") {
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
     "access_token:libtokenid_sdk",
-    "battery_manager:batterysrv_client",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
@@ -126,8 +142,6 @@ ohos_unittest("standby_plugin_strategy_test") {
     "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_single",
-    "power_manager:powermgr_client",
-    "sensor:sensor_interface_native",
     "time_service:time_client",
   ]
 
@@ -137,15 +151,37 @@ ohos_unittest("standby_plugin_strategy_test") {
     defines += [ "ENABLE_BACKGROUND_TASK_MGR" ]
   }
 
+  if (standby_power_manager_enable) {
+    external_deps += [ "power_manager:powermgr_client" ]
+    defines += [ "STANDBY_POWER_MANAGER_ENABLE" ]
+  }
+
+  if (standby_battery_manager_enable) {
+    external_deps += [ "battery_manager:batterysrv_client" ]
+    defines += [ "STANDBY_BATTERY_MANAGER_ENABLE" ]
+  }
+
+  if (standby_sensors_sensor_enable) {
+    external_deps += [ "sensor:sensor_interface_native" ]
+    defines += [ "STANDBY_SENSORS_SENSOR_ENABLE" ]
+  }
+
+  if (standby_communication_netmanager_base_enable) {
+    external_deps += [ "netmanager_base:net_policy_manager_if" ]
+    defines += [ "STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE" ]
+  }
+
   subsystem_name = "resourceschedule"
   part_name = "${standby_service_part_name}"
 }
 
 group("unittest") {
   testonly = true
-
-  deps = [
-    ":standby_plugin_strategy_test",
-    ":standby_plugin_unit_test",
-  ]
+  deps = []
+  if (device_standby_plugin_enable) {
+    deps += [
+      ":standby_plugin_strategy_test",
+      ":standby_plugin_unit_test",
+    ]
+  }
 }

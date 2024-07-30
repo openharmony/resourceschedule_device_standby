@@ -21,7 +21,9 @@
 #include "gmock/gmock.h"
 
 #include "standby_service_impl.h"
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "resource_type.h"
+#endif
 #include "system_ability_definition.h"
 
 #include "mock_bundle_manager_helper.h"

@@ -42,9 +42,15 @@
 #include "standby_config_manager.h"
 #include "common_event_listener.h"
 #include "charge_state_monitor.h"
+#ifdef STANDBY_SENSORS_SENSOR_ENABLE
 #include "motion_sensor_monitor.h"
+#endif
+#ifdef STANDBY_MULTIMODALINPUT_INPUT_ENABLE
 #include "input_manager.h"
+#endif
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_listener.h"
+#endif
 #include "input_manager_listener.h"
 #include "common_constant.h"
 #include "dark_state.h"
@@ -264,6 +270,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_006, TestSize.Level1)
     EXPECT_FALSE(constraintManager_->isEvaluation_);
 }
 
+#ifdef STANDBY_SENSORS_SENSOR_ENABLE
 /**
  * @tc.name: StandbyPluginUnitTest_007
  * @tc.desc: test MotionSensorMonitor of StandbyPlugin.
@@ -282,6 +289,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_007, TestSize.Level1)
     repeatedMotionConstraint->StopMonitoring();
     EXPECT_FALSE(repeatedMotionConstraint->isMonitoring_);
 }
+#endif
 
 /**
  * @tc.name: StandbyPluginUnitTest_008
@@ -430,6 +438,7 @@ HWMTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_013, TestSize.Level1, 20)
     EXPECT_TRUE(true);
 }
 
+#ifdef STANDBY_SENSORS_SENSOR_ENABLE
 /**
  * @tc.name: StandbyPluginUnitTest_014
  * @tc.desc: test MotionSensorMonitor of AddEnergy.
@@ -528,6 +537,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0018, TestSize.Level1)
     repeatedMotionConstraint->StartSensor();
     EXPECT_TRUE(repeatedMotionConstraint->isMonitoring_ == true);
 }
+#endif // STANDBY_SENSORS_SENSOR_ENABLE
 
 /**
  * @tc.name: StandbyPluginUnitTest_019
@@ -745,6 +755,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0031, TestSize.Level1)
     EXPECT_TRUE(DelayedSingleton<ListenerManagerAdapter>::GetInstance()->StopListener() == ERR_OK);
 }
 
+#ifdef STANDBY_SENSORS_SENSOR_ENABLE
 /**
  * @tc.name: StandbyPluginUnitTest_032
  * @tc.desc: test MotionSensorMonitor of AcceleromterCallback.
@@ -790,6 +801,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0033, TestSize.Level1)
     repeatedMotionConstraint->RepeatAcceleromterCallback(&event);
     repeatedMotionConstraint->RepeatAcceleromterCallback(nullptr);
 }
+#endif
 
 /**
  * @tc.name: StandbyPluginUnitTest_034
@@ -891,6 +903,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0037, TestSize.Level1)
     EXPECT_TRUE(argsInStr.size() != 0);
 }
 
+#ifdef STANDBY_MULTIMODALINPUT_INPUT_ENABLE
 /**
  * @tc.name: StandbyPluginUnitTest_038
  * @tc.desc: test InputManagerListener.
@@ -906,7 +919,9 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0038, TestSize.Level1)
     inputManagerListener->OnCallbackEvent(MMI::SwitchEvent::SWITCH_ON);
     EXPECT_TRUE(inputManagerListener->subscriberId_ <= 0);
 }
+#endif
 
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 /**
  * @tc.name: StandbyPluginUnitTest_039
  * @tc.desc: test BackgroundTaskListener.
@@ -922,6 +937,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_039, TestSize.Level1)
     backgroundTaskListener->StartListener();
     EXPECT_NE(backgroundTaskListener->StopListener(), ERR_OK);
 }
+#endif
 
 /**
  * @tc.name: StandbyPluginUnitTest_040

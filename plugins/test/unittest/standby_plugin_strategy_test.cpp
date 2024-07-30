@@ -20,8 +20,10 @@
 #include "system_ability_definition.h"
 
 #include "running_lock_strategy.h"
+#ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 #include "network_strategy.h"
 #include "base_network_strategy.h"
+#endif
 #include "standby_messsage.h"
 #include "common_constant.h"
 
@@ -217,6 +219,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_009, TestSize.Leve
     EXPECT_EQ(runningLockStrategy->OnDestroy(), ERR_OK);
 }
 
+#ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 /**
  * @tc.name: StandbyPluginStrategyTest_010
  * @tc.desc: test ResetFirewallStatus.
@@ -295,5 +298,6 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_013, TestSize.Leve
     baseNetworkStrategy->AddExemptionFlagByUid(uid, flag);
     EXPECT_NE(baseNetworkStrategy, nullptr);
 }
+#endif // STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
