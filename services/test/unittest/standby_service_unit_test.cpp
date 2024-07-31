@@ -76,6 +76,7 @@ namespace {
         EventFwk::CommonEventSupport::COMMON_EVENT_NITZ_TIME_CHANGED
     };
     constexpr int32_t SLEEP_TIMEOUT = 500;
+    constexpr int32_t WAKEUP_EXACT_TIMER_TYPE = 6;
 }
 
 class StandbyServiceUnitTest : public testing::Test {
@@ -1263,6 +1264,37 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_058, TestSize.Level1)
     EXPECT_EQ(DelayedSingleton<StandbyServiceImpl>::GetInstance()->IsDebugMode(), false);
     DelayedSingleton<StandbyService>::GetInstance()->OnStop();
     EXPECT_EQ(DelayedSingleton<StandbyService>::GetInstance()->state_, ServiceRunningState::STATE_NOT_START);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_059
+ * @tc.desc: test CreateTimer of TimedTask.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_059, TestSize.Level1)
+{
+    auto timedTask = std::make_shared<TimedTask>(false, 0, WAKEUP_EXACT_TIMER_TYPE);
+    uint64_t timerId {0};
+    std::function<void()> callBack {};
+    MockIpc::MockStartTimer(false);
+    uint64_t zeroTimeId {0};
+    timerId = TimedTask::CreateTimer(false, 0, WAKEUP_EXACT_TIMER_TYPE, callBack);
+    EXPECT_EQ(timerId, 0);
+    timedTask->StartDayNightSwitchTimer(timerId);
+    StandbyServiceUnitTest::SleepForFC();
+    MockIpc::MockStartTimer(true);
+    timerId = TimedTask::CreateTimer(true, 0, WAKEUP_EXACT_TIMER_TYPE, callBack);
+    EXPECT_NE(timerId, 0);
+    timedTask->SetType(zeroTimeId);
+    timedTask->SetRepeat(false);
+    timedTask->SetInterval(zeroTimeId);
+    timedTask->SetWantAgent(nullptr);
+    EXPECT_TRUE(timedTask->type == zeroTimeId);
+    EXPECT_TRUE(timedTask->repeat == false);
+    EXPECT_TRUE(timedTask->interval == zeroTimeId);
+    EXPECT_TRUE(timedTask->wantAgent == nullptr);
+    timedTask->StartDayNightSwitchTimer(timerId);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
