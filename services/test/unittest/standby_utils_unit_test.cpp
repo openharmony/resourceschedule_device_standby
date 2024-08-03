@@ -357,7 +357,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_016, TestSize.Level1)
     std::string versionStr = "1.20.20.012";
     char versionDelim = '.';
     auto tokens = JsonUtils::SplitVersion(versionStr, versionDelim);
-    ASSER_TRUE(tokens.size != 0);
+    ASSERT_TRUE(tokens.size != 0);
     for (const auto& token : tokens) {
         EXPECT_TRUE(token.size() != 0);
     }
