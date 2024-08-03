@@ -355,10 +355,10 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_015, TestSize.Level1)
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_016, TestSize.Level1)
 {
     std::string versionStr = "1.20.20.012";
-    char versionDelim = ".";
+    char versionDelim = '.';
     auto tokens = JsonUtils::SplitVersion(versionStr, versionDelim);
     ASSER_TRUE(tokens.size != 0);
-    for (auto token : tokens) {
+    for (const auto& token : tokens) {
         EXPECT_TRUE(token.size() != 0);
     }
 }
