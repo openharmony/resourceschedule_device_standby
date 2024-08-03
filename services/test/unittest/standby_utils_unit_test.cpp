@@ -345,5 +345,22 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_015, TestSize.Level1)
     TimeLtdProcess process2 {"process2", 20};
     EXPECT_TRUE(process1 < process2);
 }
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_016
+ * @tc.desc: test SplitVersion.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_016, TestSize.Level1)
+{
+    std::string versionStr = "1.20.20.012";
+    char versionDelim = '.';
+    auto tokens = JsonUtils::SplitVersion(versionStr, versionDelim);
+    ASSERT_TRUE(tokens.size() != 0);
+    for (const auto& token : tokens) {
+        EXPECT_TRUE(token.size() != 0);
+    }
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
