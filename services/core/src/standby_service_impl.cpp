@@ -49,11 +49,6 @@ namespace {
 const std::string ALLOW_RECORD_FILE_PATH = "/data/service/el1/public/device_standby/allow_record";
 const std::string STANDBY_MSG_HANDLER = "StandbyMsgHandler";
 const std::string ON_PLUGIN_REGISTER = "OnPluginRegister";
-#ifdef __LP64__
-const std::string SYSTEM_SO_PATH = "/system/lib64/";
-#else
-const std::string SYSTEM_SO_PATH = "/system/lib/";
-#endif
 const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPTION";
 const uint32_t EXEMPT_ALL_RESOURCES = 100;
 const std::string COMMON_EVENT_TIMER_SA_ABILITY = "COMMON_EVENT_TIMER_SA_ABILITY";
@@ -257,25 +252,16 @@ ErrCode StandbyServiceImpl::ResetTimeObserver()
 ErrCode StandbyServiceImpl::RegisterPlugin(const std::string& pluginName)
 {
     STANDBYSERVICE_LOGI("start register plugin %{public}s", pluginName.c_str());
-    std::string realPluginName {""};
-    if (!JsonUtils::GetRealPath(SYSTEM_SO_PATH + pluginName, realPluginName)) {
-        STANDBYSERVICE_LOGW("failed to get valid plugin path");
-        return ERR_STANDBY_PLUGIN_NOT_EXIST;
-    }
-    if (strncmp(realPluginName.c_str(), SYSTEM_SO_PATH.c_str(), SYSTEM_SO_PATH.size()) != 0) {
-        STANDBYSERVICE_LOGW("plugin must in system directory");
-        return ERR_STANDBY_PLUGIN_NOT_EXIST;
-    }
-    registerPlugin_ = dlopen(realPluginName.c_str(), RTLD_NOW);
+    registerPlugin_ = dlopen(pluginName.c_str(), RTLD_NOW);
     if (!registerPlugin_) {
         dlclose(registerPlugin_);
-        STANDBYSERVICE_LOGE("failed to open plugin %{public}s", realPluginName.c_str());
+        STANDBYSERVICE_LOGE("failed to open plugin %{public}s", pluginName.c_str());
         return ERR_STANDBY_PLUGIN_NOT_EXIST;
     }
     void* pluginFunc = dlsym(registerPlugin_, ON_PLUGIN_REGISTER.c_str());
     if (!pluginFunc) {
         dlclose(registerPlugin_);
-        STANDBYSERVICE_LOGE("failed to find extern func of plugin %{public}s", realPluginName.c_str());
+        STANDBYSERVICE_LOGE("failed to find extern func of plugin %{public}s", pluginName.c_str());
         return ERR_STANDBY_PLUGIN_NOT_EXIST;
     }
     auto onPluginInitFunc = reinterpret_cast<bool (*)()>(pluginFunc);
