@@ -60,7 +60,7 @@ void StandbyService::OnStart()
     if (!SOFTWARE_SLEEP) {
         return;
     }
-    if (state_ == ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() == ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("device standby service has already started.");
         return;
     }
@@ -80,7 +80,7 @@ void StandbyService::OnStart()
         STANDBYSERVICE_LOGE("standby service start failed!");
         return;
     }
-    state_ = ServiceRunningState::STATE_RUNNING;
+    state_.store(ServiceRunningState::STATE_RUNNING);
     STANDBYSERVICE_LOGI("standby service start succeed!");
 }
 
@@ -178,7 +178,7 @@ void StandbyService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::s
 
 ErrCode StandbyService::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -187,7 +187,7 @@ ErrCode StandbyService::SubscribeStandbyCallback(const sptr<IStandbyServiceSubsc
 
 ErrCode StandbyService::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -196,7 +196,7 @@ ErrCode StandbyService::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSub
 
 ErrCode StandbyService::ApplyAllowResource(const sptr<ResourceRequest>& resourceRequest)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -205,7 +205,7 @@ ErrCode StandbyService::ApplyAllowResource(const sptr<ResourceRequest>& resource
 
 ErrCode StandbyService::UnapplyAllowResource(const sptr<ResourceRequest>& resourceRequest)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -215,7 +215,7 @@ ErrCode StandbyService::UnapplyAllowResource(const sptr<ResourceRequest>& resour
 ErrCode StandbyService::GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
     uint32_t reasonCode)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -224,7 +224,7 @@ ErrCode StandbyService::GetAllowList(uint32_t allowType, std::vector<AllowInfo>&
 
 ErrCode StandbyService::IsDeviceInStandby(bool& isStandby)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -266,13 +266,13 @@ ErrCode StandbyService::NotifySystemAbilityStatusChanged(bool isAdded, int32_t s
 void StandbyService::OnStop()
 {
     StandbyServiceImpl::GetInstance()->UnInit();
-    state_ = ServiceRunningState::STATE_NOT_START;
+    state_.store(ServiceRunningState::STATE_NOT_START);
     STANDBYSERVICE_LOGI("standby service task manager stop");
 }
 
 ErrCode StandbyService::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -282,7 +282,7 @@ ErrCode StandbyService::ReportWorkSchedulerStatus(bool started, int32_t uid, con
 ErrCode StandbyService::GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
     uint32_t reasonCode)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -291,7 +291,7 @@ ErrCode StandbyService::GetRestrictList(uint32_t restrictType, std::vector<Allow
 
 ErrCode StandbyService::IsStrategyEnabled(const std::string& strategyName, bool& isEnabled)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -300,7 +300,7 @@ ErrCode StandbyService::IsStrategyEnabled(const std::string& strategyName, bool&
 
 ErrCode StandbyService::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
