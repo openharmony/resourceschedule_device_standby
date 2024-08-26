@@ -18,6 +18,8 @@
 #include <functional>
 #include <map>
 
+#include "accesstoken_kit.h"
+#include "parameter.h"
 #include "ipc_skeleton.h"
 #include "file_ex.h"
 #include "string_ex.h"
@@ -44,6 +46,7 @@ const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
 const bool SOFTWARE_SLEEP = system::GetBoolParameter("persist.sys.standby_switch", true);
 const std::string RSS_PROCESS_NAME = "resource_schedule_service";
 const std::string PUSH_PROCESS_NAME = "push_manager_service";
+const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyService);
@@ -309,6 +312,14 @@ ErrCode StandbyService::ReportDeviceStateChanged(DeviceStateType type, bool enab
 
 int32_t StandbyService::Dump(int32_t fd, const std::vector<std::u16string>& args)
 {
+    if (ENG_MODE == 0) {
+        STANDBYSERVICE_LOGE("Not Engineer mode");
+    }
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
+    if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
+        return ERR_PERMISSION_DENIED;
+    }
     std::vector<std::string> argsInStr;
     std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
         [](const std::u16string& arg) {
