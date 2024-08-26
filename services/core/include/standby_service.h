@@ -71,7 +71,7 @@ private:
 
 private:
     std::mutex systemAbilityLock_ {};
-    ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
+    std::atomic<ServiceRunningState> state_ {ServiceRunningState::STATE_NOT_START};
     uint32_t dependsReady_ = 0;
     std::mutex listenedSALock_ {};
 };
