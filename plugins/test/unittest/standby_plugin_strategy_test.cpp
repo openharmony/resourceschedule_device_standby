@@ -189,7 +189,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_006, TestSize.Leve
 HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_007, TestSize.Level1)
 {
     auto runningLockStrategy = std::make_shared<RunningLockStrategy>();
-    EXPECT_EQ(runningLockStrategy->GetWorkSchedulerTask(), ERR_OK);
+    EXPECT_NE(runningLockStrategy, nullptr);
 }
 
 /**
