@@ -730,8 +730,10 @@ void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& na
     if (removedNumber == allowRecordPtr->allowType_) {
         allowInfoMap_.erase(keyStr);
         STANDBYSERVICE_LOGI("allow list has been delete");
+    } else {
+        allowRecordPtr->allowType_ = allowRecordPtr->allowType_ - removedNumber;
     }
-    allowRecordPtr->allowType_ = allowRecordPtr->allowType_ - removedNumber;
+    
     StandbyStateSubscriber::GetInstance()->ReportAllowListChanged(uid, name, removedNumber, false);
     NotifyAllowListChanged(uid, name, removedNumber, false);
     DumpPersistantData();
