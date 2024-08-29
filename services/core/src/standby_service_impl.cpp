@@ -1019,6 +1019,7 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
     STANDBYSERVICE_LOGI("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
                         resType, (long long)(value), sceneInfo.c_str());
     switch (resType) {
+
         case ResType::RES_TYPE_SCREEN_STATUS:
             HandleScreenStateChanged(value);
             break;
