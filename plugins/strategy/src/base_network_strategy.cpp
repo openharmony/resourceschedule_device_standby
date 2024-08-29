@@ -519,6 +519,31 @@ ErrCode BaseNetworkStrategy::SetFirewallStatus(bool enableFirewall)
         STANDBYSERVICE_LOGE("Failed to enable or disable powersaving firewall");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
+        if (enableFirewall) {
+                    SetNetAllowApps(enableFirewall);
+                            int32_t ret = HandleDeviceIdlePolicy(enableFirewall);
+                                    if (ret == NETMANAGER_SUCCESS || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
+                                                return ERR_OK;
+                                    } else {
+                                                STANDBYSERVICE_LOGE("Failed to enable or disable powersaving firewall");
+                                                        return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
+                                    }
+        } else {
+                    int32_t ret = HandleDeviceIdlePolicy(enableFirewall);
+                            if (ret == NETMANAGER_SUCCESS || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
+                                        SetNetAllowApps(enableFirewall);
+                                                return ERR_OK;
+                            } else {
+                                        STANDBYSERVICE_LOGE("Failed to enable or disable powersaving firewall");
+                                                return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
+                            }
+        }*
+                            }
+                            }
+        }
+                                    }
+                                    }
+        }
 }
 
 // when app is created, add app info to cache
