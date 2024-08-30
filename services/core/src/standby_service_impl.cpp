@@ -980,6 +980,14 @@ void StandbyServiceImpl::HandleScreenStateChanged(const int64_t value)
     }
 }
 
+void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
+{
+    StandbyMessage standbyMessage {StandbyMessageType::SCREEN_CLICK_RECOGNIZE};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam("clickType", value);
+    DispatchEvent(standbyMessage);
+}
+
 void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo)
 {
         bool isApply = false;
@@ -1019,7 +1027,6 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
     STANDBYSERVICE_LOGI("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
                         resType, (long long)(value), sceneInfo.c_str());
     switch (resType) {
-
         case ResType::RES_TYPE_SCREEN_STATUS:
             HandleScreenStateChanged(value);
             break;
@@ -1046,6 +1053,9 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             break;
         case ResType::RES_TYPE_WIFI_P2P_STATE_CHANGED:
             HandleP2PStateChanged(value);
+            break;
+        case ResType::RES_TYPE_CLICK_RECOGNIZE:
+            HandleScreenClickRecognize();
             break;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
         case ResType::RES_TYPE_POWER_MODE_CHANGED:
