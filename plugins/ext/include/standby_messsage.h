@@ -45,6 +45,7 @@ struct StandbyMessageType {
         BG_EFFICIENCY_RESOURCE_APPLY, // application apply or unapply efficiency resources
         NAT_DETECT_INTERVAL_CHANGED, // push report nat timeout interval
         FG_APPLICATION_CHANGED,
+        SCREEN_CLICK_RECOGNIZE,
     };
 };
 

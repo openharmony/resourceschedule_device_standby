@@ -175,6 +175,7 @@ private:
     void AppEventHandler(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
     void HandleCallStateChanged(const std::string &sceneInfo);
     void HandleP2PStateChanged(int32_t state);
+    void HandleScreenClickRecognize(const int64_t value);
 #ifdef STANDBY_POWER_MANAGER_ENABLE
     void HandlePowerModeChanged(PowerMgr::PowerMode mode);
 #endif
