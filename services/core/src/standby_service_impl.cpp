@@ -1055,7 +1055,7 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             HandleP2PStateChanged(value);
             break;
         case ResType::RES_TYPE_CLICK_RECOGNIZE:
-            HandleScreenClickRecognize();
+            HandleScreenClickRecognize(value);
             break;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
         case ResType::RES_TYPE_POWER_MODE_CHANGED:
