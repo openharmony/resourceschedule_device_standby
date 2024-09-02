@@ -35,15 +35,16 @@ using namespace testing::mt;
 
 namespace OHOS {
 
-bool g_GetAllRunningWorks = true;
+bool g_getAllRunningWorks = true;
 
-ErrCode WorkScheduler::WorkSchedulerSrvClient::GetAllRunningWorks(std::list<std::shared_ptr<WorkScheduler::WorkInfo>>& workInfos)
+ErrCode WorkScheduler::WorkSchedulerSrvClient::GetAllRunningWorks
+    (std::list<std::shared_ptr<WorkScheduler::WorkInfo>>& workInfos)
 {
     std::shared_ptr<WorkInfo> workInfo1 = std::make_shared<WorkScheduler::WorkInfo>();
     std::shared_ptr<WorkInfo> workInfo2 = std::make_shared<WorkScheduler::WorkInfo>();
     workInfos.emplace_back(workInfo1);
     workInfos.emplace_back(workInfo2);
-    if (g_GetAllRunningWorks) {
+    if (g_getAllRunningWorks) {
         return ERR_OK;
     } else {
         return DevStandbyMgr::ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
