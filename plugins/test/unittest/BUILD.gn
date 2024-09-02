@@ -65,6 +65,7 @@ ohos_unittest("standby_plugin_unit_test") {
     "init:libbegetutil",
     "ipc:ipc_single",
     "time_service:time_client",
+    "work_scheduler:workschedclient",
   ]
 
   defines = []
