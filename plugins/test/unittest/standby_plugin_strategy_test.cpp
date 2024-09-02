@@ -28,11 +28,30 @@
 #include "standby_messsage.h"
 #include "common_constant.h"
 #include "want.h"
+#include "workscheduler_srv_client.h"
 
 using namespace testing::ext;
 using namespace testing::mt;
 
 namespace OHOS {
+namespace {
+    bool g_getAllRunningWorks = true;
+}
+
+ErrCode WorkScheduler::WorkSchedulerSrvClient::GetAllRunningWorks
+    (std::list<std::shared_ptr<WorkScheduler::WorkInfo>>& workInfos)
+{
+    std::shared_ptr<WorkInfo> workInfo1 = std::make_shared<WorkScheduler::WorkInfo>();
+    std::shared_ptr<WorkInfo> workInfo2 = std::make_shared<WorkScheduler::WorkInfo>();
+    workInfos.emplace_back(workInfo1);
+    workInfos.emplace_back(workInfo2);
+    if (g_getAllRunningWorks) {
+        return ERR_OK;
+    } else {
+        return DevStandbyMgr::ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
+    }
+}
+
 namespace DevStandbyMgr {
 class StandbyPluginStrategyTest : public testing::Test {
 public:
@@ -189,8 +208,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_006, TestSize.Leve
 HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_007, TestSize.Level1)
 {
     auto runningLockStrategy = std::make_shared<RunningLockStrategy>();
-    runningLockStrategy->GetWorkSchedulerTask();
-    EXPECT_NE(runningLockStrategy, nullptr);
+    EXPECT_EQ(runningLockStrategy->GetWorkSchedulerTask(), ERR_OK);
 }
 
 /**
