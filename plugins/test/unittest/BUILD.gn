@@ -142,7 +142,7 @@ ohos_unittest("standby_plugin_strategy_test") {
     "input:libmmi-client",
     "ipc:ipc_single",
     "time_service:time_client",
-    #include "workscheduler_srv_client.h"
+    "work_scheduler:workschedclient",
   ]
 
   defines = []
