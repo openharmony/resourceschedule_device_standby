@@ -41,6 +41,7 @@ bool CommonEventManager::UnSubscribeCommonEvent(const std::shared_ptr<CommonEven
 }  // namespace EventFwk
 namespace DevStandbyMgr {
 int g_mockFunctionCallCount = 0;
+int32_t ERR_FAIL = -1;
 
 void MockCommonEvent::MockPublishCommonEvent(bool mockRet)
 {
@@ -59,7 +60,7 @@ int32_t MockUtils::MockGetSingleExtConfigFunc(int32_t index, stad::string &confi
         config = R"({"version" : "1.1.1.1"})";
         return ERR_OK;
     }
-    return -1;
+    return ERR_FAIL;
 }
 }
 }  // namespace OHOS
