@@ -485,7 +485,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_024, TestSize.Level1)
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_025, TestSize.Level1)
 {
-    std::string configVerA = "1.0.0.0";
+    std::string configVerA = "1.0.0.1";
     std::string configVerB = "1.0.0.0";
     int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
     EXPECT_EQ(result, 1);
