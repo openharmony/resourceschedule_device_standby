@@ -17,12 +17,20 @@
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICES_TEST_MOCK_COMMON_EVENT_H
 namespace OHOS {
 namespace DevStandbyMgr {
+extern int g_mockFunctionCallCount;
 class MockCommonEvent {
 public:
     MockCommonEvent();
     virtual ~MockCommonEvent();
     static void MockPublishCommonEvent(bool mockRet);
     static void MockSubscribeCommonEvent(bool mockRet);
+};
+
+class MockUtils {
+public:
+    MockUtils() {};
+    ~MockUtils() {};
+    static int32_t MockGetSingleExtConfigFunc(int32_t index, stad::string &config);
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
