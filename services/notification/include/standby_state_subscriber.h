@@ -45,6 +45,7 @@ public:
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result);
     void NotifyAllowChangedByCommonEvent(int32_t uid, const std::string& name, uint32_t allowType, bool added);
+    void NotifyPowerOverusedByCallback(const std::string& module, uint32_t level);
 
 private:
     void NotifyIdleModeByCallback(bool napped, bool sleeping);
