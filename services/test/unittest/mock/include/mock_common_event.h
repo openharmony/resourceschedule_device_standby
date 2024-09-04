@@ -28,9 +28,9 @@ public:
 
 class MockUtils {
 public:
-    MockUtils() {};
-    ~MockUtils() {};
-    static int32_t MockGetSingleExtConfigFunc(int32_t index, stad::string &config);
+    MockUtils() = default;
+    ~MockUtils() = default;
+    static int32_t MockGetSingleExtConfigFunc(int32_t index, std::string &config);
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
