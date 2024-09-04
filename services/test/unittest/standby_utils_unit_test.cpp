@@ -387,7 +387,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_017, TestSize.Level1)
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_018, TestSize.Level1)
 {
-    StandbyConfigManager::GetInstance()->getSingleExtConfigFunc_ = MockUtils::MockGetSingleExtConfigFunc;
+    StandbyConfigManager::GetInstance()->getSingleExtConfigFunc_ = nullptr;
     StandbyConfigManager::GetInstance()->GetCloudConfig();
     EXPECT_EQ(g_mockFunctionCallCount, 0);
 }
