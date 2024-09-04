@@ -82,5 +82,33 @@ void StandbyServiceSubscriberProxy::OnAllowListChanged(int32_t uid, const std::s
         STANDBYSERVICE_LOGE("OnAllowListChanged SendRequest failed, error code: %d", ret);
     }
 }
+
+void StandbyServiceSubscriberProxy::OnPowerOverused(const std::string& module, uint32_t level)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        STANDBYSERVICE_LOGW("OnPowerOverused remote is dead.");
+        return;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(StandbyServiceSubscriberProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("OnPowerOverused write interface token failed.");
+        return;
+    }
+
+    if (!data.WriteString(module) || !data.WriteUint32(level)) {
+        STANDBYSERVICE_LOGW("OnPowerOverused write notification failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_POWER_OVERUSED), data, reply, option);
+    if (ret!= ERR_OK) {
+        STANDBYSERVICE_LOGE("OnPowerOverused SendRequest failed, error code: %d", ret);
+    }
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
