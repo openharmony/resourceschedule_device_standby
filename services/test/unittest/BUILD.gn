@@ -93,8 +93,8 @@ ohos_unittest("standby_utils_unit_test") {
   }
 
   sources = [
-    "standby_utils_unit_test.cpp",
     "mock/mock_common_event.cpp",
+    "standby_utils_unit_test.cpp",
   ]
 
   deps = [
