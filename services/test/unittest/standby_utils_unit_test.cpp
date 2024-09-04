@@ -38,7 +38,8 @@ class StandbyUtilsUnitTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase() {}
-    void SetUp() override {
+    void SetUp() override
+    {
         g_mockFunctionCallCount = 0;
     }
     void TearDown() override {}
