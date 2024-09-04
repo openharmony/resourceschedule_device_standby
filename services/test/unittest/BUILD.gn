@@ -84,9 +84,7 @@ ohos_unittest("standby_utils_unit_test") {
     "-Dprotected=public",
   ]
 
-  include_dirs = [
-    "${standby_service_path}/test/unittest/mock/include",
-  ]
+  include_dirs = [ "${standby_service_path}/test/unittest/mock/include" ]
 
   sanitize = {
     cfi = true
