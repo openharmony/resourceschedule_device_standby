@@ -53,7 +53,7 @@ void MockCommonEvent::MockSubscribeCommonEvent(bool mockRet)
     g_mockSubscribeCommonEvent = mockRet;
 }
 
-int32_t MockUtils::MockGetSingleExtConfigFunc(int32_t index, stad::string &config)
+int32_t MockUtils::MockGetSingleExtConfigFunc(int32_t index, std::string &config)
 {
     g_mockFunctionCallCount++;
     if (index == CLOUD_CONFIG_INDEX) {
