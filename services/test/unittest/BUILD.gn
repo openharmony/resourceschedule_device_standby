@@ -84,7 +84,18 @@ ohos_unittest("standby_utils_unit_test") {
     "-Dprotected=public",
   ]
 
-  sources = [ "standby_utils_unit_test.cpp" ]
+  include_dirs = [ "${standby_service_path}/test/unittest/mock/include" ]
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
+  sources = [
+    "mock/mock_common_event.cpp",
+    "standby_utils_unit_test.cpp",
+  ]
 
   deps = [
     "${standby_service_path}:standby_service_static",
