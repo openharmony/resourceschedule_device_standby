@@ -512,6 +512,8 @@ ErrCode BaseNetworkStrategy::SetFirewallStatus(bool enableFirewall)
     int32_t ret = HandleDeviceIdlePolicy(enableFirewall);
     STANDBYSERVICE_LOGD("set status of powersaving firewall: %{public}d , res: %{public}d",
         enableFirewall, ret);
+    
+    
     if (ret == NETMANAGER_SUCCESS || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
         SetNetAllowApps(enableFirewall);
         return ERR_OK;
