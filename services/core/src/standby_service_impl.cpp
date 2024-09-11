@@ -203,6 +203,7 @@ ErrCode StandbyServiceImpl::RegisterTimeObserver()
 {
     std::lock_guard<std::recursive_mutex> lock(timerObserverMutex_);
     handler_->PostTask([=]() {
+            STANDBYSERVICE_LOGE("Dispatch COMMON_EVENT_TIMER_SA_ABILITY begin");
             StandbyMessage message(StandbyMessageType::COMMON_EVENT, COMMON_EVENT_TIMER_SA_ABILITY);
             StandbyServiceImpl::GetInstance()->DispatchEvent(message);
         }, ONE_SECOND);
