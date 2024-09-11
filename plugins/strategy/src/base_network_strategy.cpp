@@ -374,6 +374,8 @@ int32_t BaseNetworkStrategy::HandleDeviceIdlePolicy(bool enableFirewall)
     #ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
     ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
         SetDeviceIdlePolicy(enableFirewall);
+    STANDBYSERVICE_LOGI("set status of powersaving firewall: %{public}d , res: %{public}d",
+        enableFirewall, ret);
     if (ret == NETMANAGER_SUCCESS || ret == NETMANAGER_ERR_STATUS_EXIST) {
         StandbyMessage standbyMessage {StandbyMessageType::DEVICE_NET_IDLE_POLICY_TRANSIT};
         standbyMessage.want_ = AAFwk::Want{};
@@ -509,15 +511,26 @@ void BaseNetworkStrategy::ResetFirewallAllowList()
 
 ErrCode BaseNetworkStrategy::SetFirewallStatus(bool enableFirewall)
 {
-    int32_t ret = HandleDeviceIdlePolicy(enableFirewall);
-    STANDBYSERVICE_LOGD("set status of powersaving firewall: %{public}d , res: %{public}d",
-        enableFirewall, ret);
-    if (ret == NETMANAGER_SUCCESS || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
+    if (enableFirewall) {
         SetNetAllowApps(enableFirewall);
-        return ERR_OK;
+        int32_t ret = HandleDeviceIdlePolicy(enableFirewall);
+        if (ret == NETMANAGER_SUCCESS || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
+            STANDBYSERVICE_LOGI("Succeed to enable powersaving firewall");
+            return ERR_OK;
+        } else {
+            STANDBYSERVICE_LOGE("Failed to enable powersaving firewall");
+            return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
+        }
     } else {
-        STANDBYSERVICE_LOGE("Failed to enable or disable powersaving firewall");
-        return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
+        int32_t ret = HandleDeviceIdlePolicy(enableFirewall);
+        if (ret == NETMANAGER_SUCCESS || (!enableFirewall && ret == NETMANAGER_ERR_STATUS_EXIST)) {
+            STANDBYSERVICE_LOGI("Succeed to disable powersaving firewall");
+            SetNetAllowApps(enableFirewall);
+            return ERR_OK;
+        } else {
+            STANDBYSERVICE_LOGE("Failed to disable powersaving firewall");
+            return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
+        }
     }
 }
 
