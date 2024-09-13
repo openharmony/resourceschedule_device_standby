@@ -26,6 +26,7 @@
 #include "standby_service_log.h"
 #ifdef ENABLE_BACKGROUND_TASK_MGR
 #include "background_task_helper.h"
+#include "background_mode.h"
 #endif
 #include "app_mgr_helper.h"
 #include "standby_service.h"
@@ -35,7 +36,6 @@
 #ifdef STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 #include "net_policy_client.h"
 #endif
-#include "background_mode.h"
 #include "standby_config_manager.h"
 #include "time_provider.h"
 #include "standby_service_impl.h"
@@ -51,7 +51,9 @@ const std::map<std::string, uint8_t> BGTASK_EXEMPTION_FLAG_MAP {
 };
 }
 
+#ifdef ENABLE_BACKGROUND_TASK_MGR
 using namespace OHOS::BackgroundTaskMgr;
+#endif
 
 void BaseNetworkStrategy::HandleEvent(const StandbyMessage& message)
 {
