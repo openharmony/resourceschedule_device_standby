@@ -17,6 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_STANDBY_SERVICE_UTILS_RES_TYPE_H
 
 #include <map>
+
 #include <string>
 
 namespace OHOS {
