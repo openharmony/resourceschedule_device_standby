@@ -22,7 +22,6 @@
 #endif
 
 #include <array>
-
 #include <map>
 #include <memory>
 #include <list>
@@ -177,6 +176,7 @@ private:
     void HandleCallStateChanged(const std::string &sceneInfo);
     void HandleP2PStateChanged(int32_t state);
     void HandleScreenClickRecognize(const int64_t value);
+    void HandleMmiInputPowerKeyDown(const int64_t value);
 #ifdef STANDBY_POWER_MANAGER_ENABLE
     void HandlePowerModeChanged(PowerMgr::PowerMode mode);
 #endif
