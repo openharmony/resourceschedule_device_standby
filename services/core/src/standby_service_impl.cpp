@@ -20,7 +20,6 @@
 #include <functional>
 #include <set>
 #include <sstream>
-
 #include <string>
 #include <vector>
 
@@ -989,6 +988,14 @@ void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
     DispatchEvent(standbyMessage);
 }
 
+void StandbyServiceImpl::HandleMmiInputPowerKeyDown(const int64_t value)
+{
+    StandbyMessage standbyMessage {StandbyMessageType::MMI_INPUT_POWER_KEY_DOWN};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam("keyCode", value);
+    DispatchEvent(standbyMessage);
+}
+
 void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo)
 {
         bool isApply = false;
@@ -1057,6 +1064,9 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             break;
         case ResType::RES_TYPE_CLICK_RECOGNIZE:
             HandleScreenClickRecognize(value);
+            break;
+        case ResType::RES_TYPE_MMI_INPUT_POWER_KEY:
+            HandleMmiInputPowerKeyDown(value);
             break;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
         case ResType::RES_TYPE_POWER_MODE_CHANGED:
