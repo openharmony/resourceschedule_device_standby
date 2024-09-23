@@ -314,6 +314,7 @@ int32_t StandbyService::Dump(int32_t fd, const std::vector<std::u16string>& args
 {
     if (ENG_MODE == 0) {
         STANDBYSERVICE_LOGE("Not Engineer mode");
+        return ERR_PERMISSION_DENIED;
     }
     Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
     int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
