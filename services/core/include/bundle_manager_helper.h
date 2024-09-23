@@ -29,6 +29,13 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
+struct UserSpace {
+    enum : int {
+        INVALID_USERID = -1,
+        DEFAULT_USERID = 100,
+        SPECIAL_USERID
+    };
+};
 class BundleManagerHelper {
 DECLARE_SINGLE_INSTANCE(BundleManagerHelper);
 public:

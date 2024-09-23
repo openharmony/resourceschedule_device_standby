@@ -128,6 +128,7 @@ ErrCode StandbyServiceClient::SetNatInterval(uint32_t& type, bool& enable, uint3
 
 ErrCode StandbyServiceClient::HandleEvent(const std::shared_ptr<ResData> &resData)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::string sceneInfo = resData->payload.dump();
     if (!GetStandbyServiceProxy()) {
         STANDBYSERVICE_LOGE("get standby service proxy failed");

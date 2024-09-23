@@ -19,6 +19,7 @@
 namespace {
     bool g_mockPublishCommonEvent = true;
     bool g_mockSubscribeCommonEvent = true;
+    int32_t CLOUD_CONFIG_INDEX = 7;
 }
 
 namespace OHOS {
@@ -39,6 +40,9 @@ bool CommonEventManager::UnSubscribeCommonEvent(const std::shared_ptr<CommonEven
 }
 }  // namespace EventFwk
 namespace DevStandbyMgr {
+int g_mockFunctionCallCount = 0;
+int32_t ERR_FAIL = -1;
+
 void MockCommonEvent::MockPublishCommonEvent(bool mockRet)
 {
     g_mockPublishCommonEvent = mockRet;
@@ -47,6 +51,16 @@ void MockCommonEvent::MockPublishCommonEvent(bool mockRet)
 void MockCommonEvent::MockSubscribeCommonEvent(bool mockRet)
 {
     g_mockSubscribeCommonEvent = mockRet;
+}
+
+int32_t MockUtils::MockGetSingleExtConfigFunc(int32_t index, std::string &config)
+{
+    g_mockFunctionCallCount++;
+    if (index == CLOUD_CONFIG_INDEX) {
+        config = R"({"version" : "1.1.1.1"})";
+        return ERR_OK;
+    }
+    return ERR_FAIL;
 }
 }
 }  // namespace OHOS

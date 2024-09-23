@@ -22,6 +22,7 @@
 #include "standby_service_log.h"
 #include "json_utils.h"
 #include "common_constant.h"
+#include "mock_common_event.h"
 
 using namespace testing::ext;
 using namespace testing::mt;
@@ -37,7 +38,10 @@ class StandbyUtilsUnitTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase() {}
-    void SetUp() override {}
+    void SetUp() override
+    {
+        g_mockFunctionCallCount = 0;
+    }
     void TearDown() override {}
 };
 
@@ -361,6 +365,159 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_016, TestSize.Level1)
     for (const auto& token : tokens) {
         EXPECT_TRUE(token.size() != 0);
     }
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_017
+ * @tc.desc: test GetCloudConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_017, TestSize.Level1)
+{
+    StandbyConfigManager::GetInstance()->getSingleExtConfigFunc_ = MockUtils::MockGetSingleExtConfigFunc;
+    StandbyConfigManager::GetInstance()->GetCloudConfig();
+    EXPECT_EQ(g_mockFunctionCallCount, 1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_018
+ * @tc.desc: test getSingleExtConfigFunc_ == nullptr.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_018, TestSize.Level1)
+{
+    StandbyConfigManager::GetInstance()->getSingleExtConfigFunc_ = nullptr;
+    StandbyConfigManager::GetInstance()->GetCloudConfig();
+    EXPECT_EQ(g_mockFunctionCallCount, 0);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_019
+ * @tc.desc: test GetCloudVersion.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_019, TestSize.Level1)
+{
+    int32_t CLOUD_CONFIG_INDEX = 7;
+    std::string version;
+    StandbyConfigManager::GetInstance()->getSingleExtConfigFunc_ = MockUtils::MockGetSingleExtConfigFunc;
+    StandbyConfigManager::GetInstance()->GetCloudVersion(CLOUD_CONFIG_INDEX, version);
+    EXPECT_EQ(version, "1.1.1.1");
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_020
+ * @tc.desc: test CompareVersion when only configVerA is empty.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_020, TestSize.Level1)
+{
+    std::string configVerA = "";
+    std::string configVerB = "1.0.0.0";
+    int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
+    EXPECT_EQ(result, 0);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_021
+ * @tc.desc: test CompareVersion when only configVerB is empty.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_021, TestSize.Level1)
+{
+    std::string configVerA = "1.0.0.0";
+    std::string configVerB = "";
+    int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
+    EXPECT_EQ(result, 1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_022
+ * @tc.desc: test CompareVersion when configVerA and configVerB are both empty.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_022, TestSize.Level1)
+{
+    std::string configVerA = "";
+    std::string configVerB = "";
+    int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
+    EXPECT_EQ(result, -1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_023
+ * @tc.desc: test CompareVersion when the VERSION_LEN of configVer is invaild.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_023, TestSize.Level1)
+{
+    std::string configVerA = "1.0";
+    std::string configVerB = "1.0.0.0";
+    int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
+    EXPECT_EQ(result, -1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_024
+ * @tc.desc: test CompareVersion when the configVerB is invaild.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_024, TestSize.Level1)
+{
+    std::string configVerA = "1.0.0.a";
+    std::string configVerB = "1.0.0.b";
+    int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
+    EXPECT_EQ(result, -1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_025
+ * @tc.desc: test CompareVersion when configVerA is bigger than configVerB.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_025, TestSize.Level1)
+{
+    std::string configVerA = "1.0.0.1";
+    std::string configVerB = "1.0.0.0";
+    int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
+    EXPECT_EQ(result, 1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_026
+ * @tc.desc: test CompareVersion when configVerB is bigger than configVerA.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_026, TestSize.Level1)
+{
+    std::string configVerA = "1.0.0.0";
+    std::string configVerB = "1.0.0.1";
+    int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
+    EXPECT_EQ(result, 0);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_027
+ * @tc.desc: test CompareVersion when configVerA is equal to configVerB.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_027, TestSize.Level1)
+{
+    std::string configVerA = "1.0.0.0";
+    std::string configVerB = "1.0.0.0";
+    int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
+    EXPECT_EQ(result, 1);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

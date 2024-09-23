@@ -41,9 +41,12 @@ public:
     int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
     void OnDeviceIdleMode(bool napped, bool sleeping) override;
     void OnAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added) override;
+    void OnPowerOverused(const std::string& module, uint32_t level) override;
+
 private:
     ErrCode HandleOnDeviceIdleMode(MessageParcel& data);
     ErrCode HandleOnAllowListChanged(MessageParcel& data);
+    ErrCode HandleOnPowerOverused(MessageParcel& data);
 
     ErrCode OnRemoteRequestInner(uint32_t code,
         MessageParcel& data, MessageParcel& reply, MessageOption& option);

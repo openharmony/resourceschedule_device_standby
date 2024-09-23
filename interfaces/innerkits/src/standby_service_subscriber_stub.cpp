@@ -48,6 +48,9 @@ ErrCode StandbyServiceSubscriberStub::OnRemoteRequestInner(uint32_t code,
         case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ALLOW_LIST_CHANGED)): {
             return HandleOnAllowListChanged(data);
         }
+        case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_POWER_OVERUSED)): {
+            return HandleOnPowerOverused(data);
+        }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -59,6 +62,9 @@ void StandbyServiceSubscriberStub::OnDeviceIdleMode(bool napped, bool sleeped)
 
 void StandbyServiceSubscriberStub::OnAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType,
     bool added)
+{}
+
+void StandbyServiceSubscriberStub::OnPowerOverused(const std::string& module, uint32_t level)
 {}
 
 ErrCode StandbyServiceSubscriberStub::HandleOnDeviceIdleMode(MessageParcel& data)
@@ -87,5 +93,20 @@ ErrCode StandbyServiceSubscriberStub::HandleOnAllowListChanged(MessageParcel& da
     OnAllowListChanged(uid, name, allowType, added);
     return ERR_OK;
 }
+
+ErrCode StandbyServiceSubscriberStub::HandleOnPowerOverused(MessageParcel& data)
+{
+    std::string module{""};
+    uint32_t level{0};
+
+    if (!data.ReadString(module) || !data.ReadUint32(level)) {
+        STANDBYSERVICE_LOGW("HandleOnPowerOverused Read parcel failed.");
+        return ERR_INVALID_DATA;
+    }
+
+    OnPowerOverused(module, level);
+    return ERR_OK;
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

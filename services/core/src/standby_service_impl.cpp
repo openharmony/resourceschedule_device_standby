@@ -53,6 +53,7 @@ const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY
 const uint32_t EXEMPT_ALL_RESOURCES = 100;
 const std::string COMMON_EVENT_TIMER_SA_ABILITY = "COMMON_EVENT_TIMER_SA_ABILITY";
 const uint32_t ONE_SECOND = 1000;
+const std::string DUMP_ON_POWER_OVERUSED = "--poweroverused";
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyServiceImpl);
@@ -198,6 +199,7 @@ ErrCode StandbyServiceImpl::RegisterTimeObserver()
 {
     std::lock_guard<std::recursive_mutex> lock(timerObserverMutex_);
     handler_->PostTask([=]() {
+            STANDBYSERVICE_LOGE("Dispatch COMMON_EVENT_TIMER_SA_ABILITY begin");
             StandbyMessage message(StandbyMessageType::COMMON_EVENT, COMMON_EVENT_TIMER_SA_ABILITY);
             StandbyServiceImpl::GetInstance()->DispatchEvent(message);
         }, ONE_SECOND);
@@ -996,6 +998,26 @@ void StandbyServiceImpl::HandleMmiInputPowerKeyDown(const int64_t value)
     DispatchEvent(standbyMessage);
 }
 
+void StandbyServiceImpl::DumpOnPowerOverused(const std::vector<std::string> &argsInStr, std::string &result)
+{
+    constexpr uint16_t DUMP_THREE_PARAM = 3;
+    if (argsInStr.size() != DUMP_THREE_PARAM) {
+        STANDBYSERVICE_LOGE("DumpOnPowerOverused param check failed, shoule be [--poweroverused module level].");
+        return;
+    }
+
+    const std::string &module = argsInStr[DUMP_SECOND_PARAM];
+    uint32_t level = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()));
+    HandlePowerOverused(0, module, level);
+}
+
+// handle power overused, resType for extend
+void StandbyServiceImpl::HandlePowerOverused([[maybe_unused]]uint32_t resType,
+    const std::string &module, uint32_t level)
+{
+    StandbyStateSubscriber::GetInstance()->NotifyPowerOverusedByCallback(module, level);
+}
+
 void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo)
 {
         bool isApply = false;
@@ -1201,6 +1223,8 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
         DumpChangeConfigParam(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_PUSH_STRATEGY_CHANGE) {
         DumpPushStrategyChange(argsInStr, result);
+    } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ON_POWER_OVERUSED) {
+        DumpOnPowerOverused(argsInStr, result);
     } else {
         result += "Error params.\n";
     }
