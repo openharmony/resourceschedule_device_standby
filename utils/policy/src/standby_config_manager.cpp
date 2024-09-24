@@ -362,7 +362,7 @@ const std::string& StandbyConfigManager::GetPluginName()
 
 nlohmann::json StandbyConfigManager::GetDefaultConfig(const std::string& configName)
 {
-    return GetConfigWithName(switchName, standbyStrategyConfigMap_);
+    return GetConfigWithName(configName, standbyStrategyConfigMap_);
 }
 
 bool StandbyConfigManager::GetStandbySwitch(const std::string& switchName)
