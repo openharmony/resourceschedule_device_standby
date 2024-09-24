@@ -75,23 +75,23 @@ public:
         subscriberName_ = name;
     }
     /**
-     * @brief get processName.
+     * @brief get module name.
      *
-     * @return return processName.
+     * @return return module name.
      */
-    std::string GetProcessName() const
+    std::string GetModuleName() const
     {
-        return processName_;
+        return moduleName_;
     }
 
     /**
-     * @brief set processName.
+     * @brief set module name.
      *
-     * @param name process name which will register device_standby callback.
+     * @param name module name which will register device_standby callback.
      */
-    void SetProcessName(std::string name)
+    void SetModuleName(std::string name)
     {
-        processName_ = name;
+        moduleName_ = name;
     }
 
 public:
@@ -99,7 +99,7 @@ public:
 
 private:
     std::string subscriberName_;
-    std::string processName_;
+    std::string moduleName_;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

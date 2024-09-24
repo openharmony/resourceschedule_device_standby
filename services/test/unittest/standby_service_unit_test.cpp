@@ -1313,8 +1313,8 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_060, TestSize.Level1)
     sptr<IStandbyServiceSubscriber> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
     EXPECT_EQ(StandbyStateSubscriber::GetInstance()->AddSubscriber(subscriber), ERR_OK);
     subscriber->SetSubscriberName(TEST_SUB_NAME);
-    subscriber->SetProcessName(TEST_MODULE_NAME);
-    EXPECT_EQ(subscriber->GetProcessName(), TEST_MODULE_NAME);
+    subscriber->SetModuleName(TEST_MODULE_NAME);
+    EXPECT_EQ(subscriber->GetModuleName(), TEST_MODULE_NAME);
     StandbyServiceImpl::GetInstance()->ShellDump(argsInStr, result);
     EXPECT_EQ(result.size(), 0);
     EXPECT_EQ(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber), ERR_OK);
@@ -1335,16 +1335,16 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_061, TestSize.Level1)
     sptr<IStandbyServiceSubscriber> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
     EXPECT_EQ(StandbyStateSubscriber::GetInstance()->AddSubscriber(subscriber), ERR_OK);
     subscriber->SetSubscriberName(TEST_SUB_NAME);
-    subscriber->SetProcessName(ANOTHER_MODULE_NAME);
-    EXPECT_EQ(subscriber->GetProcessName(), ANOTHER_MODULE_NAME);
+    subscriber->SetModuleName(ANOTHER_MODULE_NAME);
+    EXPECT_EQ(subscriber->GetModuleName(), ANOTHER_MODULE_NAME);
 
     // not same module name, will not callback
     StandbyServiceImpl::GetInstance()->HandlePowerOverused(0, TEST_MODULE_NAME, 1);
     SUCCEED();
 
     // change module name, will callback
-    subscriber->SetProcessName(TEST_MODULE_NAME);
-    EXPECT_EQ(subscriber->GetProcessName(), TEST_MODULE_NAME);
+    subscriber->SetModuleName(TEST_MODULE_NAME);
+    EXPECT_EQ(subscriber->GetModuleName(), TEST_MODULE_NAME);
     StandbyStateSubscriber::GetInstance()->NotifyPowerOverusedByCallback(TEST_MODULE_NAME, 1);
     EXPECT_EQ(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber), ERR_OK);
 }
