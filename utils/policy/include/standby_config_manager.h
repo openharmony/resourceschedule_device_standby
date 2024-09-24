@@ -78,7 +78,7 @@ class StandbyConfigManager {
 public:
     ErrCode Init();
     const std::string& GetPluginName();
-    nlohmann::json GetDefaultConfig(const std::string& switchName);
+    nlohmann::json GetDefaultConfig(const std::string& configName);
     bool GetStandbySwitch(const std::string& switchName);
     int32_t GetStandbyParam(const std::string& paramName);
     bool GetStrategySwitch(const std::string& switchName);
