@@ -33,6 +33,7 @@
     *GetInstance*;
     *NeedsToReadCloudConfig*;
     *SplitVersion*;
+    *GetStandbyLadderBatteryList*;
   local:
     *;
 };
