@@ -360,7 +360,7 @@ const std::string& StandbyConfigManager::GetPluginName()
     return pluginName_;
 }
 
-nlohmann::json StandbyConfigManager::GetDefaultConfig(const std::string& switchName)
+nlohmann::json StandbyConfigManager::GetDefaultConfig(const std::string& configName)
 {
     return GetConfigWithName(switchName, standbyStrategyConfigMap_);
 }
