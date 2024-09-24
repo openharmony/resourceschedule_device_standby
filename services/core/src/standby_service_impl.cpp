@@ -982,6 +982,17 @@ void StandbyServiceImpl::HandleScreenStateChanged(const int64_t value)
     }
 }
 
+void StandbyServiceImpl::HandleChargeStateChanged(const int64_t value)
+{
+    if (value == 0) {
+        DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                     EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING));
+    } else {
+        DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                                     EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING));
+    }
+}
+
 void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
 {
     StandbyMessage standbyMessage {StandbyMessageType::SCREEN_CLICK_RECOGNIZE};
@@ -1061,13 +1072,7 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             HandleScreenStateChanged(value);
             break;
         case ResType::RES_TYPE_CHARGING_DISCHARGING:
-            if (value == 0) {
-                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                             EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING));
-            } else {
-                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                             EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING));
-            }
+            HandleChargeStateChanged(value);
             break;
         case ResType::RES_TYPE_USB_DEVICE:
             if (value == 0) {
