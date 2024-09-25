@@ -984,8 +984,8 @@ void StandbyServiceImpl::HandleScreenStateChanged(const int64_t value)
 
 void StandbyServiceImpl::HandleChargeStateChanged(const int64_t value)
 {
-    auto event = value == 0 ? EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING
-                            : EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING;
+    auto event = value == 0 ? EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING :
+        EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING;
     DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, event));
 }
 
