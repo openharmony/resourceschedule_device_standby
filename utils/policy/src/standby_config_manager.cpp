@@ -360,6 +360,11 @@ const std::string& StandbyConfigManager::GetPluginName()
     return pluginName_;
 }
 
+nlohmann::json StandbyConfigManager::GetDefaultConfig(const std::string& configName)
+{
+    return GetConfigWithName(configName, standbyStrategyConfigMap_);
+}
+
 bool StandbyConfigManager::GetStandbySwitch(const std::string& switchName)
 {
     return GetConfigWithName(switchName, standbySwitchMap_);
@@ -622,6 +627,7 @@ bool StandbyConfigManager::ParseResCtrlConfig(const nlohmann::json& resCtrlConfi
 {
     bool ret = true;
     for (const auto& element : resCtrlConfigRoot.items()) {
+        standbyStrategyConfigMap_[element.key()] = element.value();
         if (!element.value().is_array()) {
             STANDBYSERVICE_LOGW("there is unexpected type of value in resource control config %{public}s",
                 element.key().c_str());

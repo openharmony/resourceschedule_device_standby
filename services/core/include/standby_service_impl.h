@@ -176,12 +176,14 @@ private:
     void HandleCallStateChanged(const std::string &sceneInfo);
     void HandleP2PStateChanged(int32_t state);
     void HandleScreenClickRecognize(const int64_t value);
+    void HandleMmiInputPowerKeyDown(const int64_t value);
 #ifdef STANDBY_POWER_MANAGER_ENABLE
     void HandlePowerModeChanged(PowerMgr::PowerMode mode);
 #endif
     void HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo);
     void HandleScreenStateChanged(const int64_t value);
-
+    void HandleChargeStateChanged(const int64_t value);
+    
     // handle abnormal power use
     void HandlePowerOverused([[maybe_unused]]uint32_t resType, const std::string &module, uint32_t level);
     void DumpOnPowerOverused(const std::vector<std::string> &argsInStr, std::string &result);

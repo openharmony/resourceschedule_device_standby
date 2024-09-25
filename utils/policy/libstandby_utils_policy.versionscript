@@ -15,8 +15,10 @@
   global:
     *LoadJsonValueFromFile*;
     *DumpJsonValueToFile*;
+    *GetStrArrFromJsonValue*;
     *GetRealPath*;
     *ConditionType*;
+    *GetDefaultConfig*;
     *GetStandbySwitch*;
     *GetStandbyParam*;
     *GetStandbyDurationList*;

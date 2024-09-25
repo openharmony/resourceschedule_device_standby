@@ -158,6 +158,8 @@ enum : uint32_t {
     RES_TYPE_WIFI_P2P_STATE_CHANGED = 64,
     // report power mode changed
     RES_TYPE_POWER_MODE_CHANGED = 92,
+    // report power key down
+    RES_TYPE_MMI_INPUT_POWER_KEY = 117,
     // last resType
     RES_TYPE_LAST,
 };
