@@ -159,7 +159,7 @@ enum : uint32_t {
     // report power mode changed
     RES_TYPE_POWER_MODE_CHANGED = 92,
     // report power key down
-    RES_TYPE_MMI_INPUT_POWER_KEY = 116,
+    RES_TYPE_MMI_INPUT_POWER_KEY = 117,
     // last resType
     RES_TYPE_LAST,
 };
