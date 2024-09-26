@@ -43,6 +43,7 @@ namespace {
     const std::string TAG_DETECT_LIST = "detect_list";
     const std::string TAG_STRATEGY_LIST = "strategy_list";
     const std::string TAG_HALFHOUR_SWITCH_SETTING = "halfhour_switch_setting";
+    const std::string TAG_LADDER_BATTERY_LIST = "ladder_battery_threshold_list";
 
     const std::string TAG_SETTING_LIST = "setting_list";
     const std::string TAG_VER = "version";
@@ -437,6 +438,11 @@ int32_t StandbyConfigManager::GetMaxDuration(const std::string& name, const std:
     }
 }
 
+std::vector<int32_t> StandbyConfigManager::GetStandbyLadderBatteryList(const std::string& switchName)
+{
+    return GetConfigWithName(switchName, ladderBatteryListMap_);
+}
+
 template<typename T> std::set<T> StandbyConfigManager::GetEligibleAllowConfig(const std::string& paramName,
     uint32_t condition, bool isAllow, bool isApp, const std::function<void(bool, std::set<T>&,
     const DefaultResourceConfig&)>& func)
@@ -506,6 +512,7 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
     nlohmann::json standbySwitchConfig;
     nlohmann::json standbyListConfig;
     nlohmann::json standbyIntervalList;
+    nlohmann::json standbyBatteryList;
 
     JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_PLUGIN_NAME, pluginName_);
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY, standbyConfig) &&
@@ -534,6 +541,12 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
             STANDBYSERVICE_LOGW("failed to parse halfhour config");
             return false;
         }
+    }
+
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_LADDER_BATTERY_LIST, standbyBatteryList) &&
+        !ParseBatteryList(standbyBatteryList)) {
+        STANDBYSERVICE_LOGW("failed to parse standby battery list in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
     }
     return true;
 }
@@ -764,6 +777,25 @@ uint32_t StandbyConfigManager::ParseCondition(const std::string& conditionStr)
         conditionValue |= iter->second;
     }
     return conditionValue;
+}
+
+bool StandbyConfigManager::ParseBatteryList(const nlohmann::json& standbyBatteryList)
+{
+    bool ret = true;
+    for (const auto& element : standbyBatteryList.items()) {
+        if (!element.value().is_array()) {
+            STANDBYSERVICE_LOGW("there is unexpected value of %{public}s in standby battery list",
+                element.key().c_str());
+            ret = false;
+            continue;
+        }
+        std::vector<int32_t> batterylList;
+        for (const int32_t battery : element.value()) {
+            batterylList.emplace_back(battery);
+        }
+        ladderBatteryListMap_.emplace(element.key(), std::move(batterylList));
+    }
+    return ret;
 }
 
 void StandbyConfigManager::DumpSetDebugMode(bool debugMode)

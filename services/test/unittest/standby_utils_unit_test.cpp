@@ -333,6 +333,9 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_014, TestSize.Level1)
     content = "{\"maintenance_list\":[\"test\":[1, 2, 3]]}";
     devStandbyConfigRoot = nlohmann::json::parse(content, nullptr, false);
     StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(devStandbyConfigRoot);
+    content = "{\"ladder_battery_threshold_list\":[\"test\":[4, 3, 2, 1]]}";
+    devStandbyConfigRoot = nlohmann::json::parse(content, nullptr, false);
+    StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(devStandbyConfigRoot);
 }
 
 /**

@@ -150,6 +150,7 @@ namespace DevStandbyMgr {
             condition, debugMode, isAllow);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetEligiblePersistAllowConfig(str,
             condition, debugMode, isAllow);
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetStandbyLadderBatteryList(str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpSetDebugMode(debugMode);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpSetSwitch(str, debugMode, str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->DumpSetParameter(str, condition, str);
