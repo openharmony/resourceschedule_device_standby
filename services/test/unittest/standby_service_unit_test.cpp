@@ -1315,7 +1315,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_060, TestSize.Level1)
     subscriber->SetSubscriberName(TEST_SUB_NAME);
     subscriber->SetModuleName(TEST_MODULE_NAME);
     EXPECT_EQ(subscriber->GetModuleName(), TEST_MODULE_NAME);
-    StandbyServiceImpl::GetInstance()->ShellDump(argsInStr, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner(argsInStr, result);
     EXPECT_EQ(result.size(), 0);
     EXPECT_EQ(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber), ERR_OK);
 }
