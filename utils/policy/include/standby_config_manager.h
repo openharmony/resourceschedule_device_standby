@@ -78,6 +78,7 @@ class StandbyConfigManager {
 public:
     ErrCode Init();
     const std::string& GetPluginName();
+    nlohmann::json GetDefaultConfig(const std::string& configName);
     bool GetStandbySwitch(const std::string& switchName);
     int32_t GetStandbyParam(const std::string& paramName);
     bool GetStrategySwitch(const std::string& switchName);
@@ -161,6 +162,7 @@ private:
     std::vector<TimerResourceConfig> timerResConfigList_;
     std::unordered_map<std::string, std::vector<int32_t>> intervalListMap_;
     std::unordered_map<std::string, std::vector<int32_t>> ladderBatteryListMap_;
+    std::unordered_map<std::string, nlohmann::json> standbyStrategyConfigMap_;
 
     std::unordered_map<std::string, bool> backStandbySwitchMap_;
     std::unordered_map<std::string, int32_t> backStandbyParaMap_;

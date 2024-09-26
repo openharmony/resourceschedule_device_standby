@@ -46,6 +46,7 @@ struct StandbyMessageType {
         NAT_DETECT_INTERVAL_CHANGED, // push report nat timeout interval
         FG_APPLICATION_CHANGED,
         SCREEN_CLICK_RECOGNIZE,
+        MMI_INPUT_POWER_KEY_DOWN,  //power key down event
     };
 };
 

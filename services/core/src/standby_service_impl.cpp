@@ -982,11 +982,26 @@ void StandbyServiceImpl::HandleScreenStateChanged(const int64_t value)
     }
 }
 
+void StandbyServiceImpl::HandleChargeStateChanged(const int64_t value)
+{
+    auto event = value == 0 ? EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING :
+        EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING;
+    DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT, event));
+}
+
 void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
 {
     StandbyMessage standbyMessage {StandbyMessageType::SCREEN_CLICK_RECOGNIZE};
     standbyMessage.want_ = AAFwk::Want {};
     standbyMessage.want_->SetParam("clickType", value);
+    DispatchEvent(standbyMessage);
+}
+
+void StandbyServiceImpl::HandleMmiInputPowerKeyDown(const int64_t value)
+{
+    StandbyMessage standbyMessage {StandbyMessageType::MMI_INPUT_POWER_KEY_DOWN};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam("keyCode", value);
     DispatchEvent(standbyMessage);
 }
 
@@ -1053,13 +1068,7 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             HandleScreenStateChanged(value);
             break;
         case ResType::RES_TYPE_CHARGING_DISCHARGING:
-            if (value == 0) {
-                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                             EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING));
-            } else {
-                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                             EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING));
-            }
+            HandleChargeStateChanged(value);
             break;
         case ResType::RES_TYPE_USB_DEVICE:
             if (value == 0) {
@@ -1078,6 +1087,9 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             break;
         case ResType::RES_TYPE_CLICK_RECOGNIZE:
             HandleScreenClickRecognize(value);
+            break;
+        case ResType::RES_TYPE_MMI_INPUT_POWER_KEY:
+            HandleMmiInputPowerKeyDown(value);
             break;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
         case ResType::RES_TYPE_POWER_MODE_CHANGED:
