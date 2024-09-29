@@ -15,6 +15,7 @@
 #include "configmanager_fuzzer.h"
 #include "securec.h"
 #include "json_utils.h"
+
 #include "nlohmann/json.hpp"
 #include "standby_config_manager.h"
 
