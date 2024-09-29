@@ -138,6 +138,7 @@ namespace DevStandbyMgr {
         bool isAllow = GetData<bool>();
         std::string str((const char *) g_baseFuzzData + g_baseFuzzPos, g_baseFuzzSize - g_baseFuzzPos);
         PreciseCoverage();
+        DelayedSingleton<StandbyConfigManager>::GetInstance()->GetDefaultConfig(str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetStandbyDurationList(str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetStandbySwitch(str);
         DelayedSingleton<StandbyConfigManager>::GetInstance()->GetStandbyParam(str);
