@@ -57,6 +57,7 @@ private:
     ErrCode HandleReportDeviceStateChanged(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleCommonEvent(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleSetNatInterval(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleReportPowerOverused(MessageParcel& data, MessageParcel& reply);
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

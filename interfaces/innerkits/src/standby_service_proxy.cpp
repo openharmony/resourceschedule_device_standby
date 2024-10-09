@@ -377,6 +377,38 @@ ErrCode StandbyServiceProxy::IsStrategyEnabled(const std::string& strategyName, 
     return result;
 }
 
+ErrCode StandbyServiceProxy::ReportPowerOverused(const std::string &module, uint32_t level)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(StandbyServiceProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("IsDeviceInStandby write descriptor failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteString(module) || !data.WriteUint32(level)) {
+        STANDBYSERVICE_LOGW("ReportPowerOverused write parameter failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = InnerTransact(static_cast<uint32_t>(IStandbyInterfaceCode::POWER_OVERUSED),
+        option, data, reply);
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("ReportPowerOverused fail: transact ErrCode=%{public}d", result);
+        return ERR_STANDBY_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        STANDBYSERVICE_LOGW("ReportPowerOverused fail: read result failed.");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    if (result != ERR_OK) {
+        STANDBYSERVICE_LOGW("ReportPowerOverused failed");
+        return result;
+    }
+    return result;
+}
+
 ErrCode StandbyServiceProxy::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
     MessageParcel data;
