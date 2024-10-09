@@ -301,6 +301,16 @@ ErrCode StandbyService::IsStrategyEnabled(const std::string& strategyName, bool&
     return StandbyServiceImpl::GetInstance()->IsStrategyEnabled(strategyName, isEnabled);
 }
 
+ErrCode StandbyService::ReportPowerOverused(const std::string &module, uint32_t level)
+{
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
+        STANDBYSERVICE_LOGW("standby service is not running");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+
+    return StandbyServiceImpl::GetInstance()->ReportPowerOverused(module, level);
+}
+
 ErrCode StandbyService::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
