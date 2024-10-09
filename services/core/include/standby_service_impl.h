@@ -112,6 +112,7 @@ public:
     ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled);
     ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled);
     ErrCode HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
+    ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
 
     void RegisterPluginInner(IConstraintManagerAdapter* constraintManager,
         IListenerManagerAdapter* listenerManager,

@@ -152,8 +152,8 @@ void StandbyStateSubscriber::NotifyAllowChangedByCallback(int32_t uid, const std
 
 void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& module, uint32_t level)
 {
-    STANDBYSERVICE_LOGI("NotifyPowerOverusedByCallback start, module: %{public}s, level: %{public}u.",
-        module.c_str(), level);
+    STANDBYSERVICE_LOGI("[PowerOverused] NotifyPowerOverusedByCallback start, "
+        "module: %{public}s, level: %{public}u.", module.c_str(), level);
     
     std::lock_guard<std::mutex> lock(subscriberLock_);
     if (subscriberList_.empty()) {
