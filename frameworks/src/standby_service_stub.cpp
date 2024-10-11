@@ -28,9 +28,7 @@ namespace DevStandbyMgr {
 ErrCode StandbyServiceStub::OnRemoteRequest(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
-    std::u16string descriptor = StandbyServiceStub::GetDescriptor();
-    std::u16string remoteDescriptor = data.ReadInterfaceToken();
-    if (descriptor != remoteDescriptor) {
+    if (StandbyServiceStub::GetDescriptor() != data.ReadInterfaceToken()) {
         STANDBYSERVICE_LOGE("StandbyServiceStub: Local descriptor not match remote.");
         return ERR_TRANSACTION_FAILED;
     }
@@ -71,6 +69,9 @@ ErrCode StandbyServiceStub::OnRemoteRequest(uint32_t code,
             break;
         case static_cast<uint32_t>(IStandbyInterfaceCode::SET_NAT_INTERVAL):
             HandleSetNatInterval(data, reply);
+            break;
+        case static_cast<uint32_t>(IStandbyInterfaceCode::POWER_OVERUSED):
+            HandleReportPowerOverused(data, reply);
             break;
         default:
             return IRemoteStub<IStandbyService>::OnRemoteRequest(code, data, reply, option);
@@ -261,6 +262,24 @@ ErrCode StandbyServiceStub::HandleSetNatInterval(MessageParcel& data, MessagePar
         STANDBYSERVICE_LOGW("HandleSetNatInterval Write result failed, ErrCode=%{public}d", result);
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceStub::HandleReportPowerOverused(MessageParcel& data, MessageParcel& reply)
+{
+    std::string module{""};
+    uint32_t level{0};
+
+    if (!data.ReadString(module) || !data.ReadUint32(level)) {
+        STANDBYSERVICE_LOGW("HandleReportPowerOverused ReadParcelable failed");
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+    ErrCode result = ReportPowerOverused(module, level);
+    if (!reply.WriteInt32(result)) {
+        STANDBYSERVICE_LOGW("HandleReportPowerOverused Write result failed, ErrCode=%{public}d", result);
+        return ERR_STANDBY_PARCELABLE_FAILED;
+    }
+
     return ERR_OK;
 }
 

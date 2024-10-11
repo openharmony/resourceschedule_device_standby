@@ -924,6 +924,15 @@ ErrCode StandbyServiceImpl::IsStrategyEnabled(const std::string& strategyName, b
     return ERR_OK;
 }
 
+ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint32_t level)
+{
+    STANDBYSERVICE_LOGI("[PowerOverused] StandbyServiceImpl: power overused, "
+        "modue name: %{public}s, level: %{public}u", module.c_str(), level);
+
+    HandlePowerOverused(0, module, level);
+    return ERR_OK;
+}
+
 ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
     if (!isServiceReady_.load()) {

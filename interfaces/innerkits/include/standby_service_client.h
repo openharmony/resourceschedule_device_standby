@@ -25,6 +25,16 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
+
+enum class PowerOverusedLevel : uint32_t {
+    NORMAL = 0,
+    MINOR,
+    WARNING,
+    SERIOUS,
+    EXTREME,
+    FATAL,
+};
+
 class StandbyServiceClient {
 public:
     StandbyServiceClient();
@@ -140,6 +150,15 @@ public:
      * @return ErrCode ERR_OK if success, else fail.
      */
     ErrCode HandleEvent(const std::shared_ptr<ResData> &resData);
+
+    /**
+     * @brief Report event when a module power energy is overused according to the information from XPower
+     *
+     * @param module module name
+     * @param level rate of power overused
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
 
 private:
     bool GetStandbyServiceProxy();
