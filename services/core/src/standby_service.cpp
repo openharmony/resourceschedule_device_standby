@@ -49,14 +49,17 @@ const std::string PUSH_PROCESS_NAME = "push_manager_service";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 }
 
-IMPLEMENT_SINGLE_INSTANCE(StandbyService);
-
 StandbyService::StandbyService() : SystemAbility(DEVICE_STANDBY_SERVICE_SYSTEM_ABILITY_ID, true) {}
 
 StandbyService::StandbyService(const int32_t systemAbilityId, bool runOnCreate)
     : SystemAbility(DEVICE_STANDBY_SERVICE_SYSTEM_ABILITY_ID, true) {}
 
 StandbyService::~StandbyService() {}
+
+std::shared_ptr<StandbyService> StandbyService::GetInstance()
+{
+    return DelayedSingleton<StandbyService>::GetInstance();
+}
 
 void StandbyService::OnStart()
 {

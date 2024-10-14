@@ -111,7 +111,7 @@
             "header_files": [
               "common_constant.h",
               "ipc_util.h",
-              "single_instance.h",
+              "c",zz
               "standby_service_errors.h",
               "standby_service_log.h"
             ]

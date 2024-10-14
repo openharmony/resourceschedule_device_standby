@@ -26,13 +26,14 @@
 #include "isystem_process_status_change.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
-#include "single_instance.h"
+#include "singleton.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
 class AbilityManagerHelper {
-DECLARE_SINGLE_INSTANCE(AbilityManagerHelper);
+DECLARE_DELAYED_SINGLETON(AbilityManagerHelper);
 public:
+    static std::shared_ptr<AbilityManagerHelper> GetInstance();
     bool GetRunningSystemProcess(std::list<SystemProcessInfo>& systemProcessInfos);
 private:
     std::mutex mutex_ {};

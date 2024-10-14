@@ -25,13 +25,14 @@
 #include "app_mgr_proxy.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
-#include "single_instance.h"
+#include "singleton.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
 class AppMgrHelper {
-DECLARE_SINGLE_INSTANCE(AppMgrHelper);
+DECLARE_DELAYED_SINGLETON(AppMgrHelper);
 public:
+    static std::shared_ptr<AppMgrHelper> GetInstance();
     /**
      * @brief Get the All Running Processes info.
      *

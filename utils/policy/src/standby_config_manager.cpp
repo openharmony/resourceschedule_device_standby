@@ -76,11 +76,14 @@ namespace {
     };
 }
 
-IMPLEMENT_SINGLE_INSTANCE(StandbyConfigManager);
-
 StandbyConfigManager::StandbyConfigManager() {}
 
 StandbyConfigManager::~StandbyConfigManager() {}
+
+std::shared_ptr<StandbyConfigManager> StandbyConfigManager::GetInstance()
+{
+    return DelayedSingleton<StandbyConfigManager>::GetInstance();
+}
 
 ErrCode StandbyConfigManager::Init()
 {

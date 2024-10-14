@@ -21,13 +21,17 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-IMPLEMENT_SINGLE_INSTANCE(AbilityManagerHelper);
 AbilityManagerHelper::AbilityManagerHelper()
 {
 }
 
 AbilityManagerHelper::~AbilityManagerHelper()
 {
+}
+
+std::shared_ptr<AbilityManagerHelper> AbilityManagerHelper::GetInstance()
+{
+    return DelayedSingleton<AbilityManagerHelper>::GetInstance();
 }
 
 bool WEAK_FUNC AbilityManagerHelper::GetRunningSystemProcess(std::list<SystemProcessInfo>& systemProcessInfos)

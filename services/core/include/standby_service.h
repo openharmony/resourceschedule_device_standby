@@ -28,7 +28,7 @@
 #include "system_ability.h"
 
 #include "standby_service_stub.h"
-#include "single_instance.h"
+#include "singleton.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -39,9 +39,10 @@ enum class ServiceRunningState {
 
 class StandbyService final : public SystemAbility, public StandbyServiceStub {
     DECLARE_SYSTEM_ABILITY(StandbyService);
-    DECLARE_SINGLE_INSTANCE(StandbyService);
+    DECLARE_DELAYED_SINGLETON(StandbyService);
 public:
     StandbyService(const int32_t systemAbilityId, bool runOnCreate);
+    static std::shared_ptr<StandbyService> GetInstance();
     void OnStart() final;
     void OnStop() final;
 

@@ -21,10 +21,14 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-IMPLEMENT_SINGLE_INSTANCE(AppMgrHelper);
 AppMgrHelper::AppMgrHelper() {}
 
 AppMgrHelper::~AppMgrHelper() {}
+
+std::shared_ptr<AppMgrHelper> AppMgrHelper::GetInstance()
+{
+    return DelayedSingleton<AppMgrHelper>::GetInstance();
+}
 
 bool WEAK_FUNC AppMgrHelper::GetAllRunningProcesses(std::vector<AppExecFwk::RunningProcessInfo>& allAppProcessInfos)
 {
