@@ -1456,7 +1456,7 @@ DeviceStateCache::DeviceStateCache()
 
 DeviceStateCache::~DeviceStateCache() {}
 
-static std::shared_ptr<DeviceStateCache> DeviceStateCache::GetInstance()
+std::shared_ptr<DeviceStateCache> DeviceStateCache::GetInstance()
 {
     return DelayedSingleton<DeviceStateCache>::GetInstance();
 }
