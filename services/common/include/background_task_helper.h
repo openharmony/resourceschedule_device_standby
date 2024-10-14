@@ -38,7 +38,7 @@ using namespace OHOS::BackgroundTaskMgr;
 class BackgroundTaskHelper : public std::enable_shared_from_this<BackgroundTaskHelper> {
 DECLARE_DELAYED_SINGLETON(BackgroundTaskHelper);
 public:
-    static std::shared_ptr<> GetInstance();
+    static std::shared_ptr<BackgroundTaskHelper> GetInstance();
     /**
      * @brief Get all running continuous task info.
      */
