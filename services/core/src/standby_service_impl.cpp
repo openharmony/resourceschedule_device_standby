@@ -60,7 +60,7 @@ StandbyServiceImpl::StandbyServiceImpl() {}
 
 StandbyServiceImpl::~StandbyServiceImpl() {}
 
-static std::shared_ptr<StandbyServiceImpl> StandbyServiceImpl::GetInstance()
+std::shared_ptr<StandbyServiceImpl> StandbyServiceImpl::GetInstance()
 {
     return DelayedSingleton<StandbyServiceImpl>::GetInstance();
 }
