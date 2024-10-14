@@ -832,6 +832,9 @@ void StandbyServiceImpl::GetTemporaryAllowList(uint32_t allowTypeIndex, std::vec
 void StandbyServiceImpl::GetPersistAllowList(uint32_t allowTypeIndex, std::vector<AllowInfo>& allowInfoList,
     bool isAllow, bool isApp)
 {
+    if (allowTypeIndex >= MAX_ALLOW_TYPE_NUM) {
+        return;
+    }
     uint32_t condition = TimeProvider::GetCondition();
     std::set<std::string> psersistAllowList;
     if (isApp) {
