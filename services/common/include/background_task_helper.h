@@ -29,15 +29,16 @@
 #include "transient_task_app_info.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
-#include "single_instance.h"
+#include "singleton.h"
 #include "standby_service_errors.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
 using namespace OHOS::BackgroundTaskMgr;
 class BackgroundTaskHelper : public std::enable_shared_from_this<BackgroundTaskHelper> {
-DECLARE_SINGLE_INSTANCE(BackgroundTaskHelper);
+DECLARE_DELAYED_SINGLETON(BackgroundTaskHelper);
 public:
+    static std::shared_ptr<BackgroundTaskHelper> GetInstance();
     /**
      * @brief Get all running continuous task info.
      */

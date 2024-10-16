@@ -26,14 +26,17 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-IMPLEMENT_SINGLE_INSTANCE(StandbyStateSubscriber);
-
 StandbyStateSubscriber::StandbyStateSubscriber()
 {
     deathRecipient_ = new (std::nothrow) SubscriberDeathRecipient();
 }
 
 StandbyStateSubscriber::~StandbyStateSubscriber() {}
+
+std::shared_ptr<StandbyStateSubscriber> StandbyStateSubscriber::GetInstance()
+{
+    return DelayedSingleton<StandbyStateSubscriber>::GetInstance();
+}
 
 ErrCode StandbyStateSubscriber::AddSubscriber(const sptr<IStandbyServiceSubscriber>& subscriber)
 {

@@ -19,14 +19,17 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-IMPLEMENT_SINGLE_INSTANCE(BackgroundTaskHelper);
-
 BackgroundTaskHelper::BackgroundTaskHelper()
 {
 }
 
 BackgroundTaskHelper::~BackgroundTaskHelper()
 {
+}
+
+std::shared_ptr<BackgroundTaskHelper> BackgroundTaskHelper::GetInstance()
+{
+    return DelayedSingleton<BackgroundTaskHelper>::GetInstance();
 }
 
 bool WEAK_FUNC BackgroundTaskHelper::GetContinuousTaskApps(

@@ -52,7 +52,7 @@
 #endif
 #include "resourcce_request.h"
 #include "res_type.h"
-#include "single_instance.h"
+#include "singleton.h"
 #include "standby_state_subscriber.h"
 
 namespace OHOS {
@@ -81,8 +81,9 @@ enum P2pState {
 };
 
 class StandbyServiceImpl : public std::enable_shared_from_this<StandbyServiceImpl> {
-DECLARE_SINGLE_INSTANCE(StandbyServiceImpl);
+DECLARE_DELAYED_SINGLETON(StandbyServiceImpl);
 public:
+    static std::shared_ptr<StandbyServiceImpl> GetInstance();
     bool Init();
     void InitReadyState();
     ErrCode RegisterCommEventObserver();
@@ -211,8 +212,9 @@ private:
 };
 
 class DeviceStateCache {
-DECLARE_SINGLE_INSTANCE(DeviceStateCache);
+DECLARE_DELAYED_SINGLETON(DeviceStateCache);
 public:
+    static std::shared_ptr<DeviceStateCache> GetInstance();
     bool SetDeviceState(int32_t type, bool enabled);
     bool GetDeviceState(int32_t type);
 private:

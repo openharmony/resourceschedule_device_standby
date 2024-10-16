@@ -32,7 +32,7 @@
 #include "iremote_object.h"
 #include "istate_manager_adapter.h"
 #include "resource_callback_info.h"
-#include "single_instance.h"
+#include "singleton.h"
 #include "standby_service_errors.h"
 
 namespace OHOS {

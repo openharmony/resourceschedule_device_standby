@@ -56,11 +56,14 @@ const uint32_t ONE_SECOND = 1000;
 const std::string DUMP_ON_POWER_OVERUSED = "--poweroverused";
 }
 
-IMPLEMENT_SINGLE_INSTANCE(StandbyServiceImpl);
-
 StandbyServiceImpl::StandbyServiceImpl() {}
 
 StandbyServiceImpl::~StandbyServiceImpl() {}
+
+std::shared_ptr<StandbyServiceImpl> StandbyServiceImpl::GetInstance()
+{
+    return DelayedSingleton<StandbyServiceImpl>::GetInstance();
+}
 
 bool StandbyServiceImpl::Init()
 {
@@ -1446,14 +1449,17 @@ void StandbyServiceImpl::DumpSubScriberObserver(const std::vector<std::string>& 
     StandbyStateSubscriber::GetInstance()->ShellDump(argsInStr, result);
 }
 
-IMPLEMENT_SINGLE_INSTANCE(DeviceStateCache);
-
 DeviceStateCache::DeviceStateCache()
 {
     deviceState_ = {false, false, false};
 }
 
 DeviceStateCache::~DeviceStateCache() {}
+
+std::shared_ptr<DeviceStateCache> DeviceStateCache::GetInstance()
+{
+    return DelayedSingleton<DeviceStateCache>::GetInstance();
+}
 
 bool DeviceStateCache::SetDeviceState(int32_t type, bool enabled)
 {
