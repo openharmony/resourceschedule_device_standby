@@ -1349,5 +1349,24 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_061, TestSize.Level1)
     EXPECT_EQ(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber), ERR_OK);
 }
 
+/**
+ * @tc.name: StandbyServiceUnitTest_062
+ * @tc.desc: test ReportPowerOverused.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_062, TestSize.Level1)
+{
+    std::string TEST_MODULE_NAME = "TestModule";
+    uint32_t level = static_cast<uint32_t>(PowerOverusedLevel::WARNING);
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
+;
+    EXPECT_EQ(StandbyService::GetInstance()->ReportPowerOverused(TEST_MODULE_NAME, level), ERR_OK);
+
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
+    level = static_cast<uint32_t>(PowerOverusedLevel::FATAL);
+    EXPECT_EQ(StandbyService::GetInstance()->ReportPowerOverused(TEST_MODULE_NAME, level), ERR_STANDBY_SYS_NOT_READY);
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
