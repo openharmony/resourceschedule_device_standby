@@ -303,7 +303,7 @@ ErrCode StandbyService::IsStrategyEnabled(const std::string& strategyName, bool&
 
 ErrCode StandbyService::ReportPowerOverused(const std::string &module, uint32_t level)
 {
-    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
+    if (state_ != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
