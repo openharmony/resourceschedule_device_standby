@@ -68,6 +68,10 @@ public:
     bool UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer);
 
 private:
+    AppMgrHelper(const AppMgrHelper&) = delete;
+    AppMgrHelper& operator= (const AppMgrHelper&) = delete;
+    AppMgrHelper(AppMgrHelper&&) = delete;
+    AppMgrHelper& operator= (AppMgrHelper&&) = delete;
     bool Connect();
 
 private:

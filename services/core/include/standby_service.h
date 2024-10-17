@@ -66,6 +66,10 @@ public:
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level) override;
 
 private:
+    StandbyService(const StandbyService&) = delete;
+    StandbyService& operator= (const StandbyService&) = delete;
+    StandbyService(StandbyService&&) = delete;
+    StandbyService& operator= (StandbyService&&) = delete;
     void DumpUsage(std::string& result);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
