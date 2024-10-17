@@ -108,6 +108,10 @@ public:
      */
     void DumpStandbyConfigInfo(std::string& result);
 private:
+    StandbyConfigManager(const StandbyConfigManager&) = delete;
+    StandbyConfigManager& operator= (const StandbyConfigManager&) = delete;
+    StandbyConfigManager(StandbyConfigManager&&) = delete;
+    StandbyConfigManager& operator= (StandbyConfigManager&&) = delete;
     template<typename T> std::set<T> GetEligibleAllowConfig(const std::string& paramName,
         uint32_t condition, bool isAllow, bool isApp, const std::function<void(bool, std::set<T>&,
         const DefaultResourceConfig&)>& func);

@@ -48,6 +48,12 @@ public:
      * @brief Get all running transient task info.
      */
     bool GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
+
+private:
+    BackgroundTaskHelper(const BackgroundTaskHelper&) = delete;
+    BackgroundTaskHelper& operator= (const BackgroundTaskHelper&) = delete;
+    BackgroundTaskHelper(BackgroundTaskHelper&&) = delete;
+    BackgroundTaskHelper& operator= (BackgroundTaskHelper&&) = delete;
 };
 }
 }

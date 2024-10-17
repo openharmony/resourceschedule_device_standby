@@ -55,6 +55,10 @@ private:
     std::list<sptr<IStandbyServiceSubscriber>>::iterator FindSubcriberObject(sptr<IRemoteObject>& proxy);
 
 private:
+    StandbyStateSubscriber(const StandbyStateSubscriber&) = delete;
+    StandbyStateSubscriber& operator= (const StandbyStateSubscriber&) = delete;
+    StandbyStateSubscriber(StandbyStateSubscriber&&) = delete;
+    StandbyStateSubscriber& operator= (StandbyStateSubscriber&&) = delete;
     std::mutex subscriberLock_ {};
     std::list<sptr<IStandbyServiceSubscriber>> subscriberList_ {};
     sptr<SubscriberDeathRecipient> deathRecipient_ {nullptr};

@@ -47,6 +47,10 @@ public:
         std::vector<AppExecFwk::ApplicationInfo> &appInfos);
     bool CheckIsSystemAppByUid(const int uid, bool& isSystemApp);
 private:
+    BundleManagerHelper(const BundleManagerHelper&) = delete;
+    BundleManagerHelper& operator= (const BundleManagerHelper&) = delete;
+    BundleManagerHelper(BundleManagerHelper&&) = delete;
+    BundleManagerHelper& operator= (BundleManagerHelper&&) = delete;
     bool Connect();
 
 private:

@@ -137,6 +137,10 @@ public:
 
     void OnProcessStatusChanged(int32_t uid, int32_t pid, const std::string& bundleName, bool isCreated);
 private:
+    StandbyServiceImpl(const StandbyServiceImpl&) = delete;
+    StandbyServiceImpl& operator= (const StandbyServiceImpl&) = delete;
+    StandbyServiceImpl(StandbyServiceImpl&&) = delete;
+    StandbyServiceImpl& operator= (StandbyServiceImpl&&) = delete;
     void ApplyAllowResInner(const sptr<ResourceRequest>& resourceRequest, int32_t pid);
     void UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord, const sptr<ResourceRequest>& resourceRequest);
     void UnapplyAllowResInner(int32_t uid, const std::string& name, uint32_t allowType,  bool removeAll);
@@ -218,6 +222,10 @@ public:
     bool SetDeviceState(int32_t type, bool enabled);
     bool GetDeviceState(int32_t type);
 private:
+    DeviceStateCache(const DeviceStateCache&) = delete;
+    DeviceStateCache& operator= (const DeviceStateCache&) = delete;
+    DeviceStateCache(DeviceStateCache&&) = delete;
+    DeviceStateCache& operator= (DeviceStateCache&&) = delete;
     std::mutex mutex_ {};
     const static std::int32_t DEVICE_STATE_NUM = 3;
     std::array<bool, DEVICE_STATE_NUM> deviceState_;

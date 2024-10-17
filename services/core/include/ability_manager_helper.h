@@ -36,6 +36,10 @@ public:
     static std::shared_ptr<AbilityManagerHelper> GetInstance();
     bool GetRunningSystemProcess(std::list<SystemProcessInfo>& systemProcessInfos);
 private:
+    AbilityManagerHelper(const AbilityManagerHelper&) = delete;
+    AbilityManagerHelper& operator= (const AbilityManagerHelper&) = delete;
+    AbilityManagerHelper(AbilityManagerHelper&&) = delete;
+    AbilityManagerHelper& operator= (AbilityManagerHelper&&) = delete;
     std::mutex mutex_ {};
 };
 }  // namespace DevStandbyMgr
