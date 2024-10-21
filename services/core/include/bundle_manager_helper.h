@@ -25,7 +25,7 @@
 #include "bundle_mgr_interface.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
-#include "single_instance.h"
+#include "singleton.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -37,8 +37,9 @@ struct UserSpace {
     };
 };
 class BundleManagerHelper {
-DECLARE_SINGLE_INSTANCE(BundleManagerHelper);
+DECLARE_DELAYED_SINGLETON(BundleManagerHelper);
 public:
+    static std::shared_ptr<BundleManagerHelper> GetInstance();
     std::string GetClientBundleName(int32_t uid);
     bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
@@ -46,6 +47,10 @@ public:
         std::vector<AppExecFwk::ApplicationInfo> &appInfos);
     bool CheckIsSystemAppByUid(const int uid, bool& isSystemApp);
 private:
+    BundleManagerHelper(const BundleManagerHelper&) = delete;
+    BundleManagerHelper& operator= (const BundleManagerHelper&) = delete;
+    BundleManagerHelper(BundleManagerHelper&&) = delete;
+    BundleManagerHelper& operator= (BundleManagerHelper&&) = delete;
     bool Connect();
 
 private:

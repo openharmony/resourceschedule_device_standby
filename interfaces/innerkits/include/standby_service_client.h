@@ -25,6 +25,16 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
+
+enum class PowerOverusedLevel : uint32_t {
+    NORMAL = 0,
+    MINOR,
+    WARNING,
+    SERIOUS,
+    EXTREME,
+    FATAL,
+};
+
 class StandbyServiceClient {
 public:
     StandbyServiceClient();

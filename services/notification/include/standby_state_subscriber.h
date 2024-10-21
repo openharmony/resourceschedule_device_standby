@@ -25,7 +25,7 @@
 #include "iremote_object.h"
 
 #include "allow_type.h"
-#include "single_instance.h"
+#include "singleton.h"
 #include "standby_service_errors.h"
 #include "istandby_service_subscriber.h"
 #include "standby_state.h"
@@ -35,9 +35,10 @@ namespace OHOS {
 namespace DevStandbyMgr {
 class SubscriberDeathRecipient;
 class StandbyStateSubscriber : public std::enable_shared_from_this<StandbyStateSubscriber> {
-DECLARE_SINGLE_INSTANCE(StandbyStateSubscriber);
+DECLARE_DELAYED_SINGLETON(StandbyStateSubscriber);
 
 public:
+    static std::shared_ptr<StandbyStateSubscriber> GetInstance();
     ErrCode AddSubscriber(const sptr<IStandbyServiceSubscriber>& subscriber);
     ErrCode RemoveSubscriber(const sptr<IStandbyServiceSubscriber>& subscriber);
     void ReportStandbyState(uint32_t curState);
@@ -54,6 +55,10 @@ private:
     std::list<sptr<IStandbyServiceSubscriber>>::iterator FindSubcriberObject(sptr<IRemoteObject>& proxy);
 
 private:
+    StandbyStateSubscriber(const StandbyStateSubscriber&) = delete;
+    StandbyStateSubscriber& operator= (const StandbyStateSubscriber&) = delete;
+    StandbyStateSubscriber(StandbyStateSubscriber&&) = delete;
+    StandbyStateSubscriber& operator= (StandbyStateSubscriber&&) = delete;
     std::mutex subscriberLock_ {};
     std::list<sptr<IStandbyServiceSubscriber>> subscriberList_ {};
     sptr<SubscriberDeathRecipient> deathRecipient_ {nullptr};

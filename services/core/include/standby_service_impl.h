@@ -52,7 +52,7 @@
 #endif
 #include "resourcce_request.h"
 #include "res_type.h"
-#include "single_instance.h"
+#include "singleton.h"
 #include "standby_state_subscriber.h"
 
 namespace OHOS {
@@ -81,8 +81,9 @@ enum P2pState {
 };
 
 class StandbyServiceImpl : public std::enable_shared_from_this<StandbyServiceImpl> {
-DECLARE_SINGLE_INSTANCE(StandbyServiceImpl);
+DECLARE_DELAYED_SINGLETON(StandbyServiceImpl);
 public:
+    static std::shared_ptr<StandbyServiceImpl> GetInstance();
     bool Init();
     void InitReadyState();
     ErrCode RegisterCommEventObserver();
@@ -136,6 +137,10 @@ public:
 
     void OnProcessStatusChanged(int32_t uid, int32_t pid, const std::string& bundleName, bool isCreated);
 private:
+    StandbyServiceImpl(const StandbyServiceImpl&) = delete;
+    StandbyServiceImpl& operator= (const StandbyServiceImpl&) = delete;
+    StandbyServiceImpl(StandbyServiceImpl&&) = delete;
+    StandbyServiceImpl& operator= (StandbyServiceImpl&&) = delete;
     void ApplyAllowResInner(const sptr<ResourceRequest>& resourceRequest, int32_t pid);
     void UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord, const sptr<ResourceRequest>& resourceRequest);
     void UnapplyAllowResInner(int32_t uid, const std::string& name, uint32_t allowType,  bool removeAll);
@@ -211,11 +216,16 @@ private:
 };
 
 class DeviceStateCache {
-DECLARE_SINGLE_INSTANCE(DeviceStateCache);
+DECLARE_DELAYED_SINGLETON(DeviceStateCache);
 public:
+    static std::shared_ptr<DeviceStateCache> GetInstance();
     bool SetDeviceState(int32_t type, bool enabled);
     bool GetDeviceState(int32_t type);
 private:
+    DeviceStateCache(const DeviceStateCache&) = delete;
+    DeviceStateCache& operator= (const DeviceStateCache&) = delete;
+    DeviceStateCache(DeviceStateCache&&) = delete;
+    DeviceStateCache& operator= (DeviceStateCache&&) = delete;
     std::mutex mutex_ {};
     const static std::int32_t DEVICE_STATE_NUM = 3;
     std::array<bool, DEVICE_STATE_NUM> deviceState_;

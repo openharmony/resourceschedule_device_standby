@@ -23,13 +23,17 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-IMPLEMENT_SINGLE_INSTANCE(BundleManagerHelper);
 BundleManagerHelper::BundleManagerHelper()
 {
 }
 
 BundleManagerHelper::~BundleManagerHelper()
 {
+}
+
+std::shared_ptr<BundleManagerHelper> BundleManagerHelper::GetInstance()
+{
+    return DelayedSingleton<BundleManagerHelper>::GetInstance();
 }
 
 std::string WEAK_FUNC BundleManagerHelper::GetClientBundleName(int32_t uid)

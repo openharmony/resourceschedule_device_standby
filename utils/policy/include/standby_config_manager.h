@@ -26,7 +26,7 @@
 
 
 #include "json_utils.h"
-#include "single_instance.h"
+#include "singleton.h"
 #include "standby_service_errors.h"
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -74,8 +74,9 @@ struct TimerResourceConfig {
 };
 
 class StandbyConfigManager {
-    DECLARE_SINGLE_INSTANCE(StandbyConfigManager);
+    DECLARE_DELAYED_SINGLETON(StandbyConfigManager);
 public:
+    static std::shared_ptr<StandbyConfigManager> GetInstance();
     ErrCode Init();
     const std::string& GetPluginName();
     nlohmann::json GetDefaultConfig(const std::string& configName);
@@ -107,6 +108,10 @@ public:
      */
     void DumpStandbyConfigInfo(std::string& result);
 private:
+    StandbyConfigManager(const StandbyConfigManager&) = delete;
+    StandbyConfigManager& operator= (const StandbyConfigManager&) = delete;
+    StandbyConfigManager(StandbyConfigManager&&) = delete;
+    StandbyConfigManager& operator= (StandbyConfigManager&&) = delete;
     template<typename T> std::set<T> GetEligibleAllowConfig(const std::string& paramName,
         uint32_t condition, bool isAllow, bool isApp, const std::function<void(bool, std::set<T>&,
         const DefaultResourceConfig&)>& func);

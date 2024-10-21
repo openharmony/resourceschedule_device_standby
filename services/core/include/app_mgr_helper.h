@@ -25,13 +25,14 @@
 #include "app_mgr_proxy.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
-#include "single_instance.h"
+#include "singleton.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
 class AppMgrHelper {
-DECLARE_SINGLE_INSTANCE(AppMgrHelper);
+DECLARE_DELAYED_SINGLETON(AppMgrHelper);
 public:
+    static std::shared_ptr<AppMgrHelper> GetInstance();
     /**
      * @brief Get the All Running Processes info.
      *
@@ -67,6 +68,10 @@ public:
     bool UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer);
 
 private:
+    AppMgrHelper(const AppMgrHelper&) = delete;
+    AppMgrHelper& operator= (const AppMgrHelper&) = delete;
+    AppMgrHelper(AppMgrHelper&&) = delete;
+    AppMgrHelper& operator= (AppMgrHelper&&) = delete;
     bool Connect();
 
 private:
