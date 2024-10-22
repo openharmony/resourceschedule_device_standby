@@ -87,8 +87,12 @@ ErrCode StandbyServiceStub::HandleSubscribeStandbyCallback(MessageParcel& data, 
         return ERR_STANDBY_PARCELABLE_FAILED;
     }
     std::string strategyName = data.ReadString();
-    STANDBYSERVICE_LOGD("HandleSubscribeStandbyCallback callback name is %{public}s 11111", strategyName.c_str());
+    std::string moduleName = data.ReadString();
+
+    STANDBYSERVICE_LOGD("HandleSubscribeStandbyCallback strategyName is %{public}s, moduleName is %{public}s.",
+        strategyName.c_str(), moduleName.c_str());
     subscriber->SetSubscriberName(strategyName);
+    subscriber->SetModuleName(moduleName);
 
     ErrCode result = SubscribeStandbyCallback(subscriber);
     if (!reply.WriteInt32(result)) {
