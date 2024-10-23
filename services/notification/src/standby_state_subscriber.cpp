@@ -167,7 +167,6 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
     for (auto iter : subscriberList_) {
         if (module == iter->GetModuleName()) {
             iter->OnPowerOverused(module, level);
-            break;
         }
     }
 }
