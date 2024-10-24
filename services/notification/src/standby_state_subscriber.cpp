@@ -163,7 +163,7 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
     int32_t curDate = TimeProvider::GetCurrentDate();
     if (curDate_ != curDate) {
     	STANDBYSERVICE_LOGI("date has changed to %{public}d", curDate);
-    	curDate_ == curDate;
+    	curDate_ = curDate;
     	modulePowerMap_.clear();
     }
     modulePowerMap_[module] = level;
