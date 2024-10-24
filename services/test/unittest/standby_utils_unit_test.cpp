@@ -290,7 +290,6 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_013, TestSize.Level1)
     EXPECT_FALSE(StandbyConfigManager::GetInstance()->ParseDefaultResCtrlConfig("test", resConfigArray));
     StandbyConfigManager::GetInstance()->ParseStrategyListConfig(resConfigArray);
     StandbyConfigManager::GetInstance()->ParseResCtrlConfig(resConfigArray);
-
     StandbyConfigManager::GetInstance()->ParseTimerResCtrlConfig(resConfigArray);
     resConfigArray = nlohmann::json::parse("{\"condition\":[]}", nullptr, false);
     StandbyConfigManager::GetInstance()->ParseDefaultResCtrlConfig("test", resConfigArray);
