@@ -23,12 +23,14 @@
 #include "standby_messsage.h"
 #include "standby_service_log.h"
 #include "standby_state.h"
+#include "time_provider.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
 StandbyStateSubscriber::StandbyStateSubscriber()
 {
     deathRecipient_ = new (std::nothrow) SubscriberDeathRecipient();
+    curDate_ = TimeProvider::GetCurrentDate();
 }
 
 StandbyStateSubscriber::~StandbyStateSubscriber() {}
@@ -62,6 +64,7 @@ ErrCode StandbyStateSubscriber::AddSubscriber(const sptr<IStandbyServiceSubscrib
     }
 
     subscriberList_.emplace_back(subscriber);
+    NotifyPowerOnRegister(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
     STANDBYSERVICE_LOGD(" suscriber standby service callback succeed, list.size() is %{public}d",
         static_cast<int32_t>(subscriberList_.size()));
@@ -157,6 +160,13 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
 {
     STANDBYSERVICE_LOGI("[PowerOverused] NotifyPowerOverusedByCallback start, "
         "module: %{public}s, level: %{public}u.", module.c_str(), level);
+    int32_t curDate = TimeProvider::GetCurrentDate();
+    if (curDate_ != curDate) {
+    	STANDBYSERVICE_LOGI("date has changed to %{public}d", curDate);
+    	curDate_ == curDate;
+    	modulePowerMap_.clear();
+    }
+    modulePowerMap_[module] = level;
     
     std::lock_guard<std::mutex> lock(subscriberLock_);
     if (subscriberList_.empty()) {
@@ -187,6 +197,18 @@ void StandbyStateSubscriber::NotifyAllowChangedByCommonEvent(int32_t uid, const 
     } else {
         STANDBYSERVICE_LOGD("PublishCommonEvent for exempt list update succeed");
     }
+}
+
+void StandbyStateSubscriber::NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber)
+{
+    std::string module = subscriber->GetModuleName();
+    uint32_t level = 0;
+    int32_t curDate = TimeProvider::GetCurrentDate();
+    auto iter = modulePowerMap_.find(module);
+    if (curDate_ == curDate && iter != modulePowerMap_.end()) {
+    	level = iter->second;
+    }
+    subscriber->OnPowerOverused(module, level);
 }
 
 void StandbyStateSubscriber::HandleSubscriberDeath(const wptr<IRemoteObject>& remote)

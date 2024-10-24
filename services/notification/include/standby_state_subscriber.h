@@ -53,6 +53,7 @@ private:
     void NotifyIdleModeByCommonEvent(bool napped, bool sleeping);
     void NotifyAllowChangedByCallback(int32_t uid, const std::string& name, uint32_t allowType, bool added);
     std::list<sptr<IStandbyServiceSubscriber>>::iterator FindSubcriberObject(sptr<IRemoteObject>& proxy);
+    void NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
 
 private:
     StandbyStateSubscriber(const StandbyStateSubscriber&) = delete;
@@ -63,6 +64,8 @@ private:
     std::list<sptr<IStandbyServiceSubscriber>> subscriberList_ {};
     sptr<SubscriberDeathRecipient> deathRecipient_ {nullptr};
     std::shared_ptr<IStateManagerAdapter> standbyStateManager_ {nullptr};
+    std::unordered_map<std::string, uint32_t> modulePowerMap_;
+    int32_t curDate_;
 };
 
 class SubscriberDeathRecipient final : public IRemoteObject::DeathRecipient {
