@@ -279,10 +279,18 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_012, TestSize.Level1)
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_013, TestSize.Level1)
 {
+    nlohmann::json defaultConfig = nlohmann::json::parse("{\"test\":true}}", nullptr, false);
+    StandbyConfigManager::GetInstance()->ParseStrategyListConfig(defaultConfig);
+    nlohmann::json testValue = StandbyConfigManager::GetInstance()->GetDefaultConfig("test");
+    EXPECT_TRUE(testValue.get<bool>());
+
+    nlohmann::json resConfigArray = nlohmann::json::parse("{\"test\":true}}", nullptr, false);
+    nlohmann::json = StandbyConfigManager::GetInstance()->GetDefaultConfig("");
     nlohmann::json resConfigArray = nlohmann::json::parse("{}", nullptr, false);
     EXPECT_FALSE(StandbyConfigManager::GetInstance()->ParseDefaultResCtrlConfig("test", resConfigArray));
     StandbyConfigManager::GetInstance()->ParseStrategyListConfig(resConfigArray);
     StandbyConfigManager::GetInstance()->ParseResCtrlConfig(resConfigArray);
+
     StandbyConfigManager::GetInstance()->ParseTimerResCtrlConfig(resConfigArray);
     resConfigArray = nlohmann::json::parse("{\"condition\":[]}", nullptr, false);
     StandbyConfigManager::GetInstance()->ParseDefaultResCtrlConfig("test", resConfigArray);
