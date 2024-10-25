@@ -279,8 +279,8 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_012, TestSize.Level1)
  */
 HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_013, TestSize.Level1)
 {
-    nlohmann::json defaultConfig = nlohmann::json::parse("{\"test\":true}}", nullptr, false);
-    StandbyConfigManager::GetInstance()->ParseStrategyListConfig(defaultConfig);
+    nlohmann::json defaultConfig = nlohmann::json::parse("{\"test\":true}", nullptr, false);
+    StandbyConfigManager::GetInstance()->ParseResCtrlConfig(defaultConfig);
     nlohmann::json testValue = StandbyConfigManager::GetInstance()->GetDefaultConfig("test");
     EXPECT_TRUE(testValue.get<bool>());
 
