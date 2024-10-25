@@ -14,6 +14,7 @@
  */
 
 #include "standby_state_subscriber.h"
+#include "standby_service_client.h"
 
 #include "common_event_data.h"
 #include "common_event_manager.h"
@@ -202,7 +203,7 @@ void StandbyStateSubscriber::NotifyAllowChangedByCommonEvent(int32_t uid, const 
 void StandbyStateSubscriber::NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
     std::string module = subscriber->GetModuleName();
-    uint32_t level = 0;
+    uint32_t level = static_cast<uint32_t>(PowerOverusedLevel::NORMAL);
     int32_t curDate = TimeProvider::GetCurrentDate();
     auto iter = modulePowerMap_.find(module);
     if (curDate_ == curDate && iter != modulePowerMap_.end()) {
