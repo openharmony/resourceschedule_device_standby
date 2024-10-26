@@ -33,6 +33,7 @@ namespace {
     const std::string JSON_KEY = "key";
     const std::string JSON_ERROR_KEY = "error_key";
     const std::string TAG_APPS_LIMIT = "apps_limit";
+    const std::string TAG_BATTERY_THRESHOLD = "battery_threshold";
 }
 class StandbyUtilsUnitTest : public testing::Test {
 public:
@@ -521,6 +522,24 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_027, TestSize.Level1)
     std::string configVerB = "1.0.0.0";
     int result = StandbyConfigManager::GetInstance()->CompareVersion(configVerA, configVerB);
     EXPECT_EQ(result, 1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_028
+ * @tc.desc: test GetStandbyLadderBatteryList of StandbyConfigManager.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_028, TestSize.Level1)
+{
+    StandbyConfigManager::GetInstance()->ladderBatteryListMap_ = {
+        {"battery_threshold", {90, 40}}
+    };
+    auto result = StandbyConfigManager::GetInstance()->GetStandbyLadderBatteryList(TAG_BATTERY_THRESHOLD);
+    EXPECT_EQ(result.size(), 2);
+    StandbyConfigManager::GetInstance()->ladderBatteryListMap_.clear();
+    result = StandbyConfigManager::GetInstance()->GetStandbyLadderBatteryList(TAG_BATTERY_THRESHOLD);
+    EXPECT_EQ(result.size(), 0);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
