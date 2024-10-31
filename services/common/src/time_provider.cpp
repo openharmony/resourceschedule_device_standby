@@ -153,6 +153,10 @@ int32_t TimeProvider::GetCurrentDate()
 {
     time_t now = std::time(0);
     tm* local_time = localtime(&now);
+    if (local_time == nullptr) {
+        STANDBYSERVICE_LOGE("get local time failed");
+        return 0;
+    }
     return local_time->tm_mday;
 }
 }  // namespace DevStandbyMgr
