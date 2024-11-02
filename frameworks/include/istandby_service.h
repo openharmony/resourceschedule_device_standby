@@ -153,6 +153,15 @@ public:
      */
     virtual ErrCode HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo) = 0;
 
+    /**
+     * @brief Report event when a module power energy is overused according to the information from XPower
+     *
+     * @param module module name
+     * @param level rate of power overused
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    virtual ErrCode ReportPowerOverused(const std::string &module, uint32_t level) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IStandbyService");
 

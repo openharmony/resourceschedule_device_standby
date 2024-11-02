@@ -112,6 +112,7 @@ public:
     ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled);
     ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled);
     ErrCode HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
+    ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
 
     void RegisterPluginInner(IConstraintManagerAdapter* constraintManager,
         IListenerManagerAdapter* listenerManager,
@@ -180,6 +181,11 @@ private:
 #endif
     void HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo);
     void HandleScreenStateChanged(const int64_t value);
+
+    // handle abnormal power use
+    void HandlePowerOverused([[maybe_unused]]uint32_t resType, const std::string &module, uint32_t level);
+    void DumpOnPowerOverused(const std::vector<std::string> &argsInStr, std::string &result);
+
 private:
     std::atomic<bool> isServiceReady_ {false};
     sptr<AppStateObserver> appStateObserver_ = nullptr;

@@ -148,6 +148,13 @@ int32_t TimeProvider::GetRandomDelay(int32_t low, int32_t high)
     std::uniform_int_distribution<> dist(low, high);
     return dist(gen);
 }
+
+int32_t TimeProvider::GetCurrentDate()
+{
+    time_t now = std::time(0);
+    tm* local_time = localtime(&now);
+    return local_time->tm_mday;
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
 

@@ -58,6 +58,7 @@ const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY
 const uint32_t EXEMPT_ALL_RESOURCES = 100;
 const std::string COMMON_EVENT_TIMER_SA_ABILITY = "COMMON_EVENT_TIMER_SA_ABILITY";
 const uint32_t ONE_SECOND = 1000;
+const std::string DUMP_ON_POWER_OVERUSED = "--poweroverused";
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyServiceImpl);
@@ -941,6 +942,15 @@ ErrCode StandbyServiceImpl::IsStrategyEnabled(const std::string& strategyName, b
     return ERR_OK;
 }
 
+ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint32_t level)
+{
+    STANDBYSERVICE_LOGI("[PowerOverused] StandbyServiceImpl: power overused, "
+        "modue name: %{public}s, level: %{public}u", module.c_str(), level);
+
+    HandlePowerOverused(0, module, level);
+    return ERR_OK;
+}
+
 ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
     if (!isServiceReady_.load()) {
@@ -997,6 +1007,26 @@ void StandbyServiceImpl::HandleScreenStateChanged(const int64_t value)
             DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
                                          EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF));
     }
+}
+
+void StandbyServiceImpl::DumpOnPowerOverused(const std::vector<std::string> &argsInStr, std::string &result)
+{
+    constexpr uint16_t DUMP_THREE_PARAM = 3;
+    if (argsInStr.size() != DUMP_THREE_PARAM) {
+        STANDBYSERVICE_LOGE("DumpOnPowerOverused param check failed, shoule be [--poweroverused module level].");
+        return;
+    }
+
+    const std::string &module = argsInStr[DUMP_SECOND_PARAM];
+    uint32_t level = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()));
+    HandlePowerOverused(0, module, level);
+}
+
+// handle power overused, resType for extend
+void StandbyServiceImpl::HandlePowerOverused([[maybe_unused]]uint32_t resType,
+    const std::string &module, uint32_t level)
+{
+    StandbyStateSubscriber::GetInstance()->NotifyPowerOverusedByCallback(module, level);
 }
 
 void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo)
@@ -1198,6 +1228,8 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
         DumpChangeConfigParam(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_PUSH_STRATEGY_CHANGE) {
         DumpPushStrategyChange(argsInStr, result);
+    } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ON_POWER_OVERUSED) {
+        DumpOnPowerOverused(argsInStr, result);
     } else {
         result += "Error params.\n";
     }

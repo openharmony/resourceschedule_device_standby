@@ -276,5 +276,19 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_014, TestSiz
     uint32_t interval = 300;
     EXPECT_EQ(StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval), ERR_PERMISSION_DENIED);
 }
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_015
+ * @tc.desc: test ReportPowerOverused.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_015, TestSize.Level1)
+{
+    std::string TEST_MODULE_NAME = "TestModule";
+    uint32_t level = static_cast<uint32_t>(PowerOverusedLevel::NORMAL);
+    EXPECT_EQ(StandbyServiceClient::GetInstance().ReportPowerOverused(TEST_MODULE_NAME, level), ERR_OK);
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

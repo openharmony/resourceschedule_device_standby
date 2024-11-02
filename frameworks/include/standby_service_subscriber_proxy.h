@@ -46,6 +46,15 @@ public:
      * @param added add or removed.
      */
     void OnAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added) override;
+
+    /**
+     * @brief report power over used.
+     *
+     * @param module target callback module.
+     * @param level power overused level.
+     */
+    void OnPowerOverused(const std::string& module, uint32_t level) override;
+
 private:
     static inline BrokerDelegator<StandbyServiceSubscriberProxy> delegator_;
 };

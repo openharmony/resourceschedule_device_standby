@@ -33,7 +33,8 @@ namespace DevStandbyMgr {
         IS_STRATEGY_ENABLED,
         REPORT_DEVICE_STATE_CHANGED,
         HANDLE_EVENT,
-        SET_NAT_INTERVAL
+        SET_NAT_INTERVAL,
+        POWER_OVERUSED,
     };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

@@ -48,6 +48,14 @@ public:
     virtual void OnAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added) = 0;
 
     /**
+     * @brief report power over used.
+     *
+     * @param module target callback module.
+     * @param level power overused level.
+     */
+    virtual void OnPowerOverused(const std::string& module, uint32_t level) = 0;
+
+    /**
      * @brief get subscriberName.
      *
      * @return return subscriberName.
@@ -66,12 +74,32 @@ public:
     {
         subscriberName_ = name;
     }
+    /**
+     * @brief get module name.
+     *
+     * @return return module name.
+     */
+    std::string GetModuleName() const
+    {
+        return moduleName_;
+    }
+
+    /**
+     * @brief set module name.
+     *
+     * @param name module name which will register device_standby callback.
+     */
+    void SetModuleName(std::string name)
+    {
+        moduleName_ = name;
+    }
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IStandbyServiceSubscriber");
 
 private:
     std::string subscriberName_;
+    std::string moduleName_;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

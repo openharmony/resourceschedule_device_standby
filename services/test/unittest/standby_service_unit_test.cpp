@@ -1296,5 +1296,77 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_059, TestSize.Level1)
     EXPECT_TRUE(timedTask->wantAgent == nullptr);
     timedTask->StartDayNightSwitchTimer(timerId);
 }
+
+/**
+ * @tc.name: StandbyServiceUnitTest_060
+ * @tc.desc: test DumpOnPowerOverused.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_060, TestSize.Level1)
+{
+    std::string result {""};
+    std::string TEST_MODULE_NAME = "TestModule";
+    std::string TEST_SUB_NAME = "TestSubName";
+    std::vector<std::string> argsInStr {"--poweroverused", TEST_MODULE_NAME, "1"};
+
+    sptr<IStandbyServiceSubscriber> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
+    EXPECT_EQ(StandbyStateSubscriber::GetInstance()->AddSubscriber(subscriber), ERR_OK);
+    subscriber->SetSubscriberName(TEST_SUB_NAME);
+    subscriber->SetModuleName(TEST_MODULE_NAME);
+    EXPECT_EQ(subscriber->GetModuleName(), TEST_MODULE_NAME);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner(argsInStr, result);
+    EXPECT_EQ(result.size(), 0);
+    EXPECT_EQ(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber), ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_061
+ * @tc.desc: test NotifyPowerOverusedByCallback.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_061, TestSize.Level1)
+{
+    std::string ANOTHER_MODULE_NAME = "ModuleX";
+    std::string TEST_MODULE_NAME = "TestModule";
+    std::string TEST_SUB_NAME = "TestSubName";
+
+    sptr<IStandbyServiceSubscriber> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
+    EXPECT_EQ(StandbyStateSubscriber::GetInstance()->AddSubscriber(subscriber), ERR_OK);
+    subscriber->SetSubscriberName(TEST_SUB_NAME);
+    subscriber->SetModuleName(ANOTHER_MODULE_NAME);
+    EXPECT_EQ(subscriber->GetModuleName(), ANOTHER_MODULE_NAME);
+
+    // not same module name, will not callback
+    StandbyServiceImpl::GetInstance()->HandlePowerOverused(0, TEST_MODULE_NAME, 1);
+    SUCCEED();
+
+    // change module name, will callback
+    subscriber->SetModuleName(TEST_MODULE_NAME);
+    EXPECT_EQ(subscriber->GetModuleName(), TEST_MODULE_NAME);
+    StandbyStateSubscriber::GetInstance()->NotifyPowerOverusedByCallback(TEST_MODULE_NAME, 1);
+    EXPECT_EQ(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber), ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_062
+ * @tc.desc: test ReportPowerOverused.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_062, TestSize.Level1)
+{
+    std::string TEST_MODULE_NAME = "TestModule";
+    uint32_t level = static_cast<uint32_t>(PowerOverusedLevel::WARNING);
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
+;
+    EXPECT_EQ(StandbyService::GetInstance()->ReportPowerOverused(TEST_MODULE_NAME, level), ERR_OK);
+
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
+    level = static_cast<uint32_t>(PowerOverusedLevel::FATAL);
+    EXPECT_EQ(StandbyService::GetInstance()->ReportPowerOverused(TEST_MODULE_NAME, level), ERR_STANDBY_SYS_NOT_READY);
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
