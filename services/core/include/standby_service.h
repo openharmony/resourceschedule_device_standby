@@ -67,6 +67,7 @@ private:
     void DumpUsage(std::string& result);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
+    bool CheckProcessNamePermission(const std::string& processName);
 
 private:
     std::mutex systemAbilityLock_ {};
