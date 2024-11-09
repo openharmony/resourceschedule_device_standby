@@ -42,6 +42,7 @@ const uint32_t ALL_DEPENDS_READY = 127;
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     StandbyService::GetInstance().get());
 const bool SOFTWARE_SLEEP = system::GetBoolParameter("persist.sys.standby_switch", true);
+const std::string RSS_PROCESS_NAME = "resource_schedule_service";
 }
 
 IMPLEMENT_SINGLE_INSTANCE(StandbyService);
@@ -304,9 +305,28 @@ int32_t StandbyService::Dump(int32_t fd, const std::vector<std::u16string>& args
     }
     return ERR_OK;
 }
+
+bool StandbyService::CheckProcessNamePermission(const std::string& processName)
+{
+    Security::AccessToken::NativeTokenInfo nativeTokenInfo;
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
+    auto tokenType = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(accessToken);
+    int32_t result = Security::AccessToken::AccessTokenKit::GetNativeTokenInfo(accessToken, nativeTokenInfo);
+    if (tokenType != Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE ||
+            result != ERR_OK || nativeTokenInfo.processName != processName) {
+        STANDBYSERVICE_LOGE("check processName failed,tokenType=%{public}d,processName=%{public}s",
+            tokenType, nativeTokenInfo.processName.c_str());
+        return false;
+    }
+    return true;
+}
+
 ErrCode StandbyService::HandleEvent(const uint32_t resType, const int64_t value,
                                     const std::string &sceneInfo)
 {
+    if (!CheckProcessNamePermission(RSS_PROCESS_NAME)) {
+        return ERR_PERMISSION_DENIED;
+    }
     StandbyServiceImpl::GetInstance()->HandleCommonEvent(resType, value, sceneInfo);
     return ERR_OK;
 }
