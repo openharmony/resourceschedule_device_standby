@@ -529,6 +529,11 @@ int32_t StandbyServiceImpl::GetUserIdByUid(int32_t uid)
 
 ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("caller permission denied.");
+        return checkRet;
+    }
+
     STANDBYSERVICE_LOGI("add %{public}s subscriber to stanby service", subscriber->GetSubscriberName().c_str());
     const auto& strategyConfigList = StandbyConfigManager::GetInstance()->GetStrategyConfigList();
     auto item = std::find(strategyConfigList.begin(), strategyConfigList.end(), subscriber->GetSubscriberName());
@@ -541,6 +546,11 @@ ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceS
 
 ErrCode StandbyServiceImpl::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("caller permission denied.");
+        return checkRet;
+    }
+
     STANDBYSERVICE_LOGI("add subscriber to stanby service succeed");
     return StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber);
 }
@@ -837,6 +847,11 @@ void StandbyServiceImpl::GetPersistAllowList(uint32_t allowTypeIndex, std::vecto
 
 ErrCode StandbyServiceImpl::IsDeviceInStandby(bool& isStandby)
 {
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("caller permission denied.");
+        return checkRet;
+    }
+
     if (!isServiceReady_.load()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -870,6 +885,11 @@ ErrCode StandbyServiceImpl::GetEligiableRestrictSet(uint32_t allowType, const st
 
 ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
 {
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("caller permission denied.");
+        return checkRet;
+    }
+
     if (!isServiceReady_.load()) {
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -916,6 +936,11 @@ void StandbyServiceImpl::GetRestrictListInner(uint32_t restrictType, std::vector
 
 ErrCode StandbyServiceImpl::IsStrategyEnabled(const std::string& strategyName, bool& isStandby)
 {
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("caller permission denied.");
+        return checkRet;
+    }
+
     if (!isServiceReady_.load()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -929,8 +954,13 @@ ErrCode StandbyServiceImpl::IsStrategyEnabled(const std::string& strategyName, b
 
 ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint32_t level)
 {
-    STANDBYSERVICE_LOGI("[PowerOverused] StandbyServiceImpl: power overused, "
+    STANDBYSERVICE_LOGD("[PowerOverused] StandbyServiceImpl: power overused, "
         "modue name: %{public}s, level: %{public}u", module.c_str(), level);
+
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("[PowerOverused] Caller permission denied.");
+        return checkRet;
+    }
 
     HandlePowerOverused(0, module, level);
     return ERR_OK;
@@ -941,6 +971,12 @@ ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool 
     if (!isServiceReady_.load()) {
         return ERR_STANDBY_SYS_NOT_READY;
     }
+
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("caller permission denied.");
+        return checkRet;
+    }
+
     STANDBYSERVICE_LOGI("device state changed, state type: %{public}d, enabled: %{public}d",
         static_cast<int32_t>(type), enabled);
     DeviceStateCache::GetInstance()->SetDeviceState(static_cast<int32_t>(type), enabled);

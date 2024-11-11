@@ -159,7 +159,7 @@ void StandbyStateSubscriber::NotifyAllowChangedByCallback(int32_t uid, const std
 
 void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& module, uint32_t level)
 {
-    STANDBYSERVICE_LOGI("[PowerOverused] NotifyPowerOverusedByCallback start, "
+    STANDBYSERVICE_LOGI("[PowerOverused] Callback process entry: starting to match subscriber, "
         "module: %{public}s, level: %{public}u.", module.c_str(), level);
     int32_t curDate = TimeProvider::GetCurrentDate();
     if (curDate_ != curDate) {
@@ -168,7 +168,7 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
         modulePowerMap_.clear();
     }
     modulePowerMap_[module] = level;
-    
+
     std::lock_guard<std::mutex> lock(subscriberLock_);
     if (subscriberList_.empty()) {
         STANDBYSERVICE_LOGW("Sleep State Subscriber List is empty");
@@ -177,6 +177,8 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
 
     for (auto iter : subscriberList_) {
         if (module == iter->GetModuleName()) {
+            STANDBYSERVICE_LOGI("[PowerOverused] Subscriber module match successful, starting to callback. "
+                "module: %{public}s, level: %{public}u.", module.c_str(), level);
             iter->OnPowerOverused(module, level);
         }
     }
