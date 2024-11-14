@@ -175,7 +175,7 @@ ErrCode StandbyServiceClient::IsStrategyEnabled(const std::string& strategyName,
 ErrCode StandbyServiceClient::ReportPowerOverused(const std::string &module, uint32_t level)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    STANDBYSERVICE_LOGI("[PowerOverused] StandbyClient: power overused, module name: %{public}s, "
+    STANDBYSERVICE_LOGD("[PowerOverused] StandbyClient: power overused, module name: %{public}s, "
         "level: %{public}u.", module.c_str(), level);
 
     if (!GetStandbyServiceProxy()) {
