@@ -126,7 +126,7 @@ std::string NetworkStrategy::UidsToString(const std::vector<uint32_t>& uids)
     for (auto it = uids.begin(); it != uids.end(); ++it) {
         str += std::to_string(*it);
         if (std::next(it) != uids.end()) {
-            str += ","
+            str += ",";
         }
     }
     str += "]";
