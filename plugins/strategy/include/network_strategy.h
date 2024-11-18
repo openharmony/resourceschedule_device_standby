@@ -34,6 +34,7 @@ private:
     void UpdateAllowedList(const StandbyMessage& message);
     void UpdateNetResourceConfig(const StandbyMessage& message);
     void StartNetLimit(const StandbyMessage& message);
+    std::string UidsToString(const std::vector<uint32_t>& uids);
     void StopNetLimit(const StandbyMessage& message);
 };
 }  // namespace DevStandbyMgr
