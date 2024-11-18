@@ -101,12 +101,12 @@ void NetworkStrategy::StopNetLimit(const StandbyMessage& message)
 
 void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, bool isAdded)
 {
-    STANDBYSERVICE_LOGD("SetFireWallAllowedList, uids size %{public}d, isAdded is %{public}d",
-        static_cast<int32_t>(uids.size()), isAdded);
     if (uids.empty()) {
         STANDBYSERVICE_LOGD("allow list is empty");
         return;
     }
+    STANDBYSERVICE_LOGI("SetFireWallAllowedList, uids: %{public}s, isAdded: %{public}d",
+        UidsToString(uids).c_str(), isAdded);
     if (!isAdded && isIdleMaintence_) {
         STANDBYSERVICE_LOGI("current is idle maintenance, do not need remove allow list");
         return;
@@ -118,6 +118,19 @@ void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, 
         return;
     }
     #endif
+}
+
+std::string NetworkStrategy::UidsToString(const std::vector<uint32_t>& uids)
+{
+    std::string str = "[";
+    for (auto it = uids.begin(); it != uids.end(); ++it) {
+        str += std::to_string(*it);
+        if (std::next(it) != uids.end()) {
+            str += ","
+        }
+    }
+    str += "]";
+    return str;
 }
 
 void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
