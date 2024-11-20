@@ -580,6 +580,19 @@ void BaseNetworkStrategy::ResetFirewallStatus(const StandbyMessage& message)
     return;
 }
 
+std::string NetworkStrategy::UidsToString(const std::vector<uint32_t>& uids)
+{
+    std::string str = "[";
+    for (auto it = uids.begin(); it != uids.end(); ++it) {
+        str += std::to_string(*it);
+        if (std::next(it) != uids.end()) {
+            str += ",";
+        }
+    }
+    str += "]";
+    return str;
+}
+
 void BaseNetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
     result.append("Network Strategy:\n").append("isFirewallEnabled: " + std::to_string(isFirewallEnabled_))
