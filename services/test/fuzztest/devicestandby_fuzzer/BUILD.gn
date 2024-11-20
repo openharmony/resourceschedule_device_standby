@@ -68,6 +68,8 @@ ohos_fuzztest("DeviceStandbyFuzzTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "time_service:time_client",
+    "resource_schedule_service:resschedsvc",
+    "resource_schedule_service:ressched_client",
   ]
 
   defines = []

@@ -69,6 +69,7 @@ ohos_fuzztest("StateManagerAdapterFuzzTest") {
     "ipc:ipc_single",
     "samgr:samgr_proxy",
     "time_service:time_client",
+    "resource_schedule_service:ressched_client",
   ]
 
   if (standby_power_manager_enable) {

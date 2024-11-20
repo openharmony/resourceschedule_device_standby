@@ -51,6 +51,7 @@ ohos_shared_library("devicestandby") {
     "ipc:ipc_single",
     "napi:ace_napi",
     "samgr:samgr_proxy",
+    "resource_schedule_service:resschedsvc",
   ]
   relative_install_dir = "module/resourceschedule"
   subsystem_name = "resourceschedule"

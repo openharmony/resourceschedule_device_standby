@@ -48,7 +48,8 @@
         "sensor",
         "time_service",
         "work_scheduler",
-        "json"
+        "json",
+        "resource_schedule_service"
       ]
     },
     "build": {

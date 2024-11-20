@@ -26,7 +26,6 @@ StandbyUtilsPolicyExternalDeps = [
   "c_utils:utils",
   "hilog:libhilog",
   "ipc:ipc_single",
-  "json:nlohmann_json_static",
 ]
 
 ohos_shared_library("standby_utils_policy") {
@@ -43,6 +42,8 @@ ohos_shared_library("standby_utils_policy") {
   deps = [ "${standby_utils_common_path}:standby_utils_common" ]
 
   external_deps = StandbyUtilsPolicyExternalDeps
+
+  public_external_deps = [ "json:nlohmann_json_static" ]
 
   defines = []
   if (enable_standby_configpolicy) {
@@ -69,6 +70,8 @@ ohos_static_library("standby_utils_policy_static") {
   deps = [ "${standby_utils_common_path}:standby_utils_common" ]
 
   external_deps = StandbyUtilsPolicyExternalDeps
+
+  public_external_deps = [ "json:nlohmann_json_static" ]
 
   defines = []
   if (enable_standby_configpolicy) {

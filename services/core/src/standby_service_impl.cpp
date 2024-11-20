@@ -1076,8 +1076,8 @@ void StandbyServiceImpl::HandlePowerOverused([[maybe_unused]]uint32_t resType,
 void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo)
 {
         bool isApply = false;
-        if (value == ResType::EfficiencyResourcesStatus::APP_EFFICIENCY_RESOURCES_APPLY ||
-            value == ResType::EfficiencyResourcesStatus::PROC_EFFICIENCY_RESOURCES_APPLY) {
+        if (value == ResourceSchedule::ResType::EfficiencyResourcesStatus::APP_EFFICIENCY_RESOURCES_APPLY ||
+            value == ResourceSchedule::ResType::EfficiencyResourcesStatus::PROC_EFFICIENCY_RESOURCES_APPLY) {
             isApply = true;
         }
         nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
@@ -1112,13 +1112,13 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
     STANDBYSERVICE_LOGI("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
                         resType, (long long)(value), sceneInfo.c_str());
     switch (resType) {
-        case ResType::RES_TYPE_SCREEN_STATUS:
+        case ResourceSchedule::ResType::RES_TYPE_SCREEN_STATUS:
             HandleScreenStateChanged(value);
             break;
-        case ResType::RES_TYPE_CHARGING_DISCHARGING:
+        case ResourceSchedule::ResType::RES_TYPE_CHARGING_DISCHARGING:
             HandleChargeStateChanged(value);
             break;
-        case ResType::RES_TYPE_USB_DEVICE:
+        case ResourceSchedule::ResType::RES_TYPE_USB_DEVICE:
             if (value == 0) {
                 DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
                                              EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED));
@@ -1127,24 +1127,24 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
                                              EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED));
             }
             break;
-        case ResType::RES_TYPE_CALL_STATE_CHANGED:
+        case ResourceSchedule::ResType::RES_TYPE_CALL_STATE_CHANGED:
             HandleCallStateChanged(sceneInfo);
             break;
-        case ResType::RES_TYPE_WIFI_P2P_STATE_CHANGED:
+        case ResourceSchedule::ResType::RES_TYPE_WIFI_P2P_STATE_CHANGED:
             HandleP2PStateChanged(value);
             break;
-        case ResType::RES_TYPE_CLICK_RECOGNIZE:
+        case ResourceSchedule::ResType::RES_TYPE_CLICK_RECOGNIZE:
             HandleScreenClickRecognize(value);
             break;
-        case ResType::RES_TYPE_MMI_INPUT_POWER_KEY:
+        case ResourceSchedule::ResType::RES_TYPE_MMI_INPUT_POWER_KEY:
             HandleMmiInputPowerKeyDown(value);
             break;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
-        case ResType::RES_TYPE_POWER_MODE_CHANGED:
+        case ResourceSchedule::ResType::RES_TYPE_POWER_MODE_CHANGED:
             HandlePowerModeChanged(static_cast<PowerMgr::PowerMode>(value));
             break;
 #endif
-        case ResType::RES_TYPE_EFFICIENCY_RESOURCES_STATE_CHANGED:
+        case ResourceSchedule::ResType::RES_TYPE_EFFICIENCY_RESOURCES_STATE_CHANGED:
             HandleResourcesStateChanged(value, sceneInfo);
             break;
         default:
@@ -1172,12 +1172,12 @@ void StandbyServiceImpl::HandlePowerModeChanged(PowerMgr::PowerMode mode)
 
 void StandbyServiceImpl::AppEventHandler(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {
-    if (resType == ResType::RES_TYPE_APP_INSTALL_UNINSTALL &&
-        (value == ResType::AppInstallStatus::APP_UNINSTALL ||
-         value == ResType::AppInstallStatus::APP_CHANGED ||
-         value == ResType::AppInstallStatus::APP_REPLACED ||
-         value == ResType::AppInstallStatus::BUNDLE_REMOVED ||
-         value == ResType::AppInstallStatus::APP_FULLY_REMOVED)
+    if (resType == ResourceSchedule::ResType::RES_TYPE_APP_INSTALL_UNINSTALL &&
+        (value == ResourceSchedule::ResType::AppInstallStatus::APP_UNINSTALL ||
+         value == ResourceSchedule::ResType::AppInstallStatus::APP_CHANGED ||
+         value == ResourceSchedule::ResType::AppInstallStatus::APP_REPLACED ||
+         value == ResourceSchedule::ResType::AppInstallStatus::BUNDLE_REMOVED ||
+         value == ResourceSchedule::ResType::AppInstallStatus::APP_FULLY_REMOVED)
         ) {
         nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
         if (payload.is_discarded()) {
@@ -1203,10 +1203,10 @@ void StandbyServiceImpl::AppEventHandler(const uint32_t resType, const int64_t v
         handler_->PostTask([uid, bundleName]() {
             StandbyServiceImpl::GetInstance()->RemoveAppAllowRecord(uid, bundleName, true);
         });
-    } else if (resType == ResType::RES_TYPE_TIMEZONE_CHANGED ||
-               resType == ResType::RES_TYPE_NITZ_TIMEZONE_CHANGED ||
-               resType == ResType::RES_TYPE_TIME_CHANGED ||
-               resType == ResType::RES_TYPE_NITZ_TIME_CHANGED) {
+    } else if (resType == ResourceSchedule::ResType::RES_TYPE_TIMEZONE_CHANGED ||
+               resType == ResourceSchedule::ResType::RES_TYPE_NITZ_TIMEZONE_CHANGED ||
+               resType == ResourceSchedule::ResType::RES_TYPE_TIME_CHANGED ||
+               resType == ResourceSchedule::ResType::RES_TYPE_NITZ_TIME_CHANGED) {
         handler_->PostTask([]() {StandbyServiceImpl::GetInstance()->ResetTimeObserver(); });
     }
 }

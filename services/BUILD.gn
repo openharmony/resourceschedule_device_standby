@@ -71,10 +71,11 @@ ohos_shared_library("standby_service") {
     "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",
-    "json:nlohmann_json_static",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "time_service:time_client",
+    "resource_schedule_service:resschedsvc",
+    "resource_schedule_service:ressched_client",
   ]
 
   defines = []
@@ -140,10 +141,11 @@ ohos_static_library("standby_service_static") {
     "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",
-    "json:nlohmann_json_static",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "time_service:time_client",
+    "resource_schedule_service:resschedsvc",
+    "resource_schedule_service:ressched_client",
   ]
 
   defines = []

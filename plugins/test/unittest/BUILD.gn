@@ -65,6 +65,7 @@ ohos_unittest("standby_plugin_unit_test") {
     "init:libbegetutil",
     "ipc:ipc_single",
     "time_service:time_client",
+    "resource_schedule_service:ressched_client",
   ]
 
   defines = []
@@ -209,6 +210,7 @@ ohos_unittest("standby_plugin_constraints_test") {
     "c_utils:utils",
     "hilog:libhilog",
     "time_service:time_client",
+    "resource_schedule_service:ressched_client",
   ]
 
   if (standby_sensors_sensor_enable) {
