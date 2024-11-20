@@ -120,19 +120,6 @@ void NetworkStrategy::SetFirewallAllowedList(const std::vector<uint32_t>& uids, 
     #endif
 }
 
-std::string NetworkStrategy::UidsToString(const std::vector<uint32_t>& uids)
-{
-    std::string str = "[";
-    for (auto it = uids.begin(); it != uids.end(); ++it) {
-        str += std::to_string(*it);
-        if (std::next(it) != uids.end()) {
-            str += ",";
-        }
-    }
-    str += "]";
-    return str;
-}
-
 void NetworkStrategy::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
 {
     if (argsInStr[DUMP_FIRST_PARAM] == DUMP_DETAIL_INFO &&
