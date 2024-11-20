@@ -128,6 +128,7 @@ protected:
     void RemoveExemptionFlag(uint32_t uid, uint8_t flag);
     void GetAndCreateAppInfo(uint32_t uid, const std::string& bundleName);
     bool GetExemptedFlag(uint8_t appNoExemptionFlag, uint8_t appExemptionFlag);
+    std::string UidsToString(const std::vector<uint32_t>& uids);
 protected:
     static bool isFirewallEnabled_;
     bool isIdleMaintence_ {false};
