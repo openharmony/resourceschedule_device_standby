@@ -43,8 +43,8 @@ ohos_unittest("standby_client_unit_test") {
     "c_utils:utils",
     "hilog:libhilog",
     "ipc:ipc_single",
-    "samgr:samgr_proxy",
     "resource_schedule_service:resschedsvc",
+    "samgr:samgr_proxy",
   ]
 
   subsystem_name = "resourceschedule"
