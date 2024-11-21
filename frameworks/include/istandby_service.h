@@ -27,7 +27,7 @@
 #include "resourcce_request.h"
 #include "standby_service_errors.h"
 #include "istandby_service_subscriber.h"
-#include "standby_res_data.h"
+#include "res_data.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
