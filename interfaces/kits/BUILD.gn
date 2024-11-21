@@ -50,8 +50,8 @@ ohos_shared_library("devicestandby") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "napi:ace_napi",
-    "samgr:samgr_proxy",
     "resource_schedule_service:resschedsvc",
+    "samgr:samgr_proxy",
   ]
   relative_install_dir = "module/resourceschedule"
   subsystem_name = "resourceschedule"
