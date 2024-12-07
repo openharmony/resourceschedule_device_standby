@@ -11,12 +11,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/config/components/idl_tool/idl.gni")
 import("//build/ohos.gni")
 import("//foundation/resourceschedule/device_standby/standby_service.gni")
+
+idl_interface_sources = [
+  "${target_gen_dir}/standby_service_proxy.cpp",
+  "${target_gen_dir}/standby_service_stub.cpp",
+]
+
+idl_gen_interface("standby_service_interface") {
+  src_idl = rebase_path("IStandbyService.idl")
+  dst_file = string_join(",", idl_interface_sources)
+  log_domainid = "0xD001718"
+  log_tag = "StandbyService"
+}
 
 config("standby_innerkits_public_config") {
   include_dirs = [
     "include",
+    "${target_gen_dir}",
     "${standby_service_frameworks_path}/include",
     "${standby_utils_common_path}/include",
   ]
@@ -29,18 +43,20 @@ ohos_shared_library("standby_innerkits") {
     cfi_cross_dso = true
     debug = false
   }
+  output_values = get_target_outputs(":standby_service_interface")
   sources = [
     "src/allow_info.cpp",
     "src/allow_type.cpp",
-    "src/resourcce_request.cpp",
+    "src/resource_request.cpp",
     "src/standby_service_client.cpp",
-    "src/standby_service_proxy.cpp",
     "src/standby_service_subscriber_stub.cpp",
   ]
+  sources += filter_include(output_values, [ "*_proxy.cpp" ])
 
   public_configs = [ ":standby_innerkits_public_config" ]
 
   deps = [
+    ":standby_service_interface",
     "${standby_service_frameworks_path}:standby_fwk",
     "${standby_utils_common_path}:standby_utils_common",
   ]
@@ -58,4 +74,24 @@ ohos_shared_library("standby_innerkits") {
   part_name = "${standby_service_part_name}"
 
   version_script = "libstandby_innerkits.versionscript"
+}
+
+ohos_source_set("device_standby_stub") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  public_configs = [ ":standby_innerkits_public_config" ]
+  output_values = get_target_outputs(":standby_service_interface")
+  sources = filter_include(output_values, [ "*_stub.cpp" ])
+  deps = [ ":standby_service_interface" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+  subsystem_name = "resourceschedule"
+  part_name = "${standby_service_part_name}"
 }

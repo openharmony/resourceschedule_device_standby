@@ -46,7 +46,9 @@ ErrCode StandbyServiceClient::SubscribeStandbyCallback(const sptr<IStandbyServic
         STANDBYSERVICE_LOGE("subscriber is nullptr");
         return ERR_STANDBY_INVALID_PARAM;
     }
-    return standbyServiceProxy_->SubscribeStandbyCallback(subscriber);
+    std::string subscriberName = subscriber->GetSubscriberName();
+    std::string moduleName = subscriber->GetModuleName();
+    return standbyServiceProxy_->SubscribeStandbyCallback(subscriber, subscriberName, moduleName);
 }
 
 ErrCode StandbyServiceClient::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
@@ -74,7 +76,8 @@ ErrCode StandbyServiceClient::ApplyAllowResource(const sptr<ResourceRequest>& re
         STANDBYSERVICE_LOGE("resource request is nullptr");
         return ERR_STANDBY_INVALID_PARAM;
     }
-    return standbyServiceProxy_->ApplyAllowResource(resourceRequest);
+    ResourceRequest& request = *resourceRequest.GetRefPtr();
+    return standbyServiceProxy_->ApplyAllowResource(request);
 }
 
 ErrCode StandbyServiceClient::UnapplyAllowResource(const sptr<ResourceRequest>& resourceRequest)
@@ -88,7 +91,8 @@ ErrCode StandbyServiceClient::UnapplyAllowResource(const sptr<ResourceRequest>& 
         STANDBYSERVICE_LOGE("resource request is nullptr");
         return ERR_STANDBY_INVALID_PARAM;
     }
-    return standbyServiceProxy_->UnapplyAllowResource(resourceRequest);
+    ResourceRequest& request = *resourceRequest.GetRefPtr();
+    return standbyServiceProxy_->UnapplyAllowResource(request);
 }
 
 ErrCode StandbyServiceClient::GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoArray,
@@ -194,7 +198,8 @@ ErrCode StandbyServiceClient::ReportDeviceStateChanged(DeviceStateType type, boo
         STANDBYSERVICE_LOGE("get standby service proxy failed");
         return ERR_STANDBY_SERVICE_NOT_CONNECTED;
     }
-    return standbyServiceProxy_->ReportDeviceStateChanged(type, enabled);
+    int32_t transType = static_cast<int32_t>(type);
+    return standbyServiceProxy_->ReportDeviceStateChanged(transType, enabled);
 }
 
 bool StandbyServiceClient::GetStandbyServiceProxy()

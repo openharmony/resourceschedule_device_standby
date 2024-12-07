@@ -42,7 +42,6 @@
 #include "iconstraint_manager_adapter.h"
 #include "ilistener_manager_adapter.h"
 #include "ipc_skeleton.h"
-#include "istandby_service.h"
 #include "istandby_service_subscriber.h"
 #include "istate_manager_adapter.h"
 #include "istrategy_manager_adapter.h"
@@ -50,7 +49,7 @@
 #ifdef STANDBY_POWER_MANAGER_ENABLE
 #include "power_mode_info.h"
 #endif
-#include "resourcce_request.h"
+#include "resource_request.h"
 #include "res_type.h"
 #include "singleton.h"
 #include "standby_state_subscriber.h"
@@ -100,8 +99,8 @@ public:
 
     ErrCode SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber);
     ErrCode UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber);
-    ErrCode ApplyAllowResource(const sptr<ResourceRequest>& resourceRequest);
-    ErrCode UnapplyAllowResource(const sptr<ResourceRequest>& resourceRequest);
+    ErrCode ApplyAllowResource(ResourceRequest& resourceRequest);
+    ErrCode UnapplyAllowResource(ResourceRequest& resourceRequest);
     ErrCode GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
         uint32_t reasonCode);
     ErrCode GetEligiableRestrictSet(uint32_t allowType, const std::string& strategyName,
@@ -111,7 +110,7 @@ public:
     ErrCode GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
         uint32_t reasonCode);
     ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled);
-    ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled);
+    ErrCode ReportDeviceStateChanged(int32_t type, bool enabled);
     ErrCode HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
 
@@ -141,8 +140,8 @@ private:
     StandbyServiceImpl& operator= (const StandbyServiceImpl&) = delete;
     StandbyServiceImpl(StandbyServiceImpl&&) = delete;
     StandbyServiceImpl& operator= (StandbyServiceImpl&&) = delete;
-    void ApplyAllowResInner(const sptr<ResourceRequest>& resourceRequest, int32_t pid);
-    void UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord, const sptr<ResourceRequest>& resourceRequest);
+    void ApplyAllowResInner(const ResourceRequest& resourceRequest, int32_t pid);
+    void UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord, const ResourceRequest& resourceRequest);
     void UnapplyAllowResInner(int32_t uid, const std::string& name, uint32_t allowType,  bool removeAll);
     void GetTemporaryAllowList(uint32_t allowTypeIndex, std::vector<AllowInfo>& allowInfoList,
         uint32_t reasonCode);

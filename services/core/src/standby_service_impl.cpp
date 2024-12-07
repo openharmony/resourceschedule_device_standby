@@ -555,28 +555,28 @@ ErrCode StandbyServiceImpl::UnsubscribeStandbyCallback(const sptr<IStandbyServic
     return StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber);
 }
 
-ErrCode StandbyServiceImpl::ApplyAllowResource(const sptr<ResourceRequest>& resourceRequest)
+ErrCode StandbyServiceImpl::ApplyAllowResource(ResourceRequest& resourceRequest)
 {
     if (!isServiceReady_.load()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
     STANDBYSERVICE_LOGD("start AddAllowList");
-    if (auto checkRet = CheckCallerPermission(resourceRequest->GetReasonCode()); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(resourceRequest.GetReasonCode()); checkRet != ERR_OK) {
         return checkRet;
     }
 
     // update allow type according to configuration
     if (Security::AccessToken::AccessTokenKit::GetTokenType(OHOS::IPCSkeleton::GetCallingTokenID())
         == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
-        resourceRequest->SetAllowType(GetExemptedResourceType(resourceRequest->GetAllowType()));
+        resourceRequest.SetAllowType(GetExemptedResourceType(resourceRequest.GetAllowType()));
     }
 
-    if (!CheckAllowTypeInfo(resourceRequest->GetAllowType()) || resourceRequest->GetUid() < 0) {
+    if (!CheckAllowTypeInfo(resourceRequest.GetAllowType()) || resourceRequest.GetUid() < 0) {
         STANDBYSERVICE_LOGE("resourceRequest param is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
     }
-    if (resourceRequest->GetDuration() < 0) {
+    if (resourceRequest.GetDuration() < 0) {
         STANDBYSERVICE_LOGE("duration param is invalid");
         return ERR_DURATION_INVALID;
     }
@@ -585,15 +585,15 @@ ErrCode StandbyServiceImpl::ApplyAllowResource(const sptr<ResourceRequest>& reso
     return ERR_OK;
 }
 
-void StandbyServiceImpl::ApplyAllowResInner(const sptr<ResourceRequest>& resourceRequest, int32_t pid)
+void StandbyServiceImpl::ApplyAllowResInner(const ResourceRequest& resourceRequest, int32_t pid)
 {
     STANDBYSERVICE_LOGI("apply res inner, uid: %{public}d, name: %{public}s, allowType: %{public}u,"\
-        " duration: %{public}d, reason: %{public}s", resourceRequest->GetUid(),
-        resourceRequest->GetName().c_str(), resourceRequest->GetAllowType(),
-        resourceRequest->GetDuration(), resourceRequest->GetReason().c_str());
+        " duration: %{public}d, reason: %{public}s", resourceRequest.GetUid(),
+        resourceRequest.GetName().c_str(), resourceRequest.GetAllowType(),
+        resourceRequest.GetDuration(), resourceRequest.GetReason().c_str());
 
-    int32_t uid = resourceRequest->GetUid();
-    const std::string& name = resourceRequest->GetName();
+    int32_t uid = resourceRequest.GetUid();
+    const std::string& name = resourceRequest.GetName();
     std::string keyStr = std::to_string(uid) + "_" + name;
     uint32_t preAllowType = 0;
 
@@ -602,7 +602,7 @@ void StandbyServiceImpl::ApplyAllowResInner(const sptr<ResourceRequest>& resourc
     if (iter == allowInfoMap_.end()) {
         std::tie(iter, std::ignore) =
             allowInfoMap_.emplace(keyStr, std::make_shared<AllowRecord>(uid, pid, name, 0));
-        iter->second->reasonCode_ = resourceRequest->GetReasonCode();
+        iter->second->reasonCode_ = resourceRequest.GetReasonCode();
     } else {
         preAllowType = iter->second->allowType_;
         iter->second->pid_ = pid;
@@ -624,13 +624,13 @@ void StandbyServiceImpl::ApplyAllowResInner(const sptr<ResourceRequest>& resourc
 }
 
 void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
-    const sptr<ResourceRequest>& resourceRequest)
+    const ResourceRequest& resourceRequest)
 {
     STANDBYSERVICE_LOGD("start UpdateRecord");
-    int32_t uid = resourceRequest->GetUid();
-    const std::string& name = resourceRequest->GetName();
-    uint32_t allowType = resourceRequest->GetAllowType();
-    bool isApp = (resourceRequest->GetReasonCode() == ReasonCodeEnum::REASON_APP_API);
+    int32_t uid = resourceRequest.GetUid();
+    const std::string& name = resourceRequest.GetName();
+    uint32_t allowType = resourceRequest.GetAllowType();
+    bool isApp = (resourceRequest.GetReasonCode() == ReasonCodeEnum::REASON_APP_API);
     int64_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetMonotonicTimeMs();
     int64_t endTime {0};
     uint32_t condition = TimeProvider::GetCondition();
@@ -641,10 +641,10 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
         }
         int64_t maxDuration = 0;
         if (allowNumber != AllowType::WORK_SCHEDULER) {
-            maxDuration = std::min(resourceRequest->GetDuration(), StandbyConfigManager::GetInstance()->
+            maxDuration = std::min(resourceRequest.GetDuration(), StandbyConfigManager::GetInstance()->
                 GetMaxDuration(name, AllowTypeName[allowTypeIndex], condition, isApp)) * TimeConstant::MSEC_PER_SEC;
         } else {
-            maxDuration = resourceRequest->GetDuration() * TimeConstant::MSEC_PER_SEC;
+            maxDuration = resourceRequest.GetDuration() * TimeConstant::MSEC_PER_SEC;
         }
         if (maxDuration <= 0) {
             continue;
@@ -654,9 +654,9 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
         auto findRecordTask = [allowTypeIndex](const auto& it) { return it.allowTypeIndex_ == allowTypeIndex; };
         auto it = std::find_if(allowTimeList.begin(), allowTimeList.end(), findRecordTask);
         if (it == allowTimeList.end()) {
-            allowTimeList.emplace_back(AllowTime {allowTypeIndex, endTime, resourceRequest->GetReason()});
+            allowTimeList.emplace_back(AllowTime {allowTypeIndex, endTime, resourceRequest.GetReason()});
         } else {
-            it->reason_ = resourceRequest->GetReason();
+            it->reason_ = resourceRequest.GetReason();
             it->endTime_ = std::max(it->endTime_, endTime);
         }
         allowRecord->allowType_ = (allowRecord->allowType_ | allowNumber);
@@ -668,35 +668,35 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
     STANDBYSERVICE_LOGE("update end time of allow list");
 }
 
-ErrCode StandbyServiceImpl::UnapplyAllowResource(const sptr<ResourceRequest>& resourceRequest)
+ErrCode StandbyServiceImpl::UnapplyAllowResource(ResourceRequest& resourceRequest)
 {
     if (!isServiceReady_.load()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
     STANDBYSERVICE_LOGD("start UnapplyAllowResource");
-    if (auto checkRet = CheckCallerPermission(resourceRequest->GetReasonCode()); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(resourceRequest.GetReasonCode()); checkRet != ERR_OK) {
         return checkRet;
     }
 
     // update allow type according to configuration
     if (Security::AccessToken::AccessTokenKit::GetTokenType(OHOS::IPCSkeleton::GetCallingTokenID())
         == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
-        resourceRequest->SetAllowType(GetExemptedResourceType(resourceRequest->GetAllowType()));
+        resourceRequest.SetAllowType(GetExemptedResourceType(resourceRequest.GetAllowType()));
     }
 
-    if (!CheckAllowTypeInfo(resourceRequest->GetAllowType()) || resourceRequest->GetUid() < 0) {
+    if (!CheckAllowTypeInfo(resourceRequest.GetAllowType()) || resourceRequest.GetUid() < 0) {
         STANDBYSERVICE_LOGE("param of resourceRequest is invalid");
         return ERR_RESOURCE_TYPES_INVALID;
     }
-    UnapplyAllowResInner(resourceRequest->GetUid(), resourceRequest->GetName(), resourceRequest->GetAllowType(), true);
+    UnapplyAllowResInner(resourceRequest.GetUid(), resourceRequest.GetName(), resourceRequest.GetAllowType(), true);
     return ERR_OK;
 }
 
 void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& name,
     uint32_t allowType, bool removeAll)
 {
-    STANDBYSERVICE_LOGD("start UnapplyAllowResInner, uid is %{public}d, allowType is %{public}d, removeAll is "\
+    STANDBYSERVICE_LOGI("start UnapplyAllowResInner, uid is %{public}d, allowType is %{public}d, removeAll is "\
         "%{public}d", uid, allowType, removeAll);
     std::string keyStr = std::to_string(uid) + "_" + name;
 
@@ -923,7 +923,7 @@ ErrCode StandbyServiceImpl::GetRestrictList(uint32_t restrictType, std::vector<A
 void StandbyServiceImpl::GetRestrictListInner(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
     uint32_t reasonCode)
 {
-    STANDBYSERVICE_LOGD("start GetRestrictListInner, restrictType is %{public}d", restrictType);
+    STANDBYSERVICE_LOGI("start GetRestrictListInner, restrictType is %{public}d", restrictType);
     for (uint32_t restrictTypeIndex = 0; restrictTypeIndex < MAX_ALLOW_TYPE_NUM; ++restrictTypeIndex) {
         uint32_t restrictNumber = restrictType & (1 << restrictTypeIndex);
         if (restrictNumber == 0) {
@@ -966,7 +966,7 @@ ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint3
     return ERR_OK;
 }
 
-ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
+ErrCode StandbyServiceImpl::ReportDeviceStateChanged(int32_t type, bool enabled)
 {
     if (!isServiceReady_.load()) {
         return ERR_STANDBY_SYS_NOT_READY;
@@ -979,7 +979,7 @@ ErrCode StandbyServiceImpl::ReportDeviceStateChanged(DeviceStateType type, bool 
 
     STANDBYSERVICE_LOGI("device state changed, state type: %{public}d, enabled: %{public}d",
         static_cast<int32_t>(type), enabled);
-    DeviceStateCache::GetInstance()->SetDeviceState(static_cast<int32_t>(type), enabled);
+    DeviceStateCache::GetInstance()->SetDeviceState(type, enabled);
     if (!enabled) {
         return ERR_OK;
     }
@@ -1399,15 +1399,15 @@ void StandbyServiceImpl::DumpModifyAllowList(const std::vector<std::string>& arg
     if (argsInStr[DUMP_SECOND_PARAM] == "--apply") {
         uint32_t allowType = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_FIFTH_PARAM].c_str()));
         int32_t duration = std::atoi(argsInStr[DUMP_SIXTH_PARAM].c_str());
-        sptr<ResourceRequest> resourceRequest = new (std::nothrow) ResourceRequest(allowType,
+        std::shared_ptr<ResourceRequest> resourceRequest = std::make_shared<ResourceRequest>(allowType,
             uid, name, duration, "dump", std::atoi(argsInStr[DUMP_SEVENTH_PARAM].c_str()));
-        ApplyAllowResource(resourceRequest);
+        ApplyAllowResource(*resourceRequest);
         result += "add one object to allow list\n";
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--unapply") {
         uint32_t allowType = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_FIFTH_PARAM].c_str()));
-        sptr<ResourceRequest> resourceRequest = new (std::nothrow) ResourceRequest(allowType,
+        std::shared_ptr<ResourceRequest> resourceRequest = std::make_shared<ResourceRequest>(allowType,
             uid, name, 0, "dump", std::atoi(argsInStr[DUMP_SEVENTH_PARAM].c_str()));
-        UnapplyAllowResource(resourceRequest);
+        UnapplyAllowResource(*resourceRequest);
         result += "remove one object to allow list\n";
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--get") {
         uint32_t allowType = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()));

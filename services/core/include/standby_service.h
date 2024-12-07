@@ -27,6 +27,8 @@
 #include "singleton.h"
 #include "system_ability.h"
 
+#include "istandby_service.h"
+#include "standby_service_client.h"
 #include "standby_service_stub.h"
 #include "singleton.h"
 
@@ -46,19 +48,20 @@ public:
     void OnStart() final;
     void OnStop() final;
 
-    ErrCode SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber) override;
+    ErrCode SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber,
+        const std::string& subscriberName, const std::string& moduleName) override;
     ErrCode UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber) override;
-    ErrCode ApplyAllowResource(const sptr<ResourceRequest>& resourceRequest) override;
-    ErrCode UnapplyAllowResource(const sptr<ResourceRequest>& resourceRequest) override;
+    ErrCode ApplyAllowResource(const ResourceRequest& resourceRequest) override;
+    ErrCode UnapplyAllowResource(const ResourceRequest& resourceRequest) override;
     ErrCode GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
         uint32_t reasonCode) override;
     ErrCode IsDeviceInStandby(bool& isStandby) override;
-    ErrCode SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval) override;
+    ErrCode SetNatInterval(uint32_t type, bool enable, uint32_t interval) override;
     ErrCode ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName) override;
     ErrCode GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
         uint32_t reasonCode) override;
     ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled) override;
-    ErrCode ReportDeviceStateChanged(DeviceStateType type, bool enabled) override;
+    ErrCode ReportDeviceStateChanged(int32_t type, bool enabled) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string>& args) override;
     void AddPluginSysAbilityListener(int32_t systemAbilityId);
     ErrCode NotifySystemAbilityStatusChanged(bool isAdded, int32_t systemAbilityId);

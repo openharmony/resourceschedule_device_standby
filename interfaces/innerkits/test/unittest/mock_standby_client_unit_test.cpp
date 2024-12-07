@@ -49,7 +49,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, Tes
     sptr<IStandbyServiceSubscriber> nullSubscriber = nullptr;
     EXPECT_NE(StandbyServiceClient::GetInstance().SubscribeStandbyCallback(nullSubscriber), ERR_OK);
     EXPECT_NE(StandbyServiceClient::GetInstance().UnsubscribeStandbyCallback(nullSubscriber), ERR_OK);
-    sptr<ResourceRequest> nullRequest = nullptr;
+    ResourceRequest* nullRequest = nullptr;
     EXPECT_NE(StandbyServiceClient::GetInstance().ApplyAllowResource(nullRequest), ERR_OK);
     EXPECT_NE(StandbyServiceClient::GetInstance().UnapplyAllowResource(nullRequest), ERR_OK);
     std::vector<AllowInfo> allowInfoList;
@@ -67,44 +67,6 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, Tes
     StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby);
     StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval);
     StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(true, -1, "");
-}
-
-/**
- * @tc.name: MockStandbyServiceClientUnitTest_002
- * @tc.desc: test StandbyServiceProxy.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_002, TestSize.Level1)
-{
-    sptr<IRemoteObject> impl {};
-    sptr<StandbyServiceProxy> proxy = new (std::nothrow) StandbyServiceProxy(impl);
-    MockSaService::MockSendRequest(true);
-    sptr<IStandbyServiceSubscriber> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
-    EXPECT_NE(proxy->SubscribeStandbyCallback(subscriber), ERR_OK);
-    EXPECT_NE(proxy->UnsubscribeStandbyCallback(subscriber), ERR_OK);
-    sptr<ResourceRequest> resouarceRequest = new (std::nothrow) ResourceRequest();
-    EXPECT_NE(proxy->ApplyAllowResource(resouarceRequest), ERR_OK);
-    EXPECT_NE(proxy->UnapplyAllowResource(resouarceRequest), ERR_OK);
-    std::vector<AllowInfo> allowInfoList;
-    EXPECT_NE(proxy->GetAllowList(0, allowInfoList, 0), ERR_OK);
-    bool isStandby {false};
-    proxy->IsDeviceInStandby(isStandby);
-    proxy->ReportWorkSchedulerStatus(false, -1, "");
-    uint32_t type = 1;
-    bool enable = true;
-    uint32_t interval = 300;
-    proxy->SetNatInterval(type, enable, interval);
-
-    MockSaService::MockSendRequest(false);
-    EXPECT_NE(proxy->SubscribeStandbyCallback(subscriber), ERR_OK);
-    EXPECT_NE(proxy->UnsubscribeStandbyCallback(subscriber), ERR_OK);
-    EXPECT_NE(proxy->ApplyAllowResource(resouarceRequest), ERR_OK);
-    EXPECT_NE(proxy->UnapplyAllowResource(resouarceRequest), ERR_OK);
-    EXPECT_NE(proxy->GetAllowList(0, allowInfoList, 0), ERR_OK);
-    proxy->IsDeviceInStandby(isStandby);
-    proxy->ReportWorkSchedulerStatus(false, -1, "");
-    proxy->SetNatInterval(type, enable, interval);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

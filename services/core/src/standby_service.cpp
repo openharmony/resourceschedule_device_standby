@@ -182,12 +182,15 @@ void StandbyService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::s
     }
 }
 
-ErrCode StandbyService::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
+ErrCode StandbyService::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber,
+    const std::string& subscriberName, const std::string& moduleName)
 {
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
+    subscriber->SetSubscriberName(subscriberName);
+    subscriber->SetModuleName(moduleName);
     return StandbyServiceImpl::GetInstance()->SubscribeStandbyCallback(subscriber);
 }
 
@@ -200,22 +203,24 @@ ErrCode StandbyService::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSub
     return StandbyServiceImpl::GetInstance()->UnsubscribeStandbyCallback(subscriber);
 }
 
-ErrCode StandbyService::ApplyAllowResource(const sptr<ResourceRequest>& resourceRequest)
+ErrCode StandbyService::ApplyAllowResource(const ResourceRequest& resourceRequest)
 {
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
-    return StandbyServiceImpl::GetInstance()->ApplyAllowResource(resourceRequest);
+    ResourceRequest request(resourceRequest);
+    return StandbyServiceImpl::GetInstance()->ApplyAllowResource(request);
 }
 
-ErrCode StandbyService::UnapplyAllowResource(const sptr<ResourceRequest>& resourceRequest)
+ErrCode StandbyService::UnapplyAllowResource(const ResourceRequest& resourceRequest)
 {
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
-    return StandbyServiceImpl::GetInstance()->UnapplyAllowResource(resourceRequest);
+    ResourceRequest request(resourceRequest);
+    return StandbyServiceImpl::GetInstance()->UnapplyAllowResource(request);
 }
 
 ErrCode StandbyService::GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
@@ -237,7 +242,7 @@ ErrCode StandbyService::IsDeviceInStandby(bool& isStandby)
     return StandbyServiceImpl::GetInstance()->IsDeviceInStandby(isStandby);
 }
 
-ErrCode StandbyService::SetNatInterval(uint32_t& type, bool& enable, uint32_t& interval)
+ErrCode StandbyService::SetNatInterval(uint32_t type, bool enable, uint32_t interval)
 {
     if (!CheckProcessNamePermission(PUSH_PROCESS_NAME)) {
         STANDBYSERVICE_LOGE("set nat interval permission check fail");
@@ -314,7 +319,7 @@ ErrCode StandbyService::ReportPowerOverused(const std::string &module, uint32_t 
     return StandbyServiceImpl::GetInstance()->ReportPowerOverused(module, level);
 }
 
-ErrCode StandbyService::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
+ErrCode StandbyService::ReportDeviceStateChanged(int32_t type, bool enabled)
 {
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");

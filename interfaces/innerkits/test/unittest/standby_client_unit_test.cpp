@@ -22,7 +22,7 @@
 
 #include "allow_type.h"
 #include "istandby_service.h"
-#include "resourcce_request.h"
+#include "resource_request.h"
 #include "standby_ipc_interface_code.h"
 #include "standby_service_client.h"
 #include "standby_service_proxy.h"
@@ -177,22 +177,6 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_007, TestSiz
     subscriber->HandleOnAllowListChanged(allowListData);
     allowListData.WriteBool(false);
     subscriber->HandleOnAllowListChanged(allowListData);
-}
-
-/**
- * @tc.name: StandbyServiceClientUnitTest_008
- * @tc.desc: test StandbyServiceProxy.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_008, TestSize.Level1)
-{
-    sptr<IRemoteObject> impl {};
-    sptr<StandbyServiceProxy> proxy = new (std::nothrow) StandbyServiceProxy(impl);
-    sptr<IStandbyServiceSubscriber> nullSubscriber = nullptr;
-    EXPECT_NE(proxy->SubscribeStandbyCallback(nullSubscriber), ERR_OK);
-    EXPECT_NE(proxy->SubscribeStandbyCallback(nullSubscriber), ERR_OK);
-    proxy->UnsubscribeStandbyCallback(nullSubscriber);
 }
 
 /**
