@@ -45,6 +45,12 @@ ohos_shared_library("standby_innerkits") {
     "${standby_utils_common_path}:standby_utils_common",
   ]
 
+  install_images = [
+    "system",
+    "updater",
+    "vendor",
+  ]
+
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
