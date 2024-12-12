@@ -152,7 +152,7 @@ int32_t TimeProvider::GetRandomDelay(int32_t low, int32_t high)
 int32_t TimeProvider::GetCurrentDate()
 {
     time_t now = std::time(0);
-    tm* local_time = localtime(&now);
+    tm* local_time = gmtime(&now);
     if (local_time == nullptr) {
         STANDBYSERVICE_LOGE("get local time failed");
         return 0;

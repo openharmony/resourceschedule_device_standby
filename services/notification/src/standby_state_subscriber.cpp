@@ -163,7 +163,7 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
         "module: %{public}s, level: %{public}u.", module.c_str(), level);
     int32_t curDate = TimeProvider::GetCurrentDate();
     if (curDate_ != curDate) {
-        STANDBYSERVICE_LOGI("date has changed to %{public}d", curDate);
+        STANDBYSERVICE_LOGI("[PowerOverused] Date has changed to %{public}d.", curDate);
         curDate_ = curDate;
         modulePowerMap_.clear();
     }
@@ -171,7 +171,7 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
 
     std::lock_guard<std::mutex> lock(subscriberLock_);
     if (subscriberList_.empty()) {
-        STANDBYSERVICE_LOGW("Sleep State Subscriber List is empty");
+        STANDBYSERVICE_LOGW("[PowerOverused] Sleep state Subscriber List is empty.");
         return;
     }
 
@@ -211,6 +211,9 @@ void StandbyStateSubscriber::NotifyPowerOnRegister(const sptr<IStandbyServiceSub
     if (curDate_ == curDate && iter != modulePowerMap_.end()) {
         level = iter->second;
     }
+
+    STANDBYSERVICE_LOGI("[PowerOverused] Subscriber callback when register, "
+        "module: %{public}s, level: %{public}u.", module.c_str(), level);
     subscriber->OnPowerOverused(module, level);
 }
 
