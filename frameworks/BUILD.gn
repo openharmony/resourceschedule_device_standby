@@ -30,14 +30,16 @@ ohos_shared_library("standby_fwk") {
   }
   sources = [
     "${standby_innerkits_path}/src/allow_info.cpp",
-    "${standby_innerkits_path}/src/resourcce_request.cpp",
-    "src/standby_service_stub.cpp",
+    "${standby_innerkits_path}/src/resource_request.cpp",
     "src/standby_service_subscriber_proxy.cpp",
   ]
 
   public_configs = [ ":standby_fwk_public_config" ]
 
-  public_deps = [ "${standby_utils_common_path}:standby_utils_common" ]
+  public_deps = [
+    "${standby_innerkits_path}:device_standby_stub",
+    "${standby_utils_common_path}:standby_utils_common",
+  ]
 
   external_deps = [
     "c_utils:utils",

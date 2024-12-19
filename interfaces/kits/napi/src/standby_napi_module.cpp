@@ -22,7 +22,7 @@
 
 #include "allow_info.h"
 #include "allow_type.h"
-#include "resourcce_request.h"
+#include "resource_request.h"
 #include "standby_service_log.h"
 #include "standby_service_client.h"
 

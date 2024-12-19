@@ -37,6 +37,7 @@
         "c_utils",
         "eventhandler",
         "hilog",
+        "idl_tool",
         "init",
         "ipc",
         "input",
@@ -77,7 +78,7 @@
             "header_files": [
               "allow_info.h",
               "allow_type.h",
-              "resourcce_request.h",
+              "resource_request.h",
               "standby_service_client.h",
               "standby_service_subscriber_stub.h",
               "standby_state.h"

@@ -41,7 +41,7 @@ public:
      * @param parcel Indicates the parcel object for unmarshalling.
      * @return The info of delay suspend.
      */
-    static sptr<ResourceRequest> Unmarshalling(Parcel& in);
+    static ResourceRequest* Unmarshalling(Parcel& in);
 
     /**
      * @brief Marshals a purpose into a parcel.
@@ -156,7 +156,7 @@ public:
      *
      * @param reason reason code of the resource request.
      */
-    inline uint32_t GetReasonCode()
+    inline uint32_t GetReasonCode() const
     {
         return reasonCode_;
     }

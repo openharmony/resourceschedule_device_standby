@@ -20,11 +20,20 @@
 #include <nocopyable.h>
 
 #include "istandby_service.h"
+#include "allow_info.h"
+#include "resource_request.h"
+#include "standby_service_errors.h"
 #include "istandby_service_subscriber.h"
 #include "res_data.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
+
+enum class DeviceStateType: int32_t {
+    DIS_COMP_CHANGE = 0,
+    TELEPHONE_STATE_CHANGE,
+    WIFI_P2P_CHANGE,
+};
 
 enum class PowerOverusedLevel : uint32_t {
     NORMAL = 0,

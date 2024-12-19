@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "resourcce_request.h"
+#include "resource_request.h"
 
 #include "ipc_util.h"
 #include "standby_service_log.h"
@@ -31,9 +31,9 @@ bool ResourceRequest::Marshalling(Parcel& out) const
     return true;
 }
 
-sptr<ResourceRequest> ResourceRequest::Unmarshalling(Parcel& in)
+ResourceRequest* ResourceRequest::Unmarshalling(Parcel& in)
 {
-    sptr<ResourceRequest> info = new (std::nothrow) ResourceRequest();
+    auto info = new (std::nothrow) ResourceRequest();
     if (info != nullptr && !info->ReadFromParcel(in)) {
         STANDBYSERVICE_LOGE("read from parcel failed");
         info = nullptr;
