@@ -27,6 +27,7 @@ namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
     const int32_t COUNT_TIMES = 15;
+    const int32_t MAX_COUNT_SENSOR = 200;
 }
 
 double MotionSensorMonitor::energy_ = 0;
@@ -45,6 +46,10 @@ MotionSensorMonitor::MotionSensorMonitor(int32_t detectionTimeOut, int32_t restT
 
 bool MotionSensorMonitor::CheckSersorUsable(SensorInfo *sensorInfo, int32_t count, int32_t sensorTypeId)
 {
+    if (sensorInfo == nullptr || !(count > 0 && count < MAX_COUNT_SENSOR)) {
+        STANDBYSERVICE_LOGE("standby service sensor info is invalid");
+        return false;
+    }
     SensorInfo *pt = sensorInfo + count;
     for (SensorInfo *ps = sensorInfo; ps < pt; ++ps) {
         if (sensorInfo->sensorTypeId == sensorTypeId) {
