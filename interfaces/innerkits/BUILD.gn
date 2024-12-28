@@ -64,7 +64,6 @@ ohos_shared_library("standby_innerkits") {
   install_images = [
     "system",
     "updater",
-    "vendor",
   ]
 
   external_deps = [
