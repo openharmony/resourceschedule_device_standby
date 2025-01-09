@@ -30,4 +30,5 @@ interface OHOS.DevStandbyMgr.IStandbyService {
     void SetNatInterval([in] unsigned int type, [in] boolean enable, [in] unsigned int interval);
     void HandleEvent([in] unsigned int resType, [in] long value, [in] String sceneInfo);
     void ReportPowerOverused([in] String module, [in] unsigned int level);
+    void DelayHeartBeat([in] long timestamp);
 }

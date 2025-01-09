@@ -1191,6 +1191,9 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_057, TestSize.Level1)
     uint32_t interval = 300;
     ErrCode code = DelayedSingleton<StandbyService>::GetInstance()->SetNatInterval(type, enable, interval);
     EXPECT_EQ(code, ERR_PERMISSION_DENIED);
+    int64_t timestamp = 100;
+    code = DelayedSingleton<StandbyService>::GetInstance()->DelayHeartBeat(timestamp);
+    EXPECT_EQ(code, ERR_PERMISSION_DENIED);
 }
 
 /**

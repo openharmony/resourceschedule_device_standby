@@ -259,6 +259,8 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_014, TestSiz
     bool enable = true;
     uint32_t interval = 300;
     EXPECT_EQ(StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval), ERR_PERMISSION_DENIED);
+    int64_t timestamp = 100;
+    EXPECT_EQ(StandbyServiceClient::GetInstance().DelayHeartBeat(timestamp), ERR_PERMISSION_DENIED);
 }
 
 /**

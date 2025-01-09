@@ -257,6 +257,19 @@ ErrCode StandbyService::SetNatInterval(uint32_t type, bool enable, uint32_t inte
     return ERR_OK;
 }
 
+ErrCode StandbyService::DelayHeartBeat(int64_t timestamp)
+{
+    if (!CheckProcessNamePermission(PUSH_PROCESS_NAME)) {
+        STANDBYSERVICE_LOGE("delay heartbeat permission check fail");
+        return ERR_PERMISSION_DENIED;
+    }
+    StandbyMessage standbyMessage{StandbyMessageType::NAT_MSG_RECV};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam(MESSAGE_TIMESTAMP, static_cast<int32_t>(timestamp));
+    StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
+    return ERR_OK;
+}
+
 void StandbyService::AddPluginSysAbilityListener(int32_t systemAbilityId)
 {
     std::lock_guard<std::mutex> pluginListenerLock(listenedSALock_);
