@@ -97,34 +97,34 @@ void StandbyService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
     auto serviceImpl = StandbyServiceImpl::GetInstance();
     switch (systemAbilityId) {
         case COMMON_EVENT_SERVICE_ID:
-            STANDBYSERVICE_LOGI("common event service is ready!");
+            STANDBYSERVICE_LOGD("common event service is ready!");
             serviceImpl->UpdateSaDependValue(true, COMMON_EVENT_SERVICE_ID);
             serviceImpl->RegisterCommEventObserver();
             break;
         case TIME_SERVICE_ID:
-            STANDBYSERVICE_LOGI("timer service is ready!");
+            STANDBYSERVICE_LOGD("timer service is ready!");
             serviceImpl->UpdateSaDependValue(true, TIMER_SERVICE_READY);
             serviceImpl->RegisterTimeObserver();
             break;
         case ABILITY_MGR_SERVICE_ID:
-            STANDBYSERVICE_LOGI("ability mgr service is ready!");
+            STANDBYSERVICE_LOGD("ability mgr service is ready!");
             serviceImpl->UpdateSaDependValue(true, ABILITY_SERVICE_READY);
             break;
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
-            STANDBYSERVICE_LOGI("bundle mgr service is ready!");
+            STANDBYSERVICE_LOGD("bundle mgr service is ready!");
             serviceImpl->UpdateSaDependValue(true, BUNDLE_MGR_READY);
             break;
         case POWER_MANAGER_SERVICE_ID:
-            STANDBYSERVICE_LOGI("power service is ready!");
+            STANDBYSERVICE_LOGD("power service is ready!");
             serviceImpl->UpdateSaDependValue(true, POWER_SERVICE_READY);
             break;
         case APP_MGR_SERVICE_ID:
-            STANDBYSERVICE_LOGI("app mgr service is ready!");
+            STANDBYSERVICE_LOGD("app mgr service is ready!");
             serviceImpl->UpdateSaDependValue(true, APP_MGR_SERVICE_READY);
             serviceImpl->RegisterAppStateObserver();
             break;
         case MULTIMODAL_INPUT_SERVICE_ID:
-            STANDBYSERVICE_LOGI("multi modal input service is ready!");
+            STANDBYSERVICE_LOGD("multi modal input service is ready!");
             serviceImpl->UpdateSaDependValue(true, MULTIMODAL_INPUT_SERVICE_READY);
             break;
         default:
