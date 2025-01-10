@@ -94,7 +94,7 @@ void StandbyServiceImpl::InitReadyState()
 {
     STANDBYSERVICE_LOGD("start init necessary plugin");
     handler_->PostTask([this]() {
-        if (isServiceReady_.load()) {
+        if (IsServiceReady()) {
             STANDBYSERVICE_LOGW("standby service is already ready, do not need repeat");
             return;
         }
@@ -176,7 +176,7 @@ void StandbyServiceImpl::DayNightSwitchCallback()
 {
     handler_->PostTask([standbyImpl = shared_from_this()]() {
         STANDBYSERVICE_LOGD("start day and night switch");
-        if (!standbyImpl->isServiceReady_.load()) {
+        if (!standbyImpl->IsServiceReady()) {
             STANDBYSERVICE_LOGW("standby service is not ready");
             if (!TimedTask::StartDayNightSwitchTimer(standbyImpl->dayNightSwitchTimerId_)) {
                 standbyImpl->ResetTimeObserver();
@@ -336,7 +336,7 @@ std::shared_ptr<IStateManagerAdapter>& StandbyServiceImpl::GetStateManager()
 void StandbyServiceImpl::UninitReadyState()
 {
     handler_->PostSyncTask([this]() {
-        if (!isServiceReady_.load()) {
+        if (!IsServiceReady()) {
             STANDBYSERVICE_LOGW("standby service is already not ready, do not need uninit");
             return;
         }
@@ -452,7 +452,7 @@ bool StandbyServiceImpl::CheckAllowTypeInfo(uint32_t allowType)
 
 ErrCode StandbyServiceImpl::RemoveAppAllowRecord(int32_t uid, const std::string &bundleName, bool resetAll)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -577,7 +577,7 @@ ErrCode StandbyServiceImpl::UnsubscribeStandbyCallback(const sptr<IStandbyServic
 
 ErrCode StandbyServiceImpl::ApplyAllowResource(ResourceRequest& resourceRequest)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -690,7 +690,7 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
 
 ErrCode StandbyServiceImpl::UnapplyAllowResource(ResourceRequest& resourceRequest)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -761,7 +761,7 @@ void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& na
 
 void StandbyServiceImpl::OnProcessStatusChanged(int32_t uid, int32_t pid, const std::string& bundleName, bool isCreated)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return;
     }
@@ -791,7 +791,7 @@ void StandbyServiceImpl::NotifyAllowListChanged(int32_t uid, const std::string& 
 ErrCode StandbyServiceImpl::GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
     uint32_t reasonCode)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -872,7 +872,7 @@ ErrCode StandbyServiceImpl::IsDeviceInStandby(bool& isStandby)
         return checkRet;
     }
 
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -910,7 +910,7 @@ ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid,
         return checkRet;
     }
 
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         return ERR_STANDBY_SYS_NOT_READY;
     }
     STANDBYSERVICE_LOGD("work scheduler status changed, isstarted: %{public}d, uid: %{public}d, bundleName: %{public}s",
@@ -927,7 +927,7 @@ ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid,
 ErrCode StandbyServiceImpl::GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
     uint32_t reasonCode)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -961,7 +961,7 @@ ErrCode StandbyServiceImpl::IsStrategyEnabled(const std::string& strategyName, b
         return checkRet;
     }
 
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGD("standby service is not ready");
         return ERR_STANDBY_SYS_NOT_READY;
     }
@@ -988,7 +988,7 @@ ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint3
 
 ErrCode StandbyServiceImpl::ReportDeviceStateChanged(int32_t type, bool enabled)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         return ERR_STANDBY_SYS_NOT_READY;
     }
 
@@ -1233,7 +1233,7 @@ void StandbyServiceImpl::AppEventHandler(const uint32_t resType, const int64_t v
 
 void StandbyServiceImpl::DispatchEvent(const StandbyMessage& message)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         STANDBYSERVICE_LOGW("standby service is not ready");
         return;
     }
@@ -1260,7 +1260,7 @@ bool StandbyServiceImpl::IsDebugMode()
 void StandbyServiceImpl::ShellDump(const std::vector<std::string>& argsInStr,
     std::string& result)
 {
-    if (!isServiceReady_.load()) {
+    if (!IsServiceReady()) {
         result += "standby service manager is not ready";
         return;
     }
