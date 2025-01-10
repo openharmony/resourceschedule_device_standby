@@ -336,7 +336,7 @@ std::shared_ptr<IStateManagerAdapter>& StandbyServiceImpl::GetStateManager()
 void StandbyServiceImpl::UninitReadyState()
 {
     handler_->PostSyncTask([this]() {
-        if (!isServiceReady_.load() {
+        if (!isServiceReady_.load()) {
             STANDBYSERVICE_LOGW("standby service is already not ready, do not need uninit");
             return;
         }
