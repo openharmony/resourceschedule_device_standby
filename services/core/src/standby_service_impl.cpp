@@ -252,8 +252,28 @@ ErrCode StandbyServiceImpl::ResetTimeObserver()
     }
     return ERR_OK;
 }
+void StandbyServiceImpl::UpdateSaDependValue(const bool& isAdd, const uint32_t& saId)
+{
+    if (isAdd) {
+        dependsReady_ |= saId;
+    }else {
+        dependsReady_ &= (~saId);
+    }
+}
 
+int32_t StandbyServiceImpl::GetSaDependValue()
+{
+    return dependsReady_;
+}
 
+bool StandbyServiceImpl::IsServiceReady()
+{
+    if (!isServiceReady_.load()){
+        STANDBYSERVICE_LOGW("standby service is not ready, dependsReady is %{public}d", dependsReady_);
+        return false;
+    }
+    return true;
+}
 ErrCode StandbyServiceImpl::RegisterPlugin(const std::string& pluginName)
 {
     STANDBYSERVICE_LOGI("start register plugin %{public}s", pluginName.c_str());
