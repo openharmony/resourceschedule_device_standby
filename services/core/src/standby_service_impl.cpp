@@ -94,7 +94,7 @@ void StandbyServiceImpl::InitReadyState()
 {
     STANDBYSERVICE_LOGD("start init necessary plugin");
     handler_->PostTask([this]() {
-        if (IsServiceReady()) {
+        if (isServiceReady_.load()) {
             STANDBYSERVICE_LOGW("standby service is already ready, do not need repeat");
             return;
         }
@@ -176,7 +176,7 @@ void StandbyServiceImpl::DayNightSwitchCallback()
 {
     handler_->PostTask([standbyImpl = shared_from_this()]() {
         STANDBYSERVICE_LOGD("start day and night switch");
-        if (!standbyImpl->IsServiceReady()) {
+        if (!standbyImpl->isServiceReady_.load()) {
             STANDBYSERVICE_LOGW("standby service is not ready");
             if (!TimedTask::StartDayNightSwitchTimer(standbyImpl->dayNightSwitchTimerId_)) {
                 standbyImpl->ResetTimeObserver();
