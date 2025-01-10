@@ -145,7 +145,7 @@ void StandbyService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::s
     switch (systemAbilityId) {
         case COMMON_EVENT_SERVICE_ID:
             STANDBYSERVICE_LOGI("common event service is removed!");
-            serviceImpl->UpdateSaDependValue(false, OMMON_EVENT_READY);
+            serviceImpl->UpdateSaDependValue(false, COMMON_EVENT_READY);
             serviceImpl->UnregisterCommEventObserver();
             break;
         case TIME_SERVICE_ID:
@@ -155,7 +155,7 @@ void StandbyService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::s
             break;
         case ABILITY_MGR_SERVICE_ID:
             STANDBYSERVICE_LOGI("ability mgr service is removed!");
-            serviceImpl->UpdateSaDependValue(false, BILITY_SERVICE_READY);
+            serviceImpl->UpdateSaDependValue(false, ABILITY_SERVICE_READY);
             break;
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
             STANDBYSERVICE_LOGI("bundle mgr service is removed!");
