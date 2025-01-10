@@ -134,7 +134,7 @@ public:
     void DispatchEvent(const StandbyMessage& message);
     bool IsDebugMode();
     bool IsServiceReady();
-    void UpdateSaDependValue(const bool& isAdd, const uint32_t& saID);
+    void UpdateSaDependValue(const bool& isAdd, const uint32_t& saId);
     int32_t GetDependValue();
 
     void OnProcessStatusChanged(int32_t uid, int32_t pid, const std::string& bundleName, bool isCreated);
