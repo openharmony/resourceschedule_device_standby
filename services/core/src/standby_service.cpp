@@ -94,7 +94,7 @@ void StandbyService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
 {
     STANDBYSERVICE_LOGI("add system ability, systemAbilityId : %{public}d", systemAbilityId);
     std::lock_guard<std::mutex> systemAbilityLock(systemAbilityLock_);
-    auto serviceImpl = StandbyServiceImpl::GetInstance;
+    auto serviceImpl = StandbyServiceImpl::GetInstance();
     switch (systemAbilityId) {
         case COMMON_EVENT_SERVICE_ID:
             STANDBYSERVICE_LOGI("common event service is ready!");
