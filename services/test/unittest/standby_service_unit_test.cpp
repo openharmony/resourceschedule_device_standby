@@ -174,7 +174,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_002, TestSize.Level1)
     StandbyService::GetInstance()->OnAddSystemAbility(POWER_MANAGER_SERVICE_ID, "");
     StandbyService::GetInstance()->OnAddSystemAbility(APP_MGR_SERVICE_ID, "");
     StandbyService::GetInstance()->OnAddSystemAbility(MULTIMODAL_INPUT_SERVICE_ID, "");
-    EXPECT_EQ(StandbyService::GetInstance()->dependsReady_, ALL_DEPENDS_READY);
+    EXPECT_EQ(StandbyServiceImpl::GetInstance()->dependsReady_, ALL_DEPENDS_READY);
     StandbyServiceImpl::GetInstance()->InitReadyState();
 }
 
