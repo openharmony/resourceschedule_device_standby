@@ -252,6 +252,7 @@ ErrCode StandbyServiceImpl::ResetTimeObserver()
     }
     return ERR_OK;
 }
+
 void StandbyServiceImpl::UpdateSaDependValue(const bool& isAdd, const uint32_t& saId)
 {
     if (isAdd) {
@@ -274,6 +275,7 @@ bool StandbyServiceImpl::IsServiceReady()
     }
     return true;
 }
+
 ErrCode StandbyServiceImpl::RegisterPlugin(const std::string& pluginName)
 {
     STANDBYSERVICE_LOGI("start register plugin %{public}s", pluginName.c_str());
