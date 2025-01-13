@@ -257,7 +257,7 @@ void StandbyServiceImpl::UpdateSaDependValue(const bool& isAdd, const uint32_t& 
 {
     if (isAdd) {
         dependsReady_ |= saId;
-    }else {
+    } else {
         dependsReady_ &= (~saId);
     }
 }
@@ -269,7 +269,7 @@ int32_t StandbyServiceImpl::GetSaDependValue()
 
 bool StandbyServiceImpl::IsServiceReady()
 {
-    if (!isServiceReady_.load()){
+    if (! isServiceReady_.load()) {
         STANDBYSERVICE_LOGW("standby service is not ready, dependsReady is %{public}d", dependsReady_);
         return false;
     }
