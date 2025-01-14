@@ -115,6 +115,7 @@ HWTEST_F(MotionSensorMonitorTest, MotionSensorCallback, TestSize.Level1)
     auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(
         PERIODLY_TASK_DECTION_TIMEOUT, PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
     repeatedMotionConstraint->MotionSensorCallback(nullptr);
+    EXPECT_EQ(StandbyServiceImpl::GetInstance()->GetStateManager()->isEvalution_, false);
 }
 
 /**
