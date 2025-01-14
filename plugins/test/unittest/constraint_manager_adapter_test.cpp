@@ -111,7 +111,9 @@ HWTEST_F(ConstraintManagerAdapterTest, StartEvalution003, TestSize.Level1)
     constraintManagerAdapter->isEvaluation_ = false;
     std::shared_ptr<ChargeStateMonitor> monitor = nullptr;
     constraintManagerAdapter->RegisterConstraintCallback(params, monitor);
-    constraintManagerAdapter->StartEvalution(params);
+    EXPECT_EQ(constraintManagerAdapter->constraintMap_.size(), 1);
+    ErrCode ret = constraintManagerAdapter->StartEvalution(params);
+    EXPECT_EQ(ret, ERR_OK);
 }
 
 /**
