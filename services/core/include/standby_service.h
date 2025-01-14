@@ -81,7 +81,6 @@ private:
 private:
     std::mutex systemAbilityLock_ {};
     std::atomic<ServiceRunningState> state_ {ServiceRunningState::STATE_NOT_START};
-    uint32_t dependsReady_ = 0;
     std::mutex listenedSALock_ {};
 };
 }  // namespace DevStandbyMgr

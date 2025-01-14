@@ -92,47 +92,48 @@ void StandbyService::OnStart()
 
 void StandbyService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
-    STANDBYSERVICE_LOGD("add system ability, systemAbilityId : %{public}d", systemAbilityId);
+    STANDBYSERVICE_LOGI("add system ability, systemAbilityId : %{public}d", systemAbilityId);
     std::lock_guard<std::mutex> systemAbilityLock(systemAbilityLock_);
+    auto serviceImpl = StandbyServiceImpl::GetInstance();
     switch (systemAbilityId) {
         case COMMON_EVENT_SERVICE_ID:
             STANDBYSERVICE_LOGD("common event service is ready!");
-            dependsReady_ |= COMMON_EVENT_READY;
-            StandbyServiceImpl::GetInstance()->RegisterCommEventObserver();
+            serviceImpl->UpdateSaDependValue(true, COMMON_EVENT_SERVICE_ID);
+            serviceImpl->RegisterCommEventObserver();
             break;
         case TIME_SERVICE_ID:
             STANDBYSERVICE_LOGD("timer service is ready!");
-            dependsReady_ |= TIMER_SERVICE_READY;
-            StandbyServiceImpl::GetInstance()->RegisterTimeObserver();
+            serviceImpl->UpdateSaDependValue(true, TIMER_SERVICE_READY);
+            serviceImpl->RegisterTimeObserver();
             break;
         case ABILITY_MGR_SERVICE_ID:
             STANDBYSERVICE_LOGD("ability mgr service is ready!");
-            dependsReady_ |= ABILITY_SERVICE_READY;
+            serviceImpl->UpdateSaDependValue(true, ABILITY_SERVICE_READY);
             break;
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
             STANDBYSERVICE_LOGD("bundle mgr service is ready!");
-            dependsReady_ |= BUNDLE_MGR_READY;
+            serviceImpl->UpdateSaDependValue(true, BUNDLE_MGR_READY);
             break;
         case POWER_MANAGER_SERVICE_ID:
             STANDBYSERVICE_LOGD("power service is ready!");
-            dependsReady_ |= POWER_SERVICE_READY;
+            serviceImpl->UpdateSaDependValue(true, POWER_SERVICE_READY);
             break;
         case APP_MGR_SERVICE_ID:
             STANDBYSERVICE_LOGD("app mgr service is ready!");
-            dependsReady_ |= APP_MGR_SERVICE_READY;
-            StandbyServiceImpl::GetInstance()->RegisterAppStateObserver();
+            serviceImpl->UpdateSaDependValue(true, APP_MGR_SERVICE_READY);
+            serviceImpl->RegisterAppStateObserver();
             break;
         case MULTIMODAL_INPUT_SERVICE_ID:
             STANDBYSERVICE_LOGD("multi modal input service is ready!");
-            dependsReady_ |= MULTIMODAL_INPUT_SERVICE_READY;
+            serviceImpl->UpdateSaDependValue(true, MULTIMODAL_INPUT_SERVICE_READY);
             break;
         default:
             NotifySystemAbilityStatusChanged(true, systemAbilityId);
             break;
     }
-    if (dependsReady_ == ALL_DEPENDS_READY) {
-        STANDBYSERVICE_LOGD("all necessary system service for standby service has been satisfied!");
-        StandbyServiceImpl::GetInstance()->InitReadyState();
+    if (serviceImpl->GetSaDependValue() == ALL_DEPENDS_READY) {
+        STANDBYSERVICE_LOGI("all necessary system service for standby service has been satisfied!");
+        serviceImpl->InitReadyState();
     }
 }
 
@@ -140,45 +141,46 @@ void StandbyService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::s
 {
     STANDBYSERVICE_LOGI("remove system ability, systemAbilityId : %{public}d", systemAbilityId);
     std::lock_guard<std::mutex> systemAbilityLock(systemAbilityLock_);
+    auto serviceImpl = StandbyServiceImpl::GetInstance();
     switch (systemAbilityId) {
         case COMMON_EVENT_SERVICE_ID:
             STANDBYSERVICE_LOGI("common event service is removed!");
-            dependsReady_ &= (~COMMON_EVENT_READY);
-            StandbyServiceImpl::GetInstance()->UnregisterCommEventObserver();
+            serviceImpl->UpdateSaDependValue(false, COMMON_EVENT_READY);
+            serviceImpl->UnregisterCommEventObserver();
             break;
         case TIME_SERVICE_ID:
             STANDBYSERVICE_LOGI("time service is removed!");
-            dependsReady_ &= (~TIMER_SERVICE_READY);
-            StandbyServiceImpl::GetInstance()->UnregisterTimeObserver();
+            serviceImpl->UpdateSaDependValue(false, TIMER_SERVICE_READY);
+            serviceImpl->UnregisterTimeObserver();
             break;
         case ABILITY_MGR_SERVICE_ID:
             STANDBYSERVICE_LOGI("ability mgr service is removed!");
-            dependsReady_ &= (~ABILITY_SERVICE_READY);
+            serviceImpl->UpdateSaDependValue(false, ABILITY_SERVICE_READY);
             break;
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
             STANDBYSERVICE_LOGI("bundle mgr service is removed!");
-            dependsReady_ &= (~BUNDLE_MGR_READY);
+            serviceImpl->UpdateSaDependValue(false, BUNDLE_MGR_READY);
             break;
         case POWER_MANAGER_SERVICE_ID:
             STANDBYSERVICE_LOGI("power service is removed!");
-            dependsReady_ &= (~POWER_SERVICE_READY);
+            serviceImpl->UpdateSaDependValue(false, POWER_SERVICE_READY);
             break;
         case APP_MGR_SERVICE_ID:
             STANDBYSERVICE_LOGI("app mgr service is removed!");
-            dependsReady_ &= (~APP_MGR_SERVICE_READY);
-            StandbyServiceImpl::GetInstance()->UnregisterAppStateObserver();
+            serviceImpl->UpdateSaDependValue(false, APP_MGR_SERVICE_READY);
+            serviceImpl->UnregisterAppStateObserver();
             break;
         case MULTIMODAL_INPUT_SERVICE_ID:
             STANDBYSERVICE_LOGI("multi modal input service  is removed!");
-            dependsReady_ &= (~MULTIMODAL_INPUT_SERVICE_READY);
+            serviceImpl->UpdateSaDependValue(false, MULTIMODAL_INPUT_SERVICE_READY);
             break;
         default:
             NotifySystemAbilityStatusChanged(false, systemAbilityId);
             break;
     }
-    if (dependsReady_ != ALL_DEPENDS_READY) {
+    if (serviceImpl->GetSaDependValue() != ALL_DEPENDS_READY) {
         STANDBYSERVICE_LOGI("necessary system service for standby service has been unsatisfied");
-        StandbyServiceImpl::GetInstance()->UninitReadyState();
+        serviceImpl->UninitReadyState();
     }
 }
 

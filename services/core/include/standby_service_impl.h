@@ -133,6 +133,9 @@ public:
         uint32_t reasonCode);
     void DispatchEvent(const StandbyMessage& message);
     bool IsDebugMode();
+    bool IsServiceReady();
+    void UpdateSaDependValue(const bool& isAdd, const uint32_t& saId);
+    int32_t GetSaDependValue();
 
     void OnProcessStatusChanged(int32_t uid, int32_t pid, const std::string& bundleName, bool isCreated);
 private:
@@ -154,6 +157,7 @@ private:
     bool ParsePersistentData();
     void GetPidAndProcName(std::unordered_map<int32_t, std::string>& pidNameMap);
     void DumpPersistantData();
+    uint32_t dependsReady_ = 0;
 
     ErrCode CheckCallerPermission(uint32_t reasonCode);
     ErrCode IsSystemAppWithPermission(int32_t uid, Security::AccessToken::AccessTokenID tokenId, uint32_t reasonCode);
