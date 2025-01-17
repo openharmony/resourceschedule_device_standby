@@ -208,6 +208,18 @@ namespace DevStandbyMgr {
             datas, reply, option);
     }
 
+    void CoverageHandleDelayHeartBeat()
+    {
+        MessageParcel datas;
+        MessageParcel reply;
+        MessageOption option;
+        datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
+        datas.WriteInt64(g_paramUint64);
+        DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
+            static_cast<uint32_t>(IStandbyServiceIpcCode::COMMAND_DELAY_HEART_BEAT),
+            datas, reply, option);
+    }
+
     void PreciseCoverage()
     {
         CoverageHandleIsStrategyEnabled();
@@ -219,6 +231,7 @@ namespace DevStandbyMgr {
         CoverageUnHandleApplyAllowResource();
         CoverageHandleCommonEvent();
         CoverageHandleSetNatInterval();
+        CoverageHandleDelayHeartBeat();
         if (g_initFlag) {
             return;
         }

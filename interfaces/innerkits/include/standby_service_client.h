@@ -169,6 +169,14 @@ public:
      */
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
 
+    /**
+     * @brief Push receives the message as the start point of the heartbeat.
+     *
+     * @param timestamp push msg recv timestamp.
+     * @return ErrCode ERR_OK if success, others if fail.
+     */
+    ErrCode DelayHeartBeat(int64_t timestamp);
+
 private:
     bool GetStandbyServiceProxy();
     void ResetStandbyServiceClient();

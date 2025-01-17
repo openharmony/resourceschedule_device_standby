@@ -78,6 +78,7 @@ const std::string SA_ID = "systemAbilityId";
 const std::string MESSAGE_TYPE = "type";
 const std::string MESSAGE_ENABLE = "enable";
 const std::string MESSAGE_INTERVAL = "interval";
+const std::string MESSAGE_TIMESTAMP = "timestamp";
 
 const std::string CONTINUOUS_TASK = "continuous_task";
 const std::string TRANSIENT_TASK = "transient_task";

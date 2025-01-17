@@ -189,6 +189,16 @@ ErrCode StandbyServiceClient::ReportPowerOverused(const std::string &module, uin
     return standbyServiceProxy_->ReportPowerOverused(module, level);
 }
 
+ErrCode StandbyServiceClient::DelayHeartBeat(int64_t timestamp)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->DelayHeartBeat(timestamp);
+}
+
 ErrCode StandbyServiceClient::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
     std::lock_guard<std::mutex> lock(mutex_);
