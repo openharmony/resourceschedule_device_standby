@@ -262,7 +262,7 @@ void StandbyServiceImpl::UpdateSaDependValue(const bool& isAdd, const uint32_t& 
     }
 }
 
-int32_t StandbyServiceImpl::GetSaDependValue()
+uint32_t StandbyServiceImpl::GetSaDependValue()
 {
     return dependsReady_;
 }

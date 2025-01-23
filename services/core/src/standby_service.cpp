@@ -98,7 +98,7 @@ void StandbyService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
     switch (systemAbilityId) {
         case COMMON_EVENT_SERVICE_ID:
             STANDBYSERVICE_LOGD("common event service is ready!");
-            serviceImpl->UpdateSaDependValue(true, COMMON_EVENT_SERVICE_ID);
+            serviceImpl->UpdateSaDependValue(true, COMMON_EVENT_READY);
             serviceImpl->RegisterCommEventObserver();
             break;
         case TIME_SERVICE_ID:
