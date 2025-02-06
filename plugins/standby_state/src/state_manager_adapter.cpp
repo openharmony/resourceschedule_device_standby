@@ -138,7 +138,6 @@ void StateManagerAdapter::HandleUserSleepState(const StandbyMessage& message)
             curStatePtr_->BeginState();
         }
     }
-
 }
 
 void StateManagerAdapter::HandleScreenStatus(const StandbyMessage& message)
