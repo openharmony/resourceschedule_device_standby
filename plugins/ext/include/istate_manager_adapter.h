@@ -67,6 +67,7 @@ protected:
     int64_t screenOffTimeStamp_ {0};
     uint64_t scrOffHalfHourTimerId_ {0};
     bool isScreenOn_ {false};
+    bool isLidOn_ {true};
     bool scrOffHalfHourCtrl_ {false};
 
     // record the history of state transition, the element of stateRecordList_ is (state, timestamp of exit)
