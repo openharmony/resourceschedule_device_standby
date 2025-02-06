@@ -30,6 +30,7 @@
     *StateManagerAdapter*;
     *RunningLockStrategy*;
     *BaseState*;
+    *StateWithMaint*;
     *WorkingState*;
     *DarkState*;
     *NapState*;
