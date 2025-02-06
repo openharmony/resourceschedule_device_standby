@@ -31,6 +31,9 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
+namespace {
+    const std::string COMMON_EVENT_USER_SLEEP_STATE_CHANGED = "COMMON_EVENT_USER_SLEEP_STATE_CHANGED";
+}
 bool StateManagerAdapter::Init()
 {
     auto StandbyServiceImpl = StandbyServiceImpl::GetInstance();
@@ -105,11 +108,35 @@ void StateManagerAdapter::HandleCommonEvent(const StandbyMessage& message)
         message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED) {
         TransitToState(StandbyState::WORKING);
     }
+    if (message.action_ == COMMON_EVENT_USER_SLEEP_STATE_CHANGED) {
+        HandleUserSleepState(message);
+    }
     if (curStatePtr_->GetCurState() != StandbyState::WORKING) {
         return;
     }
     if (CheckEnterDarkState(message)) {
         TransitToState(StandbyState::DARK);
+    }
+}
+
+void StateManagerAdapter::HandleUserSleepState(const StandbyMessage& message)
+{
+    if (isScreenOn_) {
+        return;
+    }
+    isSleepState_ = message.want_->GetBoolParam("isSleep", false);
+    STANDBYSERVICE_LOGI("standby start handle user sleep state, recv sleepState is %{public}d", isSleepState_);
+    if (isSleepState_) {
+        if (curStatePtr_->GetCurState() != StandbyState::SLEEP) {
+            UnblockCurrentState();
+            TransitToStateInner(StandbyState::SLEEP);
+        }
+        curStatePtr_->StopTimedTask(TRANSIT_NEXT_STATE_TIMED_TASK);
+        curStatePtr_->StopTimedTask(REPEATED_MOTION_DETECTION_TASK);
+    } else {
+        if (curStatePtr_->GetCurState() == StandbyState::SLEEP) {
+            curStatePtr_->BeginState();
+        }
     }
 }
 

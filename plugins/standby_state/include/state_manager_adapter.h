@@ -42,7 +42,7 @@ public:
     void HandleOpenCloseLid(const StandbyMessage& message);
     void TransitToSleepState();
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
-private:
+protected:
     void SendNotification(uint32_t preState, bool needDispatchEvent);
     bool CheckTransitionValid(uint32_t curState, uint32_t nextState);
     ErrCode ExitStandby(uint32_t nextState);
@@ -53,19 +53,21 @@ private:
     void HandleCommonEvent(const StandbyMessage& message);
     void HandleScreenStatus(const StandbyMessage& message);
     void HandleScrOffHalfHour(const StandbyMessage& message);
+    void HandleUserSleepState(const StandbyMessage& message);
     bool CheckEnterDarkState(const StandbyMessage& message);
     void DumpShowDetailInfo(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpEnterSpecifiedState(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpActivateMotion(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpResetState(const std::vector<std::string>& argsInStr, std::string& result);
     void RecordStateTransition();
-private:
+protected:
     std::shared_ptr<BaseState> darkStatePtr_ {nullptr};
     std::shared_ptr<BaseState> maintStatePtr_ {nullptr};
     std::shared_ptr<BaseState> napStatePtr_ {nullptr};
     std::shared_ptr<BaseState> sleepStatePtr_ {nullptr};
     std::shared_ptr<BaseState> workingStatePtr_ {nullptr};
     std::vector<std::shared_ptr<BaseState>> indexToState_ {};
+    bool isSleepState_ {false};
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
