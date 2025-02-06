@@ -127,14 +127,14 @@ void StateManagerAdapter::HandleUserSleepState(const StandbyMessage& message)
     isSleepState_ = message.want_->GetBoolParam("isSleep", false);
     STANDBYSERVICE_LOGI("standby start handle user sleep state, recv sleepState is %{public}d", isSleepState_);
     if (isSleepState_) {
-        if (curStatePtr_->GetCurState != StandbyState::SLEEP) {
+        if (curStatePtr_->GetCurState() != StandbyState::SLEEP) {
             UnblockCurrentState();
             TransitToStateInner(StandbyState::SLEEP);
         }
         curStatePtr_->StopTimedTask(TRANSIT_NEXT_STATE_TIMED_TASK);
         curStatePtr_->StopTimedTask(REPEATED_MOTION_DETECTION_TASK);
     } else {
-        if (curStatePtr_->GetCurState == StandbyState::SLEEP) {
+        if (curStatePtr_->GetCurState() == StandbyState::SLEEP) {
             curStatePtr_->BeginState();
         }
     }
