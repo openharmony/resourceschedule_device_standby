@@ -154,7 +154,7 @@ void StateManagerAdapter::HandleScrOffHalfHour(const StandbyMessage& message)
 
 void StateManagerAdapter::TransitToSleepState()
 {
-    if (curStatePtr_->GetCurState() == StandbyState::SLEEP || 
+    if (curStatePtr_->GetCurState() == StandbyState::SLEEP ||
         curStatePtr_->GetCurState() == StandbyState::MAINTENANCE) {
         return;
     }
