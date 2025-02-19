@@ -841,7 +841,7 @@ void StandbyServiceImpl::GetTemporaryAllowList(uint32_t allowTypeIndex, std::vec
             continue;
         }
         allowInfoList.emplace_back((1 << allowTypeIndex), allowRecordPtr->name_,
-            std::max(static_cast<int64_t>(it->endTime_ - curTime), 0L));
+            std::max(static_cast<int64_t>(it->endTime_ - curTime), static_cast<int64_t>(0L));
     }
 }
 
