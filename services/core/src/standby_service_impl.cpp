@@ -651,7 +651,7 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
     const std::string& name = resourceRequest.GetName();
     uint32_t allowType = resourceRequest.GetAllowType();
     bool isApp = (resourceRequest.GetReasonCode() == ReasonCodeEnum::REASON_APP_API);
-    int64_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetMonotonicTimeMs();
+    int64_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
     int64_t endTime {0};
     uint32_t condition = TimeProvider::GetCondition();
     for (uint32_t allowTypeIndex = 0; allowTypeIndex < MAX_ALLOW_TYPE_NUM; ++allowTypeIndex) {
@@ -826,7 +826,7 @@ void StandbyServiceImpl::GetAllowListInner(uint32_t allowType, std::vector<Allow
 void StandbyServiceImpl::GetTemporaryAllowList(uint32_t allowTypeIndex, std::vector<AllowInfo>&
     allowInfoList, uint32_t reasonCode)
 {
-    int32_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetMonotonicTimeMs();
+    int64_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
     auto findRecordTask = [allowTypeIndex](const auto& it) { return it.allowTypeIndex_ == allowTypeIndex; };
     for (auto& [key, allowRecordPtr] : allowInfoMap_) {
         if ((allowRecordPtr->allowType_ & (1 << allowTypeIndex)) == 0) {
@@ -841,7 +841,7 @@ void StandbyServiceImpl::GetTemporaryAllowList(uint32_t allowTypeIndex, std::vec
             continue;
         }
         allowInfoList.emplace_back((1 << allowTypeIndex), allowRecordPtr->name_,
-            std::max(static_cast<long>(it->endTime_ - curTime), 0L));
+            std::max(static_cast<int64_t>(it->endTime_ - curTime), static_cast<int64_t>(0L)));
     }
 }
 
