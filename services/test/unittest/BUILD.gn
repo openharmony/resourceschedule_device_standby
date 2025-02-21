@@ -282,6 +282,7 @@ ohos_unittest("mock_standby_service_unit_test") {
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
+    "googletest:gmock_main",
     "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",
@@ -290,7 +291,6 @@ ohos_unittest("mock_standby_service_unit_test") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "time_service:time_client",
-    "googletest:gmock_main",
   ]
 
   defines = []
