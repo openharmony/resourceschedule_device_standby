@@ -48,6 +48,16 @@ public:
     virtual void OnAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added) = 0;
 
     /**
+     * @brief report change of restrict list to subscriber.
+     *
+     * @param uid uid which changed happens in.
+     * @param name process name of uid.
+     * @param allowType The change of the chang.
+     * @param added add or removed.
+     */
+    virtual void OnRestrictListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added) = 0;
+
+    /**
      * @brief report power over used.
      *
      * @param module target callback module.

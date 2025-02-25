@@ -83,6 +83,35 @@ void StandbyServiceSubscriberProxy::OnAllowListChanged(int32_t uid, const std::s
     }
 }
 
+void StandbyServiceSubscriberProxy::OnRestrictListChanged(int32_t uid, const std::string& name, uint32_t allowType,
+    bool added)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        STANDBYSERVICE_LOGW("OnRestrictListChanged remote is dead.");
+        return;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(StandbyServiceSubscriberProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("OnRestrictListChanged write interface token failed.");
+        return;
+    }
+
+    if (!data.WriteInt32(uid) || !data.WriteString(name) ||
+        !data.WriteUint32(allowType) || !data.WriteBool(added)) {
+        STANDBYSERVICE_LOGW("OnRestrictListChanged write notification failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED), data, reply, option);
+    if (ret!= ERR_OK) {
+        STANDBYSERVICE_LOGE("OnRestrictListChanged SendRequest failed, error code: %d", ret);
+    }
+}
+
 void StandbyServiceSubscriberProxy::OnPowerOverused(const std::string& module, uint32_t level)
 {
     sptr<IRemoteObject> remote = Remote();
