@@ -48,6 +48,9 @@ ErrCode StandbyServiceSubscriberStub::OnRemoteRequestInner(uint32_t code,
         case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ALLOW_LIST_CHANGED)): {
             return HandleOnAllowListChanged(data);
         }
+        case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED)): {
+            return HandleOnRestrictListChanged(data);
+        }
         case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_POWER_OVERUSED)): {
             return HandleOnPowerOverused(data);
         }
@@ -61,6 +64,10 @@ void StandbyServiceSubscriberStub::OnDeviceIdleMode(bool napped, bool sleeped)
 {}
 
 void StandbyServiceSubscriberStub::OnAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType,
+    bool added)
+{}
+
+void StandbyServiceSubscriberStub::OnRestrictListChanged(int32_t uid, const std::string& name, uint32_t allowType,
     bool added)
 {}
 
@@ -91,6 +98,21 @@ ErrCode StandbyServiceSubscriberStub::HandleOnAllowListChanged(MessageParcel& da
         return ERR_INVALID_DATA;
     }
     OnAllowListChanged(uid, name, allowType, added);
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceSubscriberStub::HandleOnRestrictListChanged(MessageParcel& data)
+{
+    int32_t uid {0};
+    std::string name;
+    uint32_t allowType {0};
+    bool added {false};
+    if (!data.ReadInt32(uid) || !data.ReadString(name) ||
+        !data.ReadUint32(allowType) || !data.ReadBool(added)) {
+        STANDBYSERVICE_LOGW("HandleOnRestrictListChanged Read parcel failed.");
+        return ERR_INVALID_DATA;
+    }
+    OnRestrictListChanged(uid, name, allowType, added);
     return ERR_OK;
 }
 

@@ -25,6 +25,7 @@ namespace DevStandbyMgr {
         ON_DEVICE_IDLE_MODE = FIRST_CALL_TRANSACTION,
         ON_ALLOW_LIST_CHANGED,
         ON_POWER_OVERUSED,
+        ON_RESTRICT_LIST_CHANGED,
     };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
