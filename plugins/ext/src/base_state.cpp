@@ -39,7 +39,7 @@ bool BaseState::runningLockStatus_ = false;
 ErrCode BaseState::Init(const std::shared_ptr<BaseState>& statePtr)
 {
     auto callbackTask = [statePtr]() { statePtr->StartTransitNextState(statePtr); };
-#ifdef STANDBY_WATCH_PRODUCT_ENABLE
+#ifdef STANDBY_REALTIME_TIMER_ENABLE
     enterStandbyTimerId_ = TimedTask::CreateTimer(false, 0, 1, callbackTask);
 #else
     enterStandbyTimerId_ = TimedTask::CreateTimer(false, 0, true, false, callbackTask);
