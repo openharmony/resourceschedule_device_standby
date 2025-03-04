@@ -114,8 +114,8 @@ if (standby_rss_work_scheduler_enable) {
   StandbyPluginDefine += [ "STANDBY_RSS_WORK_SCHEDULER_ENABLE" ]
 }
 
-if (device_standby_watch_product_enable) {
-  StandbyPluginDefine += [ "STANDBY_WATCH_PRODUCT_ENABLE" ]
+if (device_standby_realtime_timer_enable) {
+  StandbyPluginDefine += [ "STANDBY_REALTIME_TIMER_ENABLE" ]
 }
 
 ohos_shared_library("standby_plugin") {
