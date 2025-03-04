@@ -39,7 +39,11 @@ bool BaseState::runningLockStatus_ = false;
 ErrCode BaseState::Init(const std::shared_ptr<BaseState>& statePtr)
 {
     auto callbackTask = [statePtr]() { statePtr->StartTransitNextState(statePtr); };
+#ifdef STANDBY_WATCH_PRODUCT_ENABLE
+    enterStandbyTimerId_ = TimedTask::CreateTimer(false, 0, 1, callbackTask);
+#else
     enterStandbyTimerId_ = TimedTask::CreateTimer(false, 0, true, false, callbackTask);
+#endif
     if (enterStandbyTimerId_ == 0) {
         STANDBYSERVICE_LOGE("%{public}s state init failed", STATE_NAME_LIST[GetCurState()].c_str());
         return ERR_STANDBY_STATE_INIT_FAILED;
