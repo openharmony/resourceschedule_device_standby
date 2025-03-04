@@ -98,5 +98,5 @@ declare_args() {
 
   # features
   device_standby_plugin_enable = true
-  device_standby_watch_product_enable = false
+  device_standby_realtime_timer_enable = false
 }
