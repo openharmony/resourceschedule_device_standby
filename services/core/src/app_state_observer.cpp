@@ -105,14 +105,9 @@ void AppStateObserver::OnPageShow(const AppExecFwk::PageStateData &pageStateData
     std::string pageName = pageStateData.pageName;
     std::string targetBundleName = pageStateData.targetBundleName;
     std::string targetModuleName = pageStateData.targetModuleName;
-    STANDBYSERVICE_LOGD("PageStateData: page show, pageName: %{public}s, bundlename: %{public}s, moduleName: %{public}s, "
-                        "abilityName: %{public}s, targetBundleName: %{public}s, targetModuleName: %{public}s",
+    STANDBYSERVICE_LOGD("PageStateData: page show, pageName: %{public}s, bundlename: %{public}s",
         pageName.c_str(),
-        bundleName.c_str(),
-        moduleName.c_str(),
-        abilityName.c_str(),
-        targetBundleName.c_str(),
-        targetModuleName.c_str());
+        bundleName.c_str());
     handler_->PostTask([bundleName, moduleName, abilityName, pageName, targetBundleName, targetModuleName]() {
         StandbyMessage message(StandbyMessageType::PAGE_SHOW);
         message.want_ = AAFwk::Want{};
@@ -134,14 +129,9 @@ void AppStateObserver::OnPageHide(const AppExecFwk::PageStateData &pageStateData
     std::string pageName = pageStateData.pageName;
     std::string targetBundleName = pageStateData.targetBundleName;
     std::string targetModuleName = pageStateData.targetModuleName;
-    STANDBYSERVICE_LOGD("PageStateData: page hide, pageName: %{public}s, bundlename: %{public}s, moduleName: %{public}s, "
-                        "abilityName: %{public}s, targetBundleName: %{public}s, targetModuleName: %{public}s",
+    STANDBYSERVICE_LOGD("PageStateData: page hide, pageName: %{public}s, bundlename: %{public}s",
         pageName.c_str(),
-        bundleName.c_str(),
-        moduleName.c_str(),
-        abilityName.c_str(),
-        targetBundleName.c_str(),
-        targetModuleName.c_str());
+        bundleName.c_str());
     handler_->PostTask([bundleName, moduleName, abilityName, pageName, targetBundleName, targetModuleName]() {
         StandbyMessage message(StandbyMessageType::PAGE_HIDE);
         message.want_ = AAFwk::Want{};
