@@ -96,5 +96,53 @@ void AppStateObserver::OnForegroundApplicationChanged(const AppExecFwk::AppState
         });
     }
 }
+
+void AppStateObserver::OnPageShow(const AppExecFwk::PageStateData &pageStateData)
+{
+    std::string bundleName = pageStateData.bundleName;
+    std::string moduleName = pageStateData.moduleName;
+    std::string abilityName = pageStateData.abilityName;
+    std::string pageName = pageStateData.pageName;
+    std::string targetBundleName = pageStateData.targetBundleName;
+    std::string targetModuleName = pageStateData.targetModuleName;
+    STANDBYSERVICE_LOGD("PageStateData: page show, pageName: %{public}s, bundlename: %{public}s",
+        pageName.c_str(),
+        bundleName.c_str());
+    handler_->PostTask([bundleName, moduleName, abilityName, pageName, targetBundleName, targetModuleName]() {
+        StandbyMessage message(StandbyMessageType::PAGE_SHOW);
+        message.want_ = AAFwk::Want{};
+        message.want_->SetParam("bundleName", bundleName);
+        message.want_->SetParam("moduleName", moduleName);
+        message.want_->SetParam("abilityName", abilityName);
+        message.want_->SetParam("pageName", pageName);
+        message.want_->SetParam("targetBundleName", targetBundleName);
+        message.want_->SetParam("targetModuleName", targetModuleName);
+        StandbyServiceImpl::GetInstance()->DispatchEvent(message);
+    });
+}
+
+void AppStateObserver::OnPageHide(const AppExecFwk::PageStateData &pageStateData)
+{
+    std::string bundleName = pageStateData.bundleName;
+    std::string moduleName = pageStateData.moduleName;
+    std::string abilityName = pageStateData.abilityName;
+    std::string pageName = pageStateData.pageName;
+    std::string targetBundleName = pageStateData.targetBundleName;
+    std::string targetModuleName = pageStateData.targetModuleName;
+    STANDBYSERVICE_LOGD("PageStateData: page hide, pageName: %{public}s, bundlename: %{public}s",
+        pageName.c_str(),
+        bundleName.c_str());
+    handler_->PostTask([bundleName, moduleName, abilityName, pageName, targetBundleName, targetModuleName]() {
+        StandbyMessage message(StandbyMessageType::PAGE_HIDE);
+        message.want_ = AAFwk::Want{};
+        message.want_->SetParam("bundleName", bundleName);
+        message.want_->SetParam("moduleName", moduleName);
+        message.want_->SetParam("abilityName", abilityName);
+        message.want_->SetParam("pageName", pageName);
+        message.want_->SetParam("targetBundleName", targetBundleName);
+        message.want_->SetParam("targetModuleName", targetModuleName);
+        StandbyServiceImpl::GetInstance()->DispatchEvent(message);
+    });
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
