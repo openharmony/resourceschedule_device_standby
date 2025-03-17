@@ -52,7 +52,9 @@ protected:
 
     void HandleCommonEvent(const StandbyMessage& message);
     void HandleScreenStatus(const StandbyMessage& message);
+#ifndef STANDBY_REALTIME_TIMER_ENABLE
     void HandleScrOffHalfHour(const StandbyMessage& message);
+#endif
     void HandleUserSleepState(const StandbyMessage& message);
     bool CheckEnterDarkState(const StandbyMessage& message);
     void DumpShowDetailInfo(const std::vector<std::string>& argsInStr, std::string& result);
