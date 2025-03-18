@@ -199,6 +199,16 @@ ErrCode StandbyServiceClient::DelayHeartBeat(int64_t timestamp)
     return standbyServiceProxy_->DelayHeartBeat(timestamp);
 }
 
+ErrCode StandbyServiceClient::ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->ReportSceneInfo(resType, value, sceneInfo);
+}
+
 ErrCode StandbyServiceClient::ReportDeviceStateChanged(DeviceStateType type, bool enabled)
 {
     std::lock_guard<std::mutex> lock(mutex_);
