@@ -310,6 +310,9 @@ ErrCode StateManagerAdapter::EnterStandby(uint32_t nextState)
 
 ErrCode StateManagerAdapter::TransitWithMaint(uint32_t nextState)
 {
+    if (nextState == StandbyState::WORKING && scrOffHalfHourCtrl_) {
+        OnScreenOffHalfHour(false, false);
+    }
     return TransitToStateInner(nextState);
 }
 
