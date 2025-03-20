@@ -980,6 +980,24 @@ ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint3
     return ERR_OK;
 }
 
+ErrCode StandbyServiceImpl::ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo)
+{
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("caller permission denied.");
+        return checkRet;
+    }
+
+    if (!IsServiceReady()) {
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    StandbyMessage standbyMessage {resType};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam("value", value);
+    standbyMessage.want_->SetParam("sceneInfo", sceneInfo);
+    DispatchEvent(standbyMessage);
+    return ERR_OK;
+}
+
 ErrCode StandbyServiceImpl::ReportDeviceStateChanged(int32_t type, bool enabled)
 {
     if (!IsServiceReady()) {

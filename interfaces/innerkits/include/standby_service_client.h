@@ -177,6 +177,16 @@ public:
      */
     ErrCode DelayHeartBeat(int64_t timestamp);
 
+    /**
+     * @brief Unified handling of events;
+     *
+     * @param resType event type.
+     * @param value event value.
+     * @param sceneInfo event scene info.
+     * @return ErrCode ERR_OK if success, else fail.
+     */
+    ErrCode ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo);
+
 private:
     bool GetStandbyServiceProxy();
     void ResetStandbyServiceClient();
