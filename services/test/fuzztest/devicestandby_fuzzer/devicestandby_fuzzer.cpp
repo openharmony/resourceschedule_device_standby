@@ -207,7 +207,7 @@ namespace DevStandbyMgr {
             static_cast<uint32_t>(IStandbyServiceIpcCode::COMMAND_SET_NAT_INTERVAL),
             datas, reply, option);
     }
-    
+
     void CoverageHandleDelayHeartBeat()
     {
         MessageParcel datas;
