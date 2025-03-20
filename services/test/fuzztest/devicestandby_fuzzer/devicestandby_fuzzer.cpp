@@ -207,7 +207,7 @@ namespace DevStandbyMgr {
             static_cast<uint32_t>(IStandbyServiceIpcCode::COMMAND_SET_NAT_INTERVAL),
             datas, reply, option);
     }
-
+    
     void CoverageHandleDelayHeartBeat()
     {
         MessageParcel datas;
@@ -217,6 +217,20 @@ namespace DevStandbyMgr {
         datas.WriteInt64(g_paramUint64);
         DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
             static_cast<uint32_t>(IStandbyServiceIpcCode::COMMAND_DELAY_HEART_BEAT),
+            datas, reply, option);
+    }
+
+    void CoverageReportSceneInfo()
+    {
+        MessageParcel datas;
+        MessageParcel reply;
+        MessageOption option;
+        datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
+        datas.WriteUint32(g_paramUint32);
+        datas.WriteInt64(g_paramUint64);
+        datas.WriteString(g_paramString);
+        DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
+            static_cast<uint32_t>(IStandbyServiceIpcCode::COMMAND_REPORT_SCENE_INFO),
             datas, reply, option);
     }
 
@@ -232,6 +246,7 @@ namespace DevStandbyMgr {
         CoverageHandleCommonEvent();
         CoverageHandleSetNatInterval();
         CoverageHandleDelayHeartBeat();
+        CoverageReportSceneInfo();
         if (g_initFlag) {
             return;
         }
