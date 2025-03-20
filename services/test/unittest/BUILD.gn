@@ -15,7 +15,7 @@ import("//build/ohos.gni")
 import("//build/test.gni")
 import("//foundation/resourceschedule/device_standby/standby_service.gni")
 
-module_output_path = "${standby_service_part_name}/unittest"
+module_output_path = "device_standby/device_standby"
 
 ohos_unittest("standby_service_unit_test") {
   module_out_path = module_output_path
