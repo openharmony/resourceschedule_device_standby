@@ -67,6 +67,7 @@ ErrCode StandbyStateSubscriber::AddSubscriber(const sptr<IStandbyServiceSubscrib
 
     subscriberList_.emplace_back(subscriber);
     NotifyPowerOnRegister(subscriber);
+    NotifyLowpowerActionOnRegister(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
     STANDBYSERVICE_LOGD(" suscriber standby service callback succeed, list.size() is %{public}d",
         static_cast<int32_t>(subscriberList_.size()));
@@ -240,7 +241,7 @@ void StandbyStateSubscriber::NotifyLowpowerActionOnRegister(const sptr<IStandbyS
         action = iter->second;
     }
 
-    STANDBYSERVICE_LOGI("[PowerOverused] Subscriber callback when register, "
+    STANDBYSERVICE_LOGI("[ActionChanged] Subscriber callback when register, "
         "module: %{public}s, action: %{public}u.", module.c_str(), action);
     subscriber->OnActionChanged(module, action);
 }

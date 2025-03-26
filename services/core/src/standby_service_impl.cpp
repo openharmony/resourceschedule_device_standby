@@ -983,7 +983,7 @@ ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint3
 
 ErrCode StandbyServiceImpl::ReportActionChanged(const std::string &module, uint32_t action)
 {
-    STANDBYSERVICE_LOGD("[ActionChanged] StandbyServiceImpl: power overused, "
+    STANDBYSERVICE_LOGD("[ActionChanged] StandbyServiceImpl: action changed, "
         "modue name: %{public}s, action: %{public}u", module.c_str(), action);
 
     if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
@@ -991,7 +991,7 @@ ErrCode StandbyServiceImpl::ReportActionChanged(const std::string &module, uint3
         return checkRet;
     }
 
-    HandlePowerOverused(0, module, action);
+    HandleActionChanged(0, module, action);
     return ERR_OK;
 }
 
@@ -1123,7 +1123,7 @@ void StandbyServiceImpl::DumpOnActionChanged(const std::vector<std::string> &arg
 
     const std::string &module = argsInStr[DUMP_SECOND_PARAM];
     uint32_t action = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()));
-    HandlePowerOverused(0, module, action);
+    HandleActionChanged(0, module, action);
 }
 
 // handle power overused, resType for extend
@@ -1133,10 +1133,11 @@ void StandbyServiceImpl::HandlePowerOverused([[maybe_unused]]uint32_t resType,
     StandbyStateSubscriber::GetInstance()->NotifyPowerOverusedByCallback(module, level);
 }
 
+// handle action changed, resType for extend
 void StandbyServiceImpl::HandleActionChanged([[maybe_unused]]uint32_t resType,
     const std::string &module, uint32_t action)
 {
-    StandbyStateSubscriber::GetInstance()->NotifyActionChangedByCallback(module, action);
+    StandbyStateSubscriber::GetInstance()->NotifyLowpowerActionByCallback(module, action);
 }
 
 void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo)
