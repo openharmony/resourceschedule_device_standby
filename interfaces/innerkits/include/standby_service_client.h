@@ -45,12 +45,6 @@ enum class PowerOverusedLevel : uint32_t {
 };
 
 enum class PolicyAction : uint32_t {
-    NORMAL = 0,
-    MINOR,
-    WARNING,
-    SERIOUS,
-    EXTREME,
-    FATAL,
 };
 
 class StandbyServiceClient {
@@ -178,14 +172,6 @@ public:
      */
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
 
-    /**
-     * @brief Report event when a module action need to change from policy change
-     *
-     * @param module module name
-     * @param action notify module do action
-     * @return ErrCode ERR_OK if success, others if fail.
-     */
-    ErrCode ReportActionChanged(const std::string &module, uint32_t action);
 
     /**
      * @brief Push receives the message as the start point of the heartbeat.

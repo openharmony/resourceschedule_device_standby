@@ -234,7 +234,7 @@ void StandbyStateSubscriber::NotifyAllowChangedByCommonEvent(int32_t uid, const 
 void StandbyStateSubscriber::NotifyLowpowerActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
     std::string module = subscriber->GetModuleName();
-    uint32_t action = static_cast<uint32_t>(PolicyAction::NORMAL);
+    uint32_t action = static_cast<uint32_t>(0);
     int32_t curDate = TimeProvider::GetCurrentDate();
     auto iter = moduleActionMap_.find(module);
     if (curDate_ == curDate && iter != moduleActionMap_.end()) {
