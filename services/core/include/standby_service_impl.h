@@ -113,6 +113,7 @@ public:
     ErrCode ReportDeviceStateChanged(int32_t type, bool enabled);
     ErrCode HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
+    ErrCode ReportActionChanged(const std::string &module, uint32_t action);
 
     void RegisterPluginInner(IConstraintManagerAdapter* constraintManager,
         IListenerManagerAdapter* listenerManager,
@@ -196,6 +197,9 @@ private:
     // handle abnormal power use
     void HandlePowerOverused([[maybe_unused]]uint32_t resType, const std::string &module, uint32_t level);
     void DumpOnPowerOverused(const std::vector<std::string> &argsInStr, std::string &result);
+
+    void HandleActionChanged([[maybe_unused]]uint32_t resType, const std::string &module, uint32_t action);
+    void DumpOnActionChanged(const std::vector<std::string> &argsInStr, std::string &result);
 
 private:
     std::atomic<bool> isServiceReady_ {false};

@@ -68,6 +68,7 @@ public:
     ErrCode NotifySystemAbilityStatusChanged(bool isAdded, int32_t systemAbilityId);
     ErrCode HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo) override;
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level) override;
+    ErrCode ReportActionChanged(const std::string &module, uint32_t action) override;
 
 private:
     StandbyService(const StandbyService&) = delete;

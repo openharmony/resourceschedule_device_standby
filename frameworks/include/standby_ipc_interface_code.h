@@ -26,6 +26,7 @@ namespace DevStandbyMgr {
         ON_ALLOW_LIST_CHANGED,
         ON_POWER_OVERUSED,
         ON_RESTRICT_LIST_CHANGED,
+        ON_ACTION_CHANGED,
     };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

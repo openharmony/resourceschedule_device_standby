@@ -43,6 +43,7 @@ public:
     void OnAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added) override;
     void OnRestrictListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added) override;
     void OnPowerOverused(const std::string& module, uint32_t level) override;
+    void OnActionChanged(const std::string& module, uint32_t action) override;
 
 private:
     ErrCode HandleOnDeviceIdleMode(MessageParcel& data);

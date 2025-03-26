@@ -54,6 +54,7 @@ const uint32_t EXEMPT_ALL_RESOURCES = 100;
 const std::string COMMON_EVENT_TIMER_SA_ABILITY = "COMMON_EVENT_TIMER_SA_ABILITY";
 const uint32_t ONE_SECOND = 1000;
 const std::string DUMP_ON_POWER_OVERUSED = "--poweroverused";
+const std::string DUMP_ON_ACTION_CHANGED = "--actionchanged";
 }
 
 StandbyServiceImpl::StandbyServiceImpl() {}
@@ -980,6 +981,20 @@ ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint3
     return ERR_OK;
 }
 
+ErrCode StandbyServiceImpl::ReportActionChanged(const std::string &module, uint32_t action)
+{
+    STANDBYSERVICE_LOGD("[ActionChanged] StandbyServiceImpl: power overused, "
+        "modue name: %{public}s, action: %{public}u", module.c_str(), action);
+
+    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("[ActionChanged] Caller permission denied.");
+        return checkRet;
+    }
+
+    HandlePowerOverused(0, module, action);
+    return ERR_OK;
+}
+
 ErrCode StandbyServiceImpl::ReportDeviceStateChanged(int32_t type, bool enabled)
 {
     if (!IsServiceReady()) {
@@ -1080,11 +1095,30 @@ void StandbyServiceImpl::DumpOnPowerOverused(const std::vector<std::string> &arg
     HandlePowerOverused(0, module, level);
 }
 
+void StandbyServiceImpl::DumpOnActionChanged(const std::vector<std::string> &argsInStr, std::string &result)
+{
+    constexpr uint16_t DUMP_THREE_PARAM = 3;
+    if (argsInStr.size() != DUMP_THREE_PARAM) {
+        STANDBYSERVICE_LOGE("DumpOnActionChanged param check failed, shoule be [--actionchanged module action].");
+        return;
+    }
+
+    const std::string &module = argsInStr[DUMP_SECOND_PARAM];
+    uint32_t action = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()));
+    HandlePowerOverused(0, module, action);
+}
+
 // handle power overused, resType for extend
 void StandbyServiceImpl::HandlePowerOverused([[maybe_unused]]uint32_t resType,
     const std::string &module, uint32_t level)
 {
     StandbyStateSubscriber::GetInstance()->NotifyPowerOverusedByCallback(module, level);
+}
+
+void StandbyServiceImpl::HandleActionChanged([[maybe_unused]]uint32_t resType,
+    const std::string &module, uint32_t action)
+{
+    StandbyStateSubscriber::GetInstance()->NotifyActionChangedByCallback(module, action);
 }
 
 void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo)
@@ -1287,6 +1321,8 @@ void StandbyServiceImpl::ShellDumpInner(const std::vector<std::string>& argsInSt
         DumpPushStrategyChange(argsInStr, result);
     } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ON_POWER_OVERUSED) {
         DumpOnPowerOverused(argsInStr, result);
+    } else if (argsInStr[DUMP_FIRST_PARAM] == DUMP_ON_ACTION_CHANGED) {
+        DumpOnActionChanged(argsInStr, result);
     } else {
         result += "Error params.\n";
     }

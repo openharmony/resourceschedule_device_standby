@@ -65,6 +65,14 @@ public:
      */
     void OnPowerOverused(const std::string& module, uint32_t level) override;
 
+    /**
+     * @brief report scene policy.
+     *
+     * @param module target callback module.
+     * @param action notify module do action.
+     */
+    void OnActionChanged(const std::string& module, uint32_t action) override;
+
 private:
     static inline BrokerDelegator<StandbyServiceSubscriberProxy> delegator_;
 };

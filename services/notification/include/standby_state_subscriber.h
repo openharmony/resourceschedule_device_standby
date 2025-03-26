@@ -47,6 +47,7 @@ public:
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result);
     void NotifyAllowChangedByCommonEvent(int32_t uid, const std::string& name, uint32_t allowType, bool added);
     void NotifyPowerOverusedByCallback(const std::string& module, uint32_t level);
+    void NotifyActionChangedByCallback(const std::string& module, uint32_t action);
 
 private:
     void NotifyIdleModeByCallback(bool napped, bool sleeping);
@@ -54,6 +55,7 @@ private:
     void NotifyAllowChangedByCallback(int32_t uid, const std::string& name, uint32_t allowType, bool added);
     std::list<sptr<IStandbyServiceSubscriber>>::iterator FindSubcriberObject(sptr<IRemoteObject>& proxy);
     void NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
+    void NotifyActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
 
 private:
     StandbyStateSubscriber(const StandbyStateSubscriber&) = delete;
@@ -65,6 +67,7 @@ private:
     sptr<SubscriberDeathRecipient> deathRecipient_ {nullptr};
     std::shared_ptr<IStateManagerAdapter> standbyStateManager_ {nullptr};
     std::unordered_map<std::string, uint32_t> modulePowerMap_;
+    std::unordered_map<std::string, uint32_t> moduleActionMap_;
     int32_t curDate_;
 };
 
