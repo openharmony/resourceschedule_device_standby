@@ -272,6 +272,15 @@ ErrCode StandbyService::DelayHeartBeat(int64_t timestamp)
     return ERR_OK;
 }
 
+ErrCode StandbyService::ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo)
+{
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
+        STANDBYSERVICE_LOGW("standby service is not running");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    return StandbyServiceImpl::GetInstance()->ReportSceneInfo(resType, value, sceneInfo);
+}
+
 void StandbyService::AddPluginSysAbilityListener(int32_t systemAbilityId)
 {
     std::lock_guard<std::mutex> pluginListenerLock(listenedSALock_);

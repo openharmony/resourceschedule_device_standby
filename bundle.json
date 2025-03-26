@@ -16,7 +16,8 @@
       "SystemCapability.ResourceSchedule.DeviceStandby"
     ],
     "features": [
-      "device_standby_plugin_enable"
+      "device_standby_plugin_enable",
+      "device_standby_realtime_timer_enable"
     ],
     "adapted_system_type": [
       "standard"

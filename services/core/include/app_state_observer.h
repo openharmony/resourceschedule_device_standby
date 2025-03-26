@@ -58,6 +58,19 @@ public:
      */
     void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override;
 
+    /**
+     * Page foreground changed callback.
+     *
+     * @param pageStateData Page Process data.
+     */
+    void OnPageShow(const AppExecFwk::PageStateData &pageStateData) override;
+    
+    /**
+     * Page foreground changed callback.
+     *
+     * @param pageStateData Page Process data.
+     */
+    void OnPageHide(const AppExecFwk::PageStateData &pageStateData) override;
 private:
     bool CheckAlivedApp(const std::string &bundleName);
 

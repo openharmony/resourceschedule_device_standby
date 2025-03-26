@@ -50,11 +50,13 @@ bool StateManagerAdapter::Init()
     indexToState_ = {
         workingStatePtr_, darkStatePtr_, napStatePtr_, maintStatePtr_, sleepStatePtr_
     };
+#ifndef STANDBY_REALTIME_TIMER_ENABLE
     auto callbackTask = [this]() { this->OnScreenOffHalfHour(true, false); };
     scrOffHalfHourTimerId_ = TimedTask::CreateTimer(false, 0, true, false, callbackTask);
     if (scrOffHalfHourTimerId_ == 0) {
         STANDBYSERVICE_LOGE("timer of screen off half hour is nullptr");
     }
+#endif
     for (const auto& statePtr : indexToState_) {
         if (statePtr->Init(statePtr) != ERR_OK) {
             return false;
@@ -81,10 +83,12 @@ bool StateManagerAdapter::UnInit()
         statePtr->UnInit();
         statePtr.reset();
     }
+#ifndef STANDBY_REALTIME_TIMER_ENABLE
     if (scrOffHalfHourTimerId_ > 0) {
         MiscServices::TimeServiceClient::GetInstance()->StopTimer(scrOffHalfHourTimerId_);
         MiscServices::TimeServiceClient::GetInstance()->DestroyTimer(scrOffHalfHourTimerId_);
     }
+#endif
     BaseState::ReleaseStandbyRunningLock();
     return true;
 }
@@ -100,7 +104,9 @@ void StateManagerAdapter::HandleEvent(const StandbyMessage& message)
 
 void StateManagerAdapter::HandleCommonEvent(const StandbyMessage& message)
 {
+#ifndef STANDBY_REALTIME_TIMER_ENABLE
     HandleScrOffHalfHour(message);
+#endif
     HandleOpenCloseLid(message);
     HandleScreenStatus(message);
     if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON ||
@@ -163,6 +169,7 @@ bool StateManagerAdapter::CheckEnterDarkState(const StandbyMessage& message)
     return true;
 }
 
+#ifndef STANDBY_REALTIME_TIMER_ENABLE
 void StateManagerAdapter::HandleScrOffHalfHour(const StandbyMessage& message)
 {
     if (scrOffHalfHourTimerId_ == 0) {
@@ -178,6 +185,7 @@ void StateManagerAdapter::HandleScrOffHalfHour(const StandbyMessage& message)
         MiscServices::TimeServiceClient::GetInstance()->StopTimer(scrOffHalfHourTimerId_);
     }
 }
+#endif
 
 void StateManagerAdapter::TransitToSleepState()
 {
@@ -302,6 +310,9 @@ ErrCode StateManagerAdapter::EnterStandby(uint32_t nextState)
 
 ErrCode StateManagerAdapter::TransitWithMaint(uint32_t nextState)
 {
+    if (nextState == StandbyState::WORKING && scrOffHalfHourCtrl_) {
+        OnScreenOffHalfHour(false, false);
+    }
     return TransitToStateInner(nextState);
 }
 

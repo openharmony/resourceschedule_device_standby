@@ -48,6 +48,8 @@ struct StandbyMessageType {
         SCREEN_CLICK_RECOGNIZE,
         MMI_INPUT_POWER_KEY_DOWN,  //power key down event
         NAT_MSG_RECV, // push receive a message, adjusts system timer
+        PAGE_SHOW,
+        PAGE_HIDE,
     };
 };
 

@@ -201,6 +201,11 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level1)
     EXPECT_NE(StandbyService::GetInstance()->GetAllowList(AllowType::NETWORK, allowInfoList, 0), ERR_OK);
     bool isStandby {false};
     EXPECT_NE(StandbyService::GetInstance()->IsDeviceInStandby(isStandby), ERR_OK);
+    uint32_t resType = 1;
+    int64_t value = 0;
+    std::string sceneInfo = "test_sceneInfo";
+    int32_t code = StandbyService::GetInstance()->ReportSceneInfo(resType, value, sceneInfo);
+    EXPECT_EQ(code, ERR_OK);
     StandbyService::GetInstance()->ReportWorkSchedulerStatus(true, -1, "");
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());

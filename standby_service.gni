@@ -98,4 +98,5 @@ declare_args() {
 
   # features
   device_standby_plugin_enable = true
+  device_standby_realtime_timer_enable = false
 }
