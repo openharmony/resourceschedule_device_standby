@@ -352,6 +352,16 @@ ErrCode StandbyService::ReportDeviceStateChanged(int32_t type, bool enabled)
     return StandbyServiceImpl::GetInstance()->ReportDeviceStateChanged(type, enabled);
 }
 
+ErrCode StandbyService::ReportActionChanged(const std::string &module, uint32_t action)
+{
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
+        STANDBYSERVICE_LOGW("standby service is not running");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+
+    return StandbyServiceImpl::GetInstance()->ReportActionChanged(module, action);
+}
+
 int32_t StandbyService::Dump(int32_t fd, const std::vector<std::u16string>& args)
 {
     if (ENG_MODE == 0) {

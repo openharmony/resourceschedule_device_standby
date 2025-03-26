@@ -54,6 +54,9 @@ ErrCode StandbyServiceSubscriberStub::OnRemoteRequestInner(uint32_t code,
         case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_POWER_OVERUSED)): {
             return HandleOnPowerOverused(data);
         }
+        case (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ACTION_CHANGED)): {
+            return HandleOnActionChanged(data);
+        }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -72,6 +75,9 @@ void StandbyServiceSubscriberStub::OnRestrictListChanged(int32_t uid, const std:
 {}
 
 void StandbyServiceSubscriberStub::OnPowerOverused(const std::string& module, uint32_t level)
+{}
+
+void StandbyServiceSubscriberStub::OnActionChanged(const std::string& module, uint32_t action)
 {}
 
 ErrCode StandbyServiceSubscriberStub::HandleOnDeviceIdleMode(MessageParcel& data)
@@ -127,6 +133,20 @@ ErrCode StandbyServiceSubscriberStub::HandleOnPowerOverused(MessageParcel& data)
     }
 
     OnPowerOverused(module, level);
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceSubscriberStub::HandleOnActionChanged(MessageParcel& data)
+{
+    std::string module{""};
+    uint32_t action{0};
+
+    if (!data.ReadString(module) || !data.ReadUint32(action)) {
+        STANDBYSERVICE_LOGW("HandleOnActionChanged Read parcel failed.");
+        return ERR_INVALID_DATA;
+    }
+
+    OnActionChanged(module, action);
     return ERR_OK;
 }
 

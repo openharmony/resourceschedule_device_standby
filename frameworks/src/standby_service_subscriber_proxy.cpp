@@ -139,5 +139,32 @@ void StandbyServiceSubscriberProxy::OnPowerOverused(const std::string& module, u
     }
 }
 
+void StandbyServiceSubscriberProxy::OnActionChanged(const std::string& module, uint32_t action)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        STANDBYSERVICE_LOGW("OnActionChanged remote is dead.");
+        return;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(StandbyServiceSubscriberProxy::GetDescriptor())) {
+        STANDBYSERVICE_LOGW("OnActionChanged write interface token failed.");
+        return;
+    }
+
+    if (!data.WriteString(module) || !data.WriteUint32(action)) {
+        STANDBYSERVICE_LOGW("OnActionChanged write notification failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_ACTION_CHANGED), data, reply, option);
+    if (ret!= ERR_OK) {
+        STANDBYSERVICE_LOGE("OnActionChanged SendRequest failed, error code: %d", ret);
+    }
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

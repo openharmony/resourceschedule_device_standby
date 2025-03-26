@@ -25,6 +25,7 @@
 #include "standby_service_log.h"
 #include "standby_state.h"
 #include "time_provider.h"
+#include <string>
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -66,6 +67,7 @@ ErrCode StandbyStateSubscriber::AddSubscriber(const sptr<IStandbyServiceSubscrib
 
     subscriberList_.emplace_back(subscriber);
     NotifyPowerOnRegister(subscriber);
+    NotifyLowpowerActionOnRegister(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
     STANDBYSERVICE_LOGD(" suscriber standby service callback succeed, list.size() is %{public}d",
         static_cast<int32_t>(subscriberList_.size()));
@@ -184,6 +186,33 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
     }
 }
 
+void StandbyStateSubscriber::NotifyLowpowerActionByCallback(const std::string& module, uint32_t action)
+{
+    STANDBYSERVICE_LOGI("[ActionChanged] Callback process entry: starting to match subscriber, "
+        "module: %{public}s, action: %{public}u.", module.c_str(), action);
+    int32_t curDate = TimeProvider::GetCurrentDate();
+    if (curDate_ != curDate) {
+        STANDBYSERVICE_LOGI("[ActionChanged] Date has changed to %{public}d.", curDate);
+        curDate_ = curDate;
+        moduleActionMap_.clear();
+    }
+    moduleActionMap_[module] = action;
+
+    std::lock_guard<std::mutex> lock(subscriberLock_);
+    if (subscriberList_.empty()) {
+        STANDBYSERVICE_LOGW("[ActionChanged] Sleep state Subscriber List is empty.");
+        return;
+    }
+
+    for (auto iter : subscriberList_) {
+        if (module == iter->GetModuleName()) {
+            STANDBYSERVICE_LOGI("[ActionChanged] Subscriber module match successful, starting to callback. "
+                "module: %{public}s, action: %{public}u.", module.c_str(), action);
+            iter->OnActionChanged(module, action);
+        }
+    }
+}
+
 void StandbyStateSubscriber::NotifyAllowChangedByCommonEvent(int32_t uid, const std::string& name,
     uint32_t allowType, bool added)
 {
@@ -200,6 +229,21 @@ void StandbyStateSubscriber::NotifyAllowChangedByCommonEvent(int32_t uid, const 
     } else {
         STANDBYSERVICE_LOGD("PublishCommonEvent for exempt list update succeed");
     }
+}
+
+void StandbyStateSubscriber::NotifyLowpowerActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber)
+{
+    std::string module = subscriber->GetModuleName();
+    uint32_t action = static_cast<uint32_t>(PolicyAction::NORMAL);
+    int32_t curDate = TimeProvider::GetCurrentDate();
+    auto iter = moduleActionMap_.find(module);
+    if (curDate_ == curDate && iter != moduleActionMap_.end()) {
+        action = iter->second;
+    }
+
+    STANDBYSERVICE_LOGI("[ActionChanged] Subscriber callback when register, "
+        "module: %{public}s, action: %{public}u.", module.c_str(), action);
+    subscriber->OnActionChanged(module, action);
 }
 
 void StandbyStateSubscriber::NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber)

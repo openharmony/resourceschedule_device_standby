@@ -66,6 +66,14 @@ public:
     virtual void OnPowerOverused(const std::string& module, uint32_t level) = 0;
 
     /**
+     * @brief report scene policy.
+     *
+     * @param module target callback module.
+     * @param action notify module do action.
+     */
+    virtual void OnActionChanged(const std::string& module, uint32_t action) = 0;
+
+    /**
      * @brief get subscriberName.
      *
      * @return return subscriberName.
