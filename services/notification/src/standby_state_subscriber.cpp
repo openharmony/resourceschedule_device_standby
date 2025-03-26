@@ -25,7 +25,7 @@
 #include "standby_service_log.h"
 #include "standby_state.h"
 #include "time_provider.h"
-#include <strtting>
+#include <string>
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -185,7 +185,7 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
     }
 }
 
-void StandbyStateSubscriber::NotifyActionChangedByCallback(const std::string& module, uint32_t action)
+void StandbyStateSubscriber::NotifyLowpowerActionByCallback(const std::string& module, uint32_t action)
 {
     STANDBYSERVICE_LOGI("[ActionChanged] Callback process entry: starting to match subscriber, "
         "module: %{public}s, action: %{public}u.", module.c_str(), action);
@@ -230,7 +230,7 @@ void StandbyStateSubscriber::NotifyAllowChangedByCommonEvent(int32_t uid, const 
     }
 }
 
-void StandbyStateSubscriber::NotifyActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber)
+void StandbyStateSubscriber::NotifyLowpowerActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
     std::string module = subscriber->GetModuleName();
     uint32_t action = static_cast<uint32_t>(PolicyAction::NORMAL);

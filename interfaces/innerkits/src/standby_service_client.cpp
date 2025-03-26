@@ -186,7 +186,7 @@ ErrCode StandbyServiceClient::ReportPowerOverused(const std::string &module, uin
         STANDBYSERVICE_LOGE("get standby service proxy failed");
         return ERR_STANDBY_SERVICE_NOT_CONNECTED;
     }
-    return standbyServiceProxy_->ReportPowerOverused(module, action);
+    return standbyServiceProxy_->ReportPowerOverused(module, level);
 }
 
 ErrCode StandbyServiceClient::ReportActionChanged(const std::string &module, uint32_t action)

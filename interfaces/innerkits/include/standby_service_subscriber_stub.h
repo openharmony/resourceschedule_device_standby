@@ -50,6 +50,7 @@ private:
     ErrCode HandleOnAllowListChanged(MessageParcel& data);
     ErrCode HandleOnRestrictListChanged(MessageParcel& data);
     ErrCode HandleOnPowerOverused(MessageParcel& data);
+    ErrCode HandleOnActionChanged(MessageParcel& data);
 
     ErrCode OnRemoteRequestInner(uint32_t code,
         MessageParcel& data, MessageParcel& reply, MessageOption& option);
