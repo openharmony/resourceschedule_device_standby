@@ -44,9 +44,6 @@ enum class PowerOverusedLevel : uint32_t {
     FATAL,
 };
 
-enum class PolicyAction : uint32_t {
-};
-
 class StandbyServiceClient {
 public:
     StandbyServiceClient();
@@ -171,7 +168,6 @@ public:
      * @return ErrCode ERR_OK if success, others if fail.
      */
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
-
 
     /**
      * @brief Push receives the message as the start point of the heartbeat.
