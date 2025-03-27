@@ -113,7 +113,6 @@ public:
     ErrCode ReportDeviceStateChanged(int32_t type, bool enabled);
     ErrCode HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
-    ErrCode ReportActionChanged(const std::string &module, uint32_t action);
     ErrCode ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo);
 
     void RegisterPluginInner(IConstraintManagerAdapter* constraintManager,

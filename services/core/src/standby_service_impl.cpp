@@ -981,20 +981,6 @@ ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint3
     return ERR_OK;
 }
 
-ErrCode StandbyServiceImpl::ReportActionChanged(const std::string &module, uint32_t action)
-{
-    STANDBYSERVICE_LOGD("[ActionChanged] StandbyServiceImpl: action changed, "
-        "modue name: %{public}s, action: %{public}u", module.c_str(), action);
-
-    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
-        STANDBYSERVICE_LOGE("[ActionChanged] Caller permission denied.");
-        return checkRet;
-    }
-
-    HandleActionChanged(0, module, action);
-    return ERR_OK;
-}
-
 ErrCode StandbyServiceImpl::ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo)
 {
     if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {

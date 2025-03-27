@@ -189,19 +189,6 @@ ErrCode StandbyServiceClient::ReportPowerOverused(const std::string &module, uin
     return standbyServiceProxy_->ReportPowerOverused(module, level);
 }
 
-ErrCode StandbyServiceClient::ReportActionChanged(const std::string &module, uint32_t action)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    STANDBYSERVICE_LOGD("[ActionChanged] StandbyClient: action changed, module name: %{public}s, "
-        "action: %{public}u.", module.c_str(), action);
-
-    if (!GetStandbyServiceProxy()) {
-        STANDBYSERVICE_LOGE("get standby service proxy failed");
-        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
-    }
-    return standbyServiceProxy_->ReportActionChanged(module, action);
-}
-
 ErrCode StandbyServiceClient::DelayHeartBeat(int64_t timestamp)
 {
     std::lock_guard<std::mutex> lock(mutex_);
