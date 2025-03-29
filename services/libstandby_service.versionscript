@@ -42,7 +42,7 @@
     *IStateManagerAdapter*;
     *IStrategyManagerAdapter*;
     *IsDebugMode*;
-    *NotifyLowpowerActionByCallback*;
+    *Notify*ByCallback*;
   local:
     *;
 };
