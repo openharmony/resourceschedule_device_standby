@@ -42,6 +42,7 @@
     *IStateManagerAdapter*;
     *IStrategyManagerAdapter*;
     *IsDebugMode*;
+    *Notify*ByCallback*;
   local:
     *;
 };
