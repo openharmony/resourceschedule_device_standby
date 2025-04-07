@@ -993,7 +993,7 @@ ErrCode StandbyServiceImpl::ReportSceneInfo(uint32_t resType, int64_t value, con
     }
     StandbyMessage standbyMessage {resType};
     standbyMessage.want_ = AAFwk::Want {};
-    standbyMessage.want_->SetParam("value", value);
+    standbyMessage.want_->SetParam("value", static_cast<int32_t>(value));
     standbyMessage.want_->SetParam("sceneInfo", sceneInfo);
     DispatchEvent(standbyMessage);
     return ERR_OK;
