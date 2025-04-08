@@ -733,7 +733,7 @@ void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& na
     auto& allowRecordPtr = iter->second;
     auto& allowTimeList = allowRecordPtr->allowTimeList_;
     uint32_t removedNumber = 0;
-    int64_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetMonotonicTimeMs();
+    int64_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetBootTimeMs();
     for (auto it = allowTimeList.begin(); it != allowTimeList.end();) {
         uint32_t allowNumber = allowType & (1 << it->allowTypeIndex_);
         if (allowNumber != 0 && (removeAll || curTime >= it->endTime_)) {
@@ -841,8 +841,16 @@ void StandbyServiceImpl::GetTemporaryAllowList(uint32_t allowTypeIndex, std::vec
         if (it == allowTimeList.end()) {
             continue;
         }
-        allowInfoList.emplace_back((1 << allowTypeIndex), allowRecordPtr->name_,
-            std::max(static_cast<int64_t>(it->endTime_ - curTime), static_cast<int64_t>(0L)));
+        int64_t duration =  std::max(static_cast<int64_t>(it->endTime_ - curTime), static_cast<int64_t>(0L));
+        if (duration > 0) {
+            allowInfoList.emplace_back((1 << allowTypeIndex), allowRecordPtr->name_, duration);
+        } else {
+            auto task = [this, allowRecordPtr = allowRecordPtr] () {
+                this->UnapplyAllowResInner(allowRecordPtr->uid_, allowRecordPtr->name_,
+                    allowRecordPtr->allowType_, false);
+            };
+            handler_->PostTask(task);
+        }
     }
 }
 
