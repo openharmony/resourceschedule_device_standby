@@ -716,7 +716,7 @@ ErrCode StandbyServiceImpl::UnapplyAllowResource(ResourceRequest& resourceReques
 void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& name,
     uint32_t allowType, bool removeAll)
 {
-    STANDBYSERVICE_LOGI("start UnapplyAllowResInner, uid is %{public}d, allowType is %{public}d, removeAll is "\
+    STANDBYSERVICE_LOGD("start UnapplyAllowResInner, uid is %{public}d, allowType is %{public}d, removeAll is "\
         "%{public}d", uid, allowType, removeAll);
     std::string keyStr = std::to_string(uid) + "_" + name;
 
@@ -939,7 +939,7 @@ ErrCode StandbyServiceImpl::GetRestrictList(uint32_t restrictType, std::vector<A
 void StandbyServiceImpl::GetRestrictListInner(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
     uint32_t reasonCode)
 {
-    STANDBYSERVICE_LOGI("start GetRestrictListInner, restrictType is %{public}d", restrictType);
+    STANDBYSERVICE_LOGD("start GetRestrictListInner, restrictType is %{public}d", restrictType);
     for (uint32_t restrictTypeIndex = 0; restrictTypeIndex < MAX_ALLOW_TYPE_NUM; ++restrictTypeIndex) {
         uint32_t restrictNumber = restrictType & (1 << restrictTypeIndex);
         if (restrictNumber == 0) {
@@ -1162,7 +1162,7 @@ void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const 
 
 ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {
-    STANDBYSERVICE_LOGI("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
+    STANDBYSERVICE_LOGD("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
                         resType, (long long)(value), sceneInfo.c_str());
     switch (resType) {
         case ResourceSchedule::ResType::RES_TYPE_SCREEN_STATUS:
