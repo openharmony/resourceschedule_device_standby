@@ -1036,7 +1036,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_042, TestSize.Level1)
     pageStateData.abilityName = SAMPLE_BUNDLE_NAME;
     pageStateData.pageName = SAMPLE_BUNDLE_NAME;
     pageStateData.targetBundleName = SAMPLE_BUNDLE_NAME;
-    pageStateData.targetModuleNam = SAMPLE_BUNDLE_NAMEe;
+    pageStateData.targetModuleName = SAMPLE_BUNDLE_NAME;
     appStateObserver->OnPageShow(pageStateData);
     appStateObserver->OnPageHide(pageStateData);
     SleepForFC();
