@@ -1029,6 +1029,16 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_042, TestSize.Level1)
     appStateObserver->OnApplicationStateChanged(appStateData);
     appStateObserver->OnProcessCreated(processData);
     appStateObserver->OnForegroundApplicationChanged(appStateData);
+
+    AppExecFwk::PageStateData pageStateData {};
+    pageStateData.bundleName = SAMPLE_BUNDLE_NAME;
+    pageStateData.moduleName = SAMPLE_BUNDLE_NAME;
+    pageStateData.abilityName = SAMPLE_BUNDLE_NAME;
+    pageStateData.pageName = SAMPLE_BUNDLE_NAME;
+    pageStateData.targetBundleName = SAMPLE_BUNDLE_NAME;
+    pageStateData.targetModuleName = SAMPLE_BUNDLE_NAME;
+    appStateObserver->OnPageShow(pageStateData);
+    appStateObserver->OnPageHide(pageStateData);
     SleepForFC();
     EXPECT_TRUE(StandbyServiceImpl::GetInstance()->allowInfoMap_.empty());
 }
