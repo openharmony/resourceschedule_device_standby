@@ -108,7 +108,7 @@ inline std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_STANDBY_NOT_SYSTEM_APP,
         "System API verification failed."},
     {ERR_STANDBY_NO_MEMORY, "Memory operation failed. Failed to allocate the memory."},
-    {ERR_STANDBY_PARCELABLE_FAILED, "Parcel operation failed."},
+    {ERR_STANDBY_PARCELABLE_FAILED, "Parcel operation failed. Possible reasons: 1. Invalid parameters"},
     {ERR_STANDBY_TRANSACT_FAILED, "IPC failed."},
     {ERR_STANDBY_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
     {ERR_STANDBY_SERVICE_NOT_CONNECTED, "System service operation failed. The system service is not connected."},
