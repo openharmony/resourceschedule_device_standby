@@ -654,7 +654,8 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
     int64_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetBootTimeMs();
     int64_t endTime {0};
     uint32_t condition = TimeProvider::GetCondition();
-    STANDBYSERVICE_LOGI("start UpdateRecord uid: %{public}d, name: %{public}s, isApp: %{public}d, condition: %{public}d"
+    STANDBYSERVICE_LOGI(
+        "start UpdateRecord uid: %{public}d, name: %{public}s, isApp: %{public}d, condition: %{public}u",
         uid, name.c_str(), isApp, condition);
     for (uint32_t allowTypeIndex = 0; allowTypeIndex < MAX_ALLOW_TYPE_NUM; ++allowTypeIndex) {
         uint32_t allowNumber = allowType & (1 << allowTypeIndex);
