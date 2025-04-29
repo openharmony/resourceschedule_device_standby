@@ -632,13 +632,13 @@ void StandbyServiceImpl::ApplyAllowResInner(const ResourceRequest& resourceReque
     if (preAllowType != iter->second->allowType_) {
         uint32_t alowTypeDiff = iter->second->allowType_ ^ (preAllowType &
             iter->second->allowType_);
-        STANDBYSERVICE_LOGD("after update record, there is added exemption type: %{public}d",
+        STANDBYSERVICE_LOGI("after update record, there is added exemption type: %{public}d",
             alowTypeDiff);
         StandbyStateSubscriber::GetInstance()->ReportAllowListChanged(uid, name, alowTypeDiff, true);
         NotifyAllowListChanged(uid, name, alowTypeDiff, true);
     }
     if (iter->second->allowType_ == 0) {
-        STANDBYSERVICE_LOGD("%{public}s does not have valid record, delete record", keyStr.c_str());
+        STANDBYSERVICE_LOGI("%{public}s does not have valid record, delete record", keyStr.c_str());
         allowInfoMap_.erase(iter);
     }
     DumpPersistantData();
@@ -647,7 +647,6 @@ void StandbyServiceImpl::ApplyAllowResInner(const ResourceRequest& resourceReque
 void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
     const ResourceRequest& resourceRequest)
 {
-    STANDBYSERVICE_LOGD("start UpdateRecord");
     int32_t uid = resourceRequest.GetUid();
     const std::string& name = resourceRequest.GetName();
     uint32_t allowType = resourceRequest.GetAllowType();
@@ -655,6 +654,9 @@ void StandbyServiceImpl::UpdateRecord(std::shared_ptr<AllowRecord>& allowRecord,
     int64_t curTime = MiscServices::TimeServiceClient::GetInstance()->GetBootTimeMs();
     int64_t endTime {0};
     uint32_t condition = TimeProvider::GetCondition();
+    STANDBYSERVICE_LOGI(
+        "start UpdateRecord uid: %{public}d, name: %{public}s, isApp: %{public}d, condition: %{public}u",
+        uid, name.c_str(), isApp, condition);
     for (uint32_t allowTypeIndex = 0; allowTypeIndex < MAX_ALLOW_TYPE_NUM; ++allowTypeIndex) {
         uint32_t allowNumber = allowType & (1 << allowTypeIndex);
         if (allowNumber == 0) {
@@ -764,7 +766,7 @@ void StandbyServiceImpl::OnProcessStatusChanged(int32_t uid, int32_t pid, const 
     if (!IsServiceReady()) {
         return;
     }
-    STANDBYSERVICE_LOGD("process status change, uid: %{public}d, pid: %{public}d, name: %{public}s, alive: %{public}d",
+    STANDBYSERVICE_LOGI("process status change, uid: %{public}d, pid: %{public}d, name: %{public}s, alive: %{public}d",
         uid, pid, bundleName.c_str(), isCreated);
     StandbyMessage standbyMessage {StandbyMessageType::PROCESS_STATE_CHANGED};
     standbyMessage.want_ = AAFwk::Want {};

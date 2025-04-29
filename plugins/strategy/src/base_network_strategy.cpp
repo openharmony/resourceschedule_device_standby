@@ -425,6 +425,8 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
     int32_t uid = message.want_->GetIntParam("uid", -1);
     std::string bundleName = message.want_->GetStringParam("name");
     bool isCreated = message.want_->GetBoolParam("isCreated", false);
+    STANDBYSERVICE_LOGI("Process Status Changed uid: %{public}d, bundleName: %{public}s, isCreated: %{public}d",
+        uid, bundleName.c_str(), isCreated);
     if (isCreated) {
         GetAndCreateAppInfo(uid, bundleName);
         auto iter = netLimitedAppInfo_.find(uid);
