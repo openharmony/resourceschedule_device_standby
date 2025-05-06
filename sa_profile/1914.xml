@@ -21,5 +21,6 @@
         <run-on-create>true</run-on-create>
         <distributed>false</distributed>
         <dump-level>1</dump-level>
+        <extension>["backup", "restore"]</extension>
     </systemability>
 </info>

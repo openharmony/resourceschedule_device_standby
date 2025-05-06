@@ -79,6 +79,13 @@ enum P2pState {
     P2P_STATE_CLOSED,
 };
 
+struct CloneFileHead {
+    char moduleName[32];
+    uint32_t fileOffset;
+    uint32_t fileSize;
+    uint8_t data[0];
+};
+
 class StandbyServiceImpl : public std::enable_shared_from_this<StandbyServiceImpl> {
 DECLARE_DELAYED_SINGLETON(StandbyServiceImpl);
 public:
@@ -96,6 +103,12 @@ public:
     ErrCode RegisterPlugin(const std::string& pluginName);
     void UninitReadyState();
     void UnInit();
+    ErrCode SubscribeBackupRestoreCallback(const std::string& moduleName,
+        const std::function<ErrCode(std::vector<char>&)>& onBackupFunc,
+        const std::function<ErrCode(std::vector<char>&)>& onRestoreFunc);
+    ErrCode UnsubscribeBackupRestoreCallback(const std::string& moduleName);
+    ErrCode OnBackup(MessageParcel& data, MessageParcel& reply);
+    ErrCode OnRestore(MessageParcel& data, MessageParcel& reply);
 
     ErrCode SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber);
     ErrCode UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber);
@@ -153,6 +166,7 @@ private:
     void GetRestrictListInner(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
         uint32_t reasonCode);
     void NotifyAllowListChanged(int32_t uid, const std::string& name, uint32_t allowType, bool added);
+    std::string BuildBackupReplyCode(int32_t replyCode);
 
     void RecoverTimeLimitedTask();
     bool ParsePersistentData();
@@ -209,6 +223,9 @@ private:
     std::mutex eventObserverMutex_ {};
     std::recursive_mutex timerObserverMutex_ {};
     std::mutex allowRecordMutex_ {};
+    std::mutex backupRestoreMutex_ {};
+    std::map<std::string, std::function<ErrCode(std::vector<char>&)>> onBackupFuncMap_ {};
+    std::map<std::string, std::function<ErrCode(std::vector<char>&)>> onRestoreFuncMap_ {};
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_ {nullptr};
     std::shared_ptr<CommonEventObserver> commonEventObserver_ {nullptr};
     uint64_t dayNightSwitchTimerId_ {0};
