@@ -509,13 +509,13 @@ ErrCode StandbyServiceImpl::OnBackup(MessageParcel& data, MessageParcel& reply)
 
     if ((!reply.WriteFileDescriptor(fd)) || (!reply.WriteString(replyCode))) {
         close(fd.Release());
-        remove(CLONE_BACKUP_FILE_PATH.c_str());
-        STANDBYSERVICE_LOGE("OnBackup fail: reply write fail!");
+        int32_t ret = remove(CLONE_BACKUP_FILE_PATH.c_str());
+        STANDBYSERVICE_LOGE("OnBackup fail: reply write fail! remove ret: %{public}d", ret);
         return ERR_INVALID_OPERATION;
     }
     close(fd.Release());
-    remove(CLONE_BACKUP_FILE_PATH.c_str());
-    STANDBYSERVICE_LOGI("OnBackup succ: backup data success!");
+    int32_t ret = remove(CLONE_BACKUP_FILE_PATH.c_str());
+    STANDBYSERVICE_LOGI("OnBackup succ: backup data success! remove ret: %{public}d", ret);
     return ERR_OK;
 }
 
