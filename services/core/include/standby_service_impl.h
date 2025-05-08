@@ -160,7 +160,7 @@ private:
     void DumpPersistantData();
     uint32_t dependsReady_ = 0;
 
-    ErrCode CheckCallerPermission(uint32_t reasonCode);
+    ErrCode CheckCallerPermission(uint32_t reasonCode = ReasonCodeEnum::REASON_APP_API);
     ErrCode IsSystemAppWithPermission(int32_t uid, Security::AccessToken::AccessTokenID tokenId, uint32_t reasonCode);
     ErrCode CheckNativePermission(Security::AccessToken::AccessTokenID tokenId);
     bool CheckAllowTypeInfo(uint32_t allowType);
