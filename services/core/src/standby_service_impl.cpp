@@ -551,7 +551,7 @@ int32_t StandbyServiceImpl::GetUserIdByUid(int32_t uid)
 
 ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
-    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("caller permission denied.");
         return checkRet;
     }
@@ -568,7 +568,7 @@ ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceS
 
 ErrCode StandbyServiceImpl::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
-    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("caller permission denied.");
         return checkRet;
     }
@@ -875,7 +875,7 @@ void StandbyServiceImpl::GetPersistAllowList(uint32_t allowTypeIndex, std::vecto
 
 ErrCode StandbyServiceImpl::IsDeviceInStandby(bool& isStandby)
 {
-    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("caller permission denied.");
         return checkRet;
     }
@@ -912,7 +912,7 @@ ErrCode StandbyServiceImpl::GetEligiableRestrictSet(uint32_t allowType, const st
 
 ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
 {
-    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("caller permission denied.");
         return checkRet;
     }
@@ -962,7 +962,7 @@ void StandbyServiceImpl::GetRestrictListInner(uint32_t restrictType, std::vector
 
 ErrCode StandbyServiceImpl::IsStrategyEnabled(const std::string& strategyName, bool& isStandby)
 {
-    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("caller permission denied.");
         return checkRet;
     }
@@ -982,7 +982,7 @@ ErrCode StandbyServiceImpl::ReportPowerOverused(const std::string &module, uint3
     STANDBYSERVICE_LOGD("[PowerOverused] StandbyServiceImpl: power overused, "
         "modue name: %{public}s, level: %{public}u", module.c_str(), level);
 
-    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("[PowerOverused] Caller permission denied.");
         return checkRet;
     }
@@ -1015,7 +1015,7 @@ ErrCode StandbyServiceImpl::ReportDeviceStateChanged(int32_t type, bool enabled)
         return ERR_STANDBY_SYS_NOT_READY;
     }
 
-    if (auto checkRet = CheckCallerPermission(ReasonCodeEnum::REASON_NATIVE_API); checkRet != ERR_OK) {
+    if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("caller permission denied.");
         return checkRet;
     }
