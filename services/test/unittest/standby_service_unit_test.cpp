@@ -1381,5 +1381,40 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_064, TestSize.Level1)
     EXPECT_EQ(StandbyStateSubscriber::GetInstance()->RemoveSubscriber(subscriber), ERR_OK);
 }
 
+/**
+ * @tc.name: StandbyServiceUnitTest_065
+ * @tc.desc: test OnExtension.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_065, TestSize.Level1)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_EQ(StandbyService::GetInstance()->OnExtension("test", data, reply), ERR_OK);
+
+    StandbyServiceImpl::GetInstance()->onBackupFuncMap_.clear();
+    StandbyServiceImpl::GetInstance()->onRestoreFuncMap_.clear();
+    EXPECT_EQ(StandbyService::GetInstance()->OnExtension("backup", data, reply), ERR_INVALID_OPERATION);
+    EXPECT_EQ(StandbyService::GetInstance()->OnExtension("restore", data, reply), ERR_INVALID_OPERATION);
+
+    auto onBackupFunc = [](std::vector<char> &buff) -> ErrCode {
+        std::string test = "test";
+        buff.insert(buff.end(), test.begin(), test.end());
+        return ERR_OK;
+    };
+    auto onRestoreFunc = [](std::vector<char> &buff) -> ErrCode { return ERR_OK; };
+    auto err = StandbyServiceImpl::GetInstance()->SubscribeBackupRestoreCallback("test", onBackupFunc, onRestoreFunc);
+    EXPECT_EQ(err, ERR_OK);
+    err = StandbyServiceImpl::GetInstance()->SubscribeBackupRestoreCallback("test", onBackupFunc, onRestoreFunc);
+    EXPECT_EQ(err, ERR_INVALID_OPERATION);
+
+    EXPECT_EQ(StandbyService::GetInstance()->OnExtension("backup", data, reply), ERR_OK);
+    data.WriteFileDescriptor(reply.ReadFileDescriptor());
+    EXPECT_EQ(StandbyService::GetInstance()->OnExtension("restore", data, reply), ERR_OK);
+
+    EXPECT_EQ(StandbyServiceImpl::GetInstance()->UnsubscribeBackupRestoreCallback("test"), ERR_OK);
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

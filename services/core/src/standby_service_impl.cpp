@@ -17,10 +17,14 @@
 
 #include <algorithm>
 #include <dlfcn.h>
+#include <fcntl.h>
+#include <file_ex.h>
 #include <functional>
+#include <securec.h>
 #include <set>
 #include <sstream>
 #include <string>
+#include <unique_fd.h>
 #include <vector>
 
 #include "ability_manager_helper.h"
@@ -47,6 +51,7 @@ namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
 const std::string ALLOW_RECORD_FILE_PATH = "/data/service/el1/public/device_standby/allow_record";
+const std::string CLONE_BACKUP_FILE_PATH = "/data/service/el1/public/device_standby/device_standby_clone";
 const std::string STANDBY_MSG_HANDLER = "StandbyMsgHandler";
 const std::string ON_PLUGIN_REGISTER = "OnPluginRegister";
 const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPTION";
@@ -55,6 +60,7 @@ const std::string COMMON_EVENT_TIMER_SA_ABILITY = "COMMON_EVENT_TIMER_SA_ABILITY
 const uint32_t ONE_SECOND = 1000;
 const std::string DUMP_ON_POWER_OVERUSED = "--poweroverused";
 const std::string DUMP_ON_ACTION_CHANGED = "--actionchanged";
+const int32_t EXTENSION_ERROR_CODE = 13500099;
 }
 
 StandbyServiceImpl::StandbyServiceImpl() {}
@@ -446,6 +452,129 @@ void StandbyServiceImpl::UnInit()
         registerPlugin_ = nullptr;
     }
     STANDBYSERVICE_LOGI("succeed to clear stawndby service implement");
+}
+
+ErrCode StandbyServiceImpl::SubscribeBackupRestoreCallback(const std::string& moduleName,
+    const std::function<ErrCode(std::vector<char>&)>& onBackupFunc,
+    const std::function<ErrCode(std::vector<char>&)>& onRestoreFunc)
+{
+    std::lock_guard<std::mutex> lock(backupRestoreMutex_);
+    if (onBackupFuncMap_.find(moduleName) != onBackupFuncMap_.end()) {
+        STANDBYSERVICE_LOGE("Repeat subscribe backup restore callback, module name: %{public}s", moduleName.c_str());
+        return ERR_INVALID_OPERATION;
+    }
+
+    onBackupFuncMap_.insert(std::make_pair(moduleName, onBackupFunc));
+    onRestoreFuncMap_.insert(std::make_pair(moduleName, onRestoreFunc));
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceImpl::UnsubscribeBackupRestoreCallback(const std::string& moduleName)
+{
+    std::lock_guard<std::mutex> lock(backupRestoreMutex_);
+    onBackupFuncMap_.erase(moduleName);
+    onRestoreFuncMap_.erase(moduleName);
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceImpl::OnBackup(MessageParcel& data, MessageParcel& reply)
+{
+    UniqueFd fd(-1);
+    std::string replyCode = BuildBackupReplyCode(0);
+    std::vector<char> buff;
+    {
+        std::lock_guard<std::mutex> lock(backupRestoreMutex_);
+        for (const auto& [moduleName, func] : onBackupFuncMap_) {
+            std::vector<char> moduleBuff;
+            ErrCode err = func(moduleBuff);
+            if (err != ERR_OK) {
+                continue;
+            }
+            CloneFileHead head {};
+            strncpy_s(head.moduleName, sizeof(head.moduleName) - 1, moduleName.c_str(), sizeof(head.moduleName) - 1);
+            head.moduleName[sizeof(head.moduleName) - 1] = '\0';
+            head.fileOffset = buff.size();
+            head.fileSize = moduleBuff.size();
+            std::copy(reinterpret_cast<char*>(&head), reinterpret_cast<char*>(&head) + sizeof(CloneFileHead),
+                std::back_inserter(buff));
+            buff.insert(buff.end(), moduleBuff.begin(), moduleBuff.end());
+        }
+    }
+    if (buff.size() != 0 && SaveBufferToFile(CLONE_BACKUP_FILE_PATH, buff)) {
+        fd = UniqueFd(open(CLONE_BACKUP_FILE_PATH.c_str(), O_RDONLY));
+    } else {
+        STANDBYSERVICE_LOGE("OnBackup fail: save buff to file fail");
+        replyCode  = BuildBackupReplyCode(EXTENSION_ERROR_CODE);
+    }
+
+    if ((!reply.WriteFileDescriptor(fd)) || (!reply.WriteString(replyCode))) {
+        close(fd.Release());
+        int32_t ret = remove(CLONE_BACKUP_FILE_PATH.c_str());
+        STANDBYSERVICE_LOGE("OnBackup fail: reply write fail! remove ret: %{public}d", ret);
+        return ERR_INVALID_OPERATION;
+    }
+    close(fd.Release());
+    int32_t ret = remove(CLONE_BACKUP_FILE_PATH.c_str());
+    STANDBYSERVICE_LOGI("OnBackup succ: backup data success! remove ret: %{public}d", ret);
+    return ERR_OK;
+}
+
+ErrCode StandbyServiceImpl::OnRestore(MessageParcel& data, MessageParcel& reply)
+{
+    std::string replyCode = BuildBackupReplyCode(0);
+    std::vector<char> buff;
+    UniqueFd fd(data.ReadFileDescriptor());
+    if (fd.Get() < 0) {
+        STANDBYSERVICE_LOGE("OnRestore fail: ReadFileDescriptor fail");
+        return ERR_INVALID_OPERATION;
+    }
+    const off_t fileLength = lseek(fd.Get(), 0, SEEK_END);
+    lseek(fd, 0, SEEK_SET);
+    buff.resize(fileLength);
+    const ssize_t len = read(fd, buff.data(), fileLength);
+    if (len == fileLength && fileLength != 0) {
+        std::lock_guard<std::mutex> lock(backupRestoreMutex_);
+        off_t offset = 0;
+        while (offset < fileLength) {
+            CloneFileHead* head = reinterpret_cast<CloneFileHead*>(buff.data() + offset);
+            head->moduleName[sizeof(CloneFileHead::moduleName) - 1] = '\0';
+            const auto& onRestoreFunc = onRestoreFuncMap_.find(std::string(head->moduleName));
+            if (onRestoreFunc != onRestoreFuncMap_.end()) {
+                std::vector<char> moduleBuff;
+                std::copy(reinterpret_cast<char*>(&head->data), reinterpret_cast<char*>(&head->data) + head->fileSize,
+                    std::back_inserter(moduleBuff));
+                (onRestoreFunc->second)(moduleBuff);
+            }
+            offset += sizeof(CloneFileHead) + head->fileSize;
+        }
+    } else {
+        STANDBYSERVICE_LOGE("OnRestore fail: get file fail");
+        replyCode  = BuildBackupReplyCode(EXTENSION_ERROR_CODE);
+    }
+
+    if (!reply.WriteString(replyCode)) {
+        close(fd.Release());
+        STANDBYSERVICE_LOGE("OnRestore fail: reply write fail!");
+        return ERR_INVALID_OPERATION;
+    }
+    close(fd.Release());
+    STANDBYSERVICE_LOGI("OnRestore succ: reply write success!");
+    return ERR_OK;
+}
+
+std::string StandbyServiceImpl::BuildBackupReplyCode(int32_t replyCode)
+{
+    nlohmann::json root;
+    nlohmann::json resultInfo;
+    nlohmann::json errorInfo;
+
+    errorInfo["type"] = "ErrorInfo";
+    errorInfo["errorCode"] = std::to_string(replyCode);
+    errorInfo["errorInfo"] = "";
+
+    resultInfo.push_back(errorInfo);
+    root["resultInfo"] = resultInfo;
+    return root.dump();
 }
 
 bool StandbyServiceImpl::CheckAllowTypeInfo(uint32_t allowType)

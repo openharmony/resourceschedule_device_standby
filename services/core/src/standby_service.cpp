@@ -47,6 +47,8 @@ const bool SOFTWARE_SLEEP = system::GetBoolParameter("persist.sys.standby_switch
 const std::string RSS_PROCESS_NAME = "resource_schedule_service";
 const std::string PUSH_PROCESS_NAME = "push_manager_service";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
+const std::string EXTENSION_BACKUP = "backup";
+const std::string EXTENSION_RESTORE = "restore";
 }
 
 StandbyService::StandbyService() : SystemAbility(DEVICE_STANDBY_SERVICE_SYSTEM_ABILITY_ID, true) {}
@@ -303,6 +305,17 @@ void StandbyService::OnStop()
     StandbyServiceImpl::GetInstance()->UnInit();
     state_.store(ServiceRunningState::STATE_NOT_START);
     STANDBYSERVICE_LOGI("standby service task manager stop");
+}
+
+int32_t StandbyService::OnExtension(const std::string& extension, MessageParcel& data, MessageParcel& reply)
+{
+    STANDBYSERVICE_LOGI("extension is %{public}s.", extension.c_str());
+    if (extension == EXTENSION_BACKUP) {
+        return StandbyServiceImpl::GetInstance()->OnBackup(data, reply);
+    } else if (extension == EXTENSION_RESTORE) {
+        return StandbyServiceImpl::GetInstance()->OnRestore(data, reply);
+    }
+    return ERR_OK;
 }
 
 ErrCode StandbyService::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)

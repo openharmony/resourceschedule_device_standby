@@ -47,6 +47,7 @@ public:
     static std::shared_ptr<StandbyService> GetInstance();
     void OnStart() final;
     void OnStop() final;
+    int32_t OnExtension(const std::string& extension, MessageParcel& data, MessageParcel& reply) override;
 
     ErrCode SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber,
         const std::string& subscriberName, const std::string& moduleName) override;
