@@ -1063,6 +1063,10 @@ ErrCode StandbyServiceImpl::ReportWorkSchedulerStatus(bool started, int32_t uid,
 ErrCode StandbyServiceImpl::GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
     uint32_t reasonCode)
 {
+    if (auto checkRet = CheckCallerPermission(reasonCode); checkRet != ERR_OK) {
+        STANDBYSERVICE_LOGE("caller permission denied.");
+        return checkRet;
+    }
     if (!IsServiceReady()) {
         return ERR_STANDBY_SYS_NOT_READY;
     }
