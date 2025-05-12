@@ -34,7 +34,7 @@ public:
      * @param parcel Indicates the parcel object for unmarshalling.
      * @return The info of delay suspend.
      */
-    static sptr<AllowInfo> Unmarshalling(Parcel& in);
+    static AllowInfo *Unmarshalling(Parcel& in);
 
     /**
      * @brief Marshals a purpose into a parcel.

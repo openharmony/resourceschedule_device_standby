@@ -27,11 +27,12 @@ bool AllowInfo::Marshalling(Parcel& out) const
     return true;
 }
 
-sptr<AllowInfo> AllowInfo::Unmarshalling(Parcel& in)
+AllowInfo *AllowInfo::Unmarshalling(Parcel& in)
 {
-    sptr<AllowInfo> info = new (std::nothrow) AllowInfo();
+    auto info = new (std::nothrow) AllowInfo();
     if (info != nullptr && !info->ReadFromParcel(in)) {
         STANDBYSERVICE_LOGE("read from parcel failed");
+        delete info;
         info = nullptr;
     }
     return info;
