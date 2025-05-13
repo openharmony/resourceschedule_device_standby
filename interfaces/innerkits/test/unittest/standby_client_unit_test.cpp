@@ -276,5 +276,20 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_015, TestSiz
     EXPECT_EQ(StandbyServiceClient::GetInstance().ReportPowerOverused(TEST_MODULE_NAME, level), ERR_OK);
 }
 
+/**
+ * @tc.name: StandbyServiceClientUnitTest_016
+ * @tc.desc: test ReportSceneInfo.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_016, TestSize.Level1)
+{
+    uint32_t resType = 1;
+    int64_t value = 0;
+    std::string sceneInfo = "test_sceneInfo";
+    int32_t code = StandbyServiceClient::GetInstance().ReportSceneInfo(resType, value, sceneInfo);
+    EXPECT_EQ(code, ERR_OK);
+}
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
