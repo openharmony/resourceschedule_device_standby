@@ -486,13 +486,12 @@ ErrCode StandbyServiceImpl::OnBackup(MessageParcel& data, MessageParcel& reply)
         std::lock_guard<std::mutex> lock(backupRestoreMutex_);
         for (const auto& [moduleName, func] : onBackupFuncMap_) {
             std::vector<char> moduleBuff;
+            CloneFileHead head {};
             ErrCode err = func(moduleBuff);
-            if (err != ERR_OK) {
+            if (err != ERR_OK ||
+                strncpy_s(head.moduleName, sizeof(head.moduleName), moduleName.c_str(), moduleName.size()) != 0) {
                 continue;
             }
-            CloneFileHead head {};
-            strncpy_s(head.moduleName, sizeof(head.moduleName) - 1, moduleName.c_str(), sizeof(head.moduleName) - 1);
-            head.moduleName[sizeof(head.moduleName) - 1] = '\0';
             head.fileOffset = buff.size();
             head.fileSize = moduleBuff.size();
             std::copy(reinterpret_cast<char*>(&head), reinterpret_cast<char*>(&head) + sizeof(CloneFileHead),
@@ -535,9 +534,12 @@ ErrCode StandbyServiceImpl::OnRestore(MessageParcel& data, MessageParcel& reply)
     if (len == fileLength && fileLength != 0) {
         std::lock_guard<std::mutex> lock(backupRestoreMutex_);
         off_t offset = 0;
-        while (offset < fileLength) {
+        while (offset + static_cast<off_t>(sizeof(CloneFileHead)) < fileLength) {
             CloneFileHead* head = reinterpret_cast<CloneFileHead*>(buff.data() + offset);
             head->moduleName[sizeof(CloneFileHead::moduleName) - 1] = '\0';
+            if (offset + static_cast<off_t>(sizeof(CloneFileHead) + head->fileSize) > fileLength) {
+                break;
+            }
             const auto& onRestoreFunc = onRestoreFuncMap_.find(std::string(head->moduleName));
             if (onRestoreFunc != onRestoreFuncMap_.end()) {
                 std::vector<char> moduleBuff;
@@ -545,7 +547,7 @@ ErrCode StandbyServiceImpl::OnRestore(MessageParcel& data, MessageParcel& reply)
                     std::back_inserter(moduleBuff));
                 (onRestoreFunc->second)(moduleBuff);
             }
-            offset += sizeof(CloneFileHead) + head->fileSize;
+            offset += static_cast<off_t>(sizeof(CloneFileHead) + head->fileSize);
         }
     } else {
         STANDBYSERVICE_LOGE("OnRestore fail: get file fail");
