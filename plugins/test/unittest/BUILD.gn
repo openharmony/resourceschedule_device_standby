@@ -65,6 +65,7 @@ ohos_unittest("standby_plugin_unit_test") {
     "init:libbegetutil",
     "ipc:ipc_single",
     "resource_schedule_service:ressched_client",
+    "safwk:system_ability_fwk",
     "time_service:time_client",
   ]
 
