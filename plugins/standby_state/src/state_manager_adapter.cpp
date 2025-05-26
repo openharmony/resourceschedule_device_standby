@@ -110,6 +110,7 @@ void StateManagerAdapter::HandleCommonEvent(const StandbyMessage& message)
     HandleOpenCloseLid(message);
     HandleScreenStatus(message);
     if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON ||
+        message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_UNLOCKED ||
         message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING ||
         message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED) {
         TransitToState(StandbyState::WORKING);
