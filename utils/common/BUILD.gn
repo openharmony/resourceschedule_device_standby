@@ -25,7 +25,7 @@ ohos_shared_library("standby_utils_common") {
   }
   sources = [ 
     "src/common_constant.cpp",
-    "src/stadby_hitrace_chain.cpp",
+    "src/standby_hitrace_chain.cpp",
   ]
 
   public_configs = [ ":standby_utils_common_config" ]
