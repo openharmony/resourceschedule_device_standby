@@ -15,6 +15,7 @@
 
 #include "running_lock_strategy.h"
 #include <algorithm>
+#include "standby_hitrace_chain.h"
 #include "standby_service_log.h"
 #include "system_ability_definition.h"
 
