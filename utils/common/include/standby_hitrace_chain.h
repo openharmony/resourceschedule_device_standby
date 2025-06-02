@@ -35,7 +35,7 @@ public:
 
 private:
     bool isBegin_ = false;
-    HitraceIdStruct traceId_ = {0};
+    HiTraceIdStruct traceId_ = {0};
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

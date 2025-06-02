@@ -18,32 +18,32 @@
 namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
-    constexpr int32_t DEFAULT_FLAGS = HitraceFlag::HITRACE_FLAG_INCLUDE_ASYNC |
-                                      HitraceFlag::HITRACE_FLAG_DONOT_CREATE_SPAN |
-                                      HitraceFlag::HITRACE_FLAG_NO_BE_INFO;
+    constexpr int32_t DEFAULT_FLAGS = HiTraceFlag::HITRACE_FLAG_INCLUDE_ASYNC |
+                                      HiTraceFlag::HITRACE_FLAG_DONOT_CREATE_SPAN |
+                                      HiTraceFlag::HITRACE_FLAG_NO_BE_INFO;
 }
 StandbyHitraceChain::StandbyHitraceChain(const bool isClearId, const char *name)
 {
     if (isClearId) {
-        HitraceChainClearId();
+        HiTraceChainClearId();
         isBegin_ = true;
-        traceId_ = HitraceChainBegin(name, DEFAULT_FLAGS);
+        traceId_ = HiTraceChainBegin(name, DEFAULT_FLAGS);
     }
 }
 
 StandbyHitraceChain::StandbyHitraceChain(const char *name, const int32_t flags)
 {
-    HitraceIdStruct currentId = HitraceChainGetId();
-    isBegin_ = !HitraceChainIsValid(&currentId);
+    HitraceIdStruct currentId = HiTraceChainGetId();
+    isBegin_ = !HiTraceChainIsValid(&currentId);
     if (isBegin_) {
-        traceId_ = HitraceChainBegin(name, (flags > 0) ? flags : DEFAULT_FLAGS);
+        traceId_ = HiTraceChainBegin(name, (flags > 0) ? flags : DEFAULT_FLAGS);
     }
 }
 
 StandbyHitraceChain::~StandbyHitraceChain()
 {
     if (isBegin_) {
-        HitraceChainEnd(&traceId_);
+        HiTraceChainEnd(&traceId_);
     }
 }
 }
