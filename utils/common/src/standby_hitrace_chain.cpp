@@ -33,7 +33,7 @@ StandbyHitraceChain::StandbyHitraceChain(const bool isClearId, const char *name)
 
 StandbyHitraceChain::StandbyHitraceChain(const char *name, const int32_t flags)
 {
-    HitraceIdStruct currentId = HiTraceChainGetId();
+    HiTraceIdStruct currentId = HiTraceChainGetId();
     isBegin_ = !HiTraceChainIsValid(&currentId);
     if (isBegin_) {
         traceId_ = HiTraceChainBegin(name, (flags > 0) ? flags : DEFAULT_FLAGS);
