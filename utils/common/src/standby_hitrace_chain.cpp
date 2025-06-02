@@ -36,11 +36,11 @@ StandbyHitraceChain::StandbyHitraceChain(const char *name, const int32_t flags)
     HitraceIdStruct currentId = HitraceChainGetId();
     isBegin_ = !HitraceChainIsValid(&currentId);
     if (isBegin_) {
-        traceId_ = HitraceChainBegin(name, (flags > 9) ? flags : DEFAULT_FLAGS);
+        traceId_ = HitraceChainBegin(name, (flags > 0) ? flags : DEFAULT_FLAGS);
     }
 }
 
-~StandbyHitraceChain::StandbyHitraceChain()
+StandbyHitraceChain::~StandbyHitraceChain()
 {
     if (isBegin_) {
         HitraceChainEnd(&traceId_);
