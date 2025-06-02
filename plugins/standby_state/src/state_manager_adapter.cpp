@@ -25,6 +25,7 @@
 #include "sleep_state.h"
 #include "standby_config_manager.h"
 #include "standby_service_impl.h"
+#include "standby_hitrace_chain.h"
 #include "standby_service_log.h"
 #include "standby_state_subscriber.h"
 #include "working_state.h"
@@ -113,6 +114,7 @@ void StateManagerAdapter::HandleCommonEvent(const StandbyMessage& message)
         message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_UNLOCKED ||
         message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_CHARGING ||
         message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED) {
+        StandbyHitraceChain traceChain(__func__);
         TransitToState(StandbyState::WORKING);
     }
     if (message.action_ == COMMON_EVENT_USER_SLEEP_STATE_CHANGED) {
@@ -122,12 +124,14 @@ void StateManagerAdapter::HandleCommonEvent(const StandbyMessage& message)
         return;
     }
     if (CheckEnterDarkState(message)) {
+        StandbyHitraceChain traceChain(__func__);
         TransitToState(StandbyState::DARK);
     }
 }
 
 void StateManagerAdapter::HandleUserSleepState(const StandbyMessage& message)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (isScreenOn_) {
         return;
     }

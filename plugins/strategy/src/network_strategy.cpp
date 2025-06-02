@@ -22,6 +22,7 @@
 #include "standby_state.h"
 #include "time_provider.h"
 #include "istandby_service.h"
+#include "standby_hitrace_chain.h"
 #include "standby_service_log.h"
 
 namespace OHOS {
@@ -83,6 +84,7 @@ void NetworkStrategy::UpdateNetResourceConfig(const StandbyMessage& message)
 
 void NetworkStrategy::StartNetLimit(const StandbyMessage& message)
 {
+    StandbyHitraceChain traceChain(__func__);
     STANDBYSERVICE_LOGD("enter NetworkStrategy StartNetLimit, eventId is %{public}d", message.eventId_);
     uint32_t current_phase = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_PHASE, 0));
     uint32_t current_state = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_STATE, 0));
@@ -95,6 +97,7 @@ void NetworkStrategy::StartNetLimit(const StandbyMessage& message)
 
 void NetworkStrategy::StopNetLimit(const StandbyMessage& message)
 {
+    StandbyHitraceChain traceChain(__func__);
     STANDBYSERVICE_LOGD("enter NetworkStrategy StopNetLimit, eventId is %{public}d", message.eventId_);
     DisableNetworkFirewall(message);
 }

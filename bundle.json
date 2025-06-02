@@ -38,6 +38,7 @@
         "c_utils",
         "eventhandler",
         "hilog",
+        "hitrace",
         "idl_tool",
         "init",
         "ipc",

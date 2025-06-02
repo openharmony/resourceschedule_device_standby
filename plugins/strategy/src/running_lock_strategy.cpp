@@ -130,6 +130,7 @@ ErrCode RunningLockStrategy::UpdateResourceConfig(const StandbyMessage& message)
 
 ErrCode RunningLockStrategy::StartProxy(const StandbyMessage& message)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (isProxied_) {
         STANDBYSERVICE_LOGD("now is proxied, do not need StartProxy, repeat process");
         return ERR_STANDBY_STRATEGY_STATE_REPEAT;
@@ -366,6 +367,7 @@ ErrCode RunningLockStrategy::ProxyAppAndProcess(bool isProxied)
 
 ErrCode RunningLockStrategy::StopProxy(const StandbyMessage& message)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (!isProxied_) {
         return ERR_STANDBY_CURRENT_STATE_NOT_MATCH;
     }
