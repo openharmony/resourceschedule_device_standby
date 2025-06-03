@@ -55,6 +55,7 @@ StandbyPluginExternalDeps = [
   "common_event_service:cesfwk_innerkits",
   "eventhandler:libeventhandler",
   "hilog:libhilog",
+  "hitrace:libhitracechain",
   "init:libbegetutil",
   "ipc:ipc_single",
   "resource_schedule_service:ressched_client",

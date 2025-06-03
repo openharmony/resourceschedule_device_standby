@@ -27,6 +27,7 @@
 #include "system_ability_definition.h"
 #include "device_standby_switch.h"
 #include "standby_service_impl.h"
+#include "standby_hitrace_chain.h"
 #include "standby_service_log.h"
 #include "standby_config_manager.h"
 
@@ -65,6 +66,7 @@ std::shared_ptr<StandbyService> StandbyService::GetInstance()
 
 void StandbyService::OnStart()
 {
+    StandbyHitraceChain traceChain(__func__);
     if (!SOFTWARE_SLEEP) {
         return;
     }
@@ -141,6 +143,7 @@ void StandbyService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
 
 void StandbyService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
+    StandbyHitraceChain traceChain(__func__);
     STANDBYSERVICE_LOGI("remove system ability, systemAbilityId : %{public}d", systemAbilityId);
     std::lock_guard<std::mutex> systemAbilityLock(systemAbilityLock_);
     auto serviceImpl = StandbyServiceImpl::GetInstance();
@@ -189,6 +192,7 @@ void StandbyService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::s
 ErrCode StandbyService::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber,
     const std::string& subscriberName, const std::string& moduleName)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -200,6 +204,7 @@ ErrCode StandbyService::SubscribeStandbyCallback(const sptr<IStandbyServiceSubsc
 
 ErrCode StandbyService::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -209,6 +214,7 @@ ErrCode StandbyService::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSub
 
 ErrCode StandbyService::ApplyAllowResource(const ResourceRequest& resourceRequest)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -219,6 +225,7 @@ ErrCode StandbyService::ApplyAllowResource(const ResourceRequest& resourceReques
 
 ErrCode StandbyService::UnapplyAllowResource(const ResourceRequest& resourceRequest)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -230,6 +237,7 @@ ErrCode StandbyService::UnapplyAllowResource(const ResourceRequest& resourceRequ
 ErrCode StandbyService::GetAllowList(uint32_t allowType, std::vector<AllowInfo>& allowInfoList,
     uint32_t reasonCode)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -239,6 +247,7 @@ ErrCode StandbyService::GetAllowList(uint32_t allowType, std::vector<AllowInfo>&
 
 ErrCode StandbyService::IsDeviceInStandby(bool& isStandby)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -248,6 +257,7 @@ ErrCode StandbyService::IsDeviceInStandby(bool& isStandby)
 
 ErrCode StandbyService::SetNatInterval(uint32_t type, bool enable, uint32_t interval)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (!CheckProcessNamePermission(PUSH_PROCESS_NAME)) {
         STANDBYSERVICE_LOGE("set nat interval permission check fail");
         return ERR_PERMISSION_DENIED;
@@ -263,6 +273,7 @@ ErrCode StandbyService::SetNatInterval(uint32_t type, bool enable, uint32_t inte
 
 ErrCode StandbyService::DelayHeartBeat(int64_t timestamp)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (!CheckProcessNamePermission(PUSH_PROCESS_NAME)) {
         STANDBYSERVICE_LOGE("delay heartbeat permission check fail");
         return ERR_PERMISSION_DENIED;
@@ -276,6 +287,7 @@ ErrCode StandbyService::DelayHeartBeat(int64_t timestamp)
 
 ErrCode StandbyService::ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -302,6 +314,7 @@ ErrCode StandbyService::NotifySystemAbilityStatusChanged(bool isAdded, int32_t s
 
 void StandbyService::OnStop()
 {
+    StandbyHitraceChain traceChain(__func__);
     StandbyServiceImpl::GetInstance()->UnInit();
     state_.store(ServiceRunningState::STATE_NOT_START);
     STANDBYSERVICE_LOGI("standby service task manager stop");
@@ -320,6 +333,7 @@ int32_t StandbyService::OnExtension(const std::string& extension, MessageParcel&
 
 ErrCode StandbyService::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -330,6 +344,7 @@ ErrCode StandbyService::ReportWorkSchedulerStatus(bool started, int32_t uid, con
 ErrCode StandbyService::GetRestrictList(uint32_t restrictType, std::vector<AllowInfo>& restrictInfoList,
     uint32_t reasonCode)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -339,6 +354,7 @@ ErrCode StandbyService::GetRestrictList(uint32_t restrictType, std::vector<Allow
 
 ErrCode StandbyService::IsStrategyEnabled(const std::string& strategyName, bool& isEnabled)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -348,6 +364,7 @@ ErrCode StandbyService::IsStrategyEnabled(const std::string& strategyName, bool&
 
 ErrCode StandbyService::ReportPowerOverused(const std::string &module, uint32_t level)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -358,6 +375,7 @@ ErrCode StandbyService::ReportPowerOverused(const std::string &module, uint32_t 
 
 ErrCode StandbyService::ReportDeviceStateChanged(int32_t type, bool enabled)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -367,6 +385,7 @@ ErrCode StandbyService::ReportDeviceStateChanged(int32_t type, bool enabled)
 
 int32_t StandbyService::Dump(int32_t fd, const std::vector<std::u16string>& args)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (ENG_MODE == 0) {
         STANDBYSERVICE_LOGE("Not Engineer mode");
         return ERR_PERMISSION_DENIED;
@@ -408,6 +427,7 @@ bool StandbyService::CheckProcessNamePermission(const std::string& processName)
 ErrCode StandbyService::HandleEvent(const uint32_t resType, const int64_t value,
                                     const std::string &sceneInfo)
 {
+    StandbyHitraceChain traceChain(__func__);
     if (!CheckProcessNamePermission(RSS_PROCESS_NAME)) {
         return ERR_PERMISSION_DENIED;
     }
