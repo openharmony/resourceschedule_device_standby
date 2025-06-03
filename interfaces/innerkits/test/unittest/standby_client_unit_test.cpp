@@ -278,7 +278,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_015, TestSiz
 
 /**
  * @tc.name: StandbyServiceClientUnitTest_016
- * @tc.desc: test OnremoteDied.
+ * @tc.desc: test OnRemoteDied.
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -288,7 +288,6 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_016, TestSiz
     auto deathRecipient_ = StandbyServiceClient::StandbyServiceDeathRecipient(*mgr);
     deathRecipient_.OnRemoteDied(nullptr);
     nlohmann::json payload;
-
     std::shared_ptr<ResourceSchedule::Resdata> data = std::make_shared<ResourceSchedule::Resdata>(1, 1, payload);
     mgr->HandleEvent(data);
     EXPECT_NE(mgr, nullptr);
@@ -328,7 +327,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_018, TestSiz
     subscriber->OnRemoteRequestInner(
         (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED)), data, reply, option);
     subscriber->OnRemoteRequestInner(
-        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED))+1, data, reply, option);
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED)) + 1, data, reply, option);
     EXPECT_NE(subscriber->HandleOnRestrictListChanged(data), ERR_OK);
     data.WriteBool(false);
     subscriber->HandleOnRestrictListChanged(data);
