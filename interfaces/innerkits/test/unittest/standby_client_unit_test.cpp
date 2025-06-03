@@ -288,7 +288,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_016, TestSiz
     auto deathRecipient_ = StandbyServiceClient::StandbyServiceDeathRecipient(*mgr);
     deathRecipient_.OnRemoteDied(nullptr);
     nlohmann::json payload;
-    std::shared_ptr<ResourceSchedule::Resdata> data = std::make_shared<ResourceSchedule::Resdata>(1, 1, payload);
+    std::shared_ptr<ResourceSchedule::ResData> data = std::make_shared<ResourceSchedule::ResData>(1, 1, payload);
     mgr->HandleEvent(data);
     EXPECT_NE(mgr, nullptr);
 }
@@ -320,6 +320,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_018, TestSiz
     sptr<StandbyServiceSubscriberProxy> proxy = new (std::nothrow) StandbyServiceSubscriberProxy(impl);
     sptr<StandbyServiceSubscriberProxy> nullSubscriber = nullptr;
     proxy->OnRestrictListChanged(-1, "", 0, false);
+
     sptr<StandbyServiceSubscriberStub> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
     MessageParcel data {};
     MessageParcel reply {};
@@ -337,8 +338,8 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_018, TestSiz
     restrictListData.WriteString("");
     restrictListData.WriteUint32(0);
     restrictListData.WriteBool(false);
-
     EXPECT_EQ(subscriber->HandleOnRestrictListChanged(restrictListData), ERR_OK);
 }
+
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
