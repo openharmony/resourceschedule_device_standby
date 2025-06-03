@@ -325,18 +325,18 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_018, TestSiz
     MessageParcel data {};
     MessageParcel reply {};
     MessageOption option {};
-    subscriber->OnRemoteRequestInner((static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED)),
-        data, reply, option);
-    subscriber->OnRemoteRequestInner((static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED))+1,
-        data, reply, option);
+    subscriber->OnRemoteRequestInner(
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED)), data, reply, option);
+    subscriber->OnRemoteRequestInner(
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED))+1, data, reply, option);
     EXPECT_NE(subscriber->HandleOnRestrictListChanged(data), ERR_OK);
     data.WriteBool(false);
     subscriber->HandleOnRestrictListChanged(data);
     MessageParcel restrictListData {};
     restrictListData.WriteInt32(0);
     restrictListData.WriteInt32(0);
-    restrictListData.WriteString(""));
-    restrictListData.WriteInt32(0);
+    restrictListData.WriteString("");
+    restrictListData.WriteUint32(0);
     restrictListData.WriteBool(false);
 
     EXPECT_EQ(subscriber->HandleOnRestrictListChanged(restrictListData), ERR_OK);
