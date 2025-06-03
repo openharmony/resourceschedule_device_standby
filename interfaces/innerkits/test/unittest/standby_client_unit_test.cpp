@@ -340,5 +340,6 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_018, TestSiz
     restrictListData.WriteBool(false);
 
     EXPECT_EQ(subscriber->HandleOnRestrictListChanged(restrictListData), ERR_OK);
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
