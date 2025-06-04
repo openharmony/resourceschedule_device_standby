@@ -23,6 +23,7 @@
     *GetStandbyParam*;
     *GetStandbyDurationList*;
     *GetStrategyConfigList*;
+    *GetStandbyListPara*;
     *Init*;
     *GetPluginName*;
     *GetMaxDuration*;

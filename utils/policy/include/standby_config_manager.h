@@ -85,6 +85,7 @@ public:
     bool GetStrategySwitch(const std::string& switchName);
     bool GetHalfHourSwitch(const std::string& switchName);
     std::shared_ptr<std::vector<DefaultResourceConfig>> GetResCtrlConfig(const std::string& switchName);
+    std::vector<std::string> GetStandbyListPara(const std::string& paramName);
     const std::vector<TimerResourceConfig>& GetTimerResConfig();
     const std::vector<std::string>& GetStrategyConfigList();
     bool GetStrategyConfigList(const std::string& switchName);
@@ -153,6 +154,7 @@ private:
     bool ParseVersionConfig(const nlohmann::json& standbyConfig, std::string& version);
 
     bool ParseBatteryList(const nlohmann::json& standbyBatteryList);
+    bool ParseStandbyListParaConfig(const nlohmann::json& standbyListParaConfig);
 
 private:
     std::mutex configMutex_;
@@ -168,6 +170,7 @@ private:
     std::unordered_map<std::string, std::vector<int32_t>> intervalListMap_;
     std::unordered_map<std::string, std::vector<int32_t>> ladderBatteryListMap_;
     std::unordered_map<std::string, nlohmann::json> standbyStrategyConfigMap_;
+    std::unordered_map<std::string, std::vector<std::string>> standbyListParaMap_;
 
     std::unordered_map<std::string, bool> backStandbySwitchMap_;
     std::unordered_map<std::string, int32_t> backStandbyParaMap_;

@@ -44,6 +44,7 @@ namespace {
     const std::string TAG_STRATEGY_LIST = "strategy_list";
     const std::string TAG_HALFHOUR_SWITCH_SETTING = "halfhour_switch_setting";
     const std::string TAG_LADDER_BATTERY_LIST = "ladder_battery_threshold_list";
+    const std::string TAG_STANDBY_LIST_PARA_CONFIG = "standby_list_para_config";
 
     const std::string TAG_SETTING_LIST = "setting_list";
     const std::string TAG_VER = "version";
@@ -178,6 +179,7 @@ void StandbyConfigManager::ParseCloudConfig(const nlohmann::json& devConfigRoot)
 {
     nlohmann::json settingConfig;
     nlohmann::json listConfig;
+    nlohmann::json standbyListParaMap;
 
     if (JsonUtils::GetObjFromJsonValue(devConfigRoot, TAG_SETTING_LIST, settingConfig) &&
         !ParseStandbyConfig(settingConfig)) {
@@ -186,6 +188,10 @@ void StandbyConfigManager::ParseCloudConfig(const nlohmann::json& devConfigRoot)
     if (JsonUtils::GetObjFromJsonValue(devConfigRoot, TAG_STRATEGY_LIST, listConfig) &&
         !ParseStrategyListConfig(listConfig)) {
         STANDBYSERVICE_LOGW("Failed to parse cloud config in %{public}s", TAG_STRATEGY_LIST.c_str());
+    }
+    if (JsonUtils::GetObjFromJsonValue(devConfigRoot, TAG_STANDBY_LIST_PARA_CONFIG, standbyListParaMap) &&
+        !ParseStandbyListParaConfig(standbyListParaMap)) {
+        STANDBYSERVICE_LOGW("failed to parse cloud config in %{public}s", TAG_STANDBY_LIST_PARA_CONFIG.c_str());
     }
     if (!ParseResCtrlConfig(devConfigRoot)) {
         STANDBYSERVICE_LOGW("Failed to parse cloud config in standby strategy.");
@@ -395,6 +401,11 @@ std::shared_ptr<std::vector<DefaultResourceConfig>> StandbyConfigManager::GetRes
     return GetConfigWithName(switchName, defaultResourceConfigMap_);
 }
 
+std::vector<std::string> StandbyConfigManager::GetStandbyListPara(const std::string& paramName)
+{
+    return GetConfigWithName(paramName, standbyListParaMap_);
+}
+
 template<typename T>
 T StandbyConfigManager::GetConfigWithName(const std::string& switchName,
     std::unordered_map<std::string, T>& configMap)
@@ -516,6 +527,7 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
     nlohmann::json standbyListConfig;
     nlohmann::json standbyIntervalList;
     nlohmann::json standbyBatteryList;
+    nlohmann::json standbyListParaMap;
 
     JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_PLUGIN_NAME, pluginName_);
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY, standbyConfig) &&
@@ -549,6 +561,11 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_LADDER_BATTERY_LIST, standbyBatteryList) &&
         !ParseBatteryList(standbyBatteryList)) {
         STANDBYSERVICE_LOGW("failed to parse standby battery list in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
+    }
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY_LIST_PARA_CONFIG, standbyListParaMap) &&
+        !ParseStandbyListParaConfig(standbyListParaMap)) {
+        STANDBYSERVICE_LOGW("failed to parse standby list para config in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
     return true;
@@ -797,6 +814,25 @@ bool StandbyConfigManager::ParseBatteryList(const nlohmann::json& standbyBattery
             batterylList.emplace_back(battery);
         }
         ladderBatteryListMap_.emplace(element.key(), std::move(batterylList));
+    }
+    return ret;
+}
+
+bool StandbyConfigManager::ParseStandbyListParaConfig(const nlohmann::json& standbyListParaConfig)
+{
+    bool ret = true;
+    for (const auto &element : standbyListParaConfig.items()) {
+        if (!element.value().is_array()) {
+            STANDBYSERVICE_LOGW("there is unexpected value of %{public}s in standby list para config",
+                element.key().c_str());
+            ret = false;
+            continue;
+        }
+        std::vector<std::string> standbyList;
+        for (const std::string& para : element.value()) {
+            standbyList.push_back(para);
+        }
+        standbyListParaMap_[element.key()] = standbyList;
     }
     return ret;
 }
