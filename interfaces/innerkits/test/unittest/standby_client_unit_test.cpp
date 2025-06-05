@@ -278,17 +278,67 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_015, TestSiz
 
 /**
  * @tc.name: StandbyServiceClientUnitTest_016
- * @tc.desc: test ReportSceneInfo.
+ * @tc.desc: test OnRemoteDied.
  * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_016, TestSize.Level1)
+{
+    auto mgr = DelayedSingleton<StandbyServiceClient>::GetInstance();
+    auto deathRecipient_ = StandbyServiceClient::StandbyServiceDeathRecipient(*mgr);
+    deathRecipient_.OnRemoteDied(nullptr);
+    nlohmann::json payload;
+    std::shared_ptr<ResourceSchedule::ResData> data = std::make_shared<ResourceSchedule::ResData>(1, 1, payload);
+    mgr->HandleEvent(data);
+    EXPECT_NE(mgr, nullptr);
+}
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_017
+ * @tc.desc: test ReportSceneInfo.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_017, TestSize.Level1)
 {
     uint32_t resType = 1;
     int64_t value = 0;
     std::string sceneInfo = "test_sceneInfo";
     int32_t code = StandbyServiceClient::GetInstance().ReportSceneInfo(resType, value, sceneInfo);
     EXPECT_EQ(code, ERR_OK);
+}
+
+/**
+ * @tc.name: StandbyServiceClientUnitTest_018
+ * @tc.desc: test OnRestrictListChanged.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_018, TestSize.Level1)
+{
+    sptr<IRemoteObject> impl {};
+    sptr<StandbyServiceSubscriberProxy> proxy = new (std::nothrow) StandbyServiceSubscriberProxy(impl);
+    sptr<StandbyServiceSubscriberProxy> nullSubscriber = nullptr;
+    proxy->OnRestrictListChanged(-1, "", 0, false);
+
+    sptr<StandbyServiceSubscriberStub> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
+    MessageParcel data {};
+    MessageParcel reply {};
+    MessageOption option {};
+    subscriber->OnRemoteRequestInner(
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED)), data, reply, option);
+    subscriber->OnRemoteRequestInner(
+        (static_cast<uint32_t>(StandbySubscriberInterfaceCode::ON_RESTRICT_LIST_CHANGED)) + 1, data, reply, option);
+    EXPECT_NE(subscriber->HandleOnRestrictListChanged(data), ERR_OK);
+    data.WriteBool(false);
+    subscriber->HandleOnRestrictListChanged(data);
+    MessageParcel restrictListData {};
+    restrictListData.WriteInt32(0);
+    restrictListData.WriteInt32(0);
+    restrictListData.WriteString("");
+    restrictListData.WriteUint32(0);
+    restrictListData.WriteBool(false);
+    EXPECT_EQ(subscriber->HandleOnRestrictListChanged(restrictListData), ERR_OK);
 }
 
 }  // namespace DevStandbyMgr
