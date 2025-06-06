@@ -527,32 +527,14 @@ std::set<std::string> StandbyConfigManager::GetEligiblePersistAllowConfig(const 
 
 bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStandbyConfigRoot)
 {
-    JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_PLUGIN_NAME, pluginName_);
-    if (!CanParseStandbyConfig(devStandbyConfigRoot)) {
-        return false;
-    }
-    if (!CanParseIntervalList(devStandbyConfigRoot)) {
-        return false;
-    }
-    if (!CanParsePkgTypeList(devStandbyConfigRoot)) {
-        return false;
-    }
-    if (!CanParseStrategyListConfig(devStandbyConfigRoot)) {
-        return false;
-    }
-    if (!CanParseBatteryList(devStandbyConfigRoot)) {
-        return false;
-    }
-    if (!CanParseStandbyListParaConfig(devStandbyConfigRoot)) {
-        return false;
-    }
-    return true;
-}
-
-bool StandbyConfigManager::CanParseStandbyConfig(const nlohmann::json& devStandbyConfigRoot)
-{
     nlohmann::json standbyConfig;
     nlohmann::json detectlist;
+    nlohmann::json standbySwitchConfig;
+    nlohmann::json standbyListConfig;
+    nlohmann::json standbyIntervalList;
+    nlohmann::json standbyBatteryList;
+    nlohmann::json standbyListParaMap;
+    JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_PLUGIN_NAME, pluginName_);
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY, standbyConfig) &&
         !ParseStandbyConfig(standbyConfig)) {
         STANDBYSERVICE_LOGW("failed to parse standby config in %{public}s", STANDBY_CONFIG_PATH.c_str());
@@ -563,20 +545,33 @@ bool StandbyConfigManager::CanParseStandbyConfig(const nlohmann::json& devStandb
         STANDBYSERVICE_LOGW("failed to parse detect list in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
-    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_HALFHOUR_SWITCH_SETTING, standbyConfig) &&
-        !ParseHalfHourSwitchConfig(standbyConfig)) {
-        STANDBYSERVICE_LOGW("failed to parse halfhour config");
-        return false;
-    }
-    return true;
-}
-
-bool StandbyConfigManager::CanParseIntervalList(const nlohmann::json& devStandbyConfigRoot)
-{
-    nlohmann::json standbyIntervalList;
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_MAINTENANCE_LIST, standbyIntervalList) &&
         !ParseIntervalList(standbyIntervalList)) {
         STANDBYSERVICE_LOGW("failed to parse standby interval list in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
+    }
+    if (!CanParsePkgTypeList(devStandbyConfigRoot)) {
+        return false;
+    }
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STRATEGY_LIST, standbyListConfig) &&
+        !ParseStrategyListConfig(standbyListConfig)) {
+        STANDBYSERVICE_LOGW("failed to parse strategy list config in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
+    }
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_HALFHOUR_SWITCH_SETTING, standbyConfig)) {
+        if (!ParseHalfHourSwitchConfig(standbyConfig)) {
+            STANDBYSERVICE_LOGW("failed to parse halfhour config");
+            return false;
+        }
+    }
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_LADDER_BATTERY_LIST, standbyBatteryList) &&
+        !ParseBatteryList(standbyBatteryList)) {
+        STANDBYSERVICE_LOGW("failed to parse standby battery list in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
+    }
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY_LIST_PARA_CONFIG, standbyListParaMap) &&
+        !ParseStandbyListParaConfig(standbyListParaMap)) {
+        STANDBYSERVICE_LOGW("failed to parse standby list para config in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
     return true;
@@ -588,39 +583,6 @@ bool StandbyConfigManager::CanParsePkgTypeList(const nlohmann::json& devStandbyC
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_PKG_TYPE_LIST, standbyPkgTypeList) &&
         !ParsePkgTypeList(standbyPkgTypeList)) {
         STANDBYSERVICE_LOGW("failed to parse standby interval list in %{public}s", STANDBY_CONFIG_PATH.c_str());
-        return false;
-    }
-    return true;
-}
-
-bool StandbyConfigManager::CanParseStrategyListConfig(const nlohmann::json& devStandbyConfigRoot)
-{
-    nlohmann::json standbyListConfig;
-    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STRATEGY_LIST, standbyListConfig) &&
-        !ParseStrategyListConfig(standbyListConfig)) {
-        STANDBYSERVICE_LOGW("failed to parse strategy list config in %{public}s", STANDBY_CONFIG_PATH.c_str());
-        return false;
-    }
-    return true;
-}
-
-bool StandbyConfigManager::CanParseBatteryList(const nlohmann::json& devStandbyConfigRoot)
-{
-    nlohmann::json standbyBatteryList;
-    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_LADDER_BATTERY_LIST, standbyBatteryList) &&
-        !ParseBatteryList(standbyBatteryList)) {
-        STANDBYSERVICE_LOGW("failed to parse standby battery list in %{public}s", STANDBY_CONFIG_PATH.c_str());
-        return false;
-    }
-    return true;
-}
-
-bool StandbyConfigManager::CanParseStandbyListParaConfig(const nlohmann::json& devStandbyConfigRoot)
-{
-    nlohmann::json standbyListParaMap;
-    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY_LIST_PARA_CONFIG, standbyListParaMap) &&
-        !ParseStandbyListParaConfig(standbyListParaMap)) {
-        STANDBYSERVICE_LOGW("failed to parse standby list para config in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
     return true;
