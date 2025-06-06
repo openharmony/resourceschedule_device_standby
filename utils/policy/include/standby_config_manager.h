@@ -122,12 +122,7 @@ private:
 
     std::vector<std::string> GetConfigFileList(const std::string& relativeConfigPath);
     bool ParseDeviceStanbyConfig(const nlohmann::json& devStandbyConfigRoot);
-    bool CanParseStandbyConfig(const nlohmann::json& devStandbyConfigRoot);
-    bool CanParseIntervalList(const nlohmann::json& devStandbyConfigRoot);
     bool CanParsePkgTypeList(const nlohmann::json& devStandbyConfigRoot);
-    bool CanParseStrategyListConfig(const nlohmann::json& devStandbyConfigRoot);
-    bool CanParseBatteryList(const nlohmann::json& devStandbyConfigRoot);
-    bool CanParseStandbyListParaConfig(const nlohmann::json& devStandbyConfigRoot);
     bool ParseStandbyConfig(const nlohmann::json& standbyConfig);
     bool ParseIntervalList(const nlohmann::json& standbyIntervalList);
     bool ParseStrategyListConfig(const nlohmann::json& standbyListConfig);
