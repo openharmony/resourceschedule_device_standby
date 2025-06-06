@@ -44,6 +44,7 @@ namespace {
     const std::string TAG_STRATEGY_LIST = "strategy_list";
     const std::string TAG_HALFHOUR_SWITCH_SETTING = "halfhour_switch_setting";
     const std::string TAG_LADDER_BATTERY_LIST = "ladder_battery_threshold_list";
+    const std::string TAG_PKG_TYPE_LIST = "pkg_type";
     const std::string TAG_STANDBY_LIST_PARA_CONFIG = "standby_list_para_config";
 
     const std::string TAG_SETTING_LIST = "setting_list";
@@ -439,6 +440,11 @@ std::vector<int32_t> StandbyConfigManager::GetStandbyDurationList(const std::str
     return GetConfigWithName(switchName, intervalListMap_);
 }
 
+std::vector<std::string> StandbyConfigManager::GetStandbyPkgTypeList(const std::string& switchName)
+{
+    return GetConfigWithName(switchName, pkgTypeMap_);
+}
+
 int32_t StandbyConfigManager::GetMaxDuration(const std::string& name, const std::string& paramName,
     uint32_t condition, bool isApp)
 {
@@ -528,7 +534,6 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
     nlohmann::json standbyIntervalList;
     nlohmann::json standbyBatteryList;
     nlohmann::json standbyListParaMap;
-
     JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_PLUGIN_NAME, pluginName_);
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY, standbyConfig) &&
         !ParseStandbyConfig(standbyConfig)) {
@@ -545,19 +550,20 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
         STANDBYSERVICE_LOGW("failed to parse standby interval list in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
+    if (!CanParsePkgTypeList(devStandbyConfigRoot)) {
+        return false;
+    }
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STRATEGY_LIST, standbyListConfig) &&
         !ParseStrategyListConfig(standbyListConfig)) {
         STANDBYSERVICE_LOGW("failed to parse strategy list config in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
-
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_HALFHOUR_SWITCH_SETTING, standbyConfig)) {
         if (!ParseHalfHourSwitchConfig(standbyConfig)) {
             STANDBYSERVICE_LOGW("failed to parse halfhour config");
             return false;
         }
     }
-
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_LADDER_BATTERY_LIST, standbyBatteryList) &&
         !ParseBatteryList(standbyBatteryList)) {
         STANDBYSERVICE_LOGW("failed to parse standby battery list in %{public}s", STANDBY_CONFIG_PATH.c_str());
@@ -566,6 +572,17 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY_LIST_PARA_CONFIG, standbyListParaMap) &&
         !ParseStandbyListParaConfig(standbyListParaMap)) {
         STANDBYSERVICE_LOGW("failed to parse standby list para config in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
+    }
+    return true;
+}
+
+bool StandbyConfigManager::CanParsePkgTypeList(const nlohmann::json& devStandbyConfigRoot)
+{
+    nlohmann::json standbyPkgTypeList;
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_PKG_TYPE_LIST, standbyPkgTypeList) &&
+        !ParsePkgTypeList(standbyPkgTypeList)) {
+        STANDBYSERVICE_LOGW("failed to parse standby interval list in %{public}s", STANDBY_CONFIG_PATH.c_str());
         return false;
     }
     return true;
@@ -590,6 +607,25 @@ bool StandbyConfigManager::ParseStandbyConfig(const nlohmann::json& standbyConfi
             }
             standbyParaMap_[element.key()] = element.value().get<int32_t>();
         }
+    }
+    return ret;
+}
+
+bool StandbyConfigManager::ParsePkgTypeList(const nlohmann::json& standbyPkgTypeList)
+{
+    bool ret = true;
+    for (const auto& element : standbyPkgTypeList.items()) {
+        if (!element.value().is_array()) {
+            STANDBYSERVICE_LOGW("there is unexpected value of %{public}s in standby pkg type list",
+                element.key().c_str());
+            ret = false;
+            continue;
+        }
+        std::vector<std::string> pkgTypeList;
+        for (const std::string pkgType : element.value()) {
+            pkgTypeList.emplace_back(pkgType);
+        }
+        pkgTypeMap_.emplace(element.key(), std::move(pkgTypeList));
     }
     return ret;
 }

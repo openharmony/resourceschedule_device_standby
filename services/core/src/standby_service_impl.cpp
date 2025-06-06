@@ -1223,6 +1223,81 @@ void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
     DispatchEvent(standbyMessage);
 }
 
+void StandbyServiceImpl::HandleBTServiceEvent(const int64_t value, const std::string &sceneInfo)
+{
+    STANDBYSERVICE_LOGI("HandleBTSerciceEvent value: %{public}lld", value);
+    nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
+    if (payload.is_discarded()) {
+        STANDBYSERVICE_LOGE("parse json failed");
+    }
+    if (value == ResourceSchedule::ResType::BtServiceEvent::GATT_APP_REGISTER) {
+        if (!payload.contains("ACTION") || !payload.contains("ADDRESS") || !payload.contains("PID") ||
+            !payload.at("ACTION").is_string() || !payload.at("ADDRESS").is_string() || !payload.at("PID").is_string()) {
+            STANDBYSERVICE_LOGE("Bt Gatt Register info is valid");
+            return;
+        }
+        std::string action = payload["ACTION"].get<std::string>();
+        std::string address = payload["ADDRESS"].get<std::string>();
+        int32_t uid = atoi(payload["UID"].get<std::string>().c_str());
+        StandbyMessage standbyMessage {StandbyMessageType::GATT_APP_REGISTER};
+        standbyMessage.want_ = AAFwk::Want {};
+        standbyMessage.want_->SetParam("ACTION", action);
+        standbyMessage.want_->SetParam("ADDRESS", address);
+        standbyMessage.want_->SetParam("UID", uid);
+        DispatchEvent(standbyMessage);
+    } else if (value == ResourceSchedule::ResType::BtServiceEvent::GATT_CONNECT_STATE) {
+        if (!payload.contains("ADDRESS") || !payload.contains("STATE") ||
+            !payload.at("ADDRESS").is_string() || !payload.at("STATE").is_string()) {
+            STANDBYSERVICE_LOGE("Bt Gatt Connection info is valid");
+            return;
+        }
+        std::string address = payload["ADDRESS"].get<std::string>();
+        int32_t state = atoi(payload["STATE"].get<std::string>().c_str());
+        StandbyMessage standbyMessage {StandbyMessageType::GATT_CONNECT_STATE};
+        standbyMessage.want_ = AAFwk::Want {};
+        standbyMessage.want_->SetParam("ADDRESS", address);
+        standbyMessage.want_->SetParam("STATE", state);
+        DispatchEvent(standbyMessage);
+    }
+}
+
+void StandbyServiceImpl::HandleBrokerGattConnect(const int64_t value, const std::string &sceneInfo)
+{
+    STANDBYSERVICE_LOGI("HandleBrokerGattConnect value: %{public}lld", value);
+    nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
+    if (payload.is_discarded()) {
+        STANDBYSERVICE_LOGE("parse json failed");
+    }
+    if (value) {
+        if (!payload.contains("clientIf") || !payload.contains("pkg") || !payload.at("clientIf").is_string() ||
+            !payload.at("pkg").is_string()) {
+            STANDBYSERVICE_LOGE("Broker Gatt connect info is valid");
+            return;
+        }
+        std::string pkg = payload["pkg"].get<std::string>();
+        int32_t clientIf = atoi(payload["clientIf"].get<std::string>().c_str());
+        bool connect = true;
+        StandbyMessage standbyMessage {StandbyMessageType::BROKER_GATT_CONNECT};
+        standbyMessage.want_ = AAFwk::Want {};
+        standbyMessage.want_->SetParam("clientIf", clientIf);
+        standbyMessage.want_->SetParam("pkg", pkg);
+        standbyMessage.want_->SetParam("connect", connect);
+        DispatchEvent(standbyMessage);
+    } else {
+        if (!payload.contains("clientIf") || !payload.at("clientIf").is_string()) {
+            STANDBYSERVICE_LOGE("Broker Gatt disconnect info is valid");
+            return;
+        }
+        int32_t clientIf = atoi(payload["clientIf"].get<std::string>().c_str());
+        bool connect = false;
+        StandbyMessage standbyMessage {StandbyMessageType::BROKER_GATT_CONNECT};
+        standbyMessage.want_ = AAFwk::Want {};
+        standbyMessage.want_->SetParam("clientIf", clientIf);
+        standbyMessage.want_->SetParam("connect", connect);
+        DispatchEvent(standbyMessage);
+    }
+}
+
 void StandbyServiceImpl::HandleMmiInputPowerKeyDown(const int64_t value)
 {
     StandbyMessage standbyMessage {StandbyMessageType::MMI_INPUT_POWER_KEY_DOWN};
@@ -1317,13 +1392,9 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             HandleChargeStateChanged(value);
             break;
         case ResourceSchedule::ResType::RES_TYPE_USB_DEVICE:
-            if (value == 0) {
-                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                             EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED));
-            } else {
-                DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                             EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED));
-            }
+            DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+                (value ? EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_DETACHED :
+                    EventFwk::CommonEventSupport::COMMON_EVENT_USB_DEVICE_ATTACHED)));
             break;
         case ResourceSchedule::ResType::RES_TYPE_CALL_STATE_CHANGED:
             HandleCallStateChanged(sceneInfo);
@@ -1336,6 +1407,12 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             break;
         case ResourceSchedule::ResType::RES_TYPE_MMI_INPUT_POWER_KEY:
             HandleMmiInputPowerKeyDown(value);
+            break;
+        case ResourceSchedule::ResType::RES_TYPE_BT_SERVICE_EVENT:
+            HandleBTServiceEvent(value, sceneInfo);
+            break;
+        case ResourceSchedule::ResType::RES_TYPE_REPORT_BOKER_GATT_CONNECT:
+            HandleBrokerGattConnect(value, sceneInfo);
             break;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
         case ResourceSchedule::ResType::RES_TYPE_POWER_MODE_CHANGED:

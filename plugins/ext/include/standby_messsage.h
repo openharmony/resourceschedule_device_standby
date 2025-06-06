@@ -50,6 +50,9 @@ struct StandbyMessageType {
         NAT_MSG_RECV, // push receive a message, adjusts system timer
         PAGE_SHOW,
         PAGE_HIDE,
+        GATT_APP_REGISTER,
+        GATT_CONNECT_STATE,
+        BROKER_GATT_CONNECT,
     };
 };
 
