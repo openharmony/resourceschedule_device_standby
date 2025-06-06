@@ -37,6 +37,7 @@
     *NeedsToReadCloudConfig*;
     *SplitVersion*;
     *GetStandbyLadderBatteryList*;
+    *GetStandbyPkgTypeList*;
   local:
     *;
 };

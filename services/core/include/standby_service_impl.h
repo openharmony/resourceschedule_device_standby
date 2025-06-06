@@ -201,6 +201,8 @@ private:
     void HandleP2PStateChanged(int32_t state);
     void HandleScreenClickRecognize(const int64_t value);
     void HandleMmiInputPowerKeyDown(const int64_t value);
+    void HandleBTServiceEvent(const int64_t value, const std::string &sceneInfo);
+    void HandleBrokerGattConnect(const int64_t value, const std::string &sceneInfo);
 #ifdef STANDBY_POWER_MANAGER_ENABLE
     void HandlePowerModeChanged(PowerMgr::PowerMode mode);
 #endif

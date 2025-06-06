@@ -99,6 +99,7 @@ public:
     int32_t GetMaxDuration(const std::string& name, const std::string& paramName, uint32_t condition, bool isApp);
 
     std::vector<int32_t> GetStandbyLadderBatteryList(const std::string& switchName);
+    std::vector<std::string> GetStandbyPkgTypeList(const std::string& switchName);
 
     void DumpSetDebugMode(bool debugMode);
     void DumpSetSwitch(const std::string& switchName, bool switchStatus, std::string& result);
@@ -121,6 +122,12 @@ private:
 
     std::vector<std::string> GetConfigFileList(const std::string& relativeConfigPath);
     bool ParseDeviceStanbyConfig(const nlohmann::json& devStandbyConfigRoot);
+    bool CanParseStandbyConfig(const nlohmann::json& devStandbyConfigRoot);
+    bool CanParseIntervalList(const nlohmann::json& devStandbyConfigRoot);
+    bool CanParsePkgTypeList(const nlohmann::json& devStandbyConfigRoot);
+    bool CanParseStrategyListConfig(const nlohmann::json& devStandbyConfigRoot);
+    bool CanParseBatteryList(const nlohmann::json& devStandbyConfigRoot);
+    bool CanParseStandbyListParaConfig(const nlohmann::json& devStandbyConfigRoot);
     bool ParseStandbyConfig(const nlohmann::json& standbyConfig);
     bool ParseIntervalList(const nlohmann::json& standbyIntervalList);
     bool ParseStrategyListConfig(const nlohmann::json& standbyListConfig);
@@ -129,6 +136,7 @@ private:
     bool ParseTimerResCtrlConfig(const nlohmann::json& resConfigArray);
     bool ParseDefaultResCtrlConfig(const std::string& resCtrlKey, const nlohmann::json& resConfigArray);
     bool ParseCommonResCtrlConfig(const nlohmann::json& sigleConfigItem, DefaultResourceConfig& resCtrlConfig);
+    bool ParsePkgTypeList(const nlohmann::json& standbyPkgTypeList);
     void ParseTimeLimitedConfig(const nlohmann::json& singleConfigItem, const std::string& key,
         std::vector<TimeLtdProcess>& resCtrlConfig);
     uint32_t ParseCondition(const std::string& conditionStr);
@@ -169,6 +177,7 @@ private:
     std::vector<TimerResourceConfig> timerResConfigList_;
     std::unordered_map<std::string, std::vector<int32_t>> intervalListMap_;
     std::unordered_map<std::string, std::vector<int32_t>> ladderBatteryListMap_;
+    std::unordered_map<std::string, std::vector<std::string>> pkgTypeMap_;
     std::unordered_map<std::string, nlohmann::json> standbyStrategyConfigMap_;
     std::unordered_map<std::string, std::vector<std::string>> standbyListParaMap_;
 
