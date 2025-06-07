@@ -209,6 +209,7 @@ private:
     void HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo);
     void HandleScreenStateChanged(const int64_t value);
     void HandleChargeStateChanged(const int64_t value);
+    void HandleBootCompleted();
     
     // handle abnormal power use
     void HandlePowerOverused([[maybe_unused]]uint32_t resType, const std::string &module, uint32_t level);

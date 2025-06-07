@@ -1380,6 +1380,12 @@ void StandbyServiceImpl::HandleResourcesStateChanged(const int64_t value, const 
         DispatchEvent(standbyMessage);
 }
 
+void StandbyServiceImpl::HandleBootCompleted()
+{
+    DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+        EventFwk::CommonEventSupport::COMMON_EVENT_BOOT_COMPLETED));
+}
+
 ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {
     STANDBYSERVICE_LOGD("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
@@ -1421,6 +1427,9 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
 #endif
         case ResourceSchedule::ResType::RES_TYPE_EFFICIENCY_RESOURCES_STATE_CHANGED:
             HandleResourcesStateChanged(value, sceneInfo);
+            break;
+        case ResourceSchedule::ResType::RES_TYPE_BOOT_COMPLETED:
+            HandleBootCompleted();
             break;
         default:
             AppEventHandler(resType, value, sceneInfo);
