@@ -30,6 +30,10 @@ extern "C" bool OnPluginRegister()
     IStateManagerAdapter* stateManager = new StateManagerAdapter();
     if (!constraintManager || !listenerManager || !strategyManager || !stateManager) {
         STANDBYSERVICE_LOGW("plugin is nullptr, failed to load valid plugin");
+        delete constraintManager;
+        delete listenerManager;
+        delete strategyManager;
+        delete stateManager;
         return false;
     }
     StandbyServiceImpl::GetInstance()->RegisterPluginInner(constraintManager,
