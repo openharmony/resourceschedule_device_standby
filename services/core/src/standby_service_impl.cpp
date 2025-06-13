@@ -38,7 +38,7 @@
 #include "event_runner.h"
 #include "istandby_service.h"
 #include "json_utils.h"
-#include "res_common_utils.h"
+#include "res_common_util.h"
 #include "res_sched_event_reporter.h"
 #include "standby_config_manager.h"
 #include "standby_service.h"
