@@ -55,7 +55,7 @@ namespace {
 const std::string ALLOW_RECORD_FILE_PATH = "/data/service/el1/public/device_standby/allow_record";
 const std::string CLONE_BACKUP_FILE_PATH = "/data/service/el1/public/device_standby/device_standby_clone";
 const std::string DEVICE_STANDBY_DIR = "/data/service/el1/public/device_standby";
-const std::string DEIVCE_SATNDBY_RDB_DIR = "/data/service/el3/100/device_standby/rdb";
+const std::string DEVICE_STANDBY_RDB_DIR = "/data/service/el3/100/device_standby/rdb";
 const std::string STANDBY_MSG_HANDLER = "StandbyMsgHandler";
 const std::string ON_PLUGIN_REGISTER = "OnPluginRegister";
 const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPTION";
@@ -1314,7 +1314,7 @@ void StandbyServiceImpl::HandleMmiInputPowerKeyDown(const int64_t value)
 void StandbyServiceImpl::HandleReportFileSizeEvent()
 {
     std::vector<std::string> currentDir;
-    const std::vector<std::string> directories = {DEIVCE_SATNDBY_DIR, DEIVCE_SATNDBY_RDB_DIR};
+    const std::vector<std::string> directories = {DEVICE_STANDBY_DIR, DEVICE_STANDBY_RDB_DIR};
 
     for (const auto& dirPath : directories) {
         bool result = ResourceSchedule::ResCommonUtil::DirIterator(dirPath, currentDir);
