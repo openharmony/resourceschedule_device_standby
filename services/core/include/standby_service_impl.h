@@ -199,6 +199,7 @@ private:
     void AppEventHandler(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
     void HandleCallStateChanged(const std::string &sceneInfo);
     void HandleP2PStateChanged(int32_t state);
+    void HandleReportFileSizeEvent();
     void HandleScreenClickRecognize(const int64_t value);
     void HandleMmiInputPowerKeyDown(const int64_t value);
     void HandleBTServiceEvent(const int64_t value, const std::string &sceneInfo);
