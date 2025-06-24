@@ -25,7 +25,7 @@
 #include "standby_service_log.h"
 #include "standby_state.h"
 #include "time_provider.h"
-#include "ressched_utils.h"
+#include "report_data_utils.h"
 #include "res_type.h"
 #include <string>
 
@@ -113,7 +113,7 @@ void StandbyStateSubscriber::ReportStandbyState(uint32_t curState)
     nlohmann::json payload;
     payload["napped"] = napped;
     payload["sleeping"] = sleeping;
-    ResourceSchedule::ResSchedUtils::GetInstance().ReportDataInProcess(
+    ReportDataUtils::GetInstance().ReportDataInProcess(
         ResourceSchedule::ResType::RES_TYPE_DEVICE_IDLE_CHANGED, 0, payload);
 }
 
