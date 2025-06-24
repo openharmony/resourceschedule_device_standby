@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,6 @@
 #ifndef STANDBY_REPORT_DATA_UTILS
 #define STANDBY_REPORT_DATA_UTILS
 
-#include <iostream>
-#include "sys/types.h"
 #include "nlohmann/json.hpp"
 
 namespace OHOS {
@@ -29,8 +27,8 @@ public:
     ~ReportDataUtils();
     static ReportDataUtils& GetInstance();
     void ReportDataInProcess(uint32_t resType, int64_t value, const nlohmann::json& payload);
-private:
 
+private:
     void LoadUtils();
 
     ReportDataFunc reportFunc_ = nullptr;
