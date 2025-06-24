@@ -26,6 +26,7 @@ ohos_shared_library("standby_utils_common") {
   sources = [ 
     "src/common_constant.cpp",
     "src/standby_hitrace_chain.cpp",
+    "src/report_data_utils.cpp",
   ]
 
   public_configs = [ ":standby_utils_common_config" ]
@@ -35,6 +36,7 @@ ohos_shared_library("standby_utils_common") {
     "hilog:libhilog",
     "hitrace:libhitracechain",
     "ipc:ipc_single",
+    "json:nlomann_json_static",
   ]
 
   defines = []
