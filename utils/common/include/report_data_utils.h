@@ -34,6 +34,7 @@ private:
     void LoadUtils();
 
     ReportDataFunc reportFunc_ = nullptr;
+    void *handle_ = nullptr;
 };
 } // namespace DevStandbyMgr
 } // namespace OHOS

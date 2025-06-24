@@ -31,6 +31,7 @@ ReportDataUtils::ReportDataUtils()
 ReportDataUtils::~ReportDataUtils()
 {
     reportFunc_ = nullptr;
+    dlclose(handle_);
 }
 
 ReportDataUtils& ReportDataUtils::GetInstance()
@@ -41,19 +42,18 @@ ReportDataUtils& ReportDataUtils::GetInstance()
 
 void ReportDataUtils::LoadUtils()
 {
-    auto handle = dlopen(RES_SCHED_SERVICE_SO.c_str(), RTLD_NOW);
-    if (!handle) {
+    handle_ = dlopen(RES_SCHED_SERVICE_SO.c_str(), RTLD_NOW);
+    if (!handle_) {
         STANDBYSERVICE_LOGW("%{public}s load %{public}s failed!", __func__, RES_SCHED_SERVICE_SO.c_str());
         return;
     }
 
-    reportFunc_ = reinterpret_cast<ReportDataFunc>(dlsym(handle, "ReportDataInProcess"));
+    reportFunc_ = reinterpret_cast<ReportDataFunc>(dlsym(handle_, "ReportDataInProcess"));
     if (!reportFunc_) {
         STANDBYSERVICE_LOGW("%{public}s load function:ReportDataInProcess failed!", __func__);
-        dlclose(handle);
+        dlclose(handle_);
         return;
     }
-    dlclose(handle);
 }
 
 void ReportDataUtils::ReportDataInProcess(uint32_t resType, int64_t value, const nlohmann::json& payload)
