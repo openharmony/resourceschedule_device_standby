@@ -25,6 +25,8 @@
 #include "standby_service_log.h"
 #include "standby_state.h"
 #include "time_provider.h"
+#include "report_data_utils.h"
+#include "res_type.h"
 #include <string>
 
 namespace OHOS {
@@ -108,6 +110,11 @@ void StandbyStateSubscriber::ReportStandbyState(uint32_t curState)
     STANDBYSERVICE_LOGD("start ReportStandbyState, napping is %{public}d, sleeping is %{public}d", napped, sleeping);
     NotifyIdleModeByCallback(napped, sleeping);
     NotifyIdleModeByCommonEvent(napped, sleeping);
+    nlohmann::json payload;
+    payload["napped"] = napped;
+    payload["sleeping"] = sleeping;
+    ReportDataUtils::GetInstance().ReportDataInProcess(
+        ResourceSchedule::ResType::RES_TYPE_DEVICE_IDLE_CHANGED, 0, payload);
 }
 
 void StandbyStateSubscriber::NotifyIdleModeByCallback(bool napped, bool sleeping)
