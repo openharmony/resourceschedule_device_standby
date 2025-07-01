@@ -204,6 +204,7 @@ private:
     void HandleMmiInputPowerKeyDown(const int64_t value);
     void HandleBTServiceEvent(const int64_t value, const std::string &sceneInfo);
     void HandleBrokerGattConnect(const int64_t value, const std::string &sceneInfo);
+    void HandleThermalScenarioReport(const int64_t value, const std::string &sceneInfo);
 #ifdef STANDBY_POWER_MANAGER_ENABLE
     void HandlePowerModeChanged(PowerMgr::PowerMode mode);
 #endif
