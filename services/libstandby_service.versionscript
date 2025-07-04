@@ -16,6 +16,7 @@
     *AddPluginSysAbilityListener*;
     *CreateTimer*;
     *TimeDiffToDayNightSwitch*;
+    *GetRandomDelay*;
     *STANDBT_MODE*;
     *GetCondition*;
     *ReportStandbyState*;
