@@ -1224,7 +1224,7 @@ void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
 {
     StandbyMessage standbyMessage {StandbyMessageType::SCREEN_CLICK_RECOGNIZE};
     standbyMessage.want_ = AAFwk::Want {};
-    standbyMessage.want_->SetParam("clickType", value);
+    standbyMessage.want_->SetParam("clickType", static_cast<int32_t>(value));
     DispatchEvent(standbyMessage);
 }
 
