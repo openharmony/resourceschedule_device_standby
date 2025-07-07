@@ -1464,7 +1464,7 @@ void StandbyServiceImpl::HandlePowerModeChanged(PowerMgr::PowerMode mode)
     StandbyMessage message(StandbyMessageType::COMMON_EVENT);
     message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_POWER_SAVE_MODE_CHANGED;
     message.want_ = AAFwk::Want {};
-    message.want_->SetParam("current_power_mode", static_cast<uint32_t>(mode));
+    message.want_->SetParam("current_power_mode", static_cast<int>(mode));
     DispatchEvent(message);
 }
 #endif
