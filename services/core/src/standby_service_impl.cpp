@@ -1406,6 +1406,15 @@ void StandbyServiceImpl::HandleBootCompleted()
         EventFwk::CommonEventSupport::COMMON_EVENT_BOOT_COMPLETED));
 }
 
+void StandbyServiceImpl::HandleThermalScenarioReport(const int64_t value, const std::string &sceneInfo)
+{
+    StandbyMessage standbyMessage {StandbyMessageType::THERMAL_SCENARIO_REPORT};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam("scenario", value);
+    standbyMessage.want_->SetParam("sceneInfo", sceneInfo);
+    DispatchEvent(standbyMessage);
+}
+
 ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {
     STANDBYSERVICE_LOGD("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
@@ -1448,6 +1457,9 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             break;
         case ResourceSchedule::ResType::RES_TYPE_BOOT_COMPLETED:
             HandleBootCompleted();
+            break;
+        case ResourceSchedule::ResType::RES_TYPE_THERMAL_SCENARIO_REPORT:
+            HandleThermalScenarioReport(value, sceneInfo);
             break;
         default:
             AppEventHandler(resType, value, sceneInfo);

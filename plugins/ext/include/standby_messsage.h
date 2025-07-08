@@ -53,6 +53,7 @@ struct StandbyMessageType {
         GATT_APP_REGISTER,
         GATT_CONNECT_STATE,
         BROKER_GATT_CONNECT,
+        THERMAL_SCENARIO_REPORT,
     };
 };
 

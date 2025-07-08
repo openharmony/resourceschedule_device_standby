@@ -201,6 +201,7 @@ private:
     void HandleMmiInputPowerKeyDown(const int64_t value);
     void HandleBTServiceEvent(const int64_t value, const std::string &sceneInfo);
     void HandleBrokerGattConnect(const int64_t value, const std::string &sceneInfo);
+    void HandleThermalScenarioReport(const int64_t value, const std::string &sceneInfo);
     void HandlePowerModeChanged(const int64_t value);
     void HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo);
     void HandleScreenStateChanged(const int64_t value);
