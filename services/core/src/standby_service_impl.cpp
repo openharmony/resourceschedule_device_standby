@@ -1442,7 +1442,7 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
             break;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
         case ResourceSchedule::ResType::RES_TYPE_POWER_MODE_CHANGED:
-            HandlePowerModeChanged(static_cast<PowerMgr::PowerMode>(value));
+            HandlePowerModeChanged(value);
             break;
 #endif
         case ResourceSchedule::ResType::RES_TYPE_EFFICIENCY_RESOURCES_STATE_CHANGED:
@@ -1459,12 +1459,12 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
 }
 
 #ifdef STANDBY_POWER_MANAGER_ENABLE
-void StandbyServiceImpl::HandlePowerModeChanged(PowerMgr::PowerMode mode)
+void StandbyServiceImpl::HandlePowerModeChanged(const int64_t value)
 {
     StandbyMessage message(StandbyMessageType::COMMON_EVENT);
     message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_POWER_SAVE_MODE_CHANGED;
     message.want_ = AAFwk::Want {};
-    message.want_->SetParam("current_power_mode", static_cast<int>(mode));
+    message.want_->SetParam("current_power_mode", static_cast<int>(value));
     DispatchEvent(message);
 }
 #endif
