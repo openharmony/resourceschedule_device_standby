@@ -30,6 +30,9 @@
 using namespace OHOS::MiscServices;
 namespace OHOS {
 namespace DevStandbyMgr {
+namespace {
+    constexpr int32_t MAX_DELAY_TIME_INTERVAL = 30 * 60 * 1000;
+}
 #ifdef STANDBY_POWER_MANAGER_ENABLE
 std::shared_ptr<PowerMgr::RunningLock> BaseState::standbyRunningLock_ = nullptr;
 const int32_t RUNNINGLOCK_TIMEOUT = 5000;
@@ -237,6 +240,7 @@ int64_t StateWithMaint::CalculateMaintTimeOut(const std::shared_ptr<IStateManage
     int64_t timeDiff {0};
     if (TimeProvider::GetCondition(maintIntervalTimeOut) == ConditionType::NIGHT_STANDBY &&
         TimeProvider::TimeDiffToDayNightSwitch(timeDiff)) {
+        timeDiff += TimeProvider::GetRandomDelay(0, MAX_DELAY_TIME_INTERVAL);
         maintIntervalTimeOut *= TimeConstant::MSEC_PER_SEC;
         maintIntervalTimeOut += timeDiff;
         return maintIntervalTimeOut;

@@ -261,6 +261,9 @@ void StateManagerAdapter::UnblockCurrentState()
 
 ErrCode StateManagerAdapter::TransitToState(uint32_t nextState)
 {
+    if (curStatePtr_ == nullptr) {
+        return ERR_STANDBY_STATE_TRANSITION_FAILED;
+    }
     uint32_t curState = curStatePtr_->GetCurState();
     if (!CheckTransitionValid(curState, nextState)) {
         return ERR_STANDBY_STATE_TRANSITION_FAILED;

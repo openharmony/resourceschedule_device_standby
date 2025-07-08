@@ -1224,7 +1224,7 @@ void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
 {
     StandbyMessage standbyMessage {StandbyMessageType::SCREEN_CLICK_RECOGNIZE};
     standbyMessage.want_ = AAFwk::Want {};
-    standbyMessage.want_->SetParam("clickType", value);
+    standbyMessage.want_->SetParam("clickType", static_cast<int32_t>(value));
     DispatchEvent(standbyMessage);
 }
 
@@ -1449,11 +1449,9 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
         case ResourceSchedule::ResType::RES_TYPE_REPORT_BOKER_GATT_CONNECT:
             HandleBrokerGattConnect(value, sceneInfo);
             break;
-#ifdef STANDBY_POWER_MANAGER_ENABLE
         case ResourceSchedule::ResType::RES_TYPE_POWER_MODE_CHANGED:
-            HandlePowerModeChanged(static_cast<PowerMgr::PowerMode>(value));
+            HandlePowerModeChanged(value);
             break;
-#endif
         case ResourceSchedule::ResType::RES_TYPE_EFFICIENCY_RESOURCES_STATE_CHANGED:
             HandleResourcesStateChanged(value, sceneInfo);
             break;
@@ -1470,21 +1468,14 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
     return ERR_OK;
 }
 
-#ifdef STANDBY_POWER_MANAGER_ENABLE
-void StandbyServiceImpl::HandlePowerModeChanged(PowerMgr::PowerMode mode)
+void StandbyServiceImpl::HandlePowerModeChanged(const int64_t value)
 {
-    bool isSaveMode = false;
-    if (mode == PowerMgr::PowerMode::POWER_SAVE_MODE || mode == PowerMgr::PowerMode::EXTREME_POWER_SAVE_MODE) {
-        isSaveMode = true;
-    }
-    
     StandbyMessage message(StandbyMessageType::COMMON_EVENT);
     message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_POWER_SAVE_MODE_CHANGED;
     message.want_ = AAFwk::Want {};
-    message.want_->SetParam("current_power_mode", isSaveMode);
+    message.want_->SetParam("current_power_mode", value);
     DispatchEvent(message);
 }
-#endif
 
 void StandbyServiceImpl::AppEventHandler(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {

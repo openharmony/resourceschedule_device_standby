@@ -46,9 +46,6 @@
 #include "istate_manager_adapter.h"
 #include "istrategy_manager_adapter.h"
 #include "nlohmann/json.hpp"
-#ifdef STANDBY_POWER_MANAGER_ENABLE
-#include "power_mode_info.h"
-#endif
 #include "resource_request.h"
 #include "res_type.h"
 #include "singleton.h"
@@ -205,9 +202,7 @@ private:
     void HandleBTServiceEvent(const int64_t value, const std::string &sceneInfo);
     void HandleBrokerGattConnect(const int64_t value, const std::string &sceneInfo);
     void HandleThermalScenarioReport(const int64_t value, const std::string &sceneInfo);
-#ifdef STANDBY_POWER_MANAGER_ENABLE
-    void HandlePowerModeChanged(PowerMgr::PowerMode mode);
-#endif
+    void HandlePowerModeChanged(const int64_t value);
     void HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo);
     void HandleScreenStateChanged(const int64_t value);
     void HandleChargeStateChanged(const int64_t value);
