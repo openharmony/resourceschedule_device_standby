@@ -39,6 +39,7 @@ namespace {
     constexpr int32_t NIGHT_TWENTY_THREE_CLOCK = 23;
     constexpr int32_t NIGHT_FIVE_CLOCK = 5;
     constexpr int32_t THREE_QUARTERS = 45;
+    constexpr int32_t SUPER_POWER_SAVING_MODE = 650;
 #ifdef STANDBY_POWER_MANAGER_ENABLE
     constexpr int32_t SAVE_MODE_ENTRANCE_MIN = 1;
 #endif
@@ -137,7 +138,9 @@ int64_t TimeProvider::GetNapTimeOut()
 bool TimeProvider::IsPowerSaveMode()
 {
     PowerMgr::PowerMode mode = PowerMgr::PowerMgrClient::GetInstance().GetDeviceMode();
-    return (mode == PowerMgr::PowerMode::POWER_SAVE_MODE || mode == PowerMgr::PowerMode::EXTREME_POWER_SAVE_MODE);
+    return (mode == PowerMgr::PowerMode::POWER_SAVE_MODE
+        || mode == PowerMgr::PowerMode::EXTREME_POWER_SAVE_MODE
+        || static_cast<int32_t>(mode) == SUPER_POWER_SAVING_MODE);
 }
 #endif
 
