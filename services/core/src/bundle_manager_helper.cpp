@@ -72,6 +72,8 @@ bool WEAK_FUNC BundleManagerHelper::GetApplicationInfos(const AppExecFwk::Applic
     if (bundleMgr_ == nullptr || !bundleMgr_->GetApplicationInfos(flag, userId, appInfos)) {
         return false;
     }
+    STANDBYSERVICE_LOGI("Succeed GetApplicationInfos, size is %{public}d",
+        static_cast<int32_t>(appInfos.size()));
     return true;
 }
 
