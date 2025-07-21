@@ -188,7 +188,7 @@ ErrCode RunningLockStrategy::GetAllAppInfos()
         STANDBYSERVICE_LOGW("failed to get all applicationInfos");
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
-    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d",
+    STANDBYSERVICE_LOGI("succeed GetApplicationInfos, size is %{public}d",
         static_cast<int32_t>(applicationInfos.size()));
     for (const auto& info : applicationInfos) {
         uidBundleNmeMap_.emplace(info.uid, info.name);
