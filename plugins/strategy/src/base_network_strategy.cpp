@@ -167,7 +167,7 @@ ErrCode BaseNetworkStrategy::InitNetLimitedAppInfo()
         UserSpace::SPECIAL_USERID, applicationInfos)) {
         STANDBYSERVICE_LOGW("failed to get special applicationInfos");
     }
-    STANDBYSERVICE_LOGD("succeed GetApplicationInfos, size is %{public}d",
+    STANDBYSERVICE_LOGI("succeed GetApplicationInfos, size is %{public}d",
         static_cast<int32_t>(applicationInfos.size()));
     for (const auto& info : applicationInfos) {
         if (netLimitedAppInfo_.find(info.uid) == netLimitedAppInfo_.end()) {
