@@ -30,6 +30,7 @@
 #include "ability_manager_helper.h"
 #include "access_token.h"
 #include "accesstoken_kit.h"
+#include "xcollie/watchdog.h"
 #include "allow_type.h"
 #include "app_mgr_helper.h"
 #include "bundle_manager_helper.h"
@@ -58,6 +59,8 @@ const std::string DEVICE_STANDBY_DIR = "/data/service/el1/public/device_standby"
 const std::string DEVICE_STANDBY_RDB_DIR = "/data/service/el3/100/device_standby/rdb";
 const std::string STANDBY_MSG_HANDLER = "StandbyMsgHandler";
 const std::string ON_PLUGIN_REGISTER = "OnPluginRegister";
+const std::string TAG_PROCESS_ABNORMAL_TIME = "process_abnormal_time";
+const int32_t PROCESS_ABNORMAL_TIME = 20000;
 const std::string STANDBY_EXEMPTION_PERMISSION = "ohos.permission.DEVICE_STANDBY_EXEMPTION";
 const uint32_t EXEMPT_ALL_RESOURCES = 100;
 const std::string COMMON_EVENT_TIMER_SA_ABILITY = "COMMON_EVENT_TIMER_SA_ABILITY";
@@ -97,6 +100,7 @@ bool StandbyServiceImpl::Init()
         STANDBYSERVICE_LOGE("register plugin failed");
         return false;
     }
+    AddWatchDog();
     HandleReportFileSizeEvent();
     STANDBYSERVICE_LOGI("register plugin secceed, dev standby service implement finish Init");
     return true;
@@ -134,6 +138,18 @@ void StandbyServiceImpl::InitReadyState()
         StandbyService::GetInstance()->AddPluginSysAbilityListener(BACKGROUND_TASK_MANAGER_SERVICE_ID);
         StandbyService::GetInstance()->AddPluginSysAbilityListener(WORK_SCHEDULE_SERVICE_ID);
         }, AppExecFwk::EventQueue::Priority::HIGH);
+}
+
+void StandbyServiceImpl::AddWatchDog()
+{
+    if (!handler_) {
+        STANDBYSERVICE_LOGE("standby msg handler is null");
+        return;
+    }
+    int32_t abnoramlTime = StandbyConfigManager::GetInstance()->GetStandbyParam(TAG_PROCESS_ABNORMAL_TIME);
+    abnoramlTime = (abnoramlTime <= 0) ? PROCESS_ABNORMAL_TIME : abnoramlTime;
+    int32_t ret = HiviewDFX::Watchdog::GetInstance().AddThread(STANDBY_MSG_HANDLER, handler_, abnoramlTime);
+    STANDBYSERVICE_LOGI("get handler abnormalTime: %{public}d, AddThread: %{public}d", abnoramlTime, ret);
 }
 
 ErrCode StandbyServiceImpl::RegisterCommEventObserver()
@@ -456,6 +472,7 @@ void StandbyServiceImpl::UnInit()
         dlclose(registerPlugin_);
         registerPlugin_ = nullptr;
     }
+    HiviewDFX::Watchdog::GetInstance().RemoveThread(STANDBY_MSG_HANDLER);
     STANDBYSERVICE_LOGI("succeed to clear stawndby service implement");
 }
 
