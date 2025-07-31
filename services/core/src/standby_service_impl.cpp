@@ -30,7 +30,7 @@
 #include "ability_manager_helper.h"
 #include "access_token.h"
 #include "accesstoken_kit.h"
-#include "xcollie/watchdog."
+#include "xcollie/watchdog.h"
 #include "allow_type.h"
 #include "app_mgr_helper.h"
 #include "bundle_manager_helper.h"
