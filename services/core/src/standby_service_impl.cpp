@@ -148,7 +148,7 @@ void StandbyServiceImpl::AddWatchDog()
     }
     int32_t abnoramlTime = StandbyConfigManager::GetInstance()->GetStandbyParam(TAG_PROCESS_ABNORMAL_TIME);
     abnoramlTime = (abnoramlTime <= 0) ? PROCESS_ABNORMAL_TIME : abnoramlTime;
-    int32_t ret = HiviewDFX::WatchDog::GetInstance().AddThread(STANDBY_MSG_HANDLER, handler_, abnoramlTime);
+    int32_t ret = HiviewDFX::Watchdog::GetInstance().AddThread(STANDBY_MSG_HANDLER, handler_, abnoramlTime);
     STANDBYSERVICE_LOGI("get handler abnormalTime: %{public}d, AddThread: %{public}d", abnoramlTime, ret);
 }
 
@@ -472,7 +472,7 @@ void StandbyServiceImpl::UnInit()
         dlclose(registerPlugin_);
         registerPlugin_ = nullptr;
     }
-    HiviewDFX::WatchDog::GetInstance.RemoveThread(STANDBY_MSG_HANDLER);
+    HiviewDFX::Watchdog::GetInstance.RemoveThread(STANDBY_MSG_HANDLER);
     STANDBYSERVICE_LOGI("succeed to clear stawndby service implement");
 }
 
