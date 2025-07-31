@@ -472,7 +472,7 @@ void StandbyServiceImpl::UnInit()
         dlclose(registerPlugin_);
         registerPlugin_ = nullptr;
     }
-    HiviewDFX::Watchdog::GetInstance.RemoveThread(STANDBY_MSG_HANDLER);
+    HiviewDFX::Watchdog::GetInstance().RemoveThread(STANDBY_MSG_HANDLER);
     STANDBYSERVICE_LOGI("succeed to clear stawndby service implement");
 }
 
