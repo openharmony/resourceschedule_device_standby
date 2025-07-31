@@ -89,6 +89,7 @@ public:
     static std::shared_ptr<StandbyServiceImpl> GetInstance();
     bool Init();
     void InitReadyState();
+    void AddWatchDog();
     ErrCode RegisterCommEventObserver();
     ErrCode RegisterAppStateObserver();
     ErrCode RegisterTimeObserver();

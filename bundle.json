@@ -37,6 +37,7 @@
         "config_policy",
         "c_utils",
         "eventhandler",
+        "hicollie",
         "hilog",
         "hitrace",
         "idl_tool",
