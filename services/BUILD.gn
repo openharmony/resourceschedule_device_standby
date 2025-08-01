@@ -30,6 +30,9 @@ ohos_shared_library("standby_service") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fstack-protector-strong",
+  ]
   if (!use_clang_coverage) {
     shlib_type = "sa"
   }

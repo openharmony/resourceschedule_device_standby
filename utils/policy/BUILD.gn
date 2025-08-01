@@ -35,6 +35,9 @@ ohos_shared_library("standby_utils_policy") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fstack-protector-strong",
+  ]
   sources = StandbyUtilsPolicy
 
   public_configs = [ ":standby_utils_policy_config" ]

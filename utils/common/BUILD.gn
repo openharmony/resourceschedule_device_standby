@@ -23,6 +23,9 @@ ohos_shared_library("standby_utils_common") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fstack-protector-strong",
+  ]
   sources = [ 
     "src/common_constant.cpp",
     "src/standby_hitrace_chain.cpp",

@@ -28,6 +28,9 @@ ohos_shared_library("standby_fwk") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fstack-protector-strong",
+  ]
   sources = [
     "${standby_innerkits_path}/src/allow_info.cpp",
     "${standby_innerkits_path}/src/resource_request.cpp",

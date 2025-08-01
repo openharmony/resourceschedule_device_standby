@@ -43,6 +43,9 @@ ohos_shared_library("standby_innerkits") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fstack-protector-strong",
+  ]
   output_values = get_target_outputs(":standby_service_interface")
   sources = [
     "src/allow_info.cpp",

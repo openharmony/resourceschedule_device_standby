@@ -126,6 +126,9 @@ ohos_shared_library("standby_plugin") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fstack-protector-strong",
+  ]
   sources = StandbyPluginSrc
 
   public_configs = [ ":standby_plugin_config" ]

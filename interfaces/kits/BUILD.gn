@@ -27,6 +27,9 @@ ohos_shared_library("devicestandby") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fstack-protector-strong",
+  ]
   sources = [
     "napi/src/common.cpp",
     "napi/src/init.cpp",
