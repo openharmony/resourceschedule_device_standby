@@ -280,10 +280,9 @@ void StandbyStateSubscriber::HandleSubscriberDeath(const wptr<IRemoteObject>& re
 }
 
 void StandbyStateSubscriber::UpdateCallBackMap(std::mutex lock, std::unordered_map<std::string, uint32_t> map,
-    const std::string type, const std::string& module, uint32_t value)
+    const std::string& module, uint32_t value)
 {
     int32_t curDate = TimeProvider::GetCurrentDate();
-
     std::lock_guard<std::mutex> modeulLock(lock);
     if (curDate_ != curDate) {
         STANDBYSERVICE_LOGI("Date has changed to %{public}d, module:%{public}s.", curDate, module.c_str());

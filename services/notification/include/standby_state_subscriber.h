@@ -57,7 +57,7 @@ private:
     void NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
     void NotifyLowpowerActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
     void UpdateCallBackMap(std::mutex lock, std::unordered_map<std::string, uint32_t> map,
-        const std::string type, const std::string& module, uint32_t value);
+        const std::string& module, uint32_t value);
 
 private:
     StandbyStateSubscriber(const StandbyStateSubscriber&) = delete;
