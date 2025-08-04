@@ -290,8 +290,6 @@ void StandbyStateSubscriber::UpdateCallBackMap(std::mutex lock, std::unordered_m
         map.clear();
     }
     map[module] = value;
-
-    
 }
 
 void StandbyStateSubscriber::ShellDump(const std::vector<std::string>& argsInStr, std::string& result)
