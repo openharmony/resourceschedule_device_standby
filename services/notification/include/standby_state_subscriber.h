@@ -57,7 +57,7 @@ private:
     void NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
     void NotifyLowpowerActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
     void HandleModulePowerMap(const std::string& module, uint32_t level);
-    void HandleModuleActionap(const std::string& module, uint32_t action);
+    void HandleModuleActionMap(const std::string& module, uint32_t action);
 
 private:
     StandbyStateSubscriber(const StandbyStateSubscriber&) = delete;
