@@ -31,11 +31,6 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-namespace {
-const std::string POWER_TYPE == "PowerOverused";
-const std::string ACTION_TYPE == "ActionChanged";
-}
-
 StandbyStateSubscriber::StandbyStateSubscriber()
 {
     deathRecipient_ = new (std::nothrow) SubscriberDeathRecipient();
@@ -175,7 +170,7 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
 {
     STANDBYSERVICE_LOGI("[PowerOverused] Callback process entry: starting to match subscriber, "
         "module: %{public}s, level: %{public}u.", module.c_str(), level);
-    HandleCallBackMap(POWER_TYPE, module, level);
+    UpdateCallBackMap(modulePowerLock_, modulePowerMap_, module, level);
 
     std::lock_guard<std::mutex> lock(subscriberLock_);
     if (subscriberList_.empty()) {
@@ -196,7 +191,7 @@ void StandbyStateSubscriber::NotifyLowpowerActionByCallback(const std::string& m
 {
     STANDBYSERVICE_LOGI("[ActionChanged] Callback process entry: starting to match subscriber, "
         "module: %{public}s, action: %{public}u.", module.c_str(), action);
-    HandleCallBackMap(ACTION_TYPE, module, action);
+    UpdateCallBackMap(moduleActionLock_, moduleActionMap_, module, action);
 
     std::lock_guard<std::mutex> lock(subscriberLock_);
     if (subscriberList_.empty()) {
@@ -284,27 +279,19 @@ void StandbyStateSubscriber::HandleSubscriberDeath(const wptr<IRemoteObject>& re
     STANDBYSERVICE_LOGD("suscriber death, remove it from list");
 }
 
-void StandbyStateSubscriber::HandleCallBackMap(const std::string type, const std::string& module, uint32_t value)
+void StandbyStateSubscriber::UpdateCallBackMap(std::mutex lock, std::unordered_map<std::string, uint32_t> map,
+    const std::string type, const std::string& module, uint32_t value)
 {
     int32_t curDate = TimeProvider::GetCurrentDate();
 
-    if (type == POWER_TYPE) {
-        std::lock_guard<std::mutex> modeulLock(modulePowerLock_);
-        if (curDate_ != curDate) {
-            STANDBYSERVICE_LOGI("[%{public}s] Date has changed to %{public}d.",type.c_str(), curDate);
-            curDate_ = curDate;
-            modulePowerMap_.clear();
-        }
-        modulePowerMap_[module] = value;
-    } else if (type == ACTION_TYPE) {
-        std::lock_guard<std::mutex> modeulLock(moduleActionLock_);
-        if (curDate_ != curDate) {
-            STANDBYSERVICE_LOGI("[%{public}s] Date has changed to %{public}d.",type.c_str(), curDate);
-            curDate_ = curDate;
-            moduleActionMap_.clear();
-        }
-        moduleActionMap_[module] = value;
+    std::lock_guard<std::mutex> modeulLock(lock);
+    if (curDate_ != curDate) {
+        STANDBYSERVICE_LOGI("Date has changed to %{public}d, module:%{public}s.", curDate, module.c_str());
+        curDate_ = curDate;
+        map.clear();
     }
+    map[module] = value;
+
     
 }
 
