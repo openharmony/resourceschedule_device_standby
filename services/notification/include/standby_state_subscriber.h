@@ -56,8 +56,7 @@ private:
     std::list<sptr<IStandbyServiceSubscriber>>::iterator FindSubcriberObject(sptr<IRemoteObject>& proxy);
     void NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
     void NotifyLowpowerActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
-    void HandleModulePowerMap(const std::string& module, uint32_t level);
-    void HandleModuleActionMap(const std::string& module, uint32_t action);
+    void HandleCallBackMap(const std::string type, const std::string& module, uint32_t value);
 
 private:
     StandbyStateSubscriber(const StandbyStateSubscriber&) = delete;
