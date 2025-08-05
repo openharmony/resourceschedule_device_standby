@@ -231,7 +231,7 @@ void StandbyStateSubscriber::NotifyLowpowerActionOnRegister(const sptr<IStandbyS
     std::string module = subscriber->GetModuleName();
     uint32_t action = 0;
     int32_t curDate = TimeProvider::GetCurrentDate();
-    std::lock_guard<std::mutex> modeulLock(moduleActionLock_);
+    std::lock_guard<std::mutex> lock(moduleActionLock_);
     auto iter = moduleActionMap_.find(module);
     if (curDate_ == curDate && iter != moduleActionMap_.end()) {
         action = iter->second;
@@ -247,7 +247,7 @@ void StandbyStateSubscriber::NotifyPowerOnRegister(const sptr<IStandbyServiceSub
     std::string module = subscriber->GetModuleName();
     uint32_t level = static_cast<uint32_t>(PowerOverusedLevel::NORMAL);
     int32_t curDate = TimeProvider::GetCurrentDate();
-    std::lock_guard<std::mutex> modeulLock(modulePowerLock_);
+    std::lock_guard<std::mutex> lock(modulePowerLock_);
     auto iter = modulePowerMap_.find(module);
     if (curDate_ == curDate && iter != modulePowerMap_.end()) {
         level = iter->second;
@@ -279,11 +279,11 @@ void StandbyStateSubscriber::HandleSubscriberDeath(const wptr<IRemoteObject>& re
     STANDBYSERVICE_LOGD("suscriber death, remove it from list");
 }
 
-void StandbyStateSubscriber::UpdateCallBackMap(std::mutex& lock, std::unordered_map<std::string, uint32_t>& map,
+void StandbyStateSubscriber::UpdateCallBackMap(std::mutex& moduleLock, std::unordered_map<std::string, uint32_t>& map,
     const std::string& module, uint32_t value)
 {
     int32_t curDate = TimeProvider::GetCurrentDate();
-    std::lock_guard<std::mutex> modeulLock(lock);
+    std::lock_guard<std::mutex> lock(moduleLock);
     if (curDate_ != curDate) {
         STANDBYSERVICE_LOGI("Date has changed to %{public}d, module:%{public}s.", curDate, module.c_str());
         curDate_ = curDate;

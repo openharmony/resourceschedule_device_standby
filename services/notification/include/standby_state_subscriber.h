@@ -56,7 +56,7 @@ private:
     std::list<sptr<IStandbyServiceSubscriber>>::iterator FindSubcriberObject(sptr<IRemoteObject>& proxy);
     void NotifyPowerOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
     void NotifyLowpowerActionOnRegister(const sptr<IStandbyServiceSubscriber>& subscriber);
-    void UpdateCallBackMap(std::mutex& lock, std::unordered_map<std::string, uint32_t>& map,
+    void UpdateCallBackMap(std::mutex& moduleLock, std::unordered_map<std::string, uint32_t>& map,
         const std::string& module, uint32_t value);
 
 private:
