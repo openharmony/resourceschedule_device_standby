@@ -279,7 +279,7 @@ void StandbyStateSubscriber::HandleSubscriberDeath(const wptr<IRemoteObject>& re
     STANDBYSERVICE_LOGD("suscriber death, remove it from list");
 }
 
-void StandbyStateSubscriber::UpdateCallBackMap(std::mutex lock, std::unordered_map<std::string, uint32_t> map,
+void StandbyStateSubscriber::UpdateCallBackMap(std::mutex& lock, std::unordered_map<std::string, uint32_t>& map,
     const std::string& module, uint32_t value)
 {
     int32_t curDate = TimeProvider::GetCurrentDate();
