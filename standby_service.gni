@@ -14,6 +14,8 @@ import("//build/ohos.gni")
 
 standby_service_root_path = "//foundation/resourceschedule/device_standby"
 
+subsystem_name = "resourceschedule"
+
 standby_service_part_name = "device_standby"
 
 standby_interfaces_path = "${standby_service_root_path}/interfaces"
