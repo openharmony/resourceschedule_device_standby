@@ -11,28 +11,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-
-@!namespace("@ohos.resourceschedule.deviceStandby", "deviceStandby")
-
-@!sts_inject("""
-static { loadLibrary("device_standby_ani.z"); }
-""")
-
-enum ResourceType: i32 {
-    NETWORK = 1,
-    RUNNING_LOCK = 1 << 1,
-    TIMER = 1 << 2,
-    WORK_SCHEDULER = 1 << 3,
-    AUTO_SYNC = 1 << 4,
-    PUSH = 1 << 5,
-    FREEZE = 1 << 6
-}
-
-struct ResourceRequest {
-    resourceTypes: ;
-    uid: ;
-    name: ;
-    duration: ;
-    reason: ;
-}
