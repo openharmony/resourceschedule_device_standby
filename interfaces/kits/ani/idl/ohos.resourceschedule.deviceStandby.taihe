@@ -11,8 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-
 @!namespace("@ohos.resourceschedule.deviceStandby", "deviceStandby")
 
 @!sts_inject("""
@@ -30,9 +28,23 @@ enum ResourceType: i32 {
 }
 
 struct ResourceRequest {
-    resourceTypes: ;
-    uid: ;
-    name: ;
-    duration: ;
-    reason: ;
+    resourceTypes: i32;
+    uid: i32;
+    name: String;
+    duration: i32;
+    reason: String;
 }
+
+struct ExemptedAppInfo {
+    resourceTypes: i32;
+    name: String;
+    duration: i32;
+}
+
+@gen_async("getExemptedApps")
+@gen_promise("getExemptedApps")
+function getExemptedAppsSync(resourceTypes: i32): Array<ExemptedAppInfo>;
+
+function requestExemptionResource(request: ResourceRequest): void; 
+
+function releaseExemptionResource(request: ResourceRequest): void;
