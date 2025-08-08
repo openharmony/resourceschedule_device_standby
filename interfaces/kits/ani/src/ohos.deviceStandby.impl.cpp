@@ -31,25 +31,61 @@ using namespace OHOS::DevStandbyMgr;
 
 namespace {
 
-std::string HandleParamErr(int32_t errCode)
+int32_t FindErrCode(const int32_t errCodeIn)
 {
-    STANDBYSERVICE_LOGI("ani HandleParamErr errCode = %{public}d, isThrow = true", errCode);
+    auto iter = paramErrCodeMsgMap.find(errCodeIn);
+    if (iter != paramErrCodeMsgMap.end()) {
+        return ERR_STANDBY_INVALID_PARAM;
+    }
+    return errCodeIn > THRESHOLD ? errCodeIn / OFFSET : errCodeIn;
+}
+
+std::string FindErrMsg(const int32_t errCode)
+{
     if (errCode == ERR_OK) {
         return "";
     }
     auto iter = saErrCodeMsgMap.find(errCode);
     if (iter != saErrCodeMsgMap.end()) {
         std::string errMessage = "BussinessError ";
-        errMessage.append(std::to_string(errCode)).append(": ").append(iter->second);
+        int32_t errCodeInfo = FindErrCode(errCode);
+        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(iter->second);
         return errMessage;
     }
     iter = paramErrCodeMsgMap.find(errCode);
     if (iter != paramErrCodeMsgMap.end()) {
         std::string errMessage = "BussinessError 401: Parameter error. ";
-        errMessage.append(iter->second);
+        errMessage.append(paramErrCodeMsgMap[errCode]);
         return errMessage;
     }
     return "Inner error.";
+}
+
+void HandleErrCode(int32_t errCode)
+{
+    STANDBYSERVICE_LOGI("HandleErrCode errCode = %{public}d", errCode);
+    if (errCode == ERR_OK) {
+        return;
+    }
+    std::string errMsg = FindErrMsg(errCode);
+    int32_t errCodeInfo = FindErrCode(errCode);
+    if (errMsg != "") {
+        ::taihe::set_business_error(errCodeInfo, errMsg);
+    }
+}
+
+void HandleParamErr(int32_t errCode)
+{
+    STANDBYSERVICE_LOGI("HandleParamErr errCode = %{public}d, isThrow = true", errCode);
+    if (errCode == ERR_OK) {
+        return;
+    }
+    auto iter = paramErrCodeMsgMap.find(errCode);
+    if (iter != paramErrCodeMsgMap.end()) {
+        std::string errMessage = "BussinessError 401: Parameter error. ";
+        errMessage.append(paramErrCodeMsgMap[errCode]);
+        ::taihe::set_business_error(ERR_STANDBY_INVALID_PARAM, errMessage);
+    }
 }
 
 ::taihe::optional<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo> GenAniExemptedAppInfo(
@@ -73,21 +109,17 @@ sptr<OHOS::DevStandbyMgr::ResourceRequest> GenResourceRequest(
 
 bool VerifyAniResourceRequest(::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
 {
-    int32_t errCode = 0;
     if (request.resourceTypes <= 0
         || static_cast<uint32_t>(request.resourceTypes) > OHOS::DevStandbyMgr::MAX_ALLOW_TYPE_NUMBER) {
-        errCode = ERR_RESOURCE_TYPES_INVALID;
-        ::taihe::set_business_error(errCode, HandleParamErr(errCode));
+        HandleParamErr(ERR_RESOURCE_TYPES_INVALID);
         return false;
     }
     if (request.uid < 0) {
-        errCode = ERR_UID_INVALID;
-        ::taihe::set_business_error(errCode, HandleParamErr(errCode));
+        HandleParamErr(ERR_UID_INVALID);
         return false;
     }
     if (request.name.empty()) {
-        errCode = ERR_NAME_INVALID_OR_EMPTY;
-        ::taihe::set_business_error(errCode, HandleParamErr(errCode));
+        HandleParamErr(ERR_NAME_INVALID_OR_EMPTY);
         return false;
     }
     return true;
@@ -100,7 +132,7 @@ bool VerifyAniResourceRequest(::ohos::resourceschedule::deviceStandby::ResourceR
         resourceTypes, allowInfoArray, ReasonCodeEnum::REASON_APP_API);
     std::vector<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo> allowLists;
     if (ret != ERR_OK) {
-        ::taihe::set_business_error(ret, HandleParamErr(ret));
+        HandleErrCode(ret);
         return ::taihe::array<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo>(allowLists);
     }
     for (const auto& allowInfo : allowInfoArray) {
@@ -118,7 +150,7 @@ void requestExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceR
     sptr<OHOS::DevStandbyMgr::ResourceRequest> resourceRequest = GenResourceRequest(request);
     int32_t ret = StandbyServiceClient::GetInstance().ApplyAllowResource(resourceRequest);
     if (ret != ERR_OK) {
-        ::taihe::set_business_error(ret, HandleParamErr(ret));
+        HandleErrCode(ret);
     }
 }
 
@@ -128,7 +160,7 @@ void releaseExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceR
     sptr<OHOS::DevStandbyMgr::ResourceRequest> resourceRequest = GenResourceRequest(request);
     int32_t ret = StandbyServiceClient::GetInstance().UnapplyAllowResource(resourceRequest);
     if (ret != ERR_OK) {
-        ::taihe::set_business_error(ret, HandleParamErr(ret));
+        HandleErrCode(ret);
     }
 }
 
@@ -137,7 +169,7 @@ bool isDeviceInStandby()
     bool isStandby;
     int32_t ret = StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby);
     if (ret != ERR_OK) {
-        ::taihe::set_business_error(ret, HandleParamErr(ret));
+        HandleErrCode(ret);
         return false;
     }
     return isStandby;
