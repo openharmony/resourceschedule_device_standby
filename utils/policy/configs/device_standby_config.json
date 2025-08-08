@@ -21,9 +21,5 @@
   "strategy_list": {},
   "halfhour_switch_setting": {
   },
-  "pkg_type": {
-    "701": [
-      "com.microtech.aidexxohos"
-    ]
-  }
+  "pkg_type": {}
 }
