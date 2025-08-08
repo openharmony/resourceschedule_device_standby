@@ -48,3 +48,5 @@ function getExemptedAppsSync(resourceTypes: i32): Array<ExemptedAppInfo>;
 function requestExemptionResource(request: ResourceRequest): void; 
 
 function releaseExemptionResource(request: ResourceRequest): void;
+
+function isDeviceInStandby(): bool;
