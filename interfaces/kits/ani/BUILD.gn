@@ -56,7 +56,7 @@ taihe_shared_library("device_standby_ani") {
 
   deps = [
     ":run_taihe",
-    ""${standby_interfaces_path}/innerkits:standby_innerkits",
+    "${standby_interfaces_path}/innerkits:standby_innerkits",
     "${standby_service_frameworks_path}:standby_fwk",
   ]
 
@@ -83,12 +83,19 @@ generate_static_abc("device_standby_abc") {
   dependencies = [ ":run_taihe" ]
 }
 
-ohos_prebuilt_etc("device_standby") {
-  source = "${target_out_dir}/reminder_agent_manager_abc.abc"
+ohos_prebuilt_etc("device_standby_etc") {
+  source = "${target_out_dir}/device_standby_abc.abc"
   module_install_dir = "framework"
   part_name = "${standby_service_part_name}"
   subsystem_name = "${subsystem_name}"
   deps = [
     ":device_standby_abc",
+  ]
+}
+
+group("device_standby_taihe") {
+  deps = [
+    ":device_standby_ani",
+    ":device_standby_etc",
   ]
 }

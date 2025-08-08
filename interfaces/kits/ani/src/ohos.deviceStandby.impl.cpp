@@ -14,7 +14,7 @@
  */
 
 #include "ohos.resourceschedule.deviceStandby.proj.hpp"
-#include "ohos.resourceschedule.deviceStandby.hpp"
+#include "ohos.resourceschedule.deviceStandby.impl.hpp"
 #include "taihe/runtime.hpp"
 #include "taihe/optional.hpp"
 #include "stdexcept"
@@ -40,7 +40,7 @@ std::string HandleParamErr(int32_t errCode)
     auto iter = saErrCodeMsgMap.find(errCode);
     if (iter != saErrCodeMsgMap.end()) {
         std::string errMessage = "BussinessError ";
-        errMessage.append(": ").append(iter->second);
+        errMessage.append(std::to_string(errCode)).append(": ").append(iter->second);
         return errMessage;
     }
     iter = paramErrCodeMsgMap.find(errCode);
