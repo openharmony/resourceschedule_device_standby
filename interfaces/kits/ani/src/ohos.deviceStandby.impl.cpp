@@ -13,20 +13,20 @@
  * limitations under the License.
  */
 
-#include "ohos.reminderAgentManager.manager.proj.hpp"
-#include "ohos.reminderAgentManager.manager.impl.hpp"
+#include "ohos.resourceschedule.deviceStandby.proj.hpp"
+#include "ohos.resourceschedule.deviceStandby.hpp"
 #include "taihe/runtime.hpp"
 #include "taihe/optional.hpp"
 #include "stdexcept"
 
-#include "standby_service_log.h"
 #include "standby_service_client.h"
+#include "standby_service_log.h"
 #include "standby_service_errors.h"
 #include "allow_type.h"
 
 using namespace taihe;
-using namespace OHOS;
 using namespace ohos::resourceschedule::deviceStandby;
+using namespace OHOS;
 using namespace OHOS::DevStandbyMgr;
 
 namespace {
@@ -52,12 +52,12 @@ std::string HandleParamErr(int32_t errCode)
     return "Inner error.";
 }
 
-::taihe::array<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo> GenAniExemptedAppInfo(
+::taihe::optional<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo> GenAniExemptedAppInfo(
     const OHOS::DevStandbyMgr::AllowInfo& allowInfo)
 {
     ::ohos::resourceschedule::deviceStandby::ExemptedAppInfo exemptedAppInfo {
         .resourceTypes = allowInfo.GetAllowType(),
-        .name = std::string(allowInfo.GetName().c_str()),
+        .name = std::string((allowInfo.GetName()).c_str()),
         .duration = allowInfo.GetDuration()
     };
     return ::taihe::optional<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo>::make(exemptedAppInfo);
@@ -67,8 +67,8 @@ sptr<OHOS::DevStandbyMgr::ResourceRequest> GenResourceRequest(
     ::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
 {
     return new (std::nothrow) OHOS::DevStandbyMgr::ResourceRequest(request.resourceTypes, request.uid,
-        std::string(request.name.c_str()), request.duration,
-        std::string(request.reason.c_str()), OHOS::DevStandbyMgr::ReasonCodeEnum::REASON_APP_API);
+        std::string((request.name).c_str()), request.duration,
+        std::string((request.reason).c_str()), OHOS::DevStandbyMgr::ReasonCodeEnum::REASON_APP_API);
 }
 
 bool VerifyAniResourceRequest(::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
@@ -76,7 +76,7 @@ bool VerifyAniResourceRequest(::ohos::resourceschedule::deviceStandby::ResourceR
     int32_t errCode = 0;
     if (request.resourceTypes <= 0
         || static_cast<uint32_t>(request.resourceTypes) > OHOS::DevStandbyMgr::MAX_ALLOW_TYPE_NUMBER) {
-        errCode = ERR_RESOURCE_TYPES_INVALID：
+        errCode = ERR_RESOURCE_TYPES_INVALID;
         ::taihe::set_business_error(errCode, HandleParamErr(errCode));
         return false;
     }
@@ -85,7 +85,7 @@ bool VerifyAniResourceRequest(::ohos::resourceschedule::deviceStandby::ResourceR
         ::taihe::set_business_error(errCode, HandleParamErr(errCode));
         return false;
     }
-    if (request.name < 0) {
+    if (request.name.empty()) {
         errCode = ERR_NAME_INVALID_OR_EMPTY;
         ::taihe::set_business_error(errCode, HandleParamErr(errCode));
         return false;
@@ -138,9 +138,9 @@ bool isDeviceInStandby()
     int32_t ret = StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby);
     if (ret != ERR_OK) {
         ::taihe::set_business_error(ret, HandleParamErr(ret));
-        reutrn false;
+        return false;
     }
-    return true;
+    return isStandby;
 }
 } // namespace
 
