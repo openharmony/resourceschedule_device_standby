@@ -34,7 +34,21 @@
 void requestExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
 {
     VerifyAniResourceRequest(request);
-    
+    sptr<OHOS::DevStandbyMgr::ResourceRequest> resourceRequest = GenResourceRequest(request);
+    int32_t ret = StandbyServiceClient::GetInstance().ApplyAllowResource(resourceRequest);
+    if (ret != ERR_OK) {
+        ::taihe::set_business_error(ret, HandleParamErr(ret));
+    }
+}
+
+void releaseExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
+{
+    VerifyAniResourceRequest(request);
+    sptr<OHOS::DevStandbyMgr::ResourceRequest> resourceRequest = GenResourceRequest(request);
+    int32_t ret = StandbyServiceClient::GetInstance().UnapplyAllowResource(resourceRequest);
+    if (ret != ERR_OK) {
+        ::taihe::set_business_error(ret, HandleParamErr(ret));
+    }
 }
 
 // Since these macros are auto-generate, lint will cause false positive.
