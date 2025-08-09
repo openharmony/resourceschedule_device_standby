@@ -106,7 +106,7 @@ bool JsonUtils::CreateNodeFile(const std::string &filePath)
     }
     int32_t fd = open(fullpath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     if (fd < ERR_OK) {
-        STANDBYSERVICE_LOGE("Fail to open file: %{public}s", fullpath.c_str());
+        STANDBYSERVICE_LOGE("Fail to open file");
         return false;
     }
     close(fd);
@@ -196,7 +196,6 @@ bool JsonUtils::GetFileContent(const std::string& filePath, std::string& content
     if (!GetRealPath(filePath, fullPath)) {
         return false;
     }
-    STANDBYSERVICE_LOGD("full path of standby service config file is: %{public}s ", fullPath.c_str());
     std::ifstream fin(fullPath);
     if (!fin.is_open()) {
         return false;
