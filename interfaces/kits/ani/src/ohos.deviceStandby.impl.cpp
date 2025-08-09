@@ -125,7 +125,7 @@ bool VerifyAniResourceRequest(::ohos::resourceschedule::deviceStandby::ResourceR
     return true;
 }
 
-::taihe::array<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo> getExemptedAppsSync(int32_t resourceTypes)
+::taihe::array<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo> GetExemptedAppsSync(int32_t resourceTypes)
 {
     std::vector<AllowInfo> allowInfoArray {};
     int32_t ret = StandbyServiceClient::GetInstance().GetAllowList(
@@ -144,7 +144,7 @@ bool VerifyAniResourceRequest(::ohos::resourceschedule::deviceStandby::ResourceR
     return ::taihe::array<::ohos::resourceschedule::deviceStandby::ExemptedAppInfo>(allowLists);
 }
 
-void requestExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
+void RequestExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
 {
     VerifyAniResourceRequest(request);
     sptr<OHOS::DevStandbyMgr::ResourceRequest> resourceRequest = GenResourceRequest(request);
@@ -154,7 +154,7 @@ void requestExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceR
     }
 }
 
-void releaseExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
+void ReleaseExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceRequest const& request)
 {
     VerifyAniResourceRequest(request);
     sptr<OHOS::DevStandbyMgr::ResourceRequest> resourceRequest = GenResourceRequest(request);
@@ -178,8 +178,8 @@ bool IsDeviceInStandby()
 
 // Since these macros are auto-generate, lint will cause false positive.
 // NOLINTBEGIN
-TH_EXPORT_CPP_API_getExemptedAppsSync(getExemptedAppsSync);
-TH_EXPORT_CPP_API_requestExemptionResource(requestExemptionResource);
-TH_EXPORT_CPP_API_releaseExemptionResource(releaseExemptionResource);
+TH_EXPORT_CPP_API_getExemptedAppsSync(GetExemptedAppsSync);
+TH_EXPORT_CPP_API_requestExemptionResource(RequestExemptionResource);
+TH_EXPORT_CPP_API_releaseExemptionResource(ReleaseExemptionResource);
 TH_EXPORT_CPP_API_isDeviceInStandby(IsDeviceInStandby);
 // NOLINTEND
