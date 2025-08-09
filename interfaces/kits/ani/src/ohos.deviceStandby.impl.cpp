@@ -164,7 +164,7 @@ void releaseExemptionResource(::ohos::resourceschedule::deviceStandby::ResourceR
     }
 }
 
-bool isDeviceInStandby()
+bool IsDeviceInStandby()
 {
     bool isStandby;
     int32_t ret = StandbyServiceClient::GetInstance().IsDeviceInStandby(isStandby);
@@ -181,5 +181,5 @@ bool isDeviceInStandby()
 TH_EXPORT_CPP_API_getExemptedAppsSync(getExemptedAppsSync);
 TH_EXPORT_CPP_API_requestExemptionResource(requestExemptionResource);
 TH_EXPORT_CPP_API_releaseExemptionResource(releaseExemptionResource);
-TH_EXPORT_CPP_API_isDeviceInStandby(isDeviceInStandby);
+TH_EXPORT_CPP_API_isDeviceInStandby(IsDeviceInStandby);
 // NOLINTEND
