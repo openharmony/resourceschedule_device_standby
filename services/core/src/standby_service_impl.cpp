@@ -26,6 +26,7 @@
 #include <string>
 #include <unique_fd.h>
 #include <vector>
+#include <cinttypes>
 
 #include "ability_manager_helper.h"
 #include "access_token.h"
@@ -1247,7 +1248,7 @@ void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
 
 void StandbyServiceImpl::HandleBTServiceEvent(const int64_t value, const std::string &sceneInfo)
 {
-    STANDBYSERVICE_LOGI("HandleBTSerciceEvent value: %{public}lld", value);
+    STANDBYSERVICE_LOGI("HandleBTSerciceEvent value: %{public}" PRId64, value);
     nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
     if (payload.is_discarded()) {
         STANDBYSERVICE_LOGE("parse json failed");
@@ -1285,7 +1286,7 @@ void StandbyServiceImpl::HandleBTServiceEvent(const int64_t value, const std::st
 
 void StandbyServiceImpl::HandleBrokerGattConnect(const int64_t value, const std::string &sceneInfo)
 {
-    STANDBYSERVICE_LOGI("HandleBrokerGattConnect value: %{public}lld", value);
+    STANDBYSERVICE_LOGI("HandleBrokerGattConnect value: %{public}" PRId64, value);
     nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
     if (payload.is_discarded()) {
         STANDBYSERVICE_LOGE("parse json failed");
