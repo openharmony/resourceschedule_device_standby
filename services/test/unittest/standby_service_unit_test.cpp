@@ -184,7 +184,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_002, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level1)
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level0)
 {
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
     sptr<IStandbyServiceSubscriber> subscriber = new (std::nothrow) StandbyServiceSubscriberStub();
@@ -224,7 +224,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_003, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_004, TestSize.Level1)
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_004, TestSize.Level0)
 {
     StandbyServiceImpl::GetInstance()->isServiceReady_ = false;
     StandbyServiceImpl::GetInstance()->DayNightSwitchCallback();
@@ -338,7 +338,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_007, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_008, TestSize.Level1)
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_008, TestSize.Level0)
 {
     StandbyServiceImpl::GetInstance()->ParsePersistentData();
     auto allowRecord = std::make_shared<AllowRecord>(0, 0, "name", AllowType::NETWORK);
@@ -389,7 +389,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_009, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_010, TestSize.Level1)
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_010, TestSize.Level0)
 {
     StandbyServiceImpl::GetInstance()->registerPlugin_ = nullptr;
     StandbyServiceImpl::GetInstance()->UninitReadyState();
@@ -485,7 +485,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_015, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_016, TestSize.Level1)
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_016, TestSize.Level0)
 {
     StandbyServiceImpl::GetInstance()->standbyStateManager_->TransitToStateInner(StandbyState::WORKING);
     SleepForFC();
@@ -516,7 +516,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_016, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level1)
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level0)
 {
     auto allowRecord = std::make_shared<AllowRecord>(DEFAULT_UID, 0, DEFAULT_BUNDLENAME, AllowType::NETWORK);
     allowRecord->allowTimeList_.emplace_back(AllowTime{0, INT64_MAX, "reason"});
@@ -569,7 +569,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_018, TestSize.Level1)
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_018, TestSize.Level0)
 {
     std::vector<std::string> argsInStr {};
     std::string result {};
@@ -673,7 +673,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_021, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_022, TestSize.Level1)
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_022, TestSize.Level0)
 {
     std::list<SystemProcessInfo> systemProcessInfos {};
     AbilityManagerHelper::GetInstance()->GetRunningSystemProcess(systemProcessInfos);
