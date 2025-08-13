@@ -872,7 +872,7 @@ ErrCode StandbyServiceImpl::UnapplyAllowResource(ResourceRequest& resourceReques
 void StandbyServiceImpl::UnapplyAllowResInner(int32_t uid, const std::string& name,
     uint32_t allowType, bool removeAll)
 {
-    STANDBYSERVICE_LOGI("start UnapplyAllowResInner, uid is %{public}d, allowType is %{public}d, removeAll is "\
+    STANDBYSERVICE_LOGD("start UnapplyAllowResInner, uid is %{public}d, allowType is %{public}d, removeAll is "\
         "%{public}d", uid, allowType, removeAll);
     std::string keyStr = std::to_string(uid) + "_" + name;
 

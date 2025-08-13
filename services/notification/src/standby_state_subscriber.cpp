@@ -168,8 +168,6 @@ void StandbyStateSubscriber::NotifyAllowChangedByCallback(int32_t uid, const std
 
 void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& module, uint32_t level)
 {
-    STANDBYSERVICE_LOGI("[PowerOverused] Callback process entry: starting to match subscriber, "
-        "module: %{public}s, level: %{public}u.", module.c_str(), level);
     UpdateCallBackMap(modulePowerLock_, modulePowerMap_, module, level);
 
     std::lock_guard<std::mutex> lock(subscriberLock_);
@@ -189,8 +187,6 @@ void StandbyStateSubscriber::NotifyPowerOverusedByCallback(const std::string& mo
 
 void StandbyStateSubscriber::NotifyLowpowerActionByCallback(const std::string& module, uint32_t action)
 {
-    STANDBYSERVICE_LOGI("[ActionChanged] Callback process entry: starting to match subscriber, "
-        "module: %{public}s, action: %{public}u.", module.c_str(), action);
     UpdateCallBackMap(moduleActionLock_, moduleActionMap_, module, action);
 
     std::lock_guard<std::mutex> lock(subscriberLock_);

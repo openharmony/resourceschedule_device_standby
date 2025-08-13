@@ -137,10 +137,10 @@ napi_value Common::GetCallbackErrorValue(napi_env env, const int32_t errCode, co
 
 void Common::HandleErrCode(const napi_env &env, int32_t errCode)
 {
-    STANDBYSERVICE_LOGI("HandleErrCode errCode = %{public}d", errCode);
     if (errCode == ERR_OK) {
         return;
     }
+    STANDBYSERVICE_LOGI("HandleErrCode errCode = %{public}d", errCode);
     std::string errMsg = FindErrMsg(env, errCode);
     int32_t errCodeInfo = FindErrCode(env, errCode);
     if (errMsg != "") {
@@ -257,7 +257,7 @@ napi_value Common::GetInt32Value(const napi_env& env, const napi_value& value, i
         return nullptr;
     }
     NAPI_CALL(env, napi_get_value_int32(env, value, &result));
-    STANDBYSERVICE_LOGI("GetInt32Value result: %{public}d", static_cast<int32_t>(result));
+    STANDBYSERVICE_LOGD("GetInt32Value result: %{public}d", static_cast<int32_t>(result));
 
     return Common::NapiGetNull(env);
 }
