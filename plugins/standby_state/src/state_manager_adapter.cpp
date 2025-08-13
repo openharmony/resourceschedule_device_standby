@@ -227,7 +227,7 @@ uint32_t StateManagerAdapter::GetPreState()
 
 ErrCode StateManagerAdapter::StartEvalCurrentState(const ConstraintEvalParam& params)
 {
-    STANDBYSERVICE_LOGI("start evalution current state, current: %{public}u, %{public}u, next:"\
+    STANDBYSERVICE_LOGD("start evalution current state, current: %{public}u, %{public}u, next:"\
         " %{public}u, %{public}u", params.curState_, params.curPhase_, params.nextState_,
         params.nextPhase_);
     isEvalution_ = true;
