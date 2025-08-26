@@ -690,6 +690,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_022, TestSize.Level0)
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, 0, applicationInfo);
     EXPECT_EQ(BundleManagerHelper::GetInstance()->bundleMgr_, nullptr);
 
+    StandbyServiceImpl::GetInstance()->RegisterCommEventObserver();
     EXPECT_NE(StandbyServiceImpl::GetInstance()->commonEventObserver_, nullptr);
     EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
     StandbyServiceImpl::GetInstance()->commonEventObserver_->OnReceiveEvent(eventData);

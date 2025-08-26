@@ -1196,6 +1196,7 @@ void WEAK_FUNC StandbyServiceImpl::HandleCallStateChanged(const std::string &sce
     nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
     if (payload.is_discarded()) {
         STANDBYSERVICE_LOGE("parse json failed");
+        return;
     }
     int32_t state = -1;
     if (payload.at("state").is_string()) {
