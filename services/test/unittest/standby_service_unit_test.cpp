@@ -535,13 +535,13 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level0)
         ReasonCodeEnum::REASON_NATIVE_API);
     StandbyServiceImpl::GetInstance()->GetAllowListInner(0, allowInfoList,
         ReasonCodeEnum::REASON_NATIVE_API);
-    StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+    StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUM, allowInfoList,
         ReasonCodeEnum::REASON_APP_API);
-    StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+    StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUM, allowInfoList,
         ReasonCodeEnum::REASON_NATIVE_API);
-    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUM, allowInfoList,
         true, true);
-    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUM, allowInfoList,
         true, false);
     ResourceRequest resourceRequest;
     StandbyServiceImpl::GetInstance()->UnapplyAllowResource(resourceRequest);
@@ -553,11 +553,11 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_017, TestSize.Level0)
     allowRecord->allowTimeList_.emplace_back(AllowTime{0, INT64_MAX, "reason"});
     allowRecord->allowTimeList_.emplace_back(AllowTime{1, INT64_MAX, "reason"});
     StandbyServiceImpl::GetInstance()->allowInfoMap_.emplace(DEFAULT_KEY, allowRecord);
-    StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+    StandbyServiceImpl::GetInstance()->GetTemporaryAllowList(MAX_ALLOW_TYPE_NUM, allowInfoList,
         ReasonCodeEnum::REASON_NATIVE_API);
-    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUM, allowInfoList,
         true, true);
-    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUMBER, allowInfoList,
+    StandbyServiceImpl::GetInstance()->GetPersistAllowList(MAX_ALLOW_TYPE_NUM, allowInfoList,
         false, true);
     StandbyServiceImpl::GetInstance()->allowInfoMap_.clear();
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->allowInfoMap_.size(), 0);
@@ -690,6 +690,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_022, TestSize.Level0)
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, 0, applicationInfo);
     EXPECT_EQ(BundleManagerHelper::GetInstance()->bundleMgr_, nullptr);
 
+    StandbyServiceImpl::GetInstance()->RegisterCommEventObserver();
     EXPECT_NE(StandbyServiceImpl::GetInstance()->commonEventObserver_, nullptr);
     EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
     StandbyServiceImpl::GetInstance()->commonEventObserver_->OnReceiveEvent(eventData);
