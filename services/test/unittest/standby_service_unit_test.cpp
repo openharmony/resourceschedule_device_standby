@@ -1209,7 +1209,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_053, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_CLOSED));
     EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE)],
         false);
-    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_CLOSing));
+    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_CLOSING));
     EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE)],
         false);
 }
