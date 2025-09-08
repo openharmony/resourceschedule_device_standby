@@ -1236,7 +1236,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_054, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->HandleCallStateChanged(R"({"state":"6","uid":"test"})");
     EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType
         ::TELEPHONE_STATE_CHANGE)], false);
-    StandbyServiceImpl::GetInstance()->HandleCallStateChanged(R"({"state":"","uid":"test"})");
+    StandbyServiceImpl::GetInstance()->HandleCallStateChanged(R"({"state":"8","uid":"test"})");
     EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType
         ::TELEPHONE_STATE_CHANGE)], false);
 }
