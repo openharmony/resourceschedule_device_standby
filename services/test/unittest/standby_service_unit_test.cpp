@@ -1195,6 +1195,53 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_049, TestSize.Level1)
 }
 
 /**
+ * @tc.name: StandbyServiceUnitTest_053
+ * @tc.desc: test HandleP2PStateChanged of StandbyServiceImpl.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_053, TestSize.Level1)
+{
+    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_IDLE));
+    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_NONE));
+    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE)],
+        false);
+    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_CLOSED));
+    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE)],
+        false);
+    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_CLOSing));
+    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE)],
+        false);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_054
+ * @tc.desc: test HandleCallStateChanged of StandbyServiceImpl.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_054, TestSize.Level1)
+{
+    DeviceStateCache::GetInstance()->deviceState_
+        [static_cast<int32_t>(DeviceStateType::TELEPHONE_STATE_CHANGE)] = false;
+    StandbyServiceImpl::GetInstance()->HandleCallStateChanged("xx");
+    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType
+        ::TELEPHONE_STATE_CHANGE)], false);
+    StandbyServiceImpl::GetInstance()->HandleCallStateChanged(R"({"state":"10","uid":"test"})");
+    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType
+        ::TELEPHONE_STATE_CHANGE)], true);
+    StandbyServiceImpl::GetInstance()->HandleCallStateChanged(R"({"state":"-1","uid":"test"})");
+    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType
+        ::TELEPHONE_STATE_CHANGE)], false);
+    StandbyServiceImpl::GetInstance()->HandleCallStateChanged(R"({"state":"6","uid":"test"})");
+    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType
+        ::TELEPHONE_STATE_CHANGE)], false);
+    StandbyServiceImpl::GetInstance()->HandleCallStateChanged(R"({"state":"","uid":"test"})");
+    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType
+        ::TELEPHONE_STATE_CHANGE)], false);
+}
+
+/**
  * @tc.name: StandbyServiceUnitTest_057
  * @tc.desc: test nat interval changed.
  * @tc.type: FUNC
