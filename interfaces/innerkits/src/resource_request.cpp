@@ -36,6 +36,7 @@ ResourceRequest* ResourceRequest::Unmarshalling(Parcel& in)
     auto info = new (std::nothrow) ResourceRequest();
     if (info != nullptr && !info->ReadFromParcel(in)) {
         STANDBYSERVICE_LOGE("read from parcel failed");
+        delete info;
         info = nullptr;
     }
     return info;
