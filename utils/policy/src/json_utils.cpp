@@ -88,7 +88,7 @@ bool JsonUtils::DumpJsonValueToFile(const nlohmann::json& jsonValue, const std::
         STANDBYSERVICE_LOGE("open file: %{public}s failed.", filePath.c_str());
         return false;
     }
-    fout << jsonValue.dump(JSON_FORMAT).c_str() << std::endl;
+    fout << jsonValue.dump(JSON_FORMAT, ' ', false, nlohmann::json::error_handler_t::replace).c_str() << std::endl;
     fout.close();
     return true;
 }
