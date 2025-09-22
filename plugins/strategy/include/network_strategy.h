@@ -29,12 +29,12 @@ public:
 protected:
     virtual void SetFirewallAllowedList(const std::vector<uint32_t>& uids, bool isAdded) override;
     void UpdateDeviceIdleIptable(bool enableFirewall);
+    void StartNetLimit(const StandbyMessage& message);
+    void StopNetLimit(const StandbyMessage& message);
 
 private:
     void UpdateAllowedList(const StandbyMessage& message);
     void UpdateNetResourceConfig(const StandbyMessage& message);
-    void StartNetLimit(const StandbyMessage& message);
-    void StopNetLimit(const StandbyMessage& message);
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
