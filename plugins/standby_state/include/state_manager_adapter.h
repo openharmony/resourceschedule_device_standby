@@ -62,7 +62,7 @@ protected:
     void DumpActivateMotion(const std::vector<std::string>& argsInStr, std::string& result);
     void DumpResetState(const std::vector<std::string>& argsInStr, std::string& result);
     void RecordStateTransition();
-    void HandleForceSleepEvent(const std::string& action);
+    void TransitHoldSleepState();
 protected:
     std::shared_ptr<BaseState> darkStatePtr_ {nullptr};
     std::shared_ptr<BaseState> maintStatePtr_ {nullptr};

@@ -620,6 +620,8 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0025, TestSize.Level1)
     DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
     message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_DISCHARGING;
     DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
+    message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_ENTER_FORCE_SLEEP;
+    DelayedSingleton<StateManagerAdapter>::GetInstance()->HandleCommonEvent(message);
     EXPECT_TRUE(DelayedSingleton<StateManagerAdapter>::GetInstance()->indexToState_.size() != 0);
 }
 
