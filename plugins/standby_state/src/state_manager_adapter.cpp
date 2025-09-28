@@ -120,9 +120,8 @@ void StateManagerAdapter::HandleCommonEvent(const StandbyMessage& message)
     if (message.action_ == COMMON_EVENT_USER_SLEEP_STATE_CHANGED) {
         HandleUserSleepState(message);
     }
-    if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_ENTER_FORCE_SLEEP ||
-        message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_EXIT_FORCE_SLEEP) {
-        HandleForceSleepEvent(message.action_);
+    if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_ENTER_FORCE_SLEEP) {
+        TransitHoldSleepState();
     }
     if (curStatePtr_->GetCurState() != StandbyState::WORKING) {
         return;
@@ -142,12 +141,7 @@ void StateManagerAdapter::HandleUserSleepState(const StandbyMessage& message)
     isSleepState_ = message.want_->GetBoolParam("isSleep", false);
     STANDBYSERVICE_LOGI("standby start handle user sleep state, recv sleepState is %{public}d", isSleepState_);
     if (isSleepState_) {
-        if (curStatePtr_->GetCurState() != StandbyState::SLEEP) {
-            UnblockCurrentState();
-            TransitToStateInner(StandbyState::SLEEP);
-        }
-        curStatePtr_->StopTimedTask(TRANSIT_NEXT_STATE_TIMED_TASK);
-        curStatePtr_->StopTimedTask(REPEATED_MOTION_DETECTION_TASK);
+        TransitHoldSleepState();
     } else {
         if (curStatePtr_->GetCurState() == StandbyState::SLEEP) {
             curStatePtr_->BeginState();
@@ -475,22 +469,15 @@ void StateManagerAdapter::DumpActivateMotion(const std::vector<std::string>& arg
     }
 }
 
-void StateManagerAdapter::HandleForceSleepEvent(const std::string& action)
+void StateManagerAdapter::TransitHoldSleepState()
 {
-    STANDBYSERVICE_LOGI("standby handle force sleep event, recv action is %{public}s", action.c_str());
     StandbyHitraceChain traceChain(__func__);
-    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_ENTER_FORCE_SLEEP) {
-        if (curStatePtr_->GetCurState() != StandbyState::SLEEP) {
-            UnblockCurrentState();
-            TransitToStateInner(StandbyState::SLEEP);
-        }
-        curStatePtr_->StopTimedTask(TRANSIT_NEXT_STATE_TIMED_TASK);
-        curStatePtr_->StopTimedTask(REPEATED_MOTION_DETECTION_TASK);
-    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_EXIT_FORCE_SLEEP) {
-        if (curStatePtr_->GetCurState() == StandbyState::SLEEP) {
-            curStatePtr_->BeginState();
-        }
+    if (curStatePtr_->GetCurState() != StandbyState::SLEEP) {
+        UnblockCurrentState();
+        TransitToStateInner(StandbyState::SLEEP);
     }
+    curStatePtr_->StopTimedTask(TRANSIT_NEXT_STATE_TIMED_TASK);
+    curStatePtr_->StopTimedTask(REPEATED_MOTION_DETECTION_TASK);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
