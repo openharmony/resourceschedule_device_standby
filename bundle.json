@@ -47,6 +47,7 @@
         "napi",
         "netmanager_base",
         "power_manager",
+        "runtime_core",
         "safwk",
         "samgr",
         "sensor",
@@ -64,7 +65,8 @@
           ],
           "fwk_group" : [
             "//foundation/resourceschedule/device_standby/frameworks:standby_fwk",
-            "//foundation/resourceschedule/device_standby/interfaces:standby_interfaces"
+            "//foundation/resourceschedule/device_standby/interfaces:standby_interfaces",
+            "//foundation/resourceschedule/device_standby/interfaces/kits/ani:device_standby_taihe"
           ],
           "service_group" : [
             "//foundation/resourceschedule/device_standby/sa_profile:device_standby_sa_profile",
