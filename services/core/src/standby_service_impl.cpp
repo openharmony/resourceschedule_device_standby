@@ -143,10 +143,6 @@ void StandbyServiceImpl::InitReadyState()
 
 void StandbyServiceImpl::AddWatchDog()
 {
-    if (!handler_) {
-        STANDBYSERVICE_LOGE("standby msg handler is null");
-        return;
-    }
     int32_t abnoramlTime = StandbyConfigManager::GetInstance()->GetStandbyParam(TAG_PROCESS_ABNORMAL_TIME);
     abnoramlTime = (abnoramlTime <= 0) ? PROCESS_ABNORMAL_TIME : abnoramlTime;
     int32_t ret = HiviewDFX::Watchdog::GetInstance().AddThread(STANDBY_MSG_HANDLER, handler_, abnoramlTime);

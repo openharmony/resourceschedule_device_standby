@@ -90,6 +90,7 @@ std::shared_ptr<StandbyConfigManager> StandbyConfigManager::GetInstance()
 ErrCode StandbyConfigManager::Init()
 {
     STANDBYSERVICE_LOGI("start to read config");
+    std::lock_guard<std::mutex> lock(configMutex_);
     LoadGetExtConfigFunc();
     GetAndParseStandbyConfig();
     GetAndParseStrategyConfig();
@@ -467,6 +468,7 @@ template<typename T> std::set<T> StandbyConfigManager::GetEligibleAllowConfig(co
     uint32_t condition, bool isAllow, bool isApp, const std::function<void(bool, std::set<T>&,
     const DefaultResourceConfig&)>& func)
 {
+    std::lock_guard<std::mutex> lock(configMutex_);
     if (defaultResourceConfigMap_.find(paramName) == defaultResourceConfigMap_.end()) {
         return {};
     }
