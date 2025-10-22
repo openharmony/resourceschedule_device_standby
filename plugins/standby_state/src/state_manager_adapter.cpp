@@ -384,8 +384,9 @@ void StateManagerAdapter::OnScreenOffHalfHourInner(bool scrOffHalfHourCtrl, bool
 void StateManagerAdapter::SendNotification(uint32_t preState, bool needDispatchEvent)
 {
     uint32_t curState = curStatePtr_->GetCurState();
-    STANDBYSERVICE_LOGI("state transit succeed, previous is %{public}s, current is %{public}s",
-        STATE_NAME_LIST[preState].c_str(), STATE_NAME_LIST[curState].c_str());
+    STANDBYSERVICE_LOGI("state transit succeed, previous is %{public}s, current is %{public}s,"
+        "needDispatchEvent: %{public}d", STATE_NAME_LIST[preState].c_str(),
+        STATE_NAME_LIST[curState].c_str(), static_cast<int32_t>(needDispatchEvent));
     if (needDispatchEvent) {
         StandbyMessage message(StandbyMessageType::STATE_TRANSIT);
         message.want_ = AAFwk::Want{};

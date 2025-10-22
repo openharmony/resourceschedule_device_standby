@@ -120,16 +120,17 @@ ErrCode BaseNetworkStrategy::UpdateFirewallAllowList()
         return ERR_STRATEGY_DEPENDS_SA_NOT_AVAILABLE;
     }
     SetFirewallStatus(true);
+    isFirewallEnabled_ = true;
     return ERR_OK;
 }
 
 ErrCode BaseNetworkStrategy::EnableNetworkFirewall(const StandbyMessage& message)
 {
     if (isFirewallEnabled_) {
-        STANDBYSERVICE_LOGD("now is doze, do not need start net limit mode, repeat process");
+        STANDBYSERVICE_LOGW("now is doze, do not need start net limit mode, repeat process");
         return ERR_STANDBY_STRATEGY_STATE_REPEAT;
     }
-    STANDBYSERVICE_LOGD("start net limit mode");
+    STANDBYSERVICE_LOGI("start net limit mode");
     // if enter sleep state and app_res_deep phase, start net limit mode.
     if (auto ret = EnableNetworkFirewallInner(); ret != ERR_OK) {
         return ret;
@@ -343,11 +344,10 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
 
 ErrCode BaseNetworkStrategy::DisableNetworkFirewall(const StandbyMessage& message)
 {
-    if (!isFirewallEnabled_) {
-        return ERR_STANDBY_CURRENT_STATE_NOT_MATCH;
-    }
     uint32_t preState = static_cast<uint32_t>(message.want_->GetIntParam(PREVIOUS_STATE, 0));
     uint32_t curState = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_STATE, 0));
+    STANDBYSERVICE_LOGI("condition preState: %{public}ud, curState: %{public}ud, isFirewallEnabled_: %{public}d",
+        preState, curState, static_cast<int32_t>(isFirewallEnabled_));
     if ((curState == StandbyState::MAINTENANCE) && (preState == StandbyState::SLEEP)) {
         // restart net limit mode
         SetFirewallStatus(false);
