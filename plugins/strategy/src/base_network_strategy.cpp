@@ -127,7 +127,7 @@ ErrCode BaseNetworkStrategy::UpdateFirewallAllowList()
 ErrCode BaseNetworkStrategy::EnableNetworkFirewall(const StandbyMessage& message)
 {
     if (isFirewallEnabled_) {
-        STANDBYSERVICE_LOGW("now is doze, do not need start net limit mode, repeat process");
+        STANDBYSERVICE_LOGW("now is sleep, do not need start net limit mode, repeat process");
         return ERR_STANDBY_STRATEGY_STATE_REPEAT;
     }
     STANDBYSERVICE_LOGI("start net limit mode");
