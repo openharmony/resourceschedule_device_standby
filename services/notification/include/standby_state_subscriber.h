@@ -20,6 +20,7 @@
 #include <map>
 #include <memory>
 #include <algorithm>
+#include <atomic>
 
 #include "singleton.h"
 #include "iremote_object.h"
@@ -72,7 +73,7 @@ private:
     std::shared_ptr<IStateManagerAdapter> standbyStateManager_ {nullptr};
     std::unordered_map<std::string, uint32_t> modulePowerMap_;
     std::unordered_map<std::string, uint32_t> moduleActionMap_;
-    int32_t curDate_;
+    std::atomic<int32_t> curDate_;
 };
 
 class SubscriberDeathRecipient final : public IRemoteObject::DeathRecipient {

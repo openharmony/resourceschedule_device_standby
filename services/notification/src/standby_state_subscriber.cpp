@@ -34,7 +34,7 @@ namespace DevStandbyMgr {
 StandbyStateSubscriber::StandbyStateSubscriber()
 {
     deathRecipient_ = new (std::nothrow) SubscriberDeathRecipient();
-    curDate_ = TimeProvider::GetCurrentDate();
+    curDate_.store(TimeProvider::GetCurrentDate(), std::memory_order_relaxed);
 }
 
 StandbyStateSubscriber::~StandbyStateSubscriber() {}
@@ -229,7 +229,7 @@ void StandbyStateSubscriber::NotifyLowpowerActionOnRegister(const sptr<IStandbyS
     int32_t curDate = TimeProvider::GetCurrentDate();
     std::lock_guard<std::mutex> lock(moduleActionLock_);
     auto iter = moduleActionMap_.find(module);
-    if (curDate_ == curDate && iter != moduleActionMap_.end()) {
+    if (curDate_.load(std::memory_order_relaxed) == curDate && iter != moduleActionMap_.end()) {
         action = iter->second;
     }
 
@@ -245,7 +245,7 @@ void StandbyStateSubscriber::NotifyPowerOnRegister(const sptr<IStandbyServiceSub
     int32_t curDate = TimeProvider::GetCurrentDate();
     std::lock_guard<std::mutex> lock(modulePowerLock_);
     auto iter = modulePowerMap_.find(module);
-    if (curDate_ == curDate && iter != modulePowerMap_.end()) {
+    if (curDate_.load(std::memory_order_relaxed) == curDate && iter != modulePowerMap_.end()) {
         level = iter->second;
     }
 
@@ -280,9 +280,9 @@ void StandbyStateSubscriber::UpdateCallBackMap(std::mutex& moduleLock, std::unor
 {
     int32_t curDate = TimeProvider::GetCurrentDate();
     std::lock_guard<std::mutex> lock(moduleLock);
-    if (curDate_ != curDate) {
+    if (curDate_.load(std::memory_order_relaxed) != curDate) {
         STANDBYSERVICE_LOGI("Date has changed to %{public}d, module:%{public}s.", curDate, module.c_str());
-        curDate_ = curDate;
+        curDate_.store(curDate, std::memory_order_relaxed);
         callBackMap.clear();
     }
     callBackMap[module] = value;
