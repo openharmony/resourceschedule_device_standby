@@ -1250,8 +1250,8 @@ void StandbyServiceImpl::HandleBTServiceEvent(const int64_t value, const std::st
         STANDBYSERVICE_LOGE("parse json failed");
     }
     if (value == ResourceSchedule::ResType::BtServiceEvent::GATT_APP_REGISTER) {
-        if (!payload.contains("ACTION") || !payload.contains("ADDRESS") || !payload.contains("PID") ||
-            !payload.at("ACTION").is_string() || !payload.at("ADDRESS").is_string() || !payload.at("PID").is_string()) {
+        if (!payload.contains("ACTION") || !payload.contains("ADDRESS") || !payload.contains("UID") ||
+            !payload.at("ACTION").is_string() || !payload.at("ADDRESS").is_string() || !payload.at("UID").is_string()) {
             STANDBYSERVICE_LOGE("Bt Gatt Register info is valid");
             return;
         }
