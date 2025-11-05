@@ -299,7 +299,8 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_005, TestSize.Level1)
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-C", "dark_timeout", "60"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-D"}, result);
     StandbyServiceImpl::GetInstance()->ShellDumpInner({"-A", "--get", "127", "false", "true"}, result);
-
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-P", "--get", "127", "false", "true"}, result);
+    StandbyServiceImpl::GetInstance()->ShellDumpInner({"-P", "--allowlist", "127", "false", "true"}, result);
     auto allowRecord = std::make_shared<AllowRecord>(0, 0, "name", AllowType::NETWORK);
     allowRecord->allowTimeList_.emplace_back(AllowTime{0, INT64_MAX, "reason"});
     StandbyServiceImpl::GetInstance()->allowInfoMap_.emplace(DEFAULT_KEY, allowRecord);
