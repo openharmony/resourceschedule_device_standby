@@ -1638,7 +1638,7 @@ void StandbyServiceImpl::DumpUsage(std::string& result)
     "                                                            switch only be used after open debug switch\n"
     "    -C  {parameter name} {parameter value}             change config parameter, only can be used when debug\n"
     "    -P                                                 sending network limiting and restoring network broadcasts\n"
-    "        {--whitelist} {parameter value}                send whitelist changes event\n"
+    "        {--allowlist} {parameter value}                send allowlist changes event\n"
     "        {--ctrinetwork}                                send network limiting broadcasts\n"
     "        {--restorectrlnetwork}                         send restore network broadcasts\n";
 
@@ -1794,7 +1794,7 @@ void StandbyServiceImpl::DumpChangeConfigParam(const std::vector<std::string>& a
 
 void StandbyServiceImpl::DumpPushStrategyChange(const std::vector<std::string>& argsInStr, std::string& result)
 {
-    if (argsInStr[DUMP_SECOND_PARAM] == "--whitelist") {
+    if (argsInStr[DUMP_SECOND_PARAM] == "--allowlist") {
         StandbyStateSubscriber::GetInstance()->NotifyAllowChangedByCommonEvent(
             std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), argsInStr[DUMP_FOURTH_PARAM],
             std::atoi(argsInStr[DUMP_FIFTH_PARAM].c_str()), argsInStr[DUMP_SIXTH_PARAM] == "true");
