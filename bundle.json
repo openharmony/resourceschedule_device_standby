@@ -17,7 +17,8 @@
     ],
     "features": [
       "device_standby_plugin_enable",
-      "device_standby_realtime_timer_enable"
+      "device_standby_realtime_timer_enable",
+      "device_standby_firewall_timer_no_wakeup"
     ],
     "adapted_system_type": [
       "standard"

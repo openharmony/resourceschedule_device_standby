@@ -32,6 +32,9 @@ namespace OHOS {
 namespace DevStandbyMgr {
 namespace {
     constexpr int32_t MAX_DELAY_TIME_INTERVAL = 30 * 60 * 1000;
+#ifdef STANDBY_FIREWALL_TIMER_NO_WAKEUP
+    constexpr int32_t TIMER_TYPE_EXACT = 4;
+#endif
 }
 #ifdef STANDBY_POWER_MANAGER_ENABLE
 std::shared_ptr<PowerMgr::RunningLock> BaseState::standbyRunningLock_ = nullptr;
@@ -44,6 +47,8 @@ ErrCode BaseState::Init(const std::shared_ptr<BaseState>& statePtr)
     auto callbackTask = [statePtr]() { statePtr->StartTransitNextState(statePtr); };
 #ifdef STANDBY_REALTIME_TIMER_ENABLE
     enterStandbyTimerId_ = TimedTask::CreateTimer(false, 0, 1, callbackTask);
+#elif defined(STANDBY_FIREWALL_TIMER_NO_WAKEUP)
+    enterStandbyTimerId_ = TimedTask::CreateTimer(false, 0, TIMER_TYPE_EXACT, callbackTask);
 #else
     enterStandbyTimerId_ = TimedTask::CreateTimer(false, 0, true, false, callbackTask);
 #endif

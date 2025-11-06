@@ -119,6 +119,10 @@ if (device_standby_realtime_timer_enable) {
   StandbyPluginDefine += [ "STANDBY_REALTIME_TIMER_ENABLE" ]
 }
 
+if (device_standby_firewall_timer_no_wakeup) {
+  StandbyPluginDefine += [ "STANDBY_FIREWALL_TIMER_NO_WAKEUP" ]
+}
+
 ohos_shared_library("standby_plugin") {
   branch_protector_ret = "pac_ret"
   sanitize = {
