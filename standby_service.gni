@@ -101,4 +101,5 @@ declare_args() {
   # features
   device_standby_plugin_enable = true
   device_standby_realtime_timer_enable = false
+  device_standby_firewall_timer_no_wakeup = false
 }
