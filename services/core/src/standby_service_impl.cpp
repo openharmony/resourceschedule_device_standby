@@ -1218,6 +1218,7 @@ void WEAK_FUNC StandbyServiceImpl::HandleP2PStateChanged(int32_t state)
 
 void StandbyServiceImpl::HandleScreenStateChanged(const int64_t value)
 {
+    STANDBYSERVICE_LOGI("screen state to %{public}lld", (long long)(value));
     if (value == 1) {
             DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
                                          EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON));
