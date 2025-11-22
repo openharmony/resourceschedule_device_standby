@@ -29,6 +29,7 @@
 #include "common_constant.h"
 #include "want.h"
 #include "workscheduler_srv_client.h"
+#include "standby_config_manager.h"
 
 using namespace testing::ext;
 using namespace testing::mt;
@@ -318,6 +319,29 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_013, TestSize.Leve
     uid = 2;
     baseNetworkStrategy->AddExemptionFlagByUid(uid, flag);
     EXPECT_NE(baseNetworkStrategy, nullptr);
+}
+
+/**
+ * @tc.name: StandbyPluginStrategyTest_014
+ * @tc.desc: test GetExemptionConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_014, TestSize.Level1)
+{
+    auto baseNetworkStrategy = std::make_shared<NetworkStrategy>();
+    uint8_t flag = 0;
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExemptable(flag), false);
+
+    flag = ExemptionTypeFlag::UNRESTRICTED;
+    baseNetworkStrategy->condition_ = ConditionType::DAY_STANDBY;
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExemptable(flag), true);
+
+    baseNetworkStrategy->condition_ = ConditionType::NIGHT_STANDBY;
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExemptable(flag), false);
+
+    flag |= ExemptionTypeFlag::CONTINUOUS_TASK;
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExemptable(flag), true);
 }
 #endif // STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 }  // namespace DevStandbyMgr
