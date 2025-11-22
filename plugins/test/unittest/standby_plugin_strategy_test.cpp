@@ -323,7 +323,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_013, TestSize.Leve
 
 /**
  * @tc.name: StandbyPluginStrategyTest_014
- * @tc.desc: test GetExemptionConfig.
+ * @tc.desc: test IsFlagExemptable.
  * @tc.type: FUNC
  * @tc.require:
  */
