@@ -30,7 +30,6 @@
 #include "istandby_service.h"
 #include "standby_service_client.h"
 #include "standby_service_stub.h"
-#include "singleton.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -70,6 +69,7 @@ public:
     ErrCode NotifySystemAbilityStatusChanged(bool isAdded, int32_t systemAbilityId);
     ErrCode HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo) override;
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level) override;
+    ErrCode PushProxyStateChanged(const uint32_t type, const bool enable) override;
 private:
     StandbyService(const StandbyService&) = delete;
     StandbyService& operator= (const StandbyService&) = delete;

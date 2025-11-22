@@ -234,6 +234,19 @@ namespace DevStandbyMgr {
             datas, reply, option);
     }
 
+    void CoverageHandlePushProxyStateChanged()
+    {
+        MessageParcel datas;
+        MessageParcel reply;
+        MessageOption option;
+        datas.WriteInterfaceToken(DEVICE_STANDBY_TOKEN);
+        datas.WriteUint32(g_paramUint32);
+        datas.WriteBool(g_paramBool);
+        DelayedSingleton<StandbyService>::GetInstance()->OnRemoteRequest(
+            static_cast<uint32_t>(IStandbyServiceIpcCode::COMMAND_PUSH_PROXY_STATE_CHANGED),
+            datas, reply, option);
+    }
+
     void PreciseCoverage()
     {
         CoverageHandleIsStrategyEnabled();
@@ -247,6 +260,7 @@ namespace DevStandbyMgr {
         CoverageHandleSetNatInterval();
         CoverageHandleDelayHeartBeat();
         CoverageReportSceneInfo();
+        CoverageHandlePushProxyStateChanged();
         if (g_initFlag) {
             return;
         }

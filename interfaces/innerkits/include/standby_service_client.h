@@ -187,6 +187,15 @@ public:
      */
     ErrCode ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo);
 
+    /**
+     * @brief Push proxy state change;
+     *
+     * @param type network type.
+     * @param enable whether to enable.
+     * @return ErrCode ERR_OK if success, else fail.
+     */
+    ErrCode PushProxyStateChanged(uint32_t type, bool enable);
+
 private:
     bool GetStandbyServiceProxy();
     void ResetStandbyServiceClient();

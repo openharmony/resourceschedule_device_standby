@@ -222,6 +222,16 @@ ErrCode StandbyServiceClient::ReportDeviceStateChanged(DeviceStateType type, boo
     return standbyServiceProxy_->ReportDeviceStateChanged(transType, enabled);
 }
 
+ErrCode StandbyServiceClient::PushProxyStateChanged(uint32_t type, bool enable)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->PushProxyStateChanged(type, enable);
+}
+
 bool StandbyServiceClient::GetStandbyServiceProxy()
 {
     if (standbyServiceProxy_ != nullptr) {
