@@ -54,6 +54,7 @@ struct StandbyMessageType {
         GATT_CONNECT_STATE,
         BROKER_GATT_CONNECT,
         THERMAL_SCENARIO_REPORT,
+        PUSH_PROXY_STATE_CHANGED, // push proxy state change
     };
 };
 

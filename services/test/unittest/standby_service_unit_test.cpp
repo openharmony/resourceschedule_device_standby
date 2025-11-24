@@ -1465,5 +1465,21 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_065, TestSize.Level1)
     EXPECT_EQ(StandbyServiceImpl::GetInstance()->UnsubscribeBackupRestoreCallback("test"), ERR_OK);
 }
 
+/**
+ * @tc.name: StandbyServiceUnitTest_066
+ * @tc.desc: test PushProxyStateChanged.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_066, TestSize.Level1)
+{
+    uint32_t type = 1;
+    bool enable = true;
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
+    EXPECT_EQ(StandbyService::GetInstance()->PushProxyStateChanged(type, enable), ERR_PERMISSION_DENIED);
+
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
+    EXPECT_EQ(StandbyService::GetInstance()->PushProxyStateChanged(type, enable), ERR_STANDBY_SYS_NOT_READY);
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

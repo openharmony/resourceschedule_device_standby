@@ -32,4 +32,5 @@ interface OHOS.DevStandbyMgr.IStandbyService {
     void ReportPowerOverused([in] String module, [in] unsigned int level);
     void DelayHeartBeat([in] long timestamp);
     void ReportSceneInfo([in] unsigned int resType, [in] long value, [in] String sceneInfo);
+    void PushProxyStateChanged([in] unsigned int type, [in] boolean enable);
 }
