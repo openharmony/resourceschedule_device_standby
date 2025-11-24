@@ -323,7 +323,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_013, TestSize.Leve
 
 /**
  * @tc.name: StandbyPluginStrategyTest_014
- * @tc.desc: test IsFlagExemptable.
+ * @tc.desc: test IsFlagExempted.
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -331,17 +331,17 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_014, TestSize.Leve
 {
     auto baseNetworkStrategy = std::make_shared<NetworkStrategy>();
     uint8_t flag = 0;
-    EXPECT_EQ(baseNetworkStrategy->IsFlagExemptable(flag), false);
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExempted(flag), false);
 
     flag = ExemptionTypeFlag::UNRESTRICTED;
     baseNetworkStrategy->condition_ = ConditionType::DAY_STANDBY;
-    EXPECT_EQ(baseNetworkStrategy->IsFlagExemptable(flag), true);
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExempted(flag), true);
 
     baseNetworkStrategy->condition_ = ConditionType::NIGHT_STANDBY;
-    EXPECT_EQ(baseNetworkStrategy->IsFlagExemptable(flag), false);
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExempted(flag), false);
 
     flag |= ExemptionTypeFlag::CONTINUOUS_TASK;
-    EXPECT_EQ(baseNetworkStrategy->IsFlagExemptable(flag), true);
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExempted(flag), true);
 }
 #endif // STANDBY_COMMUNICATION_NETMANAGER_BASE_ENABLE
 }  // namespace DevStandbyMgr

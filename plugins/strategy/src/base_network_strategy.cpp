@@ -326,7 +326,7 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
 {
     std::vector<uint32_t> uids;
     for (const auto& [key, value] : netLimitedAppInfo_) {
-        if (!IsFlagExemptable(value.appExemptionFlag_)) {
+        if (!IsFlagExempted(value.appExemptionFlag_)) {
             continue;
         }
         uids.emplace_back(key);
@@ -427,7 +427,7 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
     if (isCreated) {
         GetAndCreateAppInfo(uid, bundleName);
         auto iter = netLimitedAppInfo_.find(uid);
-        if (!IsFlagExemptable(iter->second.appExemptionFlag_)) {
+        if (!IsFlagExempted(iter->second.appExemptionFlag_)) {
             return;
         }
         SetFirewallAllowedList({uid}, isCreated);
@@ -441,7 +441,7 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
             }
             auto appFlag = iter->second.appExemptionFlag_;
             netLimitedAppInfo_.erase(uid);
-            if (!IsFlagExemptable(appFlag)) {
+            if (!IsFlagExempted(appFlag)) {
                 STANDBYSERVICE_LOGI("uid: %{public}d flag: %{public}d is not exempted", uid, appFlag);
                 return;
             }
@@ -450,7 +450,7 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
     }
 }
 
-bool BaseNetworkStrategy::IsFlagExemptable(uint8_t flag)
+bool BaseNetworkStrategy::IsFlagExempted(uint8_t flag)
 {
     // if app is not exempted
     if (!ExemptionTypeFlag::IsExempted(flag)) {
