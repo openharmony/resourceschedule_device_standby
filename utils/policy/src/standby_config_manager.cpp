@@ -868,7 +868,9 @@ bool StandbyConfigManager::ParseStandbyListParaConfig(const nlohmann::json& stan
         }
         std::vector<std::string> standbyList;
         for (const auto& para : element.value()) {
-            standbyList.push_back(para.get<std::string>());
+            if (para.is_string()) {
+                standbyList.push_back(para.get<std::string>());
+            }
         }
         standbyListParaMap_[element.key()] = standbyList;
     }
