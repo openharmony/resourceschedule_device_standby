@@ -393,6 +393,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_010, TestSize.Level0)
 {
     StandbyServiceImpl::GetInstance()->registerPlugin_ = nullptr;
     StandbyServiceImpl::GetInstance()->UninitReadyState();
+    SleepForFC();
     StandbyServiceImpl::GetInstance()->UnInit();
     StandbyServiceImpl::GetInstance()->RegisterPlugin(StandbyConfigManager::GetInstance()
         ->GetPluginName());
@@ -1149,6 +1150,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_047, TestSize.Level1)
 HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_026, TestSize.Level1, 20)
 {
     StandbyServiceImpl::GetInstance()->UninitReadyState();
+    StandbyServiceUnitTest::SleepForFC();
     EXPECT_FALSE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());
     StandbyServiceUnitTest::SleepForFC();
 }
