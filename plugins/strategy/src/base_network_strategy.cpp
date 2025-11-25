@@ -326,11 +326,7 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
 {
     std::vector<uint32_t> uids;
     for (const auto& [key, value] : netLimitedAppInfo_) {
-        if (!ExemptionTypeFlag::IsExempted(value.appExemptionFlag_)) {
-            continue;
-        }
-        if ((condition_ == ConditionType::NIGHT_STANDBY) &&
-            (!ExemptionTypeFlag::IsExempted(value.appExemptionFlag_ & (~ExemptionTypeFlag::UNRESTRICTED)))) {
+        if (!IsFlagExempted(value.appExemptionFlag_)) {
             continue;
         }
         uids.emplace_back(key);
@@ -427,20 +423,45 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
     bool isCreated = message.want_->GetBoolParam("isCreated", false);
     STANDBYSERVICE_LOGI("Process Status Changed uid: %{public}d, bundleName: %{public}s, isCreated: %{public}d",
         uid, bundleName.c_str(), isCreated);
+    condition_ = TimeProvider::GetCondition();
     if (isCreated) {
         GetAndCreateAppInfo(uid, bundleName);
         auto iter = netLimitedAppInfo_.find(uid);
-        if (ExemptionTypeFlag::IsExempted(iter->second.appExemptionFlag_)) {
-            SetFirewallAllowedList({uid}, isCreated);
+        if (!IsFlagExempted(iter->second.appExemptionFlag_)) {
+            return;
         }
+        SetFirewallAllowedList({uid}, isCreated);
     } else {
         bool isRunning {false};
         if (AppMgrHelper::GetInstance()->GetAppRunningStateByBundleName(bundleName, isRunning) && !isRunning) {
             std::lock_guard<std::mutex> lock(mutex_);
+            auto iter = netLimitedAppInfo_.find(uid);
+            if (iter == netLimitedAppInfo_.end()) {
+                return;
+            }
+            auto appFlag = iter->second.appExemptionFlag_;
             netLimitedAppInfo_.erase(uid);
+            if (!IsFlagExempted(appFlag)) {
+                STANDBYSERVICE_LOGI("uid: %{public}d flag: %{public}d is not exempted", uid, appFlag);
+                return;
+            }
             SetFirewallAllowedList({uid}, isCreated);
         }
     }
+}
+
+bool BaseNetworkStrategy::IsFlagExempted(uint8_t flag)
+{
+    // if app is not exempted
+    if (!ExemptionTypeFlag::IsExempted(flag)) {
+        return false;
+    }
+    // if night and app is system app or native process, (flag minus UNRESTRICTED) is not exempted
+    if ((TimeProvider::GetCondition() == ConditionType::NIGHT_STANDBY) &&
+        (!ExemptionTypeFlag::IsExempted(flag & (~ExemptionTypeFlag::UNRESTRICTED)))) {
+        return false;
+    }
+    return true;
 }
 
 void BaseNetworkStrategy::AddExemptionFlag(uint32_t uid, const std::string& bundleName, uint8_t flag)
