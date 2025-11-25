@@ -457,7 +457,7 @@ bool BaseNetworkStrategy::IsFlagExempted(uint8_t flag)
         return false;
     }
     // if night and app is system app or native process, (flag minus UNRESTRICTED) is not exempted
-    if ((condition_ = TimeProvider::GetCondition() == ConditionType::NIGHT_STANDBY) &&
+    if ((TimeProvider::GetCondition() == ConditionType::NIGHT_STANDBY) &&
         (!ExemptionTypeFlag::IsExempted(flag & (~ExemptionTypeFlag::UNRESTRICTED)))) {
         return false;
     }
