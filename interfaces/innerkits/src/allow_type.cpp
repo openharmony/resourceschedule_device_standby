@@ -17,7 +17,7 @@
 
 namespace OHOS {
 namespace DevStandbyMgr {
-const std::vector<std::string> AllowTypeName = {
+std::vector<std::string> AllowTypeName = {
     "NETWORK",
     "RUNNING_LOCK",
     "TIMER",
