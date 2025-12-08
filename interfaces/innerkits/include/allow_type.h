@@ -33,7 +33,7 @@ struct AllowType {
     };
 };
 
-extern const std::vector<std::string> AllowTypeName;
+extern std::vector<std::string> AllowTypeName;
 extern const uint32_t MAX_ALLOW_TYPE_NUM;
 extern const uint32_t MAX_ALLOW_TYPE_NUMBER;
 }  // namespace DevStandbyMgr
