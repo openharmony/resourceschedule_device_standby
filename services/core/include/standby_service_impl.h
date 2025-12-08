@@ -123,6 +123,7 @@ public:
     ErrCode IsStrategyEnabled(const std::string& strategyName, bool& isEnabled);
     ErrCode ReportDeviceStateChanged(int32_t type, bool enabled);
     ErrCode HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
+    void SubHandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
     ErrCode ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo);
 
@@ -207,6 +208,7 @@ private:
     void HandleResourcesStateChanged(const int64_t value, const std::string &sceneInfo);
     void HandleScreenStateChanged(const int64_t value);
     void HandleChargeStateChanged(const int64_t value);
+    void HandleWifiConnStateChanged(const int64_t value);
     void HandleBootCompleted();
     
     // handle abnormal power use

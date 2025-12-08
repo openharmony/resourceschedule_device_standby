@@ -55,6 +55,7 @@ struct StandbyMessageType {
         BROKER_GATT_CONNECT,
         THERMAL_SCENARIO_REPORT,
         PUSH_PROXY_STATE_CHANGED, // push proxy state change
+        WIFI_CONNECT_STATE_CHANGE, // wifi connect state change
     };
 };
 

@@ -1430,6 +1430,14 @@ void StandbyServiceImpl::HandleThermalScenarioReport(const int64_t value, const 
     DispatchEvent(standbyMessage);
 }
 
+void StandbyServiceImpl::HandleWifiConnStateChanged(const int64_t value)
+{
+    StandbyMessage standbyMessage {StandbyMessageType::WIFI_CONNECT_STATE_CHANGE};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam("wifiConnState", static_cast<int32_t>(value));
+    DispatchEvent(standbyMessage);
+}
+
 ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {
     STANDBYSERVICE_LOGD("HandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
@@ -1470,17 +1478,31 @@ ErrCode StandbyServiceImpl::HandleCommonEvent(const uint32_t resType, const int6
         case ResourceSchedule::ResType::RES_TYPE_EFFICIENCY_RESOURCES_STATE_CHANGED:
             HandleResourcesStateChanged(value, sceneInfo);
             break;
+        default:
+            SubHandleCommonEvent(resType, value, sceneInfo);
+            break;
+    }
+    return ERR_OK;
+}
+
+void StandbyServiceImpl::SubHandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
+{
+    STANDBYSERVICE_LOGD("SubHandleCommonEvent resType = %{public}u, value = %{public}lld, sceneInfo = %{public}s",
+                        resType, (long long)(value), sceneInfo.c_str());
+    switch (resType) {
         case ResourceSchedule::ResType::RES_TYPE_BOOT_COMPLETED:
             HandleBootCompleted();
             break;
         case ResourceSchedule::ResType::RES_TYPE_THERMAL_SCENARIO_REPORT:
             HandleThermalScenarioReport(value, sceneInfo);
             break;
+        case ResourceSchedule::ResType::RES_TYPE_WIFI_CONNECT_STATE_CHANGE:
+            HandleWifiConnStateChanged(value);
+            break;
         default:
             AppEventHandler(resType, value, sceneInfo);
             break;
     }
-    return ERR_OK;
 }
 
 void StandbyServiceImpl::HandlePowerModeChanged(const int64_t value)
