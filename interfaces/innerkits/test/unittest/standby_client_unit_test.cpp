@@ -261,6 +261,7 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_014, TestSiz
     EXPECT_EQ(StandbyServiceClient::GetInstance().SetNatInterval(type, enable, interval), ERR_PERMISSION_DENIED);
     int64_t timestamp = 100;
     EXPECT_EQ(StandbyServiceClient::GetInstance().DelayHeartBeat(timestamp), ERR_PERMISSION_DENIED);
+    EXPECT_EQ(StandbyServiceClient::GetInstance().PushProxyStateChanged(type, enable), ERR_PERMISSION_DENIED);
 }
 
 /**

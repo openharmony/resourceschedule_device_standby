@@ -69,6 +69,7 @@ HWTEST_F(StandbyServiceClientUnitTest, MockStandbyServiceClientUnitTest_001, Tes
     StandbyServiceClient::GetInstance().ReportWorkSchedulerStatus(true, -1, "");
     int64_t timestamp = 100;
     EXPECT_NE(StandbyServiceClient::GetInstance().DelayHeartBeat(timestamp), ERR_OK);
+    EXPECT_NE(StandbyServiceClient::GetInstance().PushProxyStateChanged(type, enable), ERR_OK);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
