@@ -40,7 +40,6 @@ public:
     ErrCode TransitToStateInner(uint32_t nextState) override;
     void StopEvalution() override;
     void HandleOpenCloseLid(const StandbyMessage& message);
-    void TransitToSleepState();
     void ShellDump(const std::vector<std::string>& argsInStr, std::string& result) override;
 protected:
     void SendNotification(uint32_t preState, bool needDispatchEvent);
