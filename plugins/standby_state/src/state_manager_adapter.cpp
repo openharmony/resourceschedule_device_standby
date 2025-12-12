@@ -155,7 +155,6 @@ void StateManagerAdapter::HandleScreenStatus(const StandbyMessage& message)
         isScreenOn_ = true;
     } else if (message.action_ == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF) {
         isScreenOn_ = false;
-        TransitToSleepState();
     }
 }
 
@@ -190,26 +189,10 @@ void StateManagerAdapter::HandleScrOffHalfHour(const StandbyMessage& message)
 }
 #endif
 
-void StateManagerAdapter::TransitToSleepState()
-{
-    if (curStatePtr_->GetCurState() == StandbyState::SLEEP ||
-        curStatePtr_->GetCurState() == StandbyState::MAINTENANCE) {
-        return;
-    }
-    if (!isLidOn_ && !isScreenOn_) {
-        UnblockCurrentState();
-        TransitToStateInner(StandbyState::SLEEP);
-    }
-}
-
 void StateManagerAdapter::HandleOpenCloseLid(const StandbyMessage& message)
 {
     if (message.action_ == LID_OPEN) {
-        isLidOn_ = true;
         TransitToState(StandbyState::WORKING);
-    } else if (message.action_ == LID_CLOSE) {
-        isLidOn_ = false;
-        TransitToSleepState();
     }
 }
 
