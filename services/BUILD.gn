@@ -31,7 +31,13 @@ ohos_shared_library("standby_service") {
     debug = false
   }
   cflags_cc = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fno-rtti",
+    "-fno-exceptions",
+    "-fno-unwind-tables",
     "-fstack-protector-strong",
+    "-Os",
   ]
   if (!use_clang_coverage) {
     shlib_type = "sa"
