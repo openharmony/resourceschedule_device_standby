@@ -131,7 +131,13 @@ ohos_shared_library("standby_plugin") {
     debug = false
   }
   cflags_cc = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fno-rtti",
+    "-fno-exceptions",
+    "-fno-unwind-tables",
     "-fstack-protector-strong",
+    "-Os",
   ]
   sources = StandbyPluginSrc
 
