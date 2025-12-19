@@ -27,6 +27,7 @@
     *GetContinuousTaskApps*;
     *GetTransientTaskApps*;
     *GetApplicationInfo*;
+    *GetAllBundleNames*;
     *GetClientBundleName*;
     *CheckIsSystemAppByUid*;
     *DeviceStateCache*;
