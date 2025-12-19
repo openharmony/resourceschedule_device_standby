@@ -126,7 +126,7 @@ HWTEST_F(StandbyHelperUnitTest, StandbyHelperUnitTest_005, TestSize.Level1)
     BundleManagerHelper::GetInstance()->GetApplicationInfos(AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
         0, appInfos);
 
-    std::vector<std::string> &appNameList {};
+    std::vector<std::string> appNameList {};
     BundleManagerHelper::GetInstance()->GetAllBundleNames(AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
         0, appNameList);
 
