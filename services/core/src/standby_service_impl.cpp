@@ -138,6 +138,7 @@ void StandbyServiceImpl::InitReadyState()
 
         StandbyService::GetInstance()->AddPluginSysAbilityListener(BACKGROUND_TASK_MANAGER_SERVICE_ID);
         StandbyService::GetInstance()->AddPluginSysAbilityListener(WORK_SCHEDULE_SERVICE_ID);
+        StandbyService::GetInstance()->AddPluginSysAbilityListener(MSDP_USER_STATUS_SERVICE_ID);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 

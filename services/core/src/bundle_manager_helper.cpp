@@ -77,6 +77,21 @@ bool WEAK_FUNC BundleManagerHelper::GetApplicationInfos(const AppExecFwk::Applic
     return true;
 }
 
+bool WEAK_FUNC BundleManagerHelper::GetAllBundleNames(const AppExecFwk::ApplicationFlag flag, int userId,
+    std::vector<std::string> &appNameList)
+{
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+
+    Connect();
+    STANDBYSERVICE_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
+    if (bundleMgr_ == nullptr || !bundleMgr_->GetAllBundleNames(0, flag, userId, appNameList)) {
+        return false;
+    }
+    STANDBYSERVICE_LOGI("Succeed GetAllBundleNames, size is %{public}d",
+        static_cast<int32_t>(appNameList.size()));
+    return true;
+}
+
 bool WEAK_FUNC BundleManagerHelper::CheckIsSystemAppByUid(const int uid, bool& isSystemApp)
 {
     std::lock_guard<std::mutex> lock(connectionMutex_);

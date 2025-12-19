@@ -45,6 +45,8 @@ public:
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
     bool GetApplicationInfos(const AppExecFwk::ApplicationFlag flag, int userId,
         std::vector<AppExecFwk::ApplicationInfo> &appInfos);
+    bool GetAllBundleNames(const AppExecFwk::ApplicationFlag flag, int userId,
+        std::vector<std::string> &appNameList);
     bool CheckIsSystemAppByUid(const int uid, bool& isSystemApp);
 private:
     BundleManagerHelper(const BundleManagerHelper&) = delete;
