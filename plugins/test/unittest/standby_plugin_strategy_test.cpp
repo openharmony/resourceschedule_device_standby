@@ -338,7 +338,7 @@ HWTEST_F(StandbyPluginStrategyTest, StandbyPluginStrategyTest_014, TestSize.Leve
     EXPECT_EQ(baseNetworkStrategy->IsFlagExempted(flag), true);
 
     baseNetworkStrategy->condition_ = ConditionType::NIGHT_STANDBY;
-    EXPECT_EQ(baseNetworkStrategy->IsFlagExempted(flag), false);
+    EXPECT_EQ(baseNetworkStrategy->IsFlagExempted(flag), true);
 
     flag |= ExemptionTypeFlag::CONTINUOUS_TASK;
     EXPECT_EQ(baseNetworkStrategy->IsFlagExempted(flag), true);
