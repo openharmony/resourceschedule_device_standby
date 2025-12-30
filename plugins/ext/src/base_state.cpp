@@ -102,8 +102,13 @@ void BaseState::StartTransitNextState(const std::shared_ptr<BaseState>& statePtr
 
 void BaseState::TransitToPhase(uint32_t curPhase, uint32_t nextPhase)
 {
+    auto stateManagerPtr = stateManager_.lock();
+    if (!stateManagerPtr) {
+        STANDBYSERVICE_LOGW("state manager is nullptr, can not implement function to enter next phase");
+        return;
+    }
     ConstraintEvalParam params{curState_, curPhase, curState_, nextPhase};
-    stateManager_.lock()->StartEvalCurrentState(params);
+    stateManagerPtr->StartEvalCurrentState(params);
 }
 
 void BaseState::TransitToPhaseInner(uint32_t prePhase, uint32_t curPhase)
