@@ -47,6 +47,7 @@
     *IStrategyManagerAdapter*;
     *IsDebugMode*;
     *Notify*ByCallback*;
+    *IsServiceReady*;
   local:
     *;
 };
