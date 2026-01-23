@@ -70,6 +70,7 @@ public:
     ErrCode HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo) override;
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level) override;
     ErrCode PushProxyStateChanged(const uint32_t type, const bool enable) override;
+    ErrCode HeartBeatValueChanged(const std::string &tag, int32_t timesTamp) override;
 private:
     StandbyService(const StandbyService&) = delete;
     StandbyService& operator= (const StandbyService&) = delete;

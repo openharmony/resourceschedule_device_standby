@@ -232,6 +232,16 @@ ErrCode StandbyServiceClient::PushProxyStateChanged(uint32_t type, bool enable)
     return standbyServiceProxy_->PushProxyStateChanged(type, enable);
 }
 
+ErrCode StandbyServiceClient::HeartBeatValueChanged(const std::string &tag, int32_t timesTamp)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetStandbyServiceProxy()) {
+        STANDBYSERVICE_LOGE("get standby service proxy failed");
+        return ERR_STANDBY_SERVICE_NOT_CONNECTED;
+    }
+    return standbyServiceProxy_->HeartBeatValueChanged(tag, timesTamp);
+}
+
 bool StandbyServiceClient::GetStandbyServiceProxy()
 {
     if (standbyServiceProxy_ != nullptr) {

@@ -33,4 +33,5 @@ interface OHOS.DevStandbyMgr.IStandbyService {
     void DelayHeartBeat([in] long timestamp);
     void ReportSceneInfo([in] unsigned int resType, [in] long value, [in] String sceneInfo);
     void PushProxyStateChanged([in] unsigned int type, [in] boolean enable);
+    void HeartBeatValueChanged([in] String tag, [in] int timesTamp);
 }

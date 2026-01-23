@@ -314,6 +314,16 @@ ErrCode StandbyService::PushProxyStateChanged(const uint32_t type, const bool en
     return ERR_OK;
 }
 
+ErrCode StandbyService::HeartBeatValueChanged(const std::string &tag, int32_t timesTamp)
+{
+    StandbyHitraceChain traceChain(__func__);
+    if (state_.load() != ServiceRunningState::STATE_RUNNING) {
+        STANDBYSERVICE_LOGW("standby service is not running");
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    return StandbyServiceImpl::GetInstance()->HeartBeatValueChanged(tag, timesTamp);
+}
+
 void StandbyService::AddPluginSysAbilityListener(int32_t systemAbilityId)
 {
     std::lock_guard<std::mutex> pluginListenerLock(listenedSALock_);

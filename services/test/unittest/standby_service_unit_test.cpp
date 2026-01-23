@@ -1481,5 +1481,22 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_066, TestSize.Level1)
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
     EXPECT_EQ(StandbyService::GetInstance()->PushProxyStateChanged(type, enable), ERR_STANDBY_SYS_NOT_READY);
 }
+
+/**
+ * @tc.name: StandbyServiceUnitTest_067
+ * @tc.desc: test HeartBeatValueChanged.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_067, TestSize.Level1)
+{
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
+    const std::string tag = "data_test";
+    int32_t timesTamp = 1;
+    EXPECT_EQ(StandbyService::GetInstance()->HeartBeatValueChanged(tag, timesTamp), ERR_OK);
+
+    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
+    EXPECT_EQ(StandbyService::GetInstance()->HeartBeatValueChanged(tag, timesTamp), ERR_STANDBY_SYS_NOT_READY);
+}
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

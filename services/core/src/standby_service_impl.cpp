@@ -1244,6 +1244,20 @@ void StandbyServiceImpl::HandleScreenClickRecognize(const int64_t value)
     DispatchEvent(standbyMessage);
 }
 
+ErrCode StandbyServiceImpl::HeartBeatValueChanged(const std::string &tag, int32_t timesTamp)
+{
+    if (!IsServiceReady()) {
+        return ERR_STANDBY_SYS_NOT_READY;
+    }
+    STANDBYSERVICE_LOGI("recv tag: %{public}s , heartbeat: %{public}d", tag.c_str(), timesTamp);
+    StandbyMessage standbyMessage {StandbyMessageType::HEART_BEAT_VALUE_CHANGE};
+    standbyMessage.want_ = AAFwk::Want {};
+    standbyMessage.want_->SetParam("tag", tag);
+    standbyMessage.want_->SetParam("timesTamp", timesTamp);
+    DispatchEvent(standbyMessage);
+    return ERR_OK;
+}
+
 void StandbyServiceImpl::HandleBTServiceEvent(const int64_t value, const std::string &sceneInfo)
 {
     STANDBYSERVICE_LOGI("HandleBTSerciceEvent value: %{public}" PRId64, value);

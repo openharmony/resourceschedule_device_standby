@@ -196,6 +196,15 @@ public:
      */
     ErrCode PushProxyStateChanged(uint32_t type, bool enable);
 
+    /**
+     * @brief Get wifi or modem heartbeat value;
+     *
+     * @param tag heartbeat tag.
+     * @param timesTamp push msg recv timestamp.
+     * @return ErrCode ERR_OK if success, else fail.
+     */
+    ErrCode HeartBeatValueChanged(const std::string &tag, int32_t timesTamp);
+
 private:
     bool GetStandbyServiceProxy();
     void ResetStandbyServiceClient();
