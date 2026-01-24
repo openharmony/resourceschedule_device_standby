@@ -1862,6 +1862,7 @@ bool DeviceStateCache::GetDeviceState(int32_t type)
     if (type < 0 || type >= DEVICE_STATE_NUM) {
         return false;
     }
+    std::lock_guard<std::mutex> lock(mutex_);
     STANDBYSERVICE_LOGD("get device state %{public}d, enabled is %{public}d", type, deviceState_[type]);
     return deviceState_[type];
 }
