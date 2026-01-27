@@ -126,6 +126,7 @@ public:
     void SubHandleCommonEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
     ErrCode ReportPowerOverused(const std::string &module, uint32_t level);
     ErrCode ReportSceneInfo(uint32_t resType, int64_t value, const std::string &sceneInfo);
+    ErrCode HeartBeatValueChanged(const std::string &tag, int32_t timesTamp);
 
     void RegisterPluginInner(IConstraintManagerAdapter* constraintManager,
         IListenerManagerAdapter* listenerManager,
