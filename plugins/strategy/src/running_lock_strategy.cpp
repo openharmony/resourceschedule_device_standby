@@ -56,7 +56,7 @@ void RunningLockStrategy::HandleEvent(const StandbyMessage& message)
             UpdateExemptionList(message);
             break;
         case StandbyMessageType::RES_CTRL_CONDITION_CHANGED:
-            UpdateResourceConfig(message);
+            UpdateResourceConfig();
             break;
         case StandbyMessageType::PHASE_TRANSIT:
             StartProxy(message);
@@ -98,6 +98,9 @@ ErrCode RunningLockStrategy::OnDestroy()
 
 ErrCode RunningLockStrategy::UpdateExemptionList(const StandbyMessage& message)
 {
+    if (!message.want_.has_value()) {
+        return ERR_STANDBY_OBJECT_NULL;
+    }
     uint32_t allowType = static_cast<uint32_t>(message.want_->GetIntParam("allowType", 0));
     if ((allowType & AllowType::RUNNING_LOCK) == 0) {
         STANDBYSERVICE_LOGD("allowType is not running lock, currentType is %{public}d", allowType);
@@ -122,7 +125,7 @@ ErrCode RunningLockStrategy::UpdateExemptionList(const StandbyMessage& message)
     return ERR_OK;
 }
 
-ErrCode RunningLockStrategy::UpdateResourceConfig(const StandbyMessage& message)
+ErrCode RunningLockStrategy::UpdateResourceConfig()
 {
     StopProxyInner();
     StartProxyInner();
@@ -135,6 +138,9 @@ ErrCode RunningLockStrategy::StartProxy(const StandbyMessage& message)
     if (isProxied_) {
         STANDBYSERVICE_LOGD("now is proxied, do not need StartProxy, repeat process");
         return ERR_STANDBY_STRATEGY_STATE_REPEAT;
+    }
+    if (!message.want_.has_value()) {
+        return ERR_STANDBY_OBJECT_NULL;
     }
     uint32_t curPhase = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_PHASE, 0));
     uint32_t curState = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_STATE, 0));
@@ -372,6 +378,9 @@ ErrCode RunningLockStrategy::StopProxy(const StandbyMessage& message)
     if (!isProxied_) {
         return ERR_STANDBY_CURRENT_STATE_NOT_MATCH;
     }
+    if (!message.want_.has_value()) {
+        return ERR_STANDBY_OBJECT_NULL;
+    }
     uint32_t preState = static_cast<uint32_t>(message.want_->GetIntParam(PREVIOUS_STATE, 0));
     uint32_t curState = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_STATE, 0));
     if ((curState == StandbyState::MAINTENANCE) && (preState == StandbyState::SLEEP)) {
@@ -399,6 +408,9 @@ ErrCode RunningLockStrategy::StopProxyInner()
 
 ErrCode RunningLockStrategy::UpdateBgTaskAppStatus(const StandbyMessage& message)
 {
+    if (!message.want_.has_value()) {
+        return ERR_STANDBY_OBJECT_NULL;
+    }
     std::string type = message.want_->GetStringParam(BG_TASK_TYPE);
     bool started = message.want_->GetBoolParam(BG_TASK_STATUS, false);
     int32_t uid = message.want_->GetIntParam(BG_TASK_UID, 0);
@@ -425,6 +437,9 @@ ErrCode RunningLockStrategy::UpdateBgTaskAppStatus(const StandbyMessage& message
 void RunningLockStrategy::ResetProxyStatus(const StandbyMessage& message)
 {
     if (!isProxied_ || isIdleMaintence_) {
+        return;
+    }
+    if (!message.want_.has_value()) {
         return;
     }
     bool isAdded = message.want_->GetBoolParam(SA_STATUS, false);
@@ -565,6 +580,9 @@ void RunningLockStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
 {
     if (!isProxied_) {
         STANDBYSERVICE_LOGD("RunningLockStrategy is not in proxy, do not need process");
+        return;
+    }
+    if (!message.want_.has_value()) {
         return;
     }
     int32_t uid = message.want_->GetIntParam("uid", -1);

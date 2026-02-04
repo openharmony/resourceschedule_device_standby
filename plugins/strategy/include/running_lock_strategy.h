@@ -76,7 +76,7 @@ private:
     // update exemtion list when received exemtion list changed event
     ErrCode UpdateExemptionList(const StandbyMessage& message);
     // update resource config when received condition changed event
-    ErrCode UpdateResourceConfig(const StandbyMessage& message);
+    ErrCode UpdateResourceConfig();
     ErrCode StartProxy(const StandbyMessage& message);
     ErrCode StartProxyInner();
     ErrCode StopProxy(const StandbyMessage& message);

@@ -66,6 +66,9 @@ bool WEAK_FUNC AppMgrHelper::GetAppRunningStateByBundleName(const std::string &b
 
 bool WEAK_FUNC AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
 {
+    if (observer == nullptr) {
+        return false;
+    }
     std::lock_guard<std::mutex> lock(connectMutex_);
     if (!Connect()) {
         return false;
@@ -78,6 +81,9 @@ bool WEAK_FUNC AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicati
 
 bool WEAK_FUNC AppMgrHelper::UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
 {
+    if (observer == nullptr) {
+        return false;
+    }
     std::lock_guard<std::mutex> lock(connectMutex_);
     if (!Connect()) {
         return false;

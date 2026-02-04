@@ -132,6 +132,10 @@ ErrCode StandbyServiceClient::SetNatInterval(uint32_t& type, bool& enable, uint3
 
 ErrCode StandbyServiceClient::HandleEvent(const std::shared_ptr<ResourceSchedule::ResData> &resData)
 {
+    if (!resData) {
+        STANDBYSERVICE_LOGE("resData is nullptr");
+        return ERR_STANDBY_INVALID_PARAM;
+    }
     std::lock_guard<std::mutex> lock(mutex_);
     std::string sceneInfo = resData->payload.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace);
     if (!GetStandbyServiceProxy()) {

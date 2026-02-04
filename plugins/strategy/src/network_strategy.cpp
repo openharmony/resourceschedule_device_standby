@@ -77,6 +77,9 @@ void NetworkStrategy::UpdateAllowedList(const StandbyMessage& message)
 
 void NetworkStrategy::UpdateNetResourceConfig(const StandbyMessage& message)
 {
+    if (!message.want_.has_value()) {
+        return;
+    }
     condition_ = static_cast<uint32_t>(message.want_->GetIntParam(RES_CTRL_CONDITION, 0));
     STANDBYSERVICE_LOGD("enter NetworkStrategy HandleEvent, current condition is %{public}u", condition_);
     UpdateFirewallAllowList();
@@ -86,6 +89,9 @@ void NetworkStrategy::StartNetLimit(const StandbyMessage& message)
 {
     StandbyHitraceChain traceChain(__func__);
     STANDBYSERVICE_LOGD("enter NetworkStrategy StartNetLimit, eventId is %{public}d", message.eventId_);
+    if (!message.want_.has_value()) {
+        return;
+    }
     uint32_t current_phase = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_PHASE, 0));
     uint32_t current_state = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_STATE, 0));
     if ((current_state != StandbyState::SLEEP) || (current_phase != SleepStatePhase::APP_RES_DEEP)) {
