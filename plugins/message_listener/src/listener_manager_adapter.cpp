@@ -75,6 +75,9 @@ void ListenerManagerAdapter::HandleEvent(const StandbyMessage& message)
 
 void ListenerManagerAdapter::UpdateListenerList(const StandbyMessage& message)
 {
+    if (!message.want_.has_value()) {
+        return;
+    }
     bool isAdded = message.want_->GetBoolParam(SA_STATUS, false);
     int32_t systemAbilityId = message.want_->GetIntParam(SA_ID, -1);
     if (isAdded) {

@@ -193,6 +193,10 @@ ErrCode StandbyService::SubscribeStandbyCallback(const sptr<IStandbyServiceSubsc
     const std::string& subscriberName, const std::string& moduleName)
 {
     StandbyHitraceChain traceChain(__func__);
+    if (subscriber == nullptr) {
+        STANDBYSERVICE_LOGW("standby subscriber is null");
+        return ERR_STANDBY_INVALID_PARAM;
+    }
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
@@ -205,6 +209,10 @@ ErrCode StandbyService::SubscribeStandbyCallback(const sptr<IStandbyServiceSubsc
 ErrCode StandbyService::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
     StandbyHitraceChain traceChain(__func__);
+    if (subscriber == nullptr) {
+        STANDBYSERVICE_LOGW("standby subscriber is null");
+        return ERR_STANDBY_INVALID_PARAM;
+    }
     if (state_.load() != ServiceRunningState::STATE_RUNNING) {
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;

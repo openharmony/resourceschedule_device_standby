@@ -330,6 +330,10 @@ void StandbyServiceImpl::RegisterPluginInner(IConstraintManagerAdapter* constrai
     IStrategyManagerAdapter* strategyManager,
     IStateManagerAdapter* stateManager)
 {
+    if (constraintManager == nullptr || listenerManager == nullptr
+        || strategyManager  == nullptr || stateManager == nullptr) {
+        return;
+    }
     constraintManager_ = std::shared_ptr<IConstraintManagerAdapter>(constraintManager);
     listenerManager_ = std::shared_ptr<IListenerManagerAdapter>(listenerManager);
     strategyManager_ = std::shared_ptr<IStrategyManagerAdapter>(strategyManager);
@@ -702,6 +706,10 @@ int32_t StandbyServiceImpl::GetUserIdByUid(int32_t uid)
 
 ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
+    if (subscriber == nullptr) {
+        STANDBYSERVICE_LOGW("standby subscriber is null");
+        return ERR_STANDBY_INVALID_PARAM;
+    }
     if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("caller permission denied.");
         return checkRet;
@@ -719,6 +727,10 @@ ErrCode StandbyServiceImpl::SubscribeStandbyCallback(const sptr<IStandbyServiceS
 
 ErrCode StandbyServiceImpl::UnsubscribeStandbyCallback(const sptr<IStandbyServiceSubscriber>& subscriber)
 {
+    if (subscriber == nullptr) {
+        STANDBYSERVICE_LOGW("standby subscriber is null");
+        return ERR_STANDBY_INVALID_PARAM;
+    }
     if (auto checkRet = CheckCallerPermission(); checkRet != ERR_OK) {
         STANDBYSERVICE_LOGE("caller permission denied.");
         return checkRet;

@@ -89,6 +89,9 @@ ErrCode BaseNetworkStrategy::OnDestroy()
 
 ErrCode BaseNetworkStrategy::UpdateExemptionList(const StandbyMessage& message)
 {
+    if (!message.want_.has_value()) {
+        return ERR_STANDBY_OBJECT_NULL;
+    }
     uint32_t allowType = static_cast<uint32_t>(message.want_->GetIntParam("allowType", 0));
     if ((allowType & AllowType::NETWORK) == 0) {
         STANDBYSERVICE_LOGD("allowType is not network, currentType is %{public}d", allowType);
@@ -340,6 +343,9 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
 
 ErrCode BaseNetworkStrategy::DisableNetworkFirewall(const StandbyMessage& message)
 {
+    if (!message.want_.has_value()) {
+        return ERR_STANDBY_OBJECT_NULL;
+    }
     uint32_t preState = static_cast<uint32_t>(message.want_->GetIntParam(PREVIOUS_STATE, 0));
     uint32_t curState = static_cast<uint32_t>(message.want_->GetIntParam(CURRENT_STATE, 0));
     STANDBYSERVICE_LOGI("condition preState: %{public}ud, curState: %{public}ud, isFirewallEnabled_: %{public}d",
@@ -393,7 +399,9 @@ ErrCode BaseNetworkStrategy::UpdateBgTaskAppStatus(const StandbyMessage& message
         STANDBYSERVICE_LOGD("current state is not sleep or maintenance, ignore exemption");
         return ERR_STANDBY_CURRENT_STATE_NOT_MATCH;
     }
-
+    if (!message.want_.has_value()) {
+        return ERR_STANDBY_OBJECT_NULL;
+    }
     std::string type = message.want_->GetStringParam(BG_TASK_TYPE);
     bool started = message.want_->GetBoolParam(BG_TASK_STATUS, false);
     int32_t uid = message.want_->GetIntParam(BG_TASK_UID, 0);
@@ -416,6 +424,9 @@ void BaseNetworkStrategy::HandleProcessStatusChanged(const StandbyMessage& messa
 {
     if (!isFirewallEnabled_) {
         STANDBYSERVICE_LOGD("current state is not sleep or maintenance, ignore state of process");
+        return;
+    }
+    if (!message.want_.has_value()) {
         return;
     }
     int32_t uid = message.want_->GetIntParam("uid", -1);
@@ -583,6 +594,9 @@ void BaseNetworkStrategy::GetAndCreateAppInfo(uint32_t uid, const std::string& b
 void BaseNetworkStrategy::ResetFirewallStatus(const StandbyMessage& message)
 {
     if (!isFirewallEnabled_ || isIdleMaintence_) {
+        return;
+    }
+    if (!message.want_.has_value()) {
         return;
     }
     bool isAdded = message.want_->GetBoolParam(SA_STATUS, false);

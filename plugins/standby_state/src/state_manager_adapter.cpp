@@ -138,6 +138,9 @@ void StateManagerAdapter::HandleUserSleepState(const StandbyMessage& message)
     if (isScreenOn_) {
         return;
     }
+    if (!message.want_.has_value()) {
+        return;
+    }
     isSleepState_ = message.want_->GetBoolParam("isSleep", false);
     STANDBYSERVICE_LOGI("standby start handle user sleep state, recv sleepState is %{public}d", isSleepState_);
     if (isSleepState_) {

@@ -113,6 +113,9 @@ void MotionSensorMonitor::SetEnergy(double energy)
 
 void MotionSensorMonitor::AddEnergy(AccelData *accelData)
 {
+    if (accelData == nullptr) {
+        return;
+    }
     currentAccelData_ = *accelData;
     if (!hasPrevAccelData_) {
         hasPrevAccelData_ = true;
@@ -149,6 +152,9 @@ bool MotionSensorMonitor::Init()
 
 bool MotionSensorMonitor::InitSensorUserMap(SensorInfo* sensorInfo, int32_t count)
 {
+    if (sensorInfo == nullptr) {
+        return false;
+    }
     // use acceleromter sensor and significant motion sensor to check motion
     const std::vector<int32_t> SENSOR_TYPE_CONFIG = {SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_SIGNIFICANT_MOTION};
 
