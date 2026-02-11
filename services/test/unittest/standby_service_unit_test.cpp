@@ -394,6 +394,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_010, TestSize.Level0)
 {
     StandbyServiceImpl::GetInstance()->registerPlugin_ = nullptr;
     StandbyServiceImpl::GetInstance()->UninitReadyState();
+    SleepForFC();
     StandbyServiceImpl::GetInstance()->UnInit();
     StandbyServiceImpl::GetInstance()->RegisterPlugin(StandbyConfigManager::GetInstance()
         ->GetPluginName());
