@@ -147,6 +147,7 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_001, TestSize.Level1)
     constraintManager_->Init();
     listenerManager_->Init();
     listenerManager_->StartListener();
+    SleepForFC();
     EXPECT_NE(listenerManager_, nullptr);
 }
 
