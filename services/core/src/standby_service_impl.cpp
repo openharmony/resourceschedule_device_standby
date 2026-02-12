@@ -1205,6 +1205,7 @@ void WEAK_FUNC StandbyServiceImpl::HandleCallStateChanged(const std::string &sce
     nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
     if (payload.is_discarded()) {
         STANDBYSERVICE_LOGE("parse json failed");
+        return;
     }
     int32_t state = -1;
     if (payload.at("state").is_string()) {
@@ -1276,6 +1277,7 @@ void StandbyServiceImpl::HandleBTServiceEvent(const int64_t value, const std::st
     nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
     if (payload.is_discarded()) {
         STANDBYSERVICE_LOGE("parse json failed");
+        return;
     }
     if (value == ResourceSchedule::ResType::BtServiceEvent::GATT_APP_REGISTER) {
         if (!payload.contains("ACTION") || !payload.contains("ADDRESS") || !payload.contains("UID") ||
@@ -1314,6 +1316,7 @@ void StandbyServiceImpl::HandleBrokerGattConnect(const int64_t value, const std:
     nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
     if (payload.is_discarded()) {
         STANDBYSERVICE_LOGE("parse json failed");
+        return;
     }
     if (value) {
         if (!payload.contains("clientIf") || !payload.contains("pkg") || !payload.at("clientIf").is_string() ||
