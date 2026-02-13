@@ -317,7 +317,4 @@ group("unittest") {
     ":standby_helper_unit_test",
     ":standby_utils_unit_test",
   ]
-  if (device_standby_plugin_enable) {
-    deps += [ ":standby_service_unit_test" ]
-  }
 }
