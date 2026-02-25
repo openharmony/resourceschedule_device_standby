@@ -1491,6 +1491,7 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_066, TestSize.Level1)
  */
 HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_067, TestSize.Level1)
 {
+    StandbyServiceImpl::GetInstance()->InitReadyState();
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
     const std::string tag = "data_test";
     int32_t timesTamp = 1;
