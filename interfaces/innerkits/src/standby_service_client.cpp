@@ -130,19 +130,14 @@ ErrCode StandbyServiceClient::SetNatInterval(uint32_t& type, bool& enable, uint3
     return standbyServiceProxy_->SetNatInterval(type, enable, interval);
 }
 
-ErrCode StandbyServiceClient::HandleEvent(const std::shared_ptr<ResourceSchedule::ResData> &resData)
+ErrCode StandbyServiceClient::HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo)
 {
-    if (!resData) {
-        STANDBYSERVICE_LOGE("resData is nullptr");
-        return ERR_STANDBY_INVALID_PARAM;
-    }
     std::lock_guard<std::mutex> lock(mutex_);
-    std::string sceneInfo = resData->payload.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace);
     if (!GetStandbyServiceProxy()) {
         STANDBYSERVICE_LOGE("get standby service proxy failed");
         return ERR_STANDBY_SERVICE_NOT_CONNECTED;
     }
-    return standbyServiceProxy_->HandleEvent(resData->resType, resData->value, sceneInfo);
+    return standbyServiceProxy_->HandleEvent(resType, value, sceneInfo);
 }
 
 ErrCode StandbyServiceClient::ReportWorkSchedulerStatus(bool started, int32_t uid, const std::string& bundleName)

@@ -45,6 +45,7 @@ ohos_unittest("standby_client_unit_test") {
     "ipc:ipc_single",
     "resource_schedule_service:resschedsvc",
     "samgr:samgr_proxy",
+    "json:nlohmann_json_static"，
   ]
 
   subsystem_name = "resourceschedule"
