@@ -1529,6 +1529,12 @@ void StandbyServiceImpl::SubHandleCommonEvent(const uint32_t resType, const int6
         case ResourceSchedule::ResType::RES_TYPE_WIFI_CONNECT_STATE_CHANGE:
             HandleWifiConnStateChanged(value);
             break;
+        case ResourceSchedule::ResType::RES_TYPE_INNER_AUDIO_STATE:
+            HandleAudioRendererChanged(value, sceneInfo);
+            break;
+        case ResourceSchedule::ResType::RES_TYPE_AUDIO_CAPTURE_STATUS_CHANGED:
+            HandleAudioCapturerChanged(value, sceneInfo);
+            break;
         default:
             AppEventHandler(resType, value, sceneInfo);
             break;
@@ -1541,6 +1547,50 @@ void StandbyServiceImpl::HandlePowerModeChanged(const int64_t value)
     message.action_ = EventFwk::CommonEventSupport::COMMON_EVENT_POWER_SAVE_MODE_CHANGED;
     message.want_ = AAFwk::Want {};
     message.want_->SetParam("current_power_mode", static_cast<int32_t>(value));
+    DispatchEvent(message);
+}
+
+void StandbyServiceImpl::HandleAudioRendererChanged(const int64_t value, const std::string &sceneInfo)
+{
+    nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
+    if (payload.is_discarded()) {
+        STANDBYSERVICE_LOGE("parse json failed");
+        return;
+    }
+    if (!payload.contains("uid")) {
+        STANDBYSERVICE_LOGE("param does not exist");
+        return;
+    }
+    if (!payload.at("uid").is_string()) {
+        STANDBYSERVICE_LOGE("uid param is invalid");
+        return;
+    }
+    StandbyMessage message(StandbyMessageType::AUDIO_RENDERER_CHANGE);
+    message.want_ = AAFwk::Want {};
+    message.want_->SetParam("rendererState", static_cast<int32_t>(value));
+    message.want_->SetParam("uid", payload["uid"].get<std::string>());
+    DispatchEvent(message);
+}
+
+void StandbyServiceImpl::HandleAudioCapturerChanged(const int64_t value, const std::string &sceneInfo)
+{
+    nlohmann::json payload = nlohmann::json::parse(sceneInfo, nullptr, false);
+    if (payload.is_discarded()) {
+        STANDBYSERVICE_LOGE("parse json failed");
+        return;
+    }
+    if (!payload.contains("uid")) {
+        STANDBYSERVICE_LOGE("param does not exist");
+        return;
+    }
+    if (!payload.at("uid").is_string()) {
+        STANDBYSERVICE_LOGE("uid param is invalid");
+        return;
+    }
+    StandbyMessage message(StandbyMessageType::AUDIO_CAPTURER_CHANGE);
+    message.want_ = AAFwk::Want {};
+    message.want_->SetParam("capturerState", static_cast<int32_t>(value));
+    message.want_->SetParam("uid", payload["uid"].get<std::string>());
     DispatchEvent(message);
 }
 

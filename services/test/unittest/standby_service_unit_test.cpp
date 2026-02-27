@@ -76,6 +76,13 @@ namespace {
     };
     constexpr int32_t SLEEP_TIMEOUT = 500;
     constexpr int32_t WAKEUP_EXACT_TIMER_TYPE = 6;
+
+    static std::string g_logMsg;
+    void MyLogCallback(const LogType type, const LogLevel level, const unsigned int domain, const char* tag,
+        const char* msg)
+    {
+        g_logMsg = msg;
+    }
 }
 
 class StandbyServiceUnitTest : public testing::Test {
@@ -1498,6 +1505,64 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_066, TestSize.Level1)
 
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
     EXPECT_EQ(StandbyService::GetInstance()->PushProxyStateChanged(type, enable), ERR_STANDBY_SYS_NOT_READY);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_068
+ * @tc.desc: test HandleAudioRendererChanged
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_068, TestSize.Level1)
+{
+    int64_t value = 1;
+    LOG_SetCallback(MyLogCallback);
+    std::string sceneInfo = R"({"uid":"10001"})";
+    StandbyServiceImpl::GetInstance()->HandleAudioRendererChanged(value, sceneInfo);
+
+    g_logMsg.clear();
+    sceneInfo = "invalid_json";
+    StandbyServiceImpl::GetInstance()->HandleAudioRendererChanged(value, sceneInfo);
+    EXPECT_NE(g_logMsg.find("parse json failed"), std::string::npos);
+
+    g_logMsg.clear();
+    sceneInfo = R"({"other":"value"})";
+    StandbyServiceImpl::GetInstance()->HandleAudioRendererChanged(value, sceneInfo);
+    EXPECT_NE(g_logMsg.find("param does not exist"), std::string::npos);
+
+    g_logMsg.clear();
+    sceneInfo = R"({"uid":123})";
+    StandbyServiceImpl::GetInstance()->HandleAudioRendererChanged(value, sceneInfo);
+    EXPECT_NE(g_logMsg.find("uid param is invalid"), std::string::npos);
+}
+
+/**
+ * @tc.name: StandbyServiceUnitTest_069
+ * @tc.desc: test HandleAudioCapturerChanged
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_069, TestSize.Level1)
+{
+    int64_t value = 1;
+    LOG_SetCallback(MyLogCallback);
+    std::string sceneInfo = R"({"uid":"10001"})";
+    StandbyServiceImpl::GetInstance()->HandleAudioCapturerChanged(value, sceneInfo);
+
+    g_logMsg.clear();
+    sceneInfo = "invalid_json";
+    StandbyServiceImpl::GetInstance()->HandleAudioCapturerChanged(value, sceneInfo);
+    EXPECT_NE(g_logMsg.find("parse json failed"), std::string::npos);
+
+    g_logMsg.clear();
+    sceneInfo = R"({"other":"value"})";
+    StandbyServiceImpl::GetInstance()->HandleAudioCapturerChanged(value, sceneInfo);
+    EXPECT_NE(g_logMsg.find("param does not exist"), std::string::npos);
+
+    g_logMsg.clear();
+    sceneInfo = R"({"uid":123})";
+    StandbyServiceImpl::GetInstance()->HandleAudioCapturerChanged(value, sceneInfo);
+    EXPECT_NE(g_logMsg.find("uid param is invalid"), std::string::npos);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
