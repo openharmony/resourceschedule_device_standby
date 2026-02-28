@@ -210,6 +210,8 @@ private:
     void HandleScreenStateChanged(const int64_t value);
     void HandleChargeStateChanged(const int64_t value);
     void HandleWifiConnStateChanged(const int64_t value);
+    void HandleAudioRendererChanged(const int64_t value, const std::string &sceneInfo);
+    void HandleAudioCapturerChanged(const int64_t value, const std::string &sceneInfo);
     void HandleBootCompleted();
     
     // handle abnormal power use
