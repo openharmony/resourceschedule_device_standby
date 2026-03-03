@@ -24,7 +24,6 @@
 #include "resource_request.h"
 #include "standby_service_errors.h"
 #include "istandby_service_subscriber.h"
-#include "res_data.h"
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -158,7 +157,7 @@ public:
      * @param resData event data.
      * @return ErrCode ERR_OK if success, else fail.
      */
-    ErrCode HandleEvent(const std::shared_ptr<ResourceSchedule::ResData> &resData);
+    ErrCode HandleEvent(const uint32_t resType, const int64_t value, const std::string &sceneInfo);
 
     /**
      * @brief Report event when a module power energy is overused according to the information from XPower

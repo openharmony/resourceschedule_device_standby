@@ -46,7 +46,7 @@ ohos_shared_library("standby_utils_policy") {
 
   external_deps = StandbyUtilsPolicyExternalDeps
 
-  public_external_deps = [ "json:nlohmann_json_static" ]
+  external_deps += [ "json:nlohmann_json_static" ]
 
   defines = []
   if (enable_standby_configpolicy) {
@@ -74,7 +74,7 @@ ohos_static_library("standby_utils_policy_static") {
 
   external_deps = StandbyUtilsPolicyExternalDeps
 
-  public_external_deps = [ "json:nlohmann_json_static" ]
+  external_deps += [ "json:nlohmann_json_static" ]
 
   defines = []
   if (enable_standby_configpolicy) {

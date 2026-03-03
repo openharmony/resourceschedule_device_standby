@@ -74,9 +74,9 @@ ohos_shared_library("standby_innerkits") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
+    "resource_schedule_service:resschedsvc",
   ]
 
-  public_external_deps = [ "resource_schedule_service:resschedsvc" ]
   innerapi_tags = [ "platformsdk" ]
   subsystem_name = "resourceschedule"
   part_name = "${standby_service_part_name}"

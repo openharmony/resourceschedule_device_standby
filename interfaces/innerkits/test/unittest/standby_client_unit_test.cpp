@@ -19,6 +19,7 @@
 
 #include "gtest/gtest.h"
 #include "singleton.h"
+#include "nlohmann/json.hpp"
 
 #include "allow_type.h"
 #include "istandby_service.h"
@@ -289,8 +290,8 @@ HWTEST_F(StandbyServiceClientUnitTest, StandbyServiceClientUnitTest_016, TestSiz
     auto deathRecipient_ = StandbyServiceClient::StandbyServiceDeathRecipient(*mgr);
     deathRecipient_.OnRemoteDied(nullptr);
     nlohmann::json payload;
-    std::shared_ptr<ResourceSchedule::ResData> data = std::make_shared<ResourceSchedule::ResData>(1, 1, payload);
-    mgr->HandleEvent(data);
+    std::string sceneInfo = payload.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace);
+    mgr->HandleEvent(1, 1, sceneInfo);
     EXPECT_NE(mgr, nullptr);
 }
 

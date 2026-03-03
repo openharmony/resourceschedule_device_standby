@@ -148,6 +148,7 @@ ohos_shared_library("standby_plugin") {
     "${standby_service_path}:standby_service",
     "${standby_utils_common_path}:standby_utils_common",
     "${standby_utils_policy_path}:standby_utils_policy",
+    "${standby_innerkits_path}:device_standby_stub",
   ]
 
   external_deps = StandbyPluginExternalDeps
@@ -175,6 +176,7 @@ ohos_static_library("standby_plugin_static") {
     "${standby_service_path}:standby_service",
     "${standby_utils_common_path}:standby_utils_common",
     "${standby_utils_policy_path}:standby_utils_policy",
+    "${standby_innerkits_path}:device_standby_stub",
   ]
 
   external_deps = StandbyPluginExternalDeps
