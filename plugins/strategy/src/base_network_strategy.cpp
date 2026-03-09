@@ -143,7 +143,7 @@ ErrCode BaseNetworkStrategy::EnableNetworkFirewall(const StandbyMessage& message
     }
     isFirewallEnabled_ = true;
     isIdleMaintence_ = false;
-    STANDBYSERVICE_LOGI("netlimit end succ, isFirewallEnabled_:%{public}d", static_cast<int32_t>(isFirewallEnabled_))
+    STANDBYSERVICE_LOGI("netlimit end succ, isFirewallEnabled_:%{public}d", static_cast<int32_t>(isFirewallEnabled_));
     return ERR_OK;
 }
 
