@@ -50,6 +50,9 @@
 #include "time_provider.h"
 #include "time_service_client.h"
 #include "tokenid_kit.h"
+#ifdef STANDBY_SERVICE_NETMANAGER_BASE_ENABLE
+#include "net_policy_client.h"
+#endif
 
 namespace OHOS {
 namespace DevStandbyMgr {
@@ -1234,11 +1237,16 @@ void StandbyServiceImpl::HandleScreenStateChanged(const int64_t value)
 {
     STANDBYSERVICE_LOGI("screen state to %{public}lld", (long long)(value));
     if (value == 1) {
-            DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                         EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON));
+        DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+            EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON));
+#ifdef STANDBY_SERVICE_NETMANAGER_BASE_ENABLE
+    int32_t ret = DelayedSingleton<NetManagerStandard::NetPolicyClient>::GetInstance()->
+        SetDeviceIdlePolicy(false);
+    STANDBYSERVICE_LOGI("screen on reset netlimit res: %{public}d", ret);
+#endif
     } else {
-            DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
-                                         EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF));
+        DispatchEvent(StandbyMessage(StandbyMessageType::COMMON_EVENT,
+            EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF));
     }
 }
 
