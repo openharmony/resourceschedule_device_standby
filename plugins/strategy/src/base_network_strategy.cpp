@@ -124,6 +124,8 @@ ErrCode BaseNetworkStrategy::UpdateFirewallAllowList()
     }
     SetFirewallStatus(true);
     isFirewallEnabled_ = true;
+    STANDBYSERVICE_LOGI("UpdateFirewallAllowList end, isFirewallEnabled_:%{public}d",
+        static_cast<int32_t>(isFirewallEnabled_));
     return ERR_OK;
 }
 
@@ -136,10 +138,12 @@ ErrCode BaseNetworkStrategy::EnableNetworkFirewall(const StandbyMessage& message
     STANDBYSERVICE_LOGI("start net limit mode");
     // if enter sleep state and app_res_deep phase, start net limit mode.
     if (auto ret = EnableNetworkFirewallInner(); ret != ERR_OK) {
+        STANDBYSERVICE_LOGW("EnableNetworkFirewall net limit fail, ret:%{public}d", ret);
         return ret;
     }
     isFirewallEnabled_ = true;
     isIdleMaintence_ = false;
+    STANDBYSERVICE_LOGI("netlimit end succ, isFirewallEnabled_:%{public}d", static_cast<int32_t>(isFirewallEnabled_))
     return ERR_OK;
 }
 
@@ -344,6 +348,7 @@ void BaseNetworkStrategy::SetNetAllowApps(bool isAllow)
 ErrCode BaseNetworkStrategy::DisableNetworkFirewall(const StandbyMessage& message)
 {
     if (!message.want_.has_value()) {
+        STANDBYSERVICE_LOGW("DisableNetworkFirewall message.want_ is null");
         return ERR_STANDBY_OBJECT_NULL;
     }
     uint32_t preState = static_cast<uint32_t>(message.want_->GetIntParam(PREVIOUS_STATE, 0));
@@ -361,6 +366,7 @@ ErrCode BaseNetworkStrategy::DisableNetworkFirewall(const StandbyMessage& messag
         SetFirewallStatus(true);
         isFirewallEnabled_ = true;
     } else if (preState == StandbyState::SLEEP || preState == StandbyState::MAINTENANCE) {
+        STANDBYSERVICE_LOGI("state change, start DisableNetworkFirewall");
         DisableNetworkFirewallInner();
         isIdleMaintence_ = false;
         isFirewallEnabled_ = false;
@@ -597,6 +603,7 @@ void BaseNetworkStrategy::ResetFirewallStatus(const StandbyMessage& message)
         return;
     }
     if (!message.want_.has_value()) {
+        STANDBYSERVICE_LOGW("ResetFirewallStatus message.want_ is null");
         return;
     }
     bool isAdded = message.want_->GetBoolParam(SA_STATUS, false);
