@@ -78,7 +78,7 @@ void BackgroundTaskListener::BgTaskListenerImpl::OnContinuousTaskStart(
 {
     STANDBYSERVICE_LOGD("Continuous start called, uid is %{public}d", continuousTaskCallbackInfo->GetCreatorUid());
     OnTaskStatusChanged(CONTINUOUS_TASK, true, continuousTaskCallbackInfo->GetCreatorUid(),
-        continuousTaskCallbackInfo->GetCreatorPid(), "");
+        continuousTaskCallbackInfo->GetCreatorPid(), "", continuousTaskCallbackInfo->GetTypeId());
 }
 
 void BackgroundTaskListener::BgTaskListenerImpl::OnContinuousTaskStop(
@@ -86,11 +86,11 @@ void BackgroundTaskListener::BgTaskListenerImpl::OnContinuousTaskStop(
 {
     STANDBYSERVICE_LOGD("Continuous stop called, uid is %{public}d", continuousTaskCallbackInfo->GetCreatorUid());
     OnTaskStatusChanged(CONTINUOUS_TASK, false, continuousTaskCallbackInfo->GetCreatorUid(),
-        continuousTaskCallbackInfo->GetCreatorPid(), "");
+        continuousTaskCallbackInfo->GetCreatorPid(), "", continuousTaskCallbackInfo->GetTypeId());
 }
 
 void BackgroundTaskListener::BgTaskListenerImpl::OnTaskStatusChanged(const std::string& type, bool started,
-    int32_t uid, int32_t pid, const std::string& bundleName)
+    int32_t uid, int32_t pid, const std::string& bundleName, , int32_t typeId)
 {
     StandbyMessage standbyMessage {StandbyMessageType::BG_TASK_STATUS_CHANGE};
     standbyMessage.want_ = AAFwk::Want {};
@@ -98,6 +98,7 @@ void BackgroundTaskListener::BgTaskListenerImpl::OnTaskStatusChanged(const std::
     standbyMessage.want_->SetParam(BG_TASK_STATUS, started);
     standbyMessage.want_->SetParam(BG_TASK_UID, uid);
     standbyMessage.want_->SetParam(BG_TASK_BUNDLE_NAME, bundleName);
+    standbyMessage.want_->SetParam(BG_TASK_TYPE_ID, typeId);
     StandbyServiceImpl::GetInstance()->DispatchEvent(standbyMessage);
 }
 } // OHOS
