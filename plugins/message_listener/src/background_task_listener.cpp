@@ -90,7 +90,7 @@ void BackgroundTaskListener::BgTaskListenerImpl::OnContinuousTaskStop(
 }
 
 void BackgroundTaskListener::BgTaskListenerImpl::OnTaskStatusChanged(const std::string& type, bool started,
-    int32_t uid, int32_t pid, const std::string& bundleName, , int32_t typeId)
+    int32_t uid, int32_t pid, const std::string& bundleName, int32_t typeId)
 {
     StandbyMessage standbyMessage {StandbyMessageType::BG_TASK_STATUS_CHANGE};
     standbyMessage.want_ = AAFwk::Want {};
