@@ -426,7 +426,7 @@ ErrCode BaseNetworkStrategy::UpdateBgTaskAppStatus(const StandbyMessage& message
         }
         if (condition_ == ConditionType::NIGHT_STANDBY && type == CONTINUOUS_TASK) {
             int32_t typeId = message.want_->GetIntParam(BG_TASK_TYPE_ID, -1);
-            if (typeId < 0 || (nightExemptionTaskType_ & (1 << task->GetTypeId())) == 0) {
+            if (typeId < 0 || (nightExemptionTaskType_ & (1 << typeId)) == 0) {
                 STANDBYSERVICE_LOGI("uid %{public}d continuous task typeid %{public}d not exempted in night",
                     uid, typeId);
                 return ERR_STANDBY_KEY_INFO_NOT_MATCH;
