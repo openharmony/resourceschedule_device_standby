@@ -1288,32 +1288,39 @@ void StandbyServiceImpl::HandleBTServiceEvent(const int64_t value, const std::st
         return;
     }
     if (value == ResourceSchedule::ResType::BtServiceEvent::GATT_APP_REGISTER) {
-        if (!payload.contains("ACTION") || !payload.contains("ADDRESS") || !payload.contains("UID") ||
-            !payload.at("ACTION").is_string() || !payload.at("ADDRESS").is_string() || !payload.at("UID").is_string()) {
+        if (!payload.contains("ACTION") || !payload.contains("UID") ||
+            !payload.at("ACTION").is_string() || !payload.at("UID").is_string() ||
+            !payload.contains("SIDE") || !payload.at("SIDE").is_string() ||
+            !payload.contains("APPID") || !payload.at("APPID").is_string()) {
             STANDBYSERVICE_LOGE("Bt Gatt Register info is valid");
             return;
         }
         std::string action = payload["ACTION"].get<std::string>();
-        std::string address = payload["ADDRESS"].get<std::string>();
         int32_t uid = atoi(payload["UID"].get<std::string>().c_str());
+        std::string side = payload["SIDE"].get<std::string>();
+        int32_t appid = atoi(payload["APPID"].get<std::string>().c_str());
         StandbyMessage standbyMessage {StandbyMessageType::GATT_APP_REGISTER};
         standbyMessage.want_ = AAFwk::Want {};
         standbyMessage.want_->SetParam("ACTION", action);
-        standbyMessage.want_->SetParam("ADDRESS", address);
         standbyMessage.want_->SetParam("UID", uid);
+        standbyMessage.want_->SetParam("SIDE", side);
+        standbyMessage.want_->SetParam("APPID", appid);
         DispatchEvent(standbyMessage);
     } else if (value == ResourceSchedule::ResType::BtServiceEvent::GATT_CONNECT_STATE) {
-        if (!payload.contains("ADDRESS") || !payload.contains("STATE") ||
-            !payload.at("ADDRESS").is_string() || !payload.at("STATE").is_string()) {
+        if (!payload.contains("STATE") || !payload.at("STATE").is_string() ||
+            !payload.contains("ROLE") || !payload.at("ROLE").is_string() ||
+            !payload.contains("CONNECTIF") || !payload.at("CONNECTIF").is_string()) {
             STANDBYSERVICE_LOGE("Bt Gatt Connection info is valid");
             return;
         }
-        std::string address = payload["ADDRESS"].get<std::string>();
         int32_t state = atoi(payload["STATE"].get<std::string>().c_str());
+        std::string side = payload["ROLE"].get<std::string>();
+        int32_t appid = atoi(payload["CONNECTIF"].get<std::string>().c_str());
         StandbyMessage standbyMessage {StandbyMessageType::GATT_CONNECT_STATE};
         standbyMessage.want_ = AAFwk::Want {};
-        standbyMessage.want_->SetParam("ADDRESS", address);
         standbyMessage.want_->SetParam("STATE", state);
+        standbyMessage.want_->SetParam("SIDE", side);
+        standbyMessage.want_->SetParam("APPID", appid);
         DispatchEvent(standbyMessage);
     }
 }
