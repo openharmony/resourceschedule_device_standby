@@ -418,7 +418,7 @@ ErrCode BaseNetworkStrategy::UpdateBgTaskAppStatus(const StandbyMessage& message
     }
     condition_ = TimeProvider::GetCondition();
     STANDBYSERVICE_LOGI("standby get bg task type:%{public}s,uid:%{public}d,started:%{public}d,condition:%{public}d",
-        type.c_str(), uid, typeId, condition_);
+        type.c_str(), uid, started, condition_);
     if (started) {
         if (isNightSleepMode_) {
             STANDBYSERVICE_LOGI("current is night sleep mode, skip");
