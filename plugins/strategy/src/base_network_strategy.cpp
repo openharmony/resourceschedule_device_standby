@@ -47,6 +47,7 @@ const std::map<std::string, uint8_t> BGTASK_EXEMPTION_FLAG_MAP {
 }
 
 bool BaseNetworkStrategy::isFirewallEnabled_ = false;
+bool BaseNetworkStrategy::isNightSleepMode_ = false;
 std::unordered_map<std::int32_t, NetLimtedAppInfo> BaseNetworkStrategy::netLimitedAppInfo_;
 static std::mutex mutex_;
 
@@ -414,6 +415,22 @@ ErrCode BaseNetworkStrategy::UpdateBgTaskAppStatus(const StandbyMessage& message
     std::string bundleName = message.want_->GetStringParam(BG_TASK_BUNDLE_NAME);
     if (BGTASK_EXEMPTION_FLAG_MAP.find(type) == BGTASK_EXEMPTION_FLAG_MAP.end()) {
         return ERR_STANDBY_KEY_INFO_NOT_MATCH;
+    }
+    condition_ = TimeProvider::GetCondition();
+    STANDBYSERVICE_LOGI("standby get bg task type:%{public}s,uid:%{public}d,started:%{public}d,condition:%{public}d",
+        type.c_str(), uid, typeId, condition_);
+    if (started) {
+        if (isNightSleepMode_) {
+            STANDBYSERVICE_LOGI("current is night sleep mode, skip");
+            return ERR_STANDBY_KEY_INFO_NOT_MATCH;
+        }
+        if (condition_ == ConditionType::NIGHT_STANDBY && type == CONTINUOUS_TASK) {
+            int32_t typeId = message.want_->GetIntParam(BG_TASK_TYPE_ID, -1);
+            if (typeId < 0 || (nightExemptionTaskType_ & (1 << task->GetTypeId())) == 0) {
+                STANDBYSERVICE_LOGI("uid %{public}d continuous task typeid %{public}d not exempted in night", uid, typeId);
+                return ERR_STANDBY_KEY_INFO_NOT_MATCH;
+            }
+        }
     }
     if (bundleName.empty()) {
         bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);

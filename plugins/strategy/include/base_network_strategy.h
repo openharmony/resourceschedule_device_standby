@@ -132,6 +132,7 @@ protected:
     bool IsFlagExempted(uint8_t flag);
 protected:
     static bool isFirewallEnabled_;
+    static bool isNightSleepMode_;
     bool isIdleMaintence_ {false};
     static std::unordered_map<std::int32_t, NetLimtedAppInfo> netLimitedAppInfo_;
     uint32_t nightExemptionTaskType_ {0};
