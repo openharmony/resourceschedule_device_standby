@@ -71,6 +71,7 @@ const std::string BG_TASK_UID = "uid";
 const std::string BG_TASK_PID = "pid";
 const std::string BG_TASK_BUNDLE_NAME = "name";
 const std::string BG_TASK_RESOURCE_STATUS = "applyed";
+const std::string BG_TASK_TYPE_ID = "typeId";
 
 const std::string SA_STATUS = "isAdded";
 const std::string SA_ID = "systemAbilityId";
