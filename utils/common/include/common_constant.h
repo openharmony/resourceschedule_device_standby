@@ -72,6 +72,7 @@ extern const std::string BG_TASK_UID;
 extern const std::string BG_TASK_PID;
 extern const std::string BG_TASK_BUNDLE_NAME;
 extern const std::string BG_TASK_RESOURCE_STATUS;
+extern const std::string BG_TASK_TYPE_ID;
 extern const std::string SA_STATUS;
 extern const std::string SA_ID;
 extern const std::string MESSAGE_TYPE;

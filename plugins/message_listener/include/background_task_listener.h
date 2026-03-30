@@ -92,7 +92,7 @@ private:
          * @brief dispatch BG_TASK_STATUS_CHANGE event when background task started or stopped
          */
         void OnTaskStatusChanged(const std::string& type, bool started, int32_t uid, int32_t pid,
-            const std::string& bundleName);
+            const std::string& bundleName, int32_t typeId = -1);
     private:
         std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     };
