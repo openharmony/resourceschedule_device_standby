@@ -303,6 +303,19 @@ ErrCode BaseNetworkStrategy::GetExemptionConfig()
         }
         value.appExemptionFlag_ |= ExemptionTypeFlag::RESTRICTED;
     }
+    // if app in conditional restricted list and not exempted, add retricted flag
+    std::vector<std::string> conditionalRestrictNameList =
+        StandbyConfigManager::GetInstance()->GetStandbyListPara("conditional_restrict_net_app");
+    for (auto& [key, value] : netLimitedAppInfo_) {
+        auto it = std::find(conditionalRestrictNameList.begin(), conditionalRestrictNameList.end(), value.name_);
+        if (it == conditionalRestrictNameList.end()) {
+            continue;
+        }
+        if ((value.appExemptionFlag_ & (~ExemptionTypeFlag::UNRESTRICTED)) != 0) {
+            continue;
+        }
+        value.appExemptionFlag_ |= ExemptionTypeFlag::RESTRICTED;
+    }
     return ERR_OK;
 }
 
@@ -326,6 +339,16 @@ ErrCode BaseNetworkStrategy::GetExemptionConfigForApp(NetLimtedAppInfo& appInfo,
         ReasonCodeEnum::REASON_APP_API, restrictNameList);
     if (restrictNameList.find(bundleName) != restrictNameList.end()) {
         appInfo.appExemptionFlag_ |= ExemptionTypeFlag::RESTRICTED;
+    }
+
+    // if app in conditional restricted list and not exempted, add retricted flag
+    std::vector<std::string> conditionalRestrictNameList =
+        StandbyConfigManager::GetInstance()->GetStandbyListPara("conditional_restrict_net_app");
+    auto it = std::find(conditionalRestrictNameList.begin(), conditionalRestrictNameList.end(), bundleName);
+    if (it != conditionalRestrictNameList.end()) {
+        if ((appInfo.appExemptionFlag_ & (~ExemptionTypeFlag::UNRESTRICTED)) == 0) {
+            appInfo.appExemptionFlag_ |= ExemptionTypeFlag::RESTRICTED;
+        }
     }
     return ERR_OK;
 }
