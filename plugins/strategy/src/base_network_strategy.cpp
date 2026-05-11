@@ -44,6 +44,7 @@ const std::map<std::string, uint8_t> BGTASK_EXEMPTION_FLAG_MAP {
     {TRANSIENT_TASK, ExemptionTypeFlag::TRANSIENT_TASK},
     {WORK_SCHEDULER, ExemptionTypeFlag::WORK_SCHEDULER},
 };
+const std::string CONDITIONAL_RESTRICT_NET_APP_TAG = "conditional_restrict_net_app";
 }
 
 bool BaseNetworkStrategy::isFirewallEnabled_ = false;
@@ -305,16 +306,15 @@ ErrCode BaseNetworkStrategy::GetExemptionConfig()
     }
     // if app in conditional restricted list and not exempted, add retricted flag
     std::vector<std::string> conditionalRestrictNameList =
-        StandbyConfigManager::GetInstance()->GetStandbyListPara("conditional_restrict_net_app");
+        StandbyConfigManager::GetInstance()->GetStandbyListPara(CONDITIONAL_RESTRICT_NET_APP_TAG);
     for (auto& [key, value] : netLimitedAppInfo_) {
         auto it = std::find(conditionalRestrictNameList.begin(), conditionalRestrictNameList.end(), value.name_);
         if (it == conditionalRestrictNameList.end()) {
             continue;
         }
-        if ((value.appExemptionFlag_ & (~ExemptionTypeFlag::UNRESTRICTED)) != 0) {
-            continue;
+        if ((value.appExemptionFlag_ & (~ExemptionTypeFlag::UNRESTRICTED)) == 0) {
+            value.appExemptionFlag_ |= ExemptionTypeFlag::RESTRICTED;
         }
-        value.appExemptionFlag_ |= ExemptionTypeFlag::RESTRICTED;
     }
     return ERR_OK;
 }
@@ -343,7 +343,7 @@ ErrCode BaseNetworkStrategy::GetExemptionConfigForApp(NetLimtedAppInfo& appInfo,
 
     // if app in conditional restricted list and not exempted, add retricted flag
     std::vector<std::string> conditionalRestrictNameList =
-        StandbyConfigManager::GetInstance()->GetStandbyListPara("conditional_restrict_net_app");
+        StandbyConfigManager::GetInstance()->GetStandbyListPara(CONDITIONAL_RESTRICT_NET_APP_TAG);
     auto it = std::find(conditionalRestrictNameList.begin(), conditionalRestrictNameList.end(), bundleName);
     if (it != conditionalRestrictNameList.end()) {
         if ((appInfo.appExemptionFlag_ & (~ExemptionTypeFlag::UNRESTRICTED)) == 0) {
@@ -535,6 +535,12 @@ void BaseNetworkStrategy::AddExemptionFlag(uint32_t uid, const std::string& bund
     }
     auto lastAppExemptionFlag = iter->second.appExemptionFlag_;
     iter->second.appExemptionFlag_ |= flag;
+    std::vector<std::string> conditionalRestrictNameList =
+        StandbyConfigManager::GetInstance()->GetStandbyListPara(CONDITIONAL_RESTRICT_NET_APP_TAG);
+    auto it = std::find(conditionalRestrictNameList.begin(), conditionalRestrictNameList.end(), bundleName);
+    if (it != conditionalRestrictNameList.end()) {
+        iter->second.appExemptionFlag_ &= (~ExemptionTypeFlag::RESTRICTED);
+    }
     if (GetExemptedFlag(lastAppExemptionFlag, iter->second.appExemptionFlag_)) {
         SetFirewallAllowedList({iter->first}, true);
     }
@@ -554,6 +560,14 @@ void BaseNetworkStrategy::RemoveExemptionFlag(uint32_t uid, uint8_t flag)
     STANDBYSERVICE_LOGD("RemoveExemptionFlag uid is flag is %{public}d, flag is %{public}d", uid, flag);
     auto lastAppExemptionFlag = iter->second.appExemptionFlag_;
     iter->second.appExemptionFlag_ &= (~flag);
+    std::vector<std::string> conditionalRestrictNameList =
+        StandbyConfigManager::GetInstance()->GetStandbyListPara(CONDITIONAL_RESTRICT_NET_APP_TAG);
+    auto it = std::find(conditionalRestrictNameList.begin(), conditionalRestrictNameList.end(), iter->second.name_);
+    if (it != conditionalRestrictNameList.end()) {
+        if ((iter->second.appExemptionFlag_ & (~ExemptionTypeFlag::UNRESTRICTED)) == 0) {
+            iter->second.appExemptionFlag_ |= ExemptionTypeFlag::RESTRICTED;
+        }
+    }
     if (GetExemptedFlag(iter->second.appExemptionFlag_, lastAppExemptionFlag)) {
         SetFirewallAllowedList({iter->first}, false);
     }
