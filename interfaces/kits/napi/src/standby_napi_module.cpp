@@ -99,6 +99,10 @@ napi_value IsDeviceInStandby(napi_env env, napi_callback_info info)
 {
     IsDeviceInStandbyParamsInfo params;
     if (ParseInStandbyParameters(env, info, params) == nullptr) {
+        if (params.callback) {
+            napi_delete_reference(env, params.callback);
+            params.callback = nullptr;
+        }
         return nullptr;
     }
 
@@ -210,6 +214,10 @@ napi_value GetExemptionListApps(napi_env env, napi_callback_info info)
 {
     GetAllowListParamsInfo params;
     if (ParseGetAllowListParameters(env, info, params) == nullptr) {
+        if (params.callback) {
+            napi_delete_reference(env, params.callback);
+            params.callback = nullptr;
+        }
         return nullptr;
     }
 
