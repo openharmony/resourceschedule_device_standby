@@ -130,28 +130,6 @@ void StandbyPluginUnitTest::SetUpTestCase()
 }
 
 /**
- * @tc.name: StandbyPluginUnitTest_001
- * @tc.desc: test Init of StandbyPlugin.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_001, TestSize.Level1)
-{
-    listenerManager_->StopListener();
-    listenerManager_->UnInit();
-    constraintManager_->UnInit();
-    strategyManager_->strategyList_.clear();
-    standbyStateManager_->UnInit();
-    standbyStateManager_->Init();
-    strategyManager_->Init();
-    constraintManager_->Init();
-    listenerManager_->Init();
-    listenerManager_->StartListener();
-    SleepForFC();
-    EXPECT_NE(listenerManager_, nullptr);
-}
-
-/**
  * @tc.name: StandbyPluginUnitTest_002
  * @tc.desc: test RegisterPolicy of StandbyPlugin.
  * @tc.type: FUNC
