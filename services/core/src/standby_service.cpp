@@ -329,6 +329,10 @@ ErrCode StandbyService::HeartBeatValueChanged(const std::string &tag, int32_t ti
         STANDBYSERVICE_LOGW("standby service is not running");
         return ERR_STANDBY_SYS_NOT_READY;
     }
+    if (!CheckProcessNamePermission(PUSH_PROCESS_NAME)) {
+        STANDBYSERVICE_LOGE("set heart beat value permission check fail");
+        return ERR_PERMISSION_DENIED;
+    }
     return StandbyServiceImpl::GetInstance()->HeartBeatValueChanged(tag, timesTamp);
 }
 
