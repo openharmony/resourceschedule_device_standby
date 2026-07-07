@@ -52,7 +52,9 @@ bool MotionSensorMonitor::CheckSersorUsable(SensorInfo *sensorInfo, int32_t coun
     }
     SensorInfo *pt = sensorInfo + count;
     for (SensorInfo *ps = sensorInfo; ps < pt; ++ps) {
-        if (sensorInfo->sensorTypeId == sensorTypeId) {
+        STANDBYSERVICE_LOGD("CheckSersorUsable ps->sensorTypeId: %{public}d, sensorTypeId: %{public}d",
+            ps->sensorTypeId, sensorTypeId);
+        if (ps->sensorTypeId == sensorTypeId) {
             return true;
         }
     }
@@ -158,11 +160,13 @@ bool MotionSensorMonitor::InitSensorUserMap(SensorInfo* sensorInfo, int32_t coun
     // use acceleromter sensor and significant motion sensor to check motion
     const std::vector<int32_t> SENSOR_TYPE_CONFIG = {SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_SIGNIFICANT_MOTION};
 
+    STANDBYSERVICE_LOGI("InitSensorUserMap sensorInfo.size: %{public}d", count);
     for (const auto sensorType : SENSOR_TYPE_CONFIG) {
         if (CheckSersorUsable(sensorInfo, count, sensorType)) {
             sensorUserMap_.emplace(sensorType, SensorUser {});
         }
     }
+    STANDBYSERVICE_LOGI("init sensorUserMap_.size: %{public}d", static_cast<int32_t>(sensorUserMap_.size()));
     return sensorUserMap_.size() > 0;
 }
 
