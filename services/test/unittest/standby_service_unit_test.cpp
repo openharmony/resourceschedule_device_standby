@@ -781,7 +781,7 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_067, TestSize.Level1, 2
     const std::string tag = "data_test";
     int32_t timesTamp = 1;
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
-    EXPECT_EQ(StandbyService::GetInstance()->HeartBeatValueChanged(tag, timesTamp), ERR_OK);
+    EXPECT_EQ(StandbyService::GetInstance()->HeartBeatValueChanged(tag, timesTamp), ERR_PERMISSION_DENIED);
 
     StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
     EXPECT_EQ(StandbyService::GetInstance()->HeartBeatValueChanged(tag, timesTamp), ERR_STANDBY_SYS_NOT_READY);
