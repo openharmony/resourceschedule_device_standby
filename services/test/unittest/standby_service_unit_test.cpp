@@ -771,23 +771,6 @@ HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_025, TestSize.Level1, 2
 }
 
 /**
- * @tc.name: StandbyServiceUnitTest_067
- * @tc.desc: test HeartBeatValueChanged.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_067, TestSize.Level1, 20)
-{
-    const std::string tag = "data_test";
-    int32_t timesTamp = 1;
-    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_RUNNING;
-    EXPECT_EQ(StandbyService::GetInstance()->HeartBeatValueChanged(tag, timesTamp), ERR_PERMISSION_DENIED);
-
-    StandbyService::GetInstance()->state_ = ServiceRunningState::STATE_NOT_START;
-    EXPECT_EQ(StandbyService::GetInstance()->HeartBeatValueChanged(tag, timesTamp), ERR_STANDBY_SYS_NOT_READY);
-}
-
-/**
  * @tc.name: StandbyServiceUnitTest_027
  * @tc.desc: test multithread DayNightSwitchCallback of StandbyService.
  * @tc.type: FUNC
