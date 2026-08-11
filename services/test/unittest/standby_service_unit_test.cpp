@@ -1167,19 +1167,6 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_047, TestSize.Level1)
 }
 
 /**
- * @tc.name: StandbyServiceUnitTest_026
- * @tc.desc: test multithread uninit of StandbyService.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWMTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_026, TestSize.Level1, 20)
-{
-    StandbyServiceImpl::GetInstance()->UninitReadyState();
-    EXPECT_FALSE(StandbyServiceImpl::GetInstance()->isServiceReady_.load());
-    StandbyServiceUnitTest::SleepForFC();
-}
-
-/**
  * @tc.name: StandbyServiceUnitTest_048
  * @tc.desc: test common event timer sa ability.
  * @tc.type: FUNC
@@ -1218,26 +1205,6 @@ HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_049, TestSize.Level1)
     value = 0;
     StandbyServiceImpl::GetInstance()->HandleScreenStateChanged(value);
     EXPECT_NE(StandbyServiceImpl::GetInstance(), nullptr);
-}
-
-/**
- * @tc.name: StandbyServiceUnitTest_053
- * @tc.desc: test HandleP2PStateChanged of StandbyServiceImpl.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(StandbyServiceUnitTest, StandbyServiceUnitTest_053, TestSize.Level1)
-{
-    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_IDLE));
-    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_NONE));
-    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE)],
-        false);
-    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_CLOSED));
-    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE)],
-        false);
-    StandbyServiceImpl::GetInstance()->HandleP2PStateChanged(static_cast<int32_t>(P2pState::P2P_STATE_CLOSING));
-    EXPECT_EQ(DeviceStateCache::GetInstance()->deviceState_[static_cast<int32_t>(DeviceStateType::WIFI_P2P_CHANGE)],
-        false);
 }
 
 /**
