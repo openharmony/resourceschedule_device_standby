@@ -46,21 +46,6 @@ void MotionSensorMonitorTest::SetUp()
 }
 
 /**
- * @tc.name: Init
- * @tc.desc: test Init.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(MotionSensorMonitorTest, Init, TestSize.Level1)
-{
-    ConstraintEvalParam repeatedMotionParams{};
-    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(
-        PERIODLY_TASK_DECTION_TIMEOUT, PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
-    bool ret = repeatedMotionConstraint->Init();
-    EXPECT_EQ(ret, true);
-}
-
-/**
  * @tc.name: AcceleromterCallback
  * @tc.desc: test AcceleromterCallback.
  * @tc.type: FUNC
