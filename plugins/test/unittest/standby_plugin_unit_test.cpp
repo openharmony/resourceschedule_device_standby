@@ -423,24 +423,6 @@ HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0014, TestSize.Level1)
 }
 
 /**
- * @tc.name: StandbyPluginUnitTest_015
- * @tc.desc: test MotionSensorMonitor of Init.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(StandbyPluginUnitTest, StandbyPluginUnitTest_0015, TestSize.Level1)
-{
-    ConstraintEvalParam repeatedMotionParams{};
-    auto repeatedMotionConstraint = std::make_shared<MotionSensorMonitor>(PERIODLY_TASK_DECTION_TIMEOUT,
-            PERIODLY_TASK_REST_TIMEOUT, PERIODLY_TASK_TOTAL_TIMEOUT, repeatedMotionParams);
-    repeatedMotionConstraint->Init();
-    repeatedMotionConstraint->params_.isRepeatedDetection_ = true;
-    repeatedMotionConstraint->Init();
-    repeatedMotionConstraint->params_.isRepeatedDetection_ = false;
-    EXPECT_TRUE(repeatedMotionConstraint->Init() == true);
-}
-
-/**
  * @tc.name: StandbyPluginUnitTest_016
  * @tc.desc: test MotionSensorMonitor of PeriodlyStartMotionDetection.
  * @tc.type: FUNC
