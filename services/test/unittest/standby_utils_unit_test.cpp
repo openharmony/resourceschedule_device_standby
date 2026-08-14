@@ -42,6 +42,7 @@ public:
     void SetUp() override
     {
         g_mockFunctionCallCount = 0;
+        MockUtils::mockCloudConfigContent = R"({"version" : "1.1.1.1"})";
     }
     void TearDown() override {}
 };
@@ -545,6 +546,118 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_028, TestSize.Level1)
     StandbyConfigManager::GetInstance()->ladderBatteryListMap_.clear();
     result = StandbyConfigManager::GetInstance()->GetStandbyLadderBatteryList(TAG_BATTERY_THRESHOLD);
     EXPECT_EQ(result.size(), 0);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_030
+ * @tc.desc: test ParseDeviceStandbyConfig with vaild mx_standby_list and GetMxStandbyConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_030, TestSize.Level1)
+{
+    std::string content = R"({"mx_standby_list":{"item_a":{"k1":123},"item_b":{"k2":"abc"}}})";
+    nlohmann::json root = nlohmann::json::parse(content, nullptr, false);
+    ASSERT_TRUE(StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(root));
+    const auto& mx = StandbyConfigManager::GetInstance()->GetMxStandbyConfig();
+    EXPECT_EQ(mx.size(), 2);
+    EXPECT_EQ(mx.count("item_a"), 1);
+    EXPECT_EQ(mx.count("item_b"), 1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_031
+ * @tc.desc: test ParseMxStandbyListConfig and CanParseMxStandbyList with non-object value.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_031, TestSize.Level1)
+{
+    nlohmann::json bad = nlohmann::json::parse(R"([1, 2, 3])", nullptr, false);
+    EXPECT_FALSE(StandbyConfigManager::GetInstance()->ParseMxStandbyListConfig(bad));
+    std::string content = R"({"mx_standby_list":[1, 2, 3]})";
+    nlohmann::json root = nlohmann::json::parse(content, nullptr, false);
+    EXPECT_FALSE(StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(root));
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_032
+ * @tc.desc: test CanParsePkgTypeList with non-array pkg_type value.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_032, TestSize.Level1)
+{
+    nlohmann::json root = nlohmann::json::parse(R"({"pkg_type":{"701":"not_array"}})", nullptr, false);
+    EXPECT_FALSE(StandbyConfigManager::GetInstance()->CanParsePkgTypeList(root));
+    EXPECT_FALSE(StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(root));
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_033
+ * @tc.desc: test ParseDeviceStandbyConfig with non-array value in standby_list_para_config.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_033, TestSize.Level1)
+{
+    std::string content = R"({"standby_list_para_config":{"key_not_array":123}})";
+    nlohmann::json root = nlohmann::json::parse(content, nullptr, false);
+    EXPECT_FALSE(StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(root));
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_034
+ * @tc.desc: test GetCloudConfig parses mx_standby_list from cloud config (vaild object).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_034, TestSize.Level1)
+{
+    MockUtils::mockCloudConfigContent =
+        R"({"version" : "1.1.1.1", "mx_standby_list":{"item_a":{"k1":123},"item_b":{"k2":"abc"}}})";
+    StandbyConfigManager::GetInstance()->getSingleExtConfigFunc_ = MockUtils::MockGetSingleExtConfigFunc;
+    const auto& mxBefore = StandbyConfigManager::GetInstance()->GetMxStandbyConfig();
+    size_t sizeBefore = mxBefore.size();
+    StandbyConfigManager::GetInstance()->GetCloudConfig();
+    const auto& mxAfter = StandbyConfigManager::GetInstance()->GetMxStandbyConfig();
+    EXPECT_GT(mxAfter.size(), sizeBefore);
+    EXPECT_EQ(mxAfter.count("item_a"), 1);
+    EXPECT_EQ(mxAfter.count("item_b"), 1);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_035
+ * @tc.desc: test GetCloudConfig with non-object mx_standby_list.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_035, TestSize.Level1)
+{
+    MockUtils::mockCloudConfigContent = R"({"version" : "1.1.1.1", "mx_standby_list":[1, 2, 3]})";
+    StandbyConfigManager::GetInstance()->getSingleExtConfigFunc_ = MockUtils::MockGetSingleExtConfigFunc;
+    const auto& mxBefore = StandbyConfigManager::GetInstance()->GetMxStandbyConfig();
+    size_t sizeBefore = mxBefore.size();
+    StandbyConfigManager::GetInstance()->GetCloudConfig();
+    const auto& mxAfter = StandbyConfigManager::GetInstance()->GetMxStandbyConfig();
+    EXPECT_EQ(mxAfter.size(), sizeBefore);
+}
+
+/**
+ * @tc.name: StandbyUtilsUnitTest_036
+ * @tc.desc: test GetCloudConfig without mx_standby_list key.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_036, TestSize.Level1)
+{
+    MockUtils::mockCloudConfigContent = R"({"version" : "1.1.1.1", "standby_list_para_config":{"key_not_array":123}})";
+    StandbyConfigManager::GetInstance()->getSingleExtConfigFunc_ = MockUtils::MockGetSingleExtConfigFunc;
+    const auto& mxBefore = StandbyConfigManager::GetInstance()->GetMxStandbyConfig();
+    size_t sizeBefore = mxBefore.size();
+    StandbyConfigManager::GetInstance()->GetCloudConfig();
+    const auto& mxAfter = StandbyConfigManager::GetInstance()->GetMxStandbyConfig();
+    EXPECT_EQ(mxAfter.size(), sizeBefore);
 }
 }  // namespace DevStandbyMgr
 }  // namespace OHOS

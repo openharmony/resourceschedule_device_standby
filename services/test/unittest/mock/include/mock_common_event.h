@@ -31,6 +31,7 @@ public:
     MockUtils() = default;
     ~MockUtils() = default;
     static int32_t MockGetSingleExtConfigFunc(int32_t index, std::string &config);
+    static std::string mockCloudConfigContent;
 };
 }  // namespace DevStandbyMgr
 }  // namespace OHOS
