@@ -1211,11 +1211,13 @@ void WEAK_FUNC StandbyServiceImpl::HandleCallStateChanged(const std::string &sce
         return;
     }
     int32_t state = -1;
-    if (payload.at("state").is_string()) {
-        state = atoi(payload["state"].get<std::string>().c_str());
-    }
-    if (payload.at("state").is_number_integer()) {
-        state = payload["state"].get<std::int32_t>();
+    if (payload.contains("state")) {
+        if (payload.at("state").is_string()) {
+            state = atoi(payload["state"].get<std::string>().c_str());
+        }
+        if (payload.at("state").is_number_integer()) {
+            state = payload["state"].get<std::int32_t>();
+        }
     }
     bool disable = (state == static_cast<int32_t>(TelCallState::CALL_STATUS_UNKNOWN) ||
                     state == static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED) ||
