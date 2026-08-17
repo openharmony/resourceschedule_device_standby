@@ -415,7 +415,7 @@ T StandbyConfigManager::GetConfigWithName(const std::string& switchName,
     std::lock_guard<std::mutex> lock(configMutex_);
     auto iter = configMap.find(switchName);
     if (iter == configMap.end()) {
-        STANDBYSERVICE_LOGW("failed to find config %{public}s", switchName.c_str());
+        STANDBYSERVICE_LOGD("failed to find config %{public}s", switchName.c_str());
         return T{};
     }
     return iter->second;
