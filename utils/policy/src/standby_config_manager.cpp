@@ -46,6 +46,7 @@ namespace {
     const std::string TAG_LADDER_BATTERY_LIST = "ladder_battery_threshold_list";
     const std::string TAG_PKG_TYPE_LIST = "pkg_type";
     const std::string TAG_STANDBY_LIST_PARA_CONFIG = "standby_list_para_config";
+    const std::string TAG_MX_STANDBY_LIST = "mx_standby_list";
 
     const std::string TAG_SETTING_LIST = "setting_list";
     const std::string TAG_VER = "version";
@@ -182,6 +183,7 @@ void StandbyConfigManager::ParseCloudConfig(const nlohmann::json& devConfigRoot)
     nlohmann::json settingConfig;
     nlohmann::json listConfig;
     nlohmann::json standbyListParaMap;
+    nlohmann::json mxStandbyListConfig;
 
     if (JsonUtils::GetObjFromJsonValue(devConfigRoot, TAG_SETTING_LIST, settingConfig) &&
         !ParseStandbyConfig(settingConfig)) {
@@ -194,6 +196,10 @@ void StandbyConfigManager::ParseCloudConfig(const nlohmann::json& devConfigRoot)
     if (JsonUtils::GetObjFromJsonValue(devConfigRoot, TAG_STANDBY_LIST_PARA_CONFIG, standbyListParaMap) &&
         !ParseStandbyListParaConfig(standbyListParaMap)) {
         STANDBYSERVICE_LOGW("failed to parse cloud config in %{public}s", TAG_STANDBY_LIST_PARA_CONFIG.c_str());
+    }
+    if (JsonUtils::GetObjFromJsonValue(devConfigRoot, TAG_MX_STANDBY_LIST, mxStandbyListConfig) &&
+        !ParseMxStandbyListConfig(mxStandbyListConfig)) {
+        STANDBYSERVICE_LOGW("failed to parse cloud config in %{public}s", TAG_MX_STANDBY_LIST.c_str());
     }
     if (!ParseResCtrlConfig(devConfigRoot)) {
         STANDBYSERVICE_LOGW("Failed to parse cloud config in standby strategy.");
@@ -446,6 +452,11 @@ std::vector<std::string> StandbyConfigManager::GetStandbyPkgTypeList(const std::
     return GetConfigWithName(switchName, pkgTypeMap_);
 }
 
+std::unordered_map<std::string, nlohmann::json>& StandbyConfigManager::GetMxStandbyConfig()
+{
+    return mxStandbyConfigMap_;
+}
+
 int32_t StandbyConfigManager::GetMaxDuration(const std::string& name, const std::string& paramName,
     uint32_t condition, bool isApp)
 {
@@ -534,7 +545,6 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
     nlohmann::json standbySwitchConfig;
     nlohmann::json standbyListConfig;
     nlohmann::json standbyIntervalList;
-    nlohmann::json standbyBatteryList;
     nlohmann::json standbyListParaMap;
     JsonUtils::GetStringFromJsonValue(devStandbyConfigRoot, TAG_PLUGIN_NAME, pluginName_);
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY, standbyConfig) &&
@@ -566,14 +576,12 @@ bool StandbyConfigManager::ParseDeviceStanbyConfig(const nlohmann::json& devStan
             return false;
         }
     }
-    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_LADDER_BATTERY_LIST, standbyBatteryList) &&
-        !ParseBatteryList(standbyBatteryList)) {
-        STANDBYSERVICE_LOGW("failed to parse standby battery list in %{public}s", STANDBY_CONFIG_PATH.c_str());
-        return false;
-    }
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_STANDBY_LIST_PARA_CONFIG, standbyListParaMap) &&
         !ParseStandbyListParaConfig(standbyListParaMap)) {
         STANDBYSERVICE_LOGW("failed to parse standby list para config in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
+    }
+    if (!CanParseMxStandbyList(devStandbyConfigRoot)) {
         return false;
     }
     return true;
@@ -583,8 +591,26 @@ bool StandbyConfigManager::CanParsePkgTypeList(const nlohmann::json& devStandbyC
 {
     nlohmann::json standbyPkgTypeList;
     if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_PKG_TYPE_LIST, standbyPkgTypeList) &&
-        !ParsePkgTypeList(standbyPkgTypeList)) {
-        STANDBYSERVICE_LOGW("failed to parse standby interval list in %{public}s", STANDBY_CONFIG_PATH.c_str());
+    !ParsePkgTypeList(standbyPkgTypeList)) {
+        STANDBYSERVICE_LOGW("failed to parse standby pkg type in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
+    }
+    return true;
+}
+
+bool StandbyConfigManager::CanParseMxStandbyList(const nlohmann::json& devStandbyConfigRoot)
+{
+    nlohmann::json standbyBatteryList;
+    nlohmann::json mxStandbyListConfig;
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_LADDER_BATTERY_LIST, standbyBatteryList) &&
+        !ParseBatteryList(standbyBatteryList)) {
+        STANDBYSERVICE_LOGW("failed to parse standby battery list in %{public}s", STANDBY_CONFIG_PATH.c_str());
+        return false;
+    }
+    if (JsonUtils::GetObjFromJsonValue(devStandbyConfigRoot, TAG_MX_STANDBY_LIST, mxStandbyListConfig) &&
+        !ParseMxStandbyListConfig(mxStandbyListConfig)) {
+        STANDBYSERVICE_LOGW("failed to parse standby mx strategy list config in %{public}s",
+            STANDBY_CONFIG_PATH.c_str());
         return false;
     }
     return true;
@@ -875,6 +901,19 @@ bool StandbyConfigManager::ParseStandbyListParaConfig(const nlohmann::json& stan
         standbyListParaMap_[element.key()] = standbyList;
     }
     return ret;
+}
+
+bool StandbyConfigManager::ParseMxStandbyListConfig(const nlohmann::json& standbyListConfig)
+{
+    if (!standbyListConfig.is_object()) {
+        STANDBYSERVICE_LOGW("standby mx strategy list should be an object");
+        return false;
+    }
+    for (const auto& element : standbyListConfig.items()) {
+        mxStandbyConfigMap_[element.key()] = element.value();
+    }
+    STANDBYSERVICE_LOGI("parsed %{public}s successfully", TAG_MX_STANDBY_LIST.c_str());
+    return true;
 }
 
 void StandbyConfigManager::DumpSetDebugMode(bool debugMode)

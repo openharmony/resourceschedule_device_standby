@@ -38,6 +38,7 @@
     *SplitVersion*;
     *GetStandbyLadderBatteryList*;
     *GetStandbyPkgTypeList*;
+    *GetMxStandbyConfig*;
   local:
     *;
 };

@@ -53,11 +53,13 @@ void MockCommonEvent::MockSubscribeCommonEvent(bool mockRet)
     g_mockSubscribeCommonEvent = mockRet;
 }
 
+std::string MockUtils::mockCloudConfigContent = R"({"version" : "1.1.1.1"})";
+
 int32_t MockUtils::MockGetSingleExtConfigFunc(int32_t index, std::string &config)
 {
     g_mockFunctionCallCount++;
     if (index == CLOUD_CONFIG_INDEX) {
-        config = R"({"version" : "1.1.1.1"})";
+        config = mockCloudConfigContent;
         return ERR_OK;
     }
     return ERR_FAIL;

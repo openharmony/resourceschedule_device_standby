@@ -100,6 +100,7 @@ public:
 
     std::vector<int32_t> GetStandbyLadderBatteryList(const std::string& switchName);
     std::vector<std::string> GetStandbyPkgTypeList(const std::string& switchName);
+    std::unordered_map<std::string, nlohmann::json>& GetMxStandbyConfig();
 
     void DumpSetDebugMode(bool debugMode);
     void DumpSetSwitch(const std::string& switchName, bool switchStatus, std::string& result);
@@ -123,6 +124,7 @@ private:
     std::vector<std::string> GetConfigFileList(const std::string& relativeConfigPath);
     bool ParseDeviceStanbyConfig(const nlohmann::json& devStandbyConfigRoot);
     bool CanParsePkgTypeList(const nlohmann::json& devStandbyConfigRoot);
+    bool CanParseMxStandbyList(const nlohmann::json& devStandbyConfigRoot);
     bool ParseStandbyConfig(const nlohmann::json& standbyConfig);
     bool ParseIntervalList(const nlohmann::json& standbyIntervalList);
     bool ParseStrategyListConfig(const nlohmann::json& standbyListConfig);
@@ -158,6 +160,7 @@ private:
 
     bool ParseBatteryList(const nlohmann::json& standbyBatteryList);
     bool ParseStandbyListParaConfig(const nlohmann::json& standbyListParaConfig);
+    bool ParseMxStandbyListConfig(const nlohmann::json& standbyListConfig);
 
 private:
     std::mutex configMutex_;
@@ -175,6 +178,7 @@ private:
     std::unordered_map<std::string, std::vector<std::string>> pkgTypeMap_;
     std::unordered_map<std::string, nlohmann::json> standbyStrategyConfigMap_;
     std::unordered_map<std::string, std::vector<std::string>> standbyListParaMap_;
+    std::unordered_map<std::string, nlohmann::json> mxStandbyConfigMap_;
 
     std::unordered_map<std::string, bool> backStandbySwitchMap_;
     std::unordered_map<std::string, int32_t> backStandbyParaMap_;
