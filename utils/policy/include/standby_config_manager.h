@@ -100,7 +100,7 @@ public:
 
     std::vector<int32_t> GetStandbyLadderBatteryList(const std::string& switchName);
     std::vector<std::string> GetStandbyPkgTypeList(const std::string& switchName);
-    std::unordered_map<std::string, nlohmann::json>& GetMxStandbyConfig();
+    const std::unordered_map<std::string, nlohmann::json>& GetMxStandbyConfig();
 
     void DumpSetDebugMode(bool debugMode);
     void DumpSetSwitch(const std::string& switchName, bool switchStatus, std::string& result);
