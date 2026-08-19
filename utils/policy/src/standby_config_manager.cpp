@@ -452,7 +452,7 @@ std::vector<std::string> StandbyConfigManager::GetStandbyPkgTypeList(const std::
     return GetConfigWithName(switchName, pkgTypeMap_);
 }
 
-std::unordered_map<std::string, nlohmann::json>& StandbyConfigManager::GetMxStandbyConfig()
+const std::unordered_map<std::string, nlohmann::json>& StandbyConfigManager::GetMxStandbyConfig()
 {
     return mxStandbyConfigMap_;
 }
