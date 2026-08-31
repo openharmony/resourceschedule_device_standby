@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +44,7 @@
 #include "res_sched_event_reporter.h"
 #include "standby_config_manager.h"
 #include "standby_service.h"
+#include "parse_dump_int.h"
 #include "standby_service_log.h"
 #include "system_ability_definition.h"
 #include "timed_task.h"
@@ -1395,7 +1396,12 @@ void StandbyServiceImpl::DumpOnPowerOverused(const std::vector<std::string> &arg
     }
 
     const std::string &module = argsInStr[DUMP_SECOND_PARAM];
-    uint32_t level = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()));
+    uint32_t level = 0;
+    if (!ParseDumpUint32(argsInStr[DUMP_THIRD_PARAM], level)) {
+        STANDBYSERVICE_LOGE("invalid dump power overused level: %{public}s",
+            argsInStr[DUMP_THIRD_PARAM].c_str());
+        return;
+    }
     HandlePowerOverused(0, module, level);
 }
 
@@ -1408,7 +1414,12 @@ void StandbyServiceImpl::DumpOnActionChanged(const std::vector<std::string> &arg
     }
 
     const std::string &module = argsInStr[DUMP_SECOND_PARAM];
-    uint32_t action = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()));
+    uint32_t action = 0;
+    if (!ParseDumpUint32(argsInStr[DUMP_THIRD_PARAM], action)) {
+        STANDBYSERVICE_LOGE("invalid dump action changed param: %{public}s",
+            argsInStr[DUMP_THIRD_PARAM].c_str());
+        return;
+    }
     HandleActionChanged(0, module, action);
 }
 
@@ -1834,24 +1845,50 @@ void StandbyServiceImpl::DumpModifyAllowList(const std::vector<std::string>& arg
         result += "not enough parameter for changing allow list\n";
         return;
     }
-    int32_t uid = std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str());
-    std::string name = argsInStr[DUMP_FOURTH_PARAM];
     if (argsInStr[DUMP_SECOND_PARAM] == "--apply") {
-        uint32_t allowType = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_FIFTH_PARAM].c_str()));
-        int32_t duration = std::atoi(argsInStr[DUMP_SIXTH_PARAM].c_str());
+        int32_t uid = 0;
+        uint32_t allowType = 0;
+        int32_t duration = 0;
+        uint32_t reasonCode = 0;
+        if (!ParseDumpInt32(argsInStr[DUMP_THIRD_PARAM], uid) ||
+            !ParseDumpUint32(argsInStr[DUMP_FIFTH_PARAM], allowType) ||
+            !ParseDumpInt32(argsInStr[DUMP_SIXTH_PARAM], duration) ||
+            !ParseDumpUint32(argsInStr[DUMP_SEVENTH_PARAM], reasonCode)) {
+            STANDBYSERVICE_LOGE("invalid dump apply allow list params");
+            result += "param invalid\n";
+            return;
+        }
+        std::string name = argsInStr[DUMP_FOURTH_PARAM];
         std::shared_ptr<ResourceRequest> resourceRequest = std::make_shared<ResourceRequest>(allowType,
-            uid, name, duration, "dump", std::atoi(argsInStr[DUMP_SEVENTH_PARAM].c_str()));
+            uid, name, duration, "dump", reasonCode);
         ApplyAllowResource(*resourceRequest);
         result += "add one object to allow list\n";
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--unapply") {
-        uint32_t allowType = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_FIFTH_PARAM].c_str()));
+        int32_t uid = 0;
+        uint32_t allowType = 0;
+        uint32_t reasonCode = 0;
+        if (!ParseDumpInt32(argsInStr[DUMP_THIRD_PARAM], uid) ||
+            !ParseDumpUint32(argsInStr[DUMP_FIFTH_PARAM], allowType) ||
+            !ParseDumpUint32(argsInStr[DUMP_SEVENTH_PARAM], reasonCode)) {
+            STANDBYSERVICE_LOGE("invalid dump unapply allow list params");
+            result += "param invalid\n";
+            return;
+        }
+        std::string name = argsInStr[DUMP_FOURTH_PARAM];
         std::shared_ptr<ResourceRequest> resourceRequest = std::make_shared<ResourceRequest>(allowType,
-            uid, name, 0, "dump", std::atoi(argsInStr[DUMP_SEVENTH_PARAM].c_str()));
+            uid, name, 0, "dump", reasonCode);
         UnapplyAllowResource(*resourceRequest);
         result += "remove one object to allow list\n";
     } else if (argsInStr[DUMP_SECOND_PARAM] == "--get") {
-        uint32_t allowType = static_cast<uint32_t>(std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()));
-        bool isApp = (std::atoi(argsInStr[DUMP_FOURTH_PARAM].c_str()) == 0);
+        uint32_t allowType = 0;
+        int32_t isAppVal = 0;
+        if (!ParseDumpUint32(argsInStr[DUMP_THIRD_PARAM], allowType) ||
+            !ParseDumpInt32(argsInStr[DUMP_FOURTH_PARAM], isAppVal)) {
+            STANDBYSERVICE_LOGE("invalid dump get allow list params");
+            result += "param invalid\n";
+            return;
+        }
+        bool isApp = (isAppVal == 0);
         std::vector<AllowInfo> allowInfoList;
         GetAllowListInner(allowType, allowInfoList, isApp);
         for (const auto& allowInfo : allowInfoList) {
@@ -1906,16 +1943,28 @@ void StandbyServiceImpl::DumpChangeConfigParam(const std::vector<std::string>& a
         result += "current is not in debug mode, can not change timeout\n";
         return;
     }
-    StandbyConfigManager::GetInstance()->DumpSetParameter(argsInStr[DUMP_SECOND_PARAM],
-        std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), result);
+    int32_t paramValue = 0;
+    if (!ParseDumpInt32(argsInStr[DUMP_THIRD_PARAM], paramValue)) {
+        STANDBYSERVICE_LOGE("invalid dump config param: %{public}s", argsInStr[DUMP_THIRD_PARAM].c_str());
+        result += "param invalid\n";
+        return;
+    }
+    StandbyConfigManager::GetInstance()->DumpSetParameter(argsInStr[DUMP_SECOND_PARAM], paramValue, result);
 }
 
 void StandbyServiceImpl::DumpPushStrategyChange(const std::vector<std::string>& argsInStr, std::string& result)
 {
     if (argsInStr[DUMP_SECOND_PARAM] == "--allowlist") {
-        StandbyStateSubscriber::GetInstance()->NotifyAllowChangedByCommonEvent(
-            std::atoi(argsInStr[DUMP_THIRD_PARAM].c_str()), argsInStr[DUMP_FOURTH_PARAM],
-            std::atoi(argsInStr[DUMP_FIFTH_PARAM].c_str()), argsInStr[DUMP_SIXTH_PARAM] == "true");
+        int32_t uid = 0;
+        uint32_t allowType = 0;
+        if (!ParseDumpInt32(argsInStr[DUMP_THIRD_PARAM], uid) ||
+            !ParseDumpUint32(argsInStr[DUMP_FIFTH_PARAM], allowType)) {
+            STANDBYSERVICE_LOGE("invalid dump allowlist params, uid: %{public}s, allowType: %{public}s",
+                argsInStr[DUMP_THIRD_PARAM].c_str(), argsInStr[DUMP_FIFTH_PARAM].c_str());
+        } else {
+            StandbyStateSubscriber::GetInstance()->NotifyAllowChangedByCommonEvent(
+                uid, argsInStr[DUMP_FOURTH_PARAM], allowType, argsInStr[DUMP_SIXTH_PARAM] == "true");
+        }
     }
     strategyManager_->ShellDump(argsInStr, result);
 }
