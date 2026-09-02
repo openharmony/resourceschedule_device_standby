@@ -52,6 +52,8 @@ public:
 
     static StandbyServiceClient& GetInstance();
 
+    void ResetStandbyServiceClient();
+
     /**
      * @brief Subscribes sleep state change event.
      *
@@ -189,7 +191,6 @@ public:
 
 private:
     bool GetStandbyServiceProxy();
-    void ResetStandbyServiceClient();
 
     class StandbyServiceDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
