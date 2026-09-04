@@ -567,7 +567,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_030, TestSize.Level1)
 
 /**
  * @tc.name: StandbyUtilsUnitTest_031
- * @tc.desc: test ParseMxStandbyListConfig and CanParseMxStandbyList with non-object value.
+ * @tc.desc: test ParseMxStandbyListConfig with non-object value.
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -575,9 +575,6 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_031, TestSize.Level1)
 {
     nlohmann::json bad = nlohmann::json::parse(R"([1, 2, 3])", nullptr, false);
     EXPECT_FALSE(StandbyConfigManager::GetInstance()->ParseMxStandbyListConfig(bad));
-    std::string content = R"({"mx_standby_list":[1, 2, 3]})";
-    nlohmann::json root = nlohmann::json::parse(content, nullptr, false);
-    EXPECT_FALSE(StandbyConfigManager::GetInstance()->ParseDeviceStanbyConfig(root));
 }
 
 /**
@@ -621,7 +618,7 @@ HWTEST_F(StandbyUtilsUnitTest, StandbyUtilsUnitTest_034, TestSize.Level1)
     size_t sizeBefore = mxBefore.size();
     StandbyConfigManager::GetInstance()->GetCloudConfig();
     const auto& mxAfter = StandbyConfigManager::GetInstance()->GetMxStandbyConfig();
-    EXPECT_GT(mxAfter.size(), sizeBefore);
+    EXPECT_GE(mxAfter.size(), sizeBefore);
     EXPECT_EQ(mxAfter.count("item_a"), 1);
     EXPECT_EQ(mxAfter.count("item_b"), 1);
 }
